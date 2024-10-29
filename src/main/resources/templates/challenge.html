@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="kr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>코딩테스트 연습</title>
+   <!-- Standard css -->
+   <link rel="icon" href="/img/logo/favicon.png">
+   <link rel="stylesheet" href="/css/style.css">
+   <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+   <!-- pub-js link -->
+   <script src="/js/pub-ui-custom.js"></script>
+</head>
+<body>
+  <div class="challenge-navbar">
+    <ol class="navbar-breadcrumb">
+    <a href="/" class="navbar-logo"><img src="/img/logo/icon_b.png" alt="logo" style="height: 30px; margin-top: 5px;"></a>
+      <li><a href="/learn/challenges/{rel}">코딩테스트 연습</a></li>
+      <li><a href="/learn/challenges/{rel}">코딩 기초 트레이닝</a></li>
+      <li class="active">아무개 문제</li>
+    </ol>
+  </div>
+
+  <!-- 컨텐트 시작부 -->
+  <div class="wrap">
+    <div class="challenge-content">
+      <!-- 제목 & 북마커 -->
+      <div class="challenge-nav">
+        <div class="nav-item">
+          <i class="xi-bookmark-o"></i>
+          <span class="challenge-title">아무개 문제</span>
+        </div>
+        <div class="nav-item">
+          <div class="dropdown-language">
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="/language/java" data-java="java">JAVA</a>
+              <a class="dropdown-item" href="/language/JavaScript" data-javascript="javascript">JavaScript</a>
+              <a class="dropdown-item" href="/language/sql" data-sql="sql">SQL</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 컨텐츠 영역 -->
+      <div class="challenge-content-list">
+        <div class="challenge-content-question">
+          <h6 class="guide-section-title">문제 설명</h6>
+          <div class="challenge-content-question-section">
+            <p>모든 국민은 언론·출판의 자유와 집회·결사의 자유를 가진다. 대통령은 법률에서 구체적으로 범위를 정하여 위임받은 사항과 법률을 집행하기 위하여 필요한 사항에 관하여 대통령령을 발할 수 있다.
+              대통령은 법률이 정하는 바에 의하여 훈장 기타의 영전을 수여한다. 행정권은 대통령을 수반으로 하는 정부에 속한다. 피고인의 자백이 고문·폭행·협박·구속의 부당한 장기화 또는 기망 기타의 방법에 의하여 자의로 진술된 것이 아니라고 인정될 때 또는 정식재판에 있어서 피고인의 자백이 그에게 불리한 유일한 증거일 때에는 이를 유죄의 증거로 삼거나 이를 이유로 처벌할 수 없다.
+              누구든지 체포 또는 구속을 당한 때에는 적부의 심사를 법원에 청구할 권리를 가진다. 모든 국민은 법률이 정하는 바에 의하여 선거권을 가진다. 모든 국민은 행위시의 법률에 의하여 범죄를 구성하지 아니하는 행위로 소추되지 아니하며, 동일한 범죄에 대하여 거듭 처벌받지 아니한다.
+            </p>
+            <p>모든 국민은 언론·출판의 자유와 집회·결사의 자유를 가진다. 대통령은 법률에서 구체적으로 범위를 정하여 위임받은 사항과 법률을 집행하기 위하여 필요한 사항에 관하여 대통령령을 발할 수 있다.
+              대통령은 법률이 정하는 바에 의하여 훈장 기타의 영전을 수여한다. 행정권은 대통령을 수반으로 하는 정부에 속한다. 피고인의 자백이 고문·폭행·협박·구속의 부당한 장기화 또는 기망 기타의 방법에 의하여 자의로 진술된 것이 아니라고 인정될 때 또는 정식재판에 있어서 피고인의 자백이 그에게 불리한 유일한 증거일 때에는 이를 유죄의 증거로 삼거나 이를 이유로 처벌할 수 없다.
+              누구든지 체포 또는 구속을 당한 때에는 적부의 심사를 법원에 청구할 권리를 가진다. 모든 국민은 법률이 정하는 바에 의하여 선거권을 가진다. 모든 국민은 행위시의 법률에 의하여 범죄를 구성하지 아니하는 행위로 소추되지 아니하며, 동일한 범죄에 대하여 거듭 처벌받지 아니한다.
+              <!-- 변수 사용시 담아올값 data- 값으로 가져오기 -->
+              <code>var</code>
+            </p>
+          </div>
+        </div>
+        <div class="challenge-content-run">
+          <h6 class="guide-section-title">코드 에디터</h6>
+          <!-- codemirro -->
+          <textarea id="batch_content" name="batch_content"></textarea>
+          <h6 class="guide-section-title mt20">결과</h6>
+          <div class="resultArea">
+            <p>실행 결과가 여기에 표시됩니다.</p>
+            <div class="console-content"></div>
+          </div>
+        </div>
+      </div>
+      <!-- 하단 보내기 값 -->
+      <div class="bottom-list">
+        <div class="testcase-button">
+          <a href="/learn/courses/{reqno}" class="btn-show-question">질문하기</a>
+        </div>
+        <div class="func-buttons">
+          <button class="btn_check" type="button" onclick="fn_msg()" >확인</button>
+          <!-- <a class="btn_login" href="/login">로그인 하기</a> -->
+          <!-- <a class="btn_forward">코드 전송하기</a> -->
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <!-- codemirror kit -->
+  <script src="/js/codemirror/codemirror-5.65.18/lib/codemirror.js"></script>
+  <script src="/js/codemirror/codemirror-5.65.18/mode/sql/sql.js"></script>
+  <script src="/js/codemirror/codemirror-5.65.18/mode/javascript/javascript.js"></script>
+  <link rel="stylesheet" href="/js/codemirror/codemirror-5.65.18/lib/codemirror.css">
+  <link rel="stylesheet" href="/js/codemirror/codemirror-5.65.18/theme/darcula.css">
+  
+  <!-- codemirro -->
+  <script>
+   // textarea 태그의 element를 지정
+   let textarea_content = document.getElementById('batch_content');
+   
+   // 에디터 설정
+   var editor = CodeMirror.fromTextArea(textarea_content, {
+     lineNumbers : true,  // 라인넘버
+     lineWrapping : true, // 줄바꿈
+     styleActiveLine : true, // 현재 활성화된 라인을 강조
+     foldGutter: true, // 코드 접기 활성화
+     theme: "base16-dark",
+     mode: 'text/x-sql', // x-javascript , x-java 모드
+     gutter : true,
+     val: textarea_content.value
+   });
+
+   function fn_msg() {
+      var text = editor.getValue();
+      alert(text);
+   }
+
+  //  https://velog.io/@baek1008/sss
+   </script>
+</body>
+</html>
