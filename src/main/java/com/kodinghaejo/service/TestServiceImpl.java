@@ -1,7 +1,10 @@
 package com.kodinghaejo.service;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 
 import org.springframework.stereotype.Service;
@@ -78,5 +81,53 @@ public class TestServiceImpl implements TestService {
             errorOutput.append(line).append("\n");
         }
         return "Error:\n" + errorOutput.toString();
+    }
+    
+    public void createMainJavaFile() {
+        String filePath = "submissions/Main.java";  // 원하는 파일 경로 설정
+
+        String mainTemplate = "import java.util.*;\n" +
+        					  "\n" +
+        		              "public class Main {\n" +
+                              "    public static void main(String[] args) {\n" +
+                              "        Solution solution = new Solution();\n" +
+                              "        Verify verify = new Verify();\n" +
+                              "        Random rnd = new Random();\n" +
+                              "        int num1 = rnd.nextInt(10) + 1;\n" +
+                              "        int num2 = rnd.nextInt(10) + 1;\n" +
+                              "        int result_s = solution.solution(num1, num2);\n" +
+                              "        int result_v = verify.verify(num1, num2);\n" +
+                              "        System.out.println(\"Test: \" + (result_s == result_v ? \"Pass\" : \"Fail\"));\n" +
+                              "    }\n" +
+                              "}\n";
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            writer.write(mainTemplate);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void createMainJsFile() {
+    	String filePath = "submissions/Main.js";
+    	
+    	String mainTemplate = "function getRandomInt(min, max) {\n" +
+    						  "    return Math.floor(Math.random() * (max - min + 1)) + min;\n" +
+    						  "}\n" +
+    						  "let num1 = getRandomInt(1, 10);\n" +
+    						  "let num2 = getRandomInt(1, 10);\n" +
+    						  "\n" +
+    						  "const solution = require('./Solution');\n" +
+    						  "const verify = require('./Verify');\n" +
+    						  "\n" +
+    						  "const result_s = solution(num1,num2);\n" +
+    						  "const result_v = verify(num1,num2);\n" +
+    						  "console.log(\"Test: \" + (result_s == result_v ? \"Pass\" : \"Fail\"));";
+    	
+    	try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            writer.write(mainTemplate);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }					  
     }
 }

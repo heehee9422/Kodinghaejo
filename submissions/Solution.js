@@ -1,11 +1,7 @@
-function solution(arr) {
-   var answer = [];
-   for(var i=0; i < arr.length; i++) {
-       if(arr[i] !== arr[i+1]) {
-         answer.push(arr[i]);
-       }
-   }
-   
-   return answer
+function solution(num1, num2) {
+    var answer = 0;
+    answer = num1 - num2;
+    return answer;
 }
-console.log(solution([1,1,3,3,0,1,1]));
+
+module.exports = solution;

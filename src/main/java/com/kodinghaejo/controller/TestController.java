@@ -28,18 +28,28 @@ public class TestController {
 	}
 	
 	// 코드 제출을 처리하는 POST 메서드
-    @PostMapping("/run")
+    @PostMapping("/submit")
     @ResponseBody // 메서드에서 반환되는 객체를 JSON으로 변환하여 응답 본문에 포함
     public String submitCode(@RequestParam("code") String code, @RequestParam("language") String language) {
         try {
+        	
+        	if ("javascript".equals(language)) {
+        		code += "\n\nmodule.exports = solution;";
+        	}
+        	
             // 파일명 결정
             String filename = "Solution." + (language.equals("java") ? "java" : "js");
 
             // 코드 파일 저장 경로
             Path path = Paths.get("submissions/" + filename);
             Files.createDirectories(path.getParent()); // 경로가 없으면 생성
+            
             Files.write(path, code.getBytes()); // 코드 파일로 저장
-
+            if("java".equals(language)) {
+            	testCodeService.createMainJavaFile();
+            } else if("javascript".equals(language)) {
+            	testCodeService.createMainJsFile();
+            }
             // 코드 실행 로직 호출
             return testCodeService.testCode(language, path.toString()); // 실행 결과 반환
         } catch (Exception e) {

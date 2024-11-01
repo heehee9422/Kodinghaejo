@@ -1,7 +1,11 @@
 FROM openjdk:11-jdk-slim
+
 WORKDIR /app
+
+COPY Verify.java .
 COPY Solution.java .
+COPY Main.java .
 
-Run javac Solution.java
+RUN javac Main.java Solution.java
 
-CMD ["java", "Solution"]
+CMD ["java", "Main"]
