@@ -15,6 +15,6 @@ public class TestBookmarkEntityID implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	private String email;
-	private Long tIdx;	
+	private Long testIdx;	
 
 }

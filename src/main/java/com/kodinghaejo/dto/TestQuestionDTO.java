@@ -20,7 +20,7 @@ import lombok.Setter;
 public class TestQuestionDTO {
 
 	private Long idx;
-	private TestEntity tIdx;
+	private TestEntity testIdx;
 	private MemberEntity email;
 	private String writer;
 	private String title;
@@ -31,7 +31,7 @@ public class TestQuestionDTO {
 	//Entity --> DTO 이동
 	public TestQuestionDTO(TestQuestionEntity entity) {
 		this.idx = entity.getIdx();
-		this.tIdx = entity.getTIdx();
+		this.testIdx = entity.getTestIdx();
 		this.email = entity.getEmail();
 		this.writer = entity.getWriter();
 		this.title = entity.getTitle();
@@ -45,7 +45,7 @@ public class TestQuestionDTO {
 		TestQuestionEntity entity = TestQuestionEntity
 										.builder()
 										.idx(dto.getIdx())
-										.tIdx(dto.getTIdx())
+										.testIdx(dto.getTestIdx())
 										.email(dto.getEmail())
 										.writer(dto.getWriter())
 										.title(dto.getTitle())

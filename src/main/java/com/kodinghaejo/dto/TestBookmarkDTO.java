@@ -20,14 +20,14 @@ import lombok.Setter;
 public class TestBookmarkDTO {
 
 	private MemberEntity email;
-	private TestEntity tIdx;
+	private TestEntity testIdx;
 	private String addChk;
 	private LocalDateTime addDate;
 
 	//Entity --> DTO 이동
 	public TestBookmarkDTO(TestBookmarkEntity entity) {
 		this.email = entity.getEmail();
-		this.tIdx = entity.getTIdx();
+		this.testIdx = entity.getTestIdx();
 		this.addChk = entity.getAddChk();
 		this.addDate = entity.getAddDate();
 	}
@@ -37,7 +37,7 @@ public class TestBookmarkDTO {
 		TestBookmarkEntity entity = TestBookmarkEntity
 										.builder()
 										.email(dto.getEmail())
-										.tIdx(dto.getTIdx())
+										.testIdx(dto.getTestIdx())
 										.addChk(dto.getAddChk())
 										.addDate(dto.getAddDate())
 										.build();

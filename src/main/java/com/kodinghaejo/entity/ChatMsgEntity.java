@@ -26,7 +26,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity(name = "chat_msg")
+@Entity(name = "chatMsg")
 @Table(name = "jpa_chat_msg")
 public class ChatMsgEntity {
 
@@ -38,8 +38,8 @@ public class ChatMsgEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@OnDelete(action = OnDeleteAction.CASCADE)
-	@JoinColumn(name = "c_idx", nullable = false)
-	private ChatEntity cIdx;
+	@JoinColumn(name = "chat_idx", nullable = false)
+	private ChatEntity chatIdx;
 
 	@Column(name = "email", length = 50, nullable = false)
 	private String email;

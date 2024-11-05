@@ -18,7 +18,6 @@ public class CommonCodeDTO {
 	private String code;
 	private String type;
 	private String val;
-	private String subVal;
 	private String note;
 	private String isUse;
 
@@ -27,7 +26,6 @@ public class CommonCodeDTO {
 		this.code = entity.getCode();
 		this.type = entity.getType();
 		this.val = entity.getVal();
-		this.subVal = entity.getSubVal();
 		this.note = entity.getNote();
 		this.isUse = entity.getIsUse();
 	}
@@ -39,7 +37,6 @@ public class CommonCodeDTO {
 									.code(dto.getCode())
 									.type(dto.getType())
 									.val(dto.getVal())
-									.subVal(dto.getSubVal())
 									.note(dto.getNote())
 									.isUse(dto.getIsUse())
 									.build();

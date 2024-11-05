@@ -3,7 +3,7 @@ package com.kodinghaejo.dto;
 import java.time.LocalDateTime;
 
 import com.kodinghaejo.entity.MemberEntity;
-import com.kodinghaejo.entity.TestLangEntity;
+import com.kodinghaejo.entity.TestLngEntity;
 import com.kodinghaejo.entity.TestSubmitEntity;
 
 import lombok.AllArgsConstructor;
@@ -20,7 +20,7 @@ import lombok.Setter;
 public class TestSubmitDTO {
 
 	private Long idx;
-	private TestLangEntity tlIdx;
+	private TestLngEntity tlIdx;
 	private MemberEntity email;
 	private String submSts;
 	private String content;

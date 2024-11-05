@@ -11,10 +11,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class BoardRecommendEntityID implements Serializable {
-	
-	private static final long serialVersionUID = 1L;
-	private String email;
-	private Long boardIdx;	
+public class ChatMemberEntityID implements Serializable {
 
+	private static final long serialVersionUID = 1L;
+	private Long chatIdx;
+	private String email;
+	
 }

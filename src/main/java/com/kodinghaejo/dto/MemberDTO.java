@@ -24,10 +24,10 @@ public class MemberDTO {
 	private String tel;
 	private String website;
 	private String descr;
-	private String memLvl;
-	private String tech1;
-	private String tech2;
-	private String tech3;
+	private String lvl;
+	private String tec1;
+	private String tec2;
+	private String tec3;
 	private String job1;
 	private String job2;
 	private String job3;
@@ -51,10 +51,10 @@ public class MemberDTO {
 		this.tel = entity.getTel();
 		this.website = entity.getWebsite();
 		this.descr = entity.getDescr();
-		this.memLvl = entity.getMemLvl();
-		this.tech1 = entity.getTech1();
-		this.tech2 = entity.getTech2();
-		this.tech3 = entity.getTech3();
+		this.lvl = entity.getLvl();
+		this.tec1 = entity.getTec1();
+		this.tec2 = entity.getTec2();
+		this.tec3 = entity.getTec3();
 		this.job1 = entity.getJob1();
 		this.job2 = entity.getJob2();
 		this.job3 = entity.getJob3();
@@ -80,10 +80,10 @@ public class MemberDTO {
 								.tel(dto.getTel())
 								.website(dto.getWebsite())
 								.descr(dto.getDescr())
-								.memLvl(dto.getMemLvl())
-								.tech1(dto.getTech1())
-								.tech2(dto.getTech2())
-								.tech3(dto.getTech3())
+								.lvl(dto.getLvl())
+								.tec1(dto.getTec1())
+								.tec2(dto.getTec2())
+								.tec3(dto.getTec3())
 								.job1(dto.getJob1())
 								.job2(dto.getJob2())
 								.job3(dto.getJob3())

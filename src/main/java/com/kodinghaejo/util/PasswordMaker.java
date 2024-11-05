@@ -3,13 +3,12 @@ package com.kodinghaejo.util;
 import java.util.Random;
 
 public class PasswordMaker {
-
-	//숫자 + 영문대소문자 7자리 임시패스워드 생성
-	public String tempPasswordMaker() {
-
+	public String tempPasswordMaker(int n) {
+		//숫자 + 영문대소문자 n자리 임시패스워드 생성
 		StringBuffer tempPW = new StringBuffer();
 		Random rnd = new Random();
-		for (int i = 0; i < 7; i++) {
+		
+		for (int i = 0; i < n; i++) {
 		    int rIndex = rnd.nextInt(3); //0 ~ 2 의 숫자 중에서 랜덤하게 발생
 		    switch (rIndex) {
 		    case 0:

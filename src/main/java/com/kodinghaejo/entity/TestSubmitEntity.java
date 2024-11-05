@@ -26,7 +26,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity(name = "test_submit")
+@Entity(name = "testSubmit")
 @Table(name = "jpa_test_submit")
 public class TestSubmitEntity {
 
@@ -39,7 +39,7 @@ public class TestSubmitEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JoinColumn(name = "tl_idx", nullable = false)
-	private TestLangEntity tlIdx;
+	private TestLngEntity tlIdx;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@OnDelete(action = OnDeleteAction.CASCADE)

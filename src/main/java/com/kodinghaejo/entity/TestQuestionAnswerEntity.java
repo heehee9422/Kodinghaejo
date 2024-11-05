@@ -26,7 +26,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity(name = "test_question_answer")
+@Entity(name = "testQuestionAnswer")
 @Table(name = "jpa_test_question_answer")
 public class TestQuestionAnswerEntity {
 

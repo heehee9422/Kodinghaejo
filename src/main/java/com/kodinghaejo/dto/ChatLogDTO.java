@@ -2,7 +2,8 @@ package com.kodinghaejo.dto;
 
 import java.time.LocalDateTime;
 
-import com.kodinghaejo.entity.TestEntity;
+import com.kodinghaejo.entity.ChatEntity;
+import com.kodinghaejo.entity.ChatMsgEntity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,36 +16,33 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TestDTO {
+public class ChatLogDTO {
 
 	private Long idx;
-	private String title;
-	private int diff;
-	private String src;
-	private String descr;
+	private ChatEntity chatIdx;
+	private String email;
+	private String content;
 	private LocalDateTime regdate;
 	private String isUse;
 
 	//Entity --> DTO 이동
-	public TestDTO(TestEntity entity) {
+	public ChatLogDTO(ChatMsgEntity entity) {
 		this.idx = entity.getIdx();
-		this.title = entity.getTitle();
-		this.diff = entity.getDiff();
-		this.src = entity.getSrc();
-		this.descr = entity.getDescr();
+		this.chatIdx = entity.getChatIdx();
+		this.email = entity.getEmail();
+		this.content = entity.getContent();
 		this.regdate = entity.getRegdate();
 		this.isUse = entity.getIsUse();
 	}
 
 	//DTO --> Entity 이동
-	public TestEntity dtoToEntity(TestDTO dto) {
-		TestEntity entity = TestEntity
+	public ChatMsgEntity dtoToEntity(ChatLogDTO dto) {
+		ChatMsgEntity entity = ChatMsgEntity
 								.builder()
 								.idx(dto.getIdx())
-								.title(dto.getTitle())
-								.diff(dto.getDiff())
-								.src(dto.getSrc())
-								.descr(dto.getDescr())
+								.chatIdx(dto.getChatIdx())
+								.email(dto.getEmail())
+								.content(dto.getContent())
 								.regdate(dto.getRegdate())
 								.isUse(dto.getIsUse())
 								.build();

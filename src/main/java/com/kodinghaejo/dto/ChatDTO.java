@@ -3,7 +3,6 @@ package com.kodinghaejo.dto;
 import java.time.LocalDateTime;
 
 import com.kodinghaejo.entity.ChatEntity;
-import com.kodinghaejo.entity.MemberEntity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +18,6 @@ import lombok.Setter;
 public class ChatDTO {
 
 	private Long idx;
-	private MemberEntity email;
 	private String type;
 	private String password;
 	private String title;
@@ -34,7 +32,6 @@ public class ChatDTO {
 	//Entity --> DTO 이동
 	public ChatDTO(ChatEntity entity) {
 		this.idx = entity.getIdx();
-		this.email = entity.getEmail();
 		this.type = entity.getType();
 		this.password = entity.getPassword();
 		this.title = entity.getTitle();
@@ -52,7 +49,6 @@ public class ChatDTO {
 		ChatEntity entity = ChatEntity
 								.builder()
 								.idx(dto.getIdx())
-								.email(dto.getEmail())
 								.type(dto.getType())
 								.password(dto.getPassword())
 								.title(dto.getTitle())

@@ -19,7 +19,7 @@ import lombok.Setter;
 public class BoardDTO {
 
 	private Long idx;
-	private String bCat;
+	private String cat;
 	private MemberEntity email;
 	private String writer;
 	private String title;
@@ -30,7 +30,7 @@ public class BoardDTO {
 	//Entity --> DTO 이동
 	public BoardDTO(BoardEntity entity) {
 		this.idx = entity.getIdx();
-		this.bCat = entity.getBCat();
+		this.cat = entity.getCat();
 		this.email = entity.getEmail();
 		this.writer = entity.getWriter();
 		this.title = entity.getTitle();
@@ -44,7 +44,7 @@ public class BoardDTO {
 		BoardEntity entity = BoardEntity
 								.builder()
 								.idx(dto.getIdx())
-								.bCat(dto.getBCat())
+								.cat(dto.getCat())
 								.email(dto.getEmail())
 								.writer(dto.getWriter())
 								.title(dto.getTitle())

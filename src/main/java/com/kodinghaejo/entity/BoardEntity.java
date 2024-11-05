@@ -36,8 +36,8 @@ public class BoardEntity {
 	@Column(name = "idx", nullable = false)
 	private Long idx;
 
-	@Column(name = "b_cat", length = 20, nullable = false)
-	private String bCat;
+	@Column(name = "cat", length = 20, nullable = false)
+	private String cat;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@OnDelete(action = OnDeleteAction.CASCADE)

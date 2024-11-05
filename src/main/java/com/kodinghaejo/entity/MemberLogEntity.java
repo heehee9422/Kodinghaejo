@@ -24,27 +24,21 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity(name = "testBookmark")
-@Table(name = "jpa_test_bookmark")
-@IdClass(TestBookmarkEntityID.class)
-public class TestBookmarkEntity {
-
+@Entity(name = "memberLog")
+@Table(name = "jpa_member_log")
+@IdClass(MemberLogEntityID.class)
+public class MemberLogEntity {
+	
 	@Id
 	@ManyToOne(fetch = FetchType.LAZY)
 	@OnDelete(action = OnDeleteAction.CASCADE)
-	@JoinColumn(name = "email", nullable = false)
+	@JoinColumn(name = "email")
 	private MemberEntity email;
-
+	
 	@Id
-	@ManyToOne(fetch = FetchType.LAZY)
-	@OnDelete(action = OnDeleteAction.CASCADE)
-	@JoinColumn(name = "test_idx", nullable = false)
-	private TestEntity testIdx;
-
-	@Column(name = "add_chk", length = 2, nullable = true)
-	private String addChk;
-
-	@Column(name = "add_date", nullable = true)
-	private LocalDateTime addDate;
+	private LocalDateTime regdate;
+	
+	@Column(name = "status", length = 10, nullable = false)
+	private String status;
 
 }

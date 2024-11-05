@@ -24,7 +24,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity(name = "board_recommend")
+@Entity(name = "boardRecommend")
 @Table(name = "jpa_board_recommend")
 @IdClass(BoardRecommendEntityID.class)
 public class BoardRecommendEntity {
@@ -38,8 +38,8 @@ public class BoardRecommendEntity {
 	@Id
 	@ManyToOne(fetch = FetchType.LAZY)
 	@OnDelete(action = OnDeleteAction.CASCADE)
-	@JoinColumn(name = "b_idx", nullable = false)
-	private BoardEntity bIdx;
+	@JoinColumn(name = "board_idx", nullable = false)
+	private BoardEntity boardIdx;
 
 	@Column(name = "good_chk", length = 2, nullable = true)
 	private String goodChk;

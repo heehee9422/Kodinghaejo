@@ -15,7 +15,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity(name = "common_code")
+@Entity(name = "commonCode")
 @Table(name = "jpa_common_code")
 public class CommonCodeEntity {
 
@@ -28,9 +28,6 @@ public class CommonCodeEntity {
 
 	@Column(name = "val", length = 50, nullable = false)
 	private String val;
-
-	@Column(name = "sub_val", length = 50, nullable = true)
-	private String subVal;
 
 	@Column(name = "note", length = 200, nullable = true)
 	private String note;

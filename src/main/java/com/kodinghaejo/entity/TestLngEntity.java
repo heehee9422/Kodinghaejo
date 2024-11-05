@@ -26,9 +26,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity(name = "test_lang")
-@Table(name = "jpa_test_lang")
-public class TestLangEntity {
+@Entity(name = "testLng")
+@Table(name = "jpa_test_lng")
+public class TestLngEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "TEST_LANG_SEQ")
@@ -38,14 +38,20 @@ public class TestLangEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@OnDelete(action = OnDeleteAction.CASCADE)
-	@JoinColumn(name = "t_idx", nullable = false)
-	private TestEntity tIdx;
+	@JoinColumn(name = "test_idx", nullable = false)
+	private TestEntity testIdx;
 
-	@Column(name = "lang", length = 20, nullable = false)
-	private String lang;
+	@Column(name = "lng", length = 20, nullable = false)
+	private String lng;
 
 	@Column(name = "content", length = 2000, nullable = false)
 	private String content;
+
+	@Column(name = "correct", length = 2000, nullable = false)
+	private String correct;
+
+	@Column(name = "main_src", length = 2000, nullable = false)
+	private String mainSrc;
 
 	@Column(name = "regdate", nullable = false)
 	private LocalDateTime regdate;

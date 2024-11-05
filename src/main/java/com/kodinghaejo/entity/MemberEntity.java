@@ -2,6 +2,8 @@ package com.kodinghaejo.entity;
 
 import java.time.LocalDateTime;
 
+import com.kodinghaejo.dto.MemberDTO;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -43,17 +45,17 @@ public class MemberEntity {
 	@Column(name = "descr", length = 2000, nullable = true)
 	private String descr;
 
-	@Column(name = "mem_lvl", length = 20, nullable = false)
-	private String memLvl;
+	@Column(name = "lvl", length = 20, nullable = false)
+	private String lvl;
 
-	@Column(name = "tech_1", length = 20, nullable = true)
-	private String tech1;
+	@Column(name = "tec_1", length = 20, nullable = true)
+	private String tec1;
 
-	@Column(name = "tech_2", length = 20, nullable = true)
-	private String tech2;
+	@Column(name = "tec_2", length = 20, nullable = true)
+	private String tec2;
 
-	@Column(name = "tech_3", length = 20, nullable = true)
-	private String tech3;
+	@Column(name = "tec_3", length = 20, nullable = true)
+	private String tec3;
 
 	@Column(name = "job_1", length = 20, nullable = true)
 	private String job1;
@@ -93,5 +95,21 @@ public class MemberEntity {
 
 	@Column(name = "is_use", length = 2, nullable = false)
 	private String isUse;
+	
+	public void editInfo(MemberDTO member) {
+		this.username = member.getUsername();
+		this.tel = member.getTel();
+		this.website = member.getWebsite();
+		this.descr = member.getDescr();
+		this.tec1 = member.getTec1();
+		this.tec2 = member.getTec2();
+		this.tec3 = member.getTec3();
+		this.job1 = member.getJob1();
+		this.job2 = member.getJob2();
+		this.job3 = member.getJob3();
+		this.orgImg = member.getOrgImg();
+		this.storedImg = member.getStoredImg();
+		this.imgSize = member.getImgSize();
+	}
 
 }

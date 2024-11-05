@@ -20,7 +20,7 @@ import lombok.Setter;
 public class BoardRecommendDTO {
 
 	private MemberEntity email;
-	private BoardEntity bIdx;
+	private BoardEntity boardIdx;
 	private String goodChk;
 	private String badChk;
 	private LocalDateTime goodDate;
@@ -29,7 +29,7 @@ public class BoardRecommendDTO {
 	//Entity --> DTO 이동
 	public BoardRecommendDTO(BoardRecommendEntity entity) {
 		this.email = entity.getEmail();
-		this.bIdx = entity.getBIdx();
+		this.boardIdx = entity.getBoardIdx();
 		this.goodChk = entity.getGoodChk();
 		this.badChk = entity.getBadChk();
 		this.goodDate = entity.getGoodDate();
@@ -41,7 +41,7 @@ public class BoardRecommendDTO {
 		BoardRecommendEntity entity = BoardRecommendEntity
 										.builder()
 										.email(dto.getEmail())
-										.bIdx(dto.getBIdx())
+										.boardIdx(dto.getBoardIdx())
 										.goodChk(dto.getGoodChk())
 										.badChk(dto.getBadChk())
 										.goodDate(dto.getGoodDate())

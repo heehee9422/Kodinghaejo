@@ -2,8 +2,8 @@ package com.kodinghaejo.dto;
 
 import java.time.LocalDateTime;
 
-import com.kodinghaejo.entity.TestLangEntity;
-import com.kodinghaejo.entity.TestLangSolEntity;
+import com.kodinghaejo.entity.TestEntity;
+import com.kodinghaejo.entity.TestLngEntity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,30 +16,39 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TestLangSolDTO {
+public class TestLngDTO {
 
 	private Long idx;
-	private TestLangEntity tlIdx;
+	private TestEntity testIdx;
+	private String lng;
 	private String content;
+	private String correct;
+	private String mainSrc;
 	private LocalDateTime regdate;
 	private String isUse;
 
 	//Entity --> DTO 이동
-	public TestLangSolDTO(TestLangSolEntity entity) {
+	public TestLngDTO(TestLngEntity entity) {
 		this.idx = entity.getIdx();
-		this.tlIdx = entity.getTlIdx();
+		this.testIdx = entity.getTestIdx();
+		this.lng = entity.getLng();
 		this.content = entity.getContent();
+		this.correct = entity.getCorrect();
+		this.mainSrc = entity.getMainSrc();
 		this.regdate = entity.getRegdate();
 		this.isUse = entity.getIsUse();
 	}
 
 	//DTO --> Entity 이동
-	public TestLangSolEntity dtoToEntity(TestLangSolDTO dto) {
-		TestLangSolEntity entity = TestLangSolEntity
+	public TestLngEntity dtoToEntity(TestLngDTO dto) {
+		TestLngEntity entity = TestLngEntity
 									.builder()
 									.idx(dto.getIdx())
-									.tlIdx(dto.getTlIdx())
+									.testIdx(dto.getTestIdx())
+									.lng(dto.getLng())
 									.content(dto.getContent())
+									.correct(dto.getCorrect())
+									.mainSrc(dto.getMainSrc())
 									.regdate(dto.getRegdate())
 									.isUse(dto.getIsUse())
 									.build();

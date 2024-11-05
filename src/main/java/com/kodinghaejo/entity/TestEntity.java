@@ -39,20 +39,8 @@ public class TestEntity {
 	@Column(name = "src", length = 20, nullable = false)
 	private String src;
 
-	@Column(name = "cat", length = 20, nullable = false)
-	private String cat;
-
 	@Column(name = "descr", length = 2000, nullable = false)
 	private String descr;
-
-	@Column(name = "restr", length = 200, nullable = false)
-	private String restr;
-
-	@Column(name = "ex_str", length = 200, nullable = false)
-	private String exStr;
-
-	@Column(name = "ex_descr", length = 2000, nullable = false)
-	private String exDescr;
 
 	@Column(name = "regdate", nullable = false)
 	private LocalDateTime regdate;

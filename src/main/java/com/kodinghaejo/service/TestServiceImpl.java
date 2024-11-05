@@ -9,12 +9,46 @@ import java.io.InputStreamReader;
 
 import org.springframework.stereotype.Service;
 
+import com.kodinghaejo.dto.TestDTO;
+import com.kodinghaejo.entity.TestEntity;
+import com.kodinghaejo.entity.TestLngEntity;
+import com.kodinghaejo.entity.repository.TestLngRepository;
+import com.kodinghaejo.entity.repository.TestRepository;
+
 import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
 public class TestServiceImpl implements TestService {
 	
+<<<<<<< Updated upstream
+=======
+	private final TestRepository testRepository;
+	private final TestLngRepository testLngRepository;
+	
+	//코딩테스트 문제 가져오기
+	@Override
+	public TestDTO loadTest(Long idx) throws Exception {
+		return testRepository.findById(idx).map((test) -> new TestDTO(test)).get();
+	}
+	
+	//문제에서 선택 가능한 언어 확인
+	@Override
+	public String lngAvlChk(Long idx, String lng) throws Exception {
+		TestEntity testEntity = testRepository.findById(idx).get();
+		
+		return testLngRepository.findFirstByTestIdxAndLng(testEntity, lng) != null ? "Y" : "N";
+	}
+	
+	//코딩테스트 언어별 문제 가져오기
+	@Override
+	public TestLngEntity loadTestLng(Long testIdx, String language) throws Exception {
+		TestEntity testEntity = testRepository.findById(testIdx).get();
+		
+		return testLngRepository.findFirstByTestIdxAndLng(testEntity, language);
+	}
+	
+>>>>>>> Stashed changes
 	@Override
     public String testCode(String language, String filePath) {
         String absolutePath = new File(filePath).getAbsolutePath(); // 절대 경로로 변환

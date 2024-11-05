@@ -19,7 +19,7 @@ import lombok.Setter;
 public class ChatMsgDTO {
 
 	private Long idx;
-	private ChatEntity cIdx;
+	private ChatEntity chatIdx;
 	private String email;
 	private String content;
 	private LocalDateTime regdate;
@@ -28,7 +28,7 @@ public class ChatMsgDTO {
 	//Entity --> DTO 이동
 	public ChatMsgDTO(ChatMsgEntity entity) {
 		this.idx = entity.getIdx();
-		this.cIdx = entity.getCIdx();
+		this.chatIdx = entity.getChatIdx();
 		this.email = entity.getEmail();
 		this.content = entity.getContent();
 		this.regdate = entity.getRegdate();
@@ -40,7 +40,7 @@ public class ChatMsgDTO {
 		ChatMsgEntity entity = ChatMsgEntity
 								.builder()
 								.idx(dto.getIdx())
-								.cIdx(dto.getCIdx())
+								.chatIdx(dto.getChatIdx())
 								.email(dto.getEmail())
 								.content(dto.getContent())
 								.regdate(dto.getRegdate())
