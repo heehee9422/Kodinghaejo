@@ -21,8 +21,6 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class TestServiceImpl implements TestService {
 	
-<<<<<<< Updated upstream
-=======
 	private final TestRepository testRepository;
 	private final TestLngRepository testLngRepository;
 	
@@ -48,21 +46,34 @@ public class TestServiceImpl implements TestService {
 		return testLngRepository.findFirstByTestIdxAndLng(testEntity, language);
 	}
 	
->>>>>>> Stashed changes
+	//코드 제출 시 파일 생성
+	@Override
+	public void createVerifyFiles(String mainSrc, String correctSrc) throws Exception {
+		String mainPath = "submissions/Main.java";
+		String correctPath = "submissions/Verify.java";
+		
+		BufferedWriter mainWriter = new BufferedWriter(new FileWriter(mainPath));
+		BufferedWriter correctWriter = new BufferedWriter(new FileWriter(correctPath));
+		
+		mainWriter.write(mainSrc);
+		correctWriter.write(correctSrc);
+		
+		mainWriter.close();
+		correctWriter.close();
+	}
+	
+	//코드 제출 시 검증 처리 
 	@Override
     public String testCode(String language, String filePath) {
         String absolutePath = new File(filePath).getAbsolutePath(); // 절대 경로로 변환
         String imageName;
         String containerName;
 
-        if ("java".equals(language)) {
-            imageName = "java-code";
-            containerName = "java-container";
-        } else if ("javascript".equals(language)) {
-            imageName = "js-code";
-            containerName = "js-container";
+        if (language.equals("java") || language.equals("js")) {
+        	imageName = language + "-code";
+        	containerName = language + "-container";
         } else {
-            throw new IllegalArgumentException("Unsupported language: " + language);
+        	throw new IllegalArgumentException("지원하지 않는 언어: " + language);
         }
 
         // 빌드 명령어

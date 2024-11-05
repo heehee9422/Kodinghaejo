@@ -1,14 +1,5 @@
 package com.kodinghaejo.service;
 
-<<<<<<< Updated upstream
-public interface TestService {
-	
-	String testCode(String language, String filePath);
-	
-	void createMainJavaFile();
-	
-	void createMainJsFile();
-=======
 import com.kodinghaejo.dto.TestDTO;
 import com.kodinghaejo.entity.TestLngEntity;
 
@@ -23,10 +14,10 @@ public interface TestService {
 	//코딩테스트 언어별 문제 가져오기
 	public TestLngEntity loadTestLng(Long testIdx, String language) throws Exception;
 	
-	public String testCode(String language, String filePath);
+	//코드 제출 시 파일 생성
+	public void createVerifyFiles(String mainSrc, String correctSrc) throws Exception;
+
+	//코드 제출 시 검증 처리 
+	public String testCode(String language, String filePath) throws Exception;
 	
-	public void createMainJavaFile();
-	
-	public void createMainJsFile();
->>>>>>> Stashed changes
 }

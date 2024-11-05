@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="kr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>게시판</title>
+  <!-- Standard css -->
+  <link rel="icon" href="/img/logo/favicon.png">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+  <!-- pub-js link -->
+  <script src="/js/pub-ui-custom.js"></script>
+</head>
+
+<body>
+  <!-- header 영역 -->
+  <div id="header"></div>
+  
+  <!-- 글 내용 -->
+  <div class="container" style="min-height: auto;">
+    <div class="content-board-free-view">
+      <div class="content-board-free-view-wrap">
+        <h4>자유주제</h4>
+        <h5>개발자 세미나 What We Work 1회에서 발표자를 모집합니다.</h5>
+        <div class="profile-title">
+          <img src="/img/test-profile/nonoping.png" alt="">
+          <div class="profile-title-content">
+            <p class="profile-name">회원 아무개씨</p>
+            <p class="profile-date">5시간전</p>
+          </div>
+        </div>
+        <p>
+          큰돌의 제 1회 작은 개발자 세미나. What We Work 1회를 개최합니다
+          모집인원 : 10 ~ 20명
+          시일 : 241109 토 14 ~ 18시 서울 천호역 어딘가
+          요금 : 무료 / 세미나 끝나고 회식할 분들은 돈걷어서 할 예정입니다.
+          내용 : 강연 + 모각코 + 네트워킹
+          강연자 모집 ::
+          강연자 또한 구글폼으로 지원받습니다.
+          강연자는 제가 소정의 기프티콘을 드릴 예정입니다.
+          주제는 What We Work에 관한 내용입니다. (기술 등)
+        </p>
+        <div class="profile-item">
+          <ol>
+            <li><i class="xi-eye-o"></i><span>{0}</span></li>
+            <li><i class="xi-comment-o"></i><span>{0}</span></li>
+          </ol>
+          <ol>
+            <li><i class="xi-heart-o"></i><span>{0}</span></li>
+            <li><i class="xi-cut"></i><span>신고하기</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container" style="background: #F9FAFB;">
+    <!-- 댓글 내용 -->
+    <div class="content-board-free-view-review">
+      <!-- 댓글 -->
+      <div class="free-review-box">
+        <h5>댓글</h5>
+        <div class="free-review-list">
+          <div class="free-review-list-title">
+            <div class="profile-title">
+              <div class="profile-title-content">
+                <img src="/img/test-profile/nonoping.png" alt="">
+                <p class="profile-name">회원 아무개씨</p>
+                <p class="profile-date">5시간전</p>
+              </div>
+              <ol>
+                <li><i class="xi-heart-o"></i><span>{0}</span></li>
+                <li><i class="xi-cut"></i><span>신고하기</span></li>
+              </ol>
+            </div>
+          </div>
+          <div class="free-review-list-content">
+            <p>
+              저도 프론트엔드 개발자이지만 질문자님과 비슷한 상황입니다. 약 3년 정도 경력은 있지만 실질적인 실력은 그에 못 미칠 것이라 생각되는..
+              3년 간 회사에서 아예 아무것도 안하신 건 아니실테니 지금 실력을 기반으로 위 강의나 책이나 글들을 참고하면서 현재 실력보다 높은 실력이 요구되는 토이 프로젝트를 진행해보면 어떨까 싶습니다.
+              그렇게 프로젝트 하나 준비하신 다음에 그 프로젝트를 이력서 삼아 렛플같은 곳에서 다른 사람들과 협업 프로젝트 하시면서 최종적으로 포트폴리오 2개를 준비하고 이직을 계획하시는 게 현실적으로 보입니다. 비전공자이시니 기초적인 컴퓨터 과학, 자료구조 같은 것들도 시간나면 짬짬히 해야하구요.
+              결국에 실력을 쌓는 것은 저런 강의보단 개인적으로 하는 토이 프로젝트 훨씬 도움이 된다고 생각합니다.
+            </p>
+            <!-- 해당 고객일때 -->
+            <div class="user-free-board-tab">
+              <a href="#" class="btn_eidt">수정하기</a>
+              <!-- <a href="#" class="btn_eidt">확인</a> -->
+              <a href="#" class="btn_cancel">취소</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 댓글 쓰기 내역 -->
+    <div class="content-board-free-view-write">
+      <h5>댓글 쓰기 영역</h5>
+      <div id="content" style="width: 100%; height: 500px;"></div>
+      <button class="view-write-btn">댓글 등록</button>
+    </div>
+  </div>
+  <!-- footer영역 -->
+  <div id="footer" style="margin-top: 0;"></div>
+  <!-- toast API -->
+  <!-- 현재 그냥 사용 하시고 나중에 모듈 한꺼번에 묶어 주세요 -->
+  <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+  <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+  <script>
+    const editor = new toastui.Editor({
+      el: document.querySelector('#content'), // 에디터를 적용할 요소 (컨테이너)
+      height: '400px',                        // 에디터 영역의 높이 값 (OOOpx || auto)
+      initialEditType: 'markdown',            // 최초로 보여줄 에디터 타입 (markdown || wysiwyg)
+      initialValue: '내용을 입력해 주세요.',    // 내용의 초기 값으로, 반드시 마크다운 문자열 형태여야 함
+      initialEditType: 'wysiwyg'              // 마크다운 프리뷰 스타일 (tab || vertical)
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="kr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>게시판</title>
+    <!-- Standard css -->
+    <link rel="icon" href="/img/logo/favicon.png" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css" />
+    <!-- pub-js link -->
+    <script src="/js/pub-ui-custom.js"></script>
+  </head>
+  <!-- 게시판 복사용 게시판 -->
+  <body>
+    <!-- header 영역 -->
+    <div id="header"></div>
+    <div class="container">
+      <div class="main-content">
+        <div class="content-join" style="text-align: center;">
+          <div class="mt100"></div>
+          <h2>회원가입</h2>
+          <div class="join-email-form">
+            <label for="email">이메일</label>
+            <input type="text" />
+          </div>
+          <div class="join-pass-form">
+            <label for="pass">비밀번호</label>
+            <input type="text" />
+          </div>
+          <div class="join-pass-info">
+            <p>영문/숫자/특수문자 중, 2가지 이상 포함</p>
+            <p>8자 이상 32자 이하 입력 (공백 제외)</p>
+            <p>
+              연속 3자 이상 동일한 문자/숫자 제외</p>
+          </div>
+          <div class="join-pass-form">
+            <label for="pass-check">비밀번호 확인</label>
+            <input type="text" />
+          </div>
+          <input type="button" value="가입하기" >
+        </div>
+      </div>
+    </div>
+    <!-- footer영역 -->
+    <div id="footer"></div>
+  </body>
+</html>

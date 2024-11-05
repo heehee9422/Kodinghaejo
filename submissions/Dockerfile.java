@@ -6,6 +6,6 @@ COPY Verify.java .
 COPY Solution.java .
 COPY Main.java .
 
-RUN javac Main.java Solution.java
+RUN javac Main.java
 
 CMD ["java", "Main"]

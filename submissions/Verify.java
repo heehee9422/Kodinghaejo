@@ -1,9 +1,14 @@
 class Verify {
-    public int verify(int num1, int num2) {
-        int answer=0;
-        if(-50000<=num1 && num1<=50000 && -50000<=num2 && num2<=50000) {
-            answer = num1-num2;
-        }
-        return answer;
-    }
+	public int verify(int a, int d, boolean[] included) {
+		int answer = 0;
+
+		for (int i = 0; i < included.length; i++) {
+			if (included[i]) {
+				answer += a;
+			}
+			a += d;
+		}
+
+		return answer;
+	}
 }

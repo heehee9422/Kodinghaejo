@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="kr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>게시판</title>
+  <!-- Standard css -->
+  <link rel="icon" href="/img/logo/favicon.png">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+  <!-- pub-js link -->
+  <script src="/js/pub-ui-custom.js"></script>
+</head>
+<body>
+  <!-- header 영역 -->
+  <div id="header"></div>
+  <div class="container">
+    <div class="main-content">
+      <div class="content-board-notice-write">
+        <div class="content-board-notice-write-wrap">
+          <h2>자유롭게 글을 작성해 보세요</h2>
+          <div class="mt30"></div>
+          <div class="category-menu">
+            <label for="category-section">카테고리<span class="asterisk"></span></label>
+            <select name="category-section">
+              <option value="자유주제" selected>자유주제</option>
+              <option value="커리어 고민">커리어고민</option>
+              <!-- <option value="카테고리메뉴" disabled>카테고리메뉴</option> -->
+            </select>
+          </div>
+          <div class="category-title">
+            <label for="title">제목<span class="asterisk"></span></label>
+            <input type="text" name="title" placeholder="제목을 입력해 주세요" maxlength="100">
+          </div>
+          <div class="category-content"  class="mt20">
+            <label for="content">내용<span class="asterisk"></span></label>
+            <div id="content"></div>
+          </div>
+          <div class="category-footer mt30">
+            <button type="submit">전송</button> <!-- form 액션으로 사용 할때 값을 다 넘겨 줍니다 다른 버튼으로 사용해도 무방-->
+            <button onclick="history.back();">뒤로가기</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+ <!-- footer영역 -->
+ <div id="footer"></div>
+  <!-- toast API : 나중에 모듈로 작성해서 만들기-->
+  <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+  <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+  <script>
+    const editor = new toastui.Editor({
+      el: document.querySelector('#content'), // 에디터를 적용할 요소 (컨테이너)
+      height: '400px',                        // 에디터 영역의 높이 값 (OOOpx || auto)
+      initialEditType: 'markdown',            // 최초로 보여줄 에디터 타입 (markdown || wysiwyg)
+      initialValue: '내용을 입력해 주세요.',    // 내용의 초기 값으로, 반드시 마크다운 문자열 형태여야 함
+      initialEditType: 'wysiwyg'              // 마크다운 프리뷰 스타일 (tab || vertical)
+    });
+  </script>
+  <style>
+    .toastui-editor-mode-switch { display: none !important; }
+  </style>
+   
+</body>
+</html>

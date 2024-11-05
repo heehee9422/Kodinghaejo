@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="kr" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>코딩테스트 연습</title>
+	<!-- Standard css -->
+	<link rel="icon" href="/img/logo/favicon.png">
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+	<!-- pub-js link -->
+	<script src="/js/pub-ui-custom.js"></script>
+</head>
+<body>
+	<div class="challenge-navbar">
+		<ol class="navbar-breadcrumb">
+			<a href="/" class="navbar-logo"><img src="/img/logo/icon_b.png" alt="logo" style="height: 30px; margin-top: 5px;"></a>
+			<li><a href="/learn/challenges/{rel}">코딩테스트 연습</a></li>
+			<li><a href="/learn/challenges/{rel}">코딩 기초 트레이닝</a></li>
+			<li class="active">[[ ${ test.title } ]]</li>
+		</ol>
+	</div>
+
+	<!-- 컨텐트 시작부 -->
+	<div class="wrap">
+		<div class="challenge-content">
+			<!-- 제목 & 북마커 -->
+			<div class="challenge-nav">
+				<div class="nav-item">
+					<i class="xi-bookmark-o"></i>
+					<span class="challenge-title">[[ ${ test.title } ]]</span>
+				</div>
+				<div class="nav-item">
+					<div class="dropdown-language">
+						<div class="dropdown-menu" id="language">
+							<th:block th:if="${ java == 'Y' }">
+							<button type="button" class="dropdown-item btn-language" data-language="java">Java</button>
+							</th:block>
+							<th:block th:if="${ js == 'Y' }">
+							<button type="button" class="dropdown-item btn-language" data-language="js">JavaScript</button>
+							</th:block>
+							<th:block th:if="${ oracle == 'Y' }">
+							<button type="button" class="dropdown-item btn-language" data-language="sql">SQL</button>
+							</th:block>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- 컨텐츠 영역 -->
+			<div class="challenge-content-list">
+				<div class="challenge-content-question">
+					<h6 class="guide-section-title">문제 설명</h6>
+					<div class="challenge-content-question-section">[( ${ test.descr } )]</div>
+				</div>
+				<div class="challenge-content-run">
+					<h6 class="guide-section-title">코드 에디터</h6>
+					<!-- CodeMirror -->
+					<textarea id="batch_content" name="batch_content"></textarea>
+					<h6 class="guide-section-title mt20">결과</h6>
+					<div class="resultArea">
+						<p id="output">실행 결과가 여기에 표시됩니다.</p>
+					</div>
+				</div>
+			</div>
+			<!-- 하단 보내기 값 -->
+			<div class="bottom-list">
+				<div class="testcase-button">
+					<a href="/learn/courses/{reqno}" class="btn-show-question">질문하기</a>
+				</div>
+				<div class="func-buttons">
+					<button class="btn_check" type="button" id="run">실행</button>
+					<button class="btn_check" type="button" id="submit">제출</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- CodeMirror Kit -->
+	<script src="/js/codemirror-5.65.18/lib/codemirror.js"></script>
+	<script src="/js/codemirror-5.65.18/mode/clike/clike.js"></script>
+	<script src="/js/codemirror-5.65.18/mode/sql/sql.js"></script>
+	<script src="/js/codemirror-5.65.18/mode/javascript/javascript.js"></script>
+	<link rel="stylesheet" href="/js/codemirror-5.65.18/lib/codemirror.css">
+	<link rel="stylesheet" href="/js/codemirror-5.65.18/theme/monokai.css">
+	<!-- Custom Script -->
+	<script>
+		//textarea element 가져오기
+		let textarea_content = document.getElementById('batch_content');
+		
+		let selectedLanguage; //초기 언어
+		let lngMode; //에디터 모드
+		if ('[[ ${ java } ]]' === 'Y') {
+			selectedLanguage = 'java';
+			lngMode = 'text/x-java';
+		} else if ('[[ ${ js } ]]' === 'Y') {
+			selectedLanguage = 'js';
+			lngMode = 'text/javascript';
+		} else if ('[[ ${ oracle } ]]' === 'Y') {
+			selectedLanguage = 'oracle';
+			lngMode = 'text/x-sql';
+		}
+		
+		//CodeMirror 에디터 초기화
+		var editor = CodeMirror.fromTextArea(textarea_content, {
+			lineNumbers: true, 
+			lineWrapping: true, 
+			styleActiveLine: true, 
+			foldGutter: true, 
+			theme: 'monokai',
+			mode: lngMode, 
+			gutter: true
+		});
+
+		const outputArea = document.getElementById("output");
+
+		//초기 언어에 대한 세팅
+		document.querySelectorAll('.btn-language').forEach((btn) => {
+			if (btn.matches('button[data-language="' + selectedLanguage + '"]')) btn.classList.add('active');
+		});
+
+		//언어 버튼 클릭 시 모드 변경
+		document.querySelectorAll('.btn-language').forEach((button) => {
+			button.addEventListener('click', (e) => {
+				selectedLanguage = e.target.getAttribute('data-language');
+				let mode = selectedLanguage === 'java' ? 'text/x-java' :
+							selectedLanguage === 'js' ? 'text/javascript' :
+							selectedLanguage === 'oracle' ? 'text/x-sql' : '';
+				
+				editor.setOption('mode', mode);
+				//editor.setValue(''); 
+				outputArea.innerText = "실행 결과가 여기에 표시됩니다."; //언어 변경 시 출력 초기화
+
+				//버튼 활성화 상태 업데이트
+				document.querySelectorAll('.btn-language').forEach((btn) => btn.classList.remove('active'));
+				e.target.classList.add('active');
+				loadTestLng();
+			});
+		});
+		
+		//문제 관련 변수 (언어별 문제 인덱스, 정답 소스, 메인 소스)
+		let tlIdx, correctSrc, mainSrc;
+		
+		//언어별 문제 가져오기
+		const loadTestLng = async () => {
+			let lngCode = selectedLanguage === 'java' ? 'LNG-0001' :
+							selectedLanguage === 'js' ? 'LNG-0002' :
+							selectedLanguage === 'oracle' ? 'LNG-0003' : '';
+			
+			await fetch('/test/language', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+				body: new URLSearchParams({
+					'test_idx': parseInt('[[ ${ test.idx } ]]'),
+					'language': lngCode
+				})
+			})
+			.then((response) => response.json())
+			.then((data) => {
+				tlIdx = data.idx;
+				editor.setValue(data.content_src.replaceAll('\\t', '\t').replaceAll('\\n', '\n'));
+				correctSrc = data.correct_src.replaceAll('\\t', '\t').replaceAll('\\n', '\n');
+				mainSrc = data.main_src.replaceAll('\\t', '\t').replaceAll('\\n', '\n');
+			})
+			.catch((error) => {
+				console.log("error: " + error);
+				alert("시스템 장애로 인하여 문제 로딩에 실패했습니다.");
+			});
+		}
+
+		/*
+		//실행 버튼 클릭 시 코드 실행
+		document.getElementById("run").addEventListener("click", function() {
+			const code = editor.getValue();
+
+			try {
+				if (selectedLanguage === 'javascript') {
+					let result = eval(code);
+					outputArea.innerText = result;
+				} else if (selectedLanguage === 'java') {
+					outputArea.innerText = editor.getValue();
+				} else if (selectedLanguage === 'sql') {
+					outputArea.innerText = editor.getValue();
+				}
+			} catch (error) {
+				outputArea.innerText = "오류 발생: " + error.message;
+			}
+		});
+		*/
+		
+		//실행 버튼 클릭 시 코드 실행
+		document.getElementById("submit").addEventListener("click", () => {
+			//console.log('<code>\n' + editor.getValue());
+			//console.log('<correct_src>\n' + correctSrc);
+			//console.log('<main_src>\n' + mainSrc);
+			
+			fetch('/test/submit', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+				body: new URLSearchParams({
+					'tl_idx': tlIdx,
+					'code': editor.getValue(),
+					'correct_src': correctSrc,
+					'main_src': mainSrc,
+					'language': selectedLanguage
+				})
+			})
+			.then((response) => response.text())
+			.then((data) => {
+				outputArea.innerText = data; //서버에서 받은 결과 표시
+			})
+			.catch((error) => {
+				outputArea.innerText = "오류 발생: " + error.message;
+			});
+		});
+		
+		loadTestLng();
+	</script>
+</body>
+</html>
