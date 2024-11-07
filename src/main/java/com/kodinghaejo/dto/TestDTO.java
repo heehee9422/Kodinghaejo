@@ -1,6 +1,7 @@
 package com.kodinghaejo.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.kodinghaejo.entity.TestEntity;
 
@@ -23,6 +24,7 @@ public class TestDTO {
 	private String descr;
 	private LocalDateTime regdate;
 	private String isUse;
+	private List<TestLngDTO> testLngList;
 
 	//Entity --> DTO 이동
 	public TestDTO(TestEntity entity) {

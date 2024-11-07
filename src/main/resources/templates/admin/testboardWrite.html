@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>문제 작성</title>
+<!-- Standard css -->
+<link rel="icon" href="/img/logo/favicon.png">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet"
+	href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+<link rel="stylesheet"
+	href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+<!-- pub-js link -->
+<script src="/js/pub-ui-custom.js"></script>
+<!-- CodeMirror Kit -->
+<script src="/js/codemirror/codemirror-5.65.18/lib/codemirror.js"></script>
+<script src="/js/codemirror/codemirror-5.65.18/mode/sql/sql.js"></script>
+<script
+	src="/js/codemirror/codemirror-5.65.18/mode/javascript/javascript.js"></script>
+<script src="/js/codemirror/codemirror-5.65.18/mode/clike/clike.js"></script>
+<link rel="stylesheet"
+	href="/js/codemirror/codemirror-5.65.18/lib/codemirror.css">
+<link rel="stylesheet"
+	href="/js/codemirror/codemirror-5.65.18/theme/monokai.css">
+</head>
+<body>
+	<!-- header 영역 -->
+	<div id="header" th:replace="include/header"></div>
+	<div class="container">
+		<div class="main-content">
+			<div class="content-board-notice-write">
+				<div class="content-board-notice-write-wrap">
+					<h2>문제 작성</h2>
+					<div class="mt30"></div>
+					<form class="WriteForm" id="WriteForm" name="writeForm"
+						method="post">
+						<div class="category-menu">
+							<label for="category-level">난이도<span class="asterisk"></span></label>
+							<select name="category-level">
+								<option value="0" selected>0단계</option>
+								<option value="1">1단계</option>
+								<option value="2">2단계</option>
+							</select>
+						</div>
+						<div class="category-title">
+							<label for="title">제목<span class="asterisk"></span></label> <input
+								type="text" name="title" id="title" placeholder="제목을 입력해 주세요"
+								maxlength="100">
+						</div>
+						<div class="category-content mt20">
+							<label for="content">내용<span class="asterisk"></span></label>
+							<div id="content"></div>
+						</div>
+						<!-- 언어별 문제 정보 추가 섹션 -->
+						<h2>언어별 문제 정보</h2>
+						<div id="language-sections"></div>
+
+						<button type="button" onclick="addLanguageSection()">언어
+							추가</button>
+						<div class="category-footer mt30">
+							<input type="button" onclick="testWrite()" value="문제 출제">
+							<input type="button" onclick="history.back();" value="뒤로가기">
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- footer영역 -->
+	<div id="footer"></div>
+
+	<!-- toast API -->
+	<script
+		src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+	<script>
+    const editor = new toastui.Editor({
+        el: document.querySelector('#content'),
+        previewStyle: 'vertical',
+        height: '400px',
+        initialEditType: 'markdown',
+        initialValue: `### 문제 설명
+ex)정수 num1과 num2가 주어질 때, num1에서 num2를 뺀 값을 return하도록 solution 함수를 완성해주세요.
+
+ --- 
+
+   ### 제한사항
+
+  - 첫번째 제한사항을 작성하세요.
+  - 두번째 제한사항을 작성하세요.
+  - 세번째 제한사항을 작성하세요.
+  - 네번째 제한사항을 작성하세요.
+
+   ### 입출력 예
+
+   | num1 | num2 | result |
+   |------|------|--------|
+   |     |     |      |
+   |   |     |      |
+
+ --- 
+
+   ### 입출력 예 설명
+
+   ##### 입출력 예 #1
+
+   - ex)num1이 2이고 num2가 3이므로 2 - 3 = -1을 return합니다.
+
+   ##### 입출력 예 #2
+
+   - ex)num1이 100이고 num2가 2이므로 100 - 2 = 98을 return합니다.`
+    });
+
+    let languageIndex = 1;
+    let editors = [];
+
+    function addLanguageSection() {
+        const languageSections = document.getElementById('language-sections');
+        const newSection = document.createElement('div');
+        newSection.classList.add('language-section');
+
+        newSection.innerHTML = `
+        	<div style="margin-bottom: 15px;">
+            <label for="language">언어:</label>
+            <select name="testLngList[${languageIndex}].language" onchange="changeMode(this, ${languageIndex})" required>
+              <option value="java">Java</option>
+              <option value="javascript">JavaScript</option>
+            </select>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label for="content">예제 코드</label>
+            <div class="codemirror-editor" id="content-editor-${languageIndex}"></div>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label for="correct">정답 코드</label>
+            <div class="codemirror-editor" id="correct-editor-${languageIndex}"></div>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label for="main_src">메인 코드</label>
+            <div class="codemirror-editor" id="main-src-editor-${languageIndex}"></div>
+        </div>
+        `;
+
+        languageSections.appendChild(newSection);
+
+        initCodeMirror(languageIndex);
+
+        languageIndex++;
+    }
+
+    function changeMode(selectElement, index) {
+        const selectedLanguage = selectElement.value;
+        let mode = "";
+
+        if (selectedLanguage === "java") {
+            mode = "text/x-java";
+        } else if (selectedLanguage === "javascript") {
+            mode = "text/javascript";
+        }
+
+        updateCodeMirror(index, mode);
+    }
+
+    // CodeMirror 초기화
+    function initCodeMirror(index, mode = "text/x-java") {
+        const contentEditor = CodeMirror(document.getElementById(`content-editor-${index}`), {
+            mode: mode,
+            theme: "monokai",
+            lineNumbers: true,
+            tabSize: 2,
+            lineWrapping: true
+        });
+
+        const correctEditor = CodeMirror(document.getElementById(`correct-editor-${index}`), {
+            mode: mode,
+            theme: "monokai",
+            lineNumbers: true,
+            tabSize: 2,
+            lineWrapping: true
+        });
+
+        const mainSrcEditor = CodeMirror(document.getElementById(`main-src-editor-${index}`), {
+            mode: mode,
+            theme: "monokai",
+            lineNumbers: true,
+            tabSize: 2,
+            lineWrapping: true
+        });
+
+        editors[index] = { contentEditor, correctEditor, mainSrcEditor };
+    }
+
+    function updateCodeMirror(index, mode) {
+        if (editors[index]) {
+            const { contentEditor, correctEditor, mainSrcEditor } = editors[index];
+
+            contentEditor.setOption("mode", mode);
+            correctEditor.setOption("mode", mode);
+            mainSrcEditor.setOption("mode", mode);
+        }
+    }
+    
+    const testWrite = async () => {
+        let title = document.querySelector('#title');
+        let content = editor.getMarkdown();  // 에디터에서 markdown 내용을 가져옴
+        // 제목과 내용 검사
+        if (title.value === '') {
+            alert('제목을 입력하세요!!!');
+            title.focus();
+            return false;
+        }
+        if (content === '') {
+            alert('내용을 입력하세요!!!');
+            return false;
+        }
+        const data = {
+            title: title.value,
+            descr: content,
+            diff: document.querySelector("select[name='category-level']").value,
+            regdate: new Date().toISOString(),
+            isUse: "Y",
+            testLngList: [],
+        };
+        
+        editors.forEach((editor, index) => {
+            const languageCode = document.querySelector(`select[name='testLngList[${index}].language']`).value;
+            data.testLngList.push({
+                lng: languageCode === 'java' ? 'LNG-0001' : 'LNG-0002',
+                content: editor.contentEditor.getValue().replaceAll('\n', '\\n').replaceAll('\t', '\\t'),
+                correct: editor.correctEditor.getValue().replaceAll('\n', '\\n').replaceAll('\t', '\\t'),
+                mainSrc: editor.mainSrcEditor.getValue().replaceAll('\n', '\\n').replaceAll('\t', '\\t'),
+                regdate: data.regdate,
+                isUse: data.isUse
+            });
+        });
+        console.log(data);
+        
+        await fetch('/page-admin/testboardWrite', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then((response) => response.json())
+            .then((data) => {
+                if (data.message === 'good') {
+                    alert("문제 작성이 완료되었습니다.");
+                    document.location.href = '/page-admin/systemTest';
+                } else {
+                    alert("시스템 오류로 문제가 등록되지 않았습니다.");
+                }
+            }).catch((error) => {
+                alert("시스템 오류로 문제가 등록되지 않았습니다.");
+                console.log("error : " + error);
+            });
+    };
+  </script>
+	<style>
+.toastui-editor-mode-switch {
+	display: none !important;
+}
+</style>
+</body>
+</html>

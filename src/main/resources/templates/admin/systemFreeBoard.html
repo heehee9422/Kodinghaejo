@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="kr" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>회원정보 관리</title>
+<link rel="icon" href="/img/logo/favicon.png" />
+<link rel="stylesheet" href="/css/style.css" />
+<link rel="stylesheet"
+	href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css" />
+<script src="/js/pub-ui-custom.js"></script>
+</head>
+<body>
+	<div id="header" th:replace="include/header"></div>
+	<div class="container column mt50">
+		<div class="column-row">
+			<!-- 메뉴 컬럼 -->
+			<div class="c-column-2">
+				<div id="system_menu" th:replace="include/system"></div>
+			</div>
+			<!-- content -->
+			<div class="c-column-8">
+				<div class="sys-system_menu">
+					<h2>자유게시판 관리</h2>
+					<div class="search-bar">
+						<input type="text" name="searchKeyword" placeholder="검색어 입력" />
+						<button class="btn_search">검색</button>
+					</div>
+					<div class="sys-description-box mb20">
+						<h3 class="mt20">게시글 수 : 10</h3>
+					</div>
+					<table>
+						<caption style="display: none;">관리자 게시판 입니다</caption>
+						<colgroup>
+							<col width="">
+							<col width="30%">
+							<col width="">
+							<col width="">
+							<col width="">
+							<col width="">
+							<col width="">
+							<col width="">
+							<!-- 참고하세요 -->
+							<!-- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/colgroup -->
+						</colgroup>
+						<thead>
+							<tr>
+								<th>번호</th>
+								<th>제목</th>
+								<th>작성자</th>
+								<th>작성일</th>
+								<th>조회수</th>
+								<th>추천수</th>
+								<th>신고수</th>
+								<th>삭제</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>1</td>
+								<td>첫번째 게시글입니다.</td>
+								<td>홍길동</td>
+								<td>2024-11-04</td>
+								<td>4</td>
+								<td>3</td>
+								<td>0</td>
+								<td><a href="" class="btn_delete">삭제</a></td>
+							</tr>
+						</tbody>
+					</table>
+					<!-- svg 나중에 수정해줄께 -->
+					<div class="paginate mt20">
+						<a href="" class="left-prev-arrow"> <svg width="12"
+								height="12" viewBox="0 0 22 22" fill="none"
+								xmlns="http://www.w3.org/2000/svg">
+              <path d="M11 1L1 11.1579L10.6891 21" stroke="black"
+									stroke-linecap="round" />
+              <path d="M21 1L11 11.1579L20.6891 21" stroke="black"
+									stroke-linecap="round" />
+            </svg>
+						</a> <a href="" class="left-arrow"><i class="xi-angle-left-thin"></i></a>
+						<a href="#" class="on" role="button">1</a> <a href="#">2</a> <a
+							href="#">3</a> <a href="#">4</a> <a href="#">100</a> <a href=""
+							class="right-arrow"><i class="xi-angle-right-thin"></i></a> <a
+							href="" class="right-next-arrow"> <svg width="12" height="12"
+								viewBox="0 0 22 22" fill="none"
+								xmlns="http://www.w3.org/2000/svg">
+              <path d="M11 1L21 11.1579L11.3109 21" stroke="black"
+									stroke-linecap="round" />
+              <path d="M1 1L11 11.1579L1.31088 21" stroke="black"
+									stroke-linecap="round" />
+            </svg>
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+<footer>
+	<div id="footer" th:replace="include/footer"></div>
+</footer>
+</html>

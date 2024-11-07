@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="kr" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>문제 리스트 관리</title>
+<link rel="icon" href="/img/logo/favicon.png">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet"
+	href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+<script src="/js/pub-ui-custom.js"></script>
+</head>
+<body>
+<div id="header" th:replace="include/header"></div>
+	<div class="container column mt50">
+		<div class="column-row">
+			<div class="c-column-2">
+				<div id="system_menu" th:replace="include/system"></div>
+			</div>
+			<div class="c-column-8">
+				<div class="sys-system_menu">
+					<h2>문제 목록</h2>
+					<div class="search-bar">
+						<input type="text" name="searchKeyword" placeholder="검색어 입력">
+						<button class="btn_search">검색</button>
+					</div>
+					<div class="sys-description-box mb20">
+						<div class="box-itme">
+							<h3>문제 수 : <span th:text="${testCount}"></span></h3>
+						</div>
+						<div class="box-itme">
+							<button class="testwrite-button"><a href="/admin/testboardWrite">문제 출제</a></button>
+						</div>
+					</div>
+					<table>
+						<caption style="display: none;">관리자 게시판 입니다</caption>
+						<colgroup>
+							<col width="">
+							<col width="">
+							<col width="">
+							<col width="">
+							<col width="">
+							<col width="">
+						</colgroup>
+						<thead>
+							<tr>
+								<th>번호</th>
+								<th>제목</th>
+								<th>난이도</th>
+								<th>언어</th>
+								<th>출제일자</th>
+								<th>제출인원</th>
+								<th>정답률</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="test : ${tests}">
+								<td th:text="${test.idx}">1</td>
+								<td th:text="${test.title}">첫번째 문제입니다.</td>
+								<td th:text="${test.diff}">1레벨</td>
+								<td>
+						            <ul>
+						                <!-- testLngList를 순회하며 언어 코드 출력 -->
+						                <li th:each="lang : ${test.testLngList}" 
+										    th:text="${lang.lng == 'LNG-0001' ? 'JAVA' : (lang.lng == 'LNG-0002' ? 'javascript' : 'Unknown')}">
+										</li>
+						            </ul>
+						        </td>
+								<td th:text="${test.regdate}">2024-11-04</td>
+								<td>999명</td>
+								<td>50%</td>
+							</tr>
+
+
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</body>
+<footer>
+	<div id="footer" th:replace="include/footer"></div>
+</footer>
+</html>

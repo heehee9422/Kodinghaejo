@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="kr" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>회원정보 관리</title>
+<link rel="icon" href="/img/logo/favicon.png">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet"
+	href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+<script src="/js/pub-ui-custom.js"></script>
+
+</head>
+
+<body>
+	<div id="header" th:replace="include/header"></div>
+	<div class="container column mt50">
+		<div class="column-row">
+			<div class="c-column-2">
+				<div id="system_menu" th:replace="include/system"></div>
+			</div>
+			<div class="c-column-8">
+				<div class="sys-system_menu">
+					<h2>채팅방 관리</h2>
+					<div class="search-bar">
+						<input type="text" name="searchKeyword" placeholder="검색어 입력">
+						<button class="btn_search">검색</button>
+					</div>
+					<div class="sys-description-box mb20">
+						<div class="box-itme">
+							<h3 class="mt20">채팅방 수 : 5</h3>
+						</div>
+						<div class="box-itme">
+							<button class="deletechat-btn mt20">인원 없는 채팅방 삭제</button>
+						</div>
+					</div>
+					<table>
+						<caption style="display: none;">관리자 게시판 입니다</caption>
+						<colgroup>
+							<col width="">
+							<col width="">
+							<col width="">
+							<col width="">
+							<col width="">
+							<col width="">
+							<col width="">
+							<col width="">
+							<!-- 참고하세요 -->
+							<!-- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/colgroup -->
+						</colgroup>
+						<thead>
+							<tr>
+								<th>방번호</th>
+								<th>방제목</th>
+								<th>방장</th>
+								<th>개설일</th>
+								<th>참여인원</th>
+								<th>대화로그</th>
+								<th>신고수</th>
+								<th>상세보기</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>1</td>
+								<td>같이 코딩공부하실분</td>
+								<td>홍길동</td>
+								<td>2024-11-04</td>
+								<td>4</td>
+								<td>11</td>
+								<td>0</td>
+								<td><a href="" class="btn_view">상세보기</a></td>
+							</tr>
+							<tr>
+								<td>2</td>
+								<td>프로젝트 팀 구합니다</td>
+								<td>김영희</td>
+								<td>2024-11-03</td>
+								<td>6</td>
+								<td>23</td>
+								<td>1</td>
+								<td><a href="" class="btn_view">상세보기</a></td>
+							</tr>
+							<tr>
+								<td>3</td>
+								<td>알고리즘 스터디</td>
+								<td>이철수</td>
+								<td>2024-11-02</td>
+								<td>8</td>
+								<td>18</td>
+								<td>0</td>
+								<td><a href="" class="btn_view">상세보기</a></td>
+							</tr>
+							<tr>
+								<td>4</td>
+								<td>프로그래밍 언어 토론방</td>
+								<td>박지수</td>
+								<td>2024-11-01</td>
+								<td>5</td>
+								<td>27</td>
+								<td>2</td>
+								<td><a href="" class="btn_view">상세보기</a></td>
+							</tr>
+							<tr>
+								<td>5</td>
+								<td>JS 초보 스터디</td>
+								<td>최민호</td>
+								<td>2024-10-31</td>
+								<td>3</td>
+								<td>15</td>
+								<td>0</td>
+								<td><a href="" class="btn_view">상세보기</a></td>
+							</tr>
+							<tr>
+								<td>6</td>
+								<td>백엔드 개발자 모임</td>
+								<td>윤정아</td>
+								<td>2024-10-30</td>
+								<td>9</td>
+								<td>30</td>
+								<td>3</td>
+								<td><a href="" class="btn_view">상세보기</a></td>
+							</tr>
+							<tr>
+								<td>7</td>
+								<td>코딩 챌린지 그룹</td>
+								<td>서준호</td>
+								<td>2024-10-29</td>
+								<td>7</td>
+								<td>21</td>
+								<td>0</td>
+								<td><a href="" class="btn_view">상세보기</a></td>
+							</tr>
+							<tr>
+								<td>8</td>
+								<td>리액트 공부방</td>
+								<td>정미나</td>
+								<td>2024-10-28</td>
+								<td>6</td>
+								<td>14</td>
+								<td>1</td>
+								<td><a href="" class="btn_view">상세보기</a></td>
+							</tr>
+							<tr>
+								<td>9</td>
+								<td>데이터베이스 스터디</td>
+								<td>강수연</td>
+								<td>2024-10-27</td>
+								<td>4</td>
+								<td>10</td>
+								<td>0</td>
+								<td><a href="" class="btn_view">상세보기</a></td>
+							</tr>
+							<tr>
+								<td>10</td>
+								<td>AI와 머신러닝 토론방</td>
+								<td>이상훈</td>
+								<td>2024-10-26</td>
+								<td>10</td>
+								<td>35</td>
+								<td>5</td>
+								<td><a href="" class="btn_view">상세보기</a></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<footer>
+	<div id="footer" th:replace="include/footer"></div>
+</footer>
+</html>

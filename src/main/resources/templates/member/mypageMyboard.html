@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+
+
+.container {
+            display: flex;
+            margin: 20px; /* 전체 여백 */
+        }
+
+    .mypage_menu {
+            float: left; 
+            width: 180px; 
+            height: 500px;
+            padding: 20px; 
+            margin-top: 20px; 
+            margin-left: 20px; 
+            border: 3px solid rgb(194, 194, 194); 
+            box-sizing: border-box; 
+            border-radius: 10px; 
+        }
+
+.mypage_content {
+            flex: 1; /* 남은 공간을 모두 차지하도록 설정 */
+           
+            padding: 20px;
+            margin-left: 20px;
+           
+        }
+
+.myboard{
+        width: 600px; 
+        padding: 20px; 
+        margin-top: 20px; 
+        margin-left: 20px; 
+        border: 3px solid rgb(194, 194, 194);  
+        border-radius: 10px; 
+
+
+
+}
+
+.table-container {
+            width: 600px;
+            margin: 20px auto;
+            font-family: Arial, sans-serif;
+        }
+
+        .table-title {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #666;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        /* 헤더 스타일 */
+        thead th {
+            background-color: #f2f2f2;
+            padding: 10px;
+            font-weight: bold;
+            color: #555;
+            border-bottom: 1px solid #ddd;
+        }
+
+        /* 본문 스타일 */
+        tbody td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        /* 삭제 버튼 스타일 */
+        .delete-button {
+            padding: 5px 10px;
+            background-color: #eee;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            color: #555;
+            cursor: pointer;
+        }
+
+        .delete-button:hover {
+            background-color: #ddd;
+        }
+
+        /* 글자 색상 */
+        .gray-text {
+            color: #888;
+        }
+
+        .blue-text {
+            color: #007bff;
+            text-decoration: none;
+        }
+    
+
+    
+   
+  
+
+    </style>
+
+
+    <title>mypage-내정보</title>
+</head>
+<body>
+   <!-- header-->
+
+   <div class="container">
+   <div class = "mypage_menu">
+   <p>MyPage</p>
+   <ul>
+       <li><a href="">내정보</a></li>
+       <li><a href="">나의활동</a></li>
+       <li><a href="">내 게시판</a></li>
+       <li><a href="">내 문제집</a></li>
+   </ul>
+    </div> 
+
+    <div class = "mypage_content">
+
+        <p> <span style="font-size: 30px; font-weight: bold ;"> Mypage</span><span style="font-size: 20px; font-weight: bold ;">- 내 게시판</span></p>
+    
+        <div class = "myboard">
+
+        <div class="board_free">
+            <div class="table-container">
+                <div class="table-title">작성한 글 : 2개</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>순번</th>
+                            <th>게시판</th>
+                            <th>제목</th>
+                            <th>작성일</th>
+                            <th>조회수</th>
+                            <th>삭제</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      
+                      <!--반복문으로 게시물 수만큼 반복-->
+                        <tr>
+                            <td>1</td>
+                            <td>자유게시판</td>
+                            <td class="gray-text">안녕하세요</td>
+                            <td><span class="blue-text">24/10/25</span></td>
+                            <td>5</td>
+                            <td><button class="delete-button">삭제</button></td>
+                        </tr>
+                        <!-- -->
+                      
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+        <div class="board_like">
+            <div class="table-container">
+                <div class="table-title">댓글 : 1개</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>순번</th>
+                            <th>원글</th>
+                            <th>제목</th>
+                            <th>작성일</th>
+                            <th>조회수</th>
+                            <th>삭제</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      
+                      <!--반복문으로 게시물 수만큼 반복-->
+                        <tr>
+                            <td>1</td>
+                            <td>안녕하세요</td>
+                            <td class="gray-text">그래요</td>
+                            <td><span class="blue-text">24/10/25</span></td>
+                            <td>5</td>
+                            <td><button class="delete-button">삭제</button></td>
+                        </tr>
+                        <!-- -->
+                      
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="board_like">
+            <div class="table-container">
+                <div class="table-title">작성한 글 : 2개</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>순번</th>
+                            <th>게시판</th>
+                            <th>제목</th>
+                            <th>작성일</th>
+                            <th>조회수</th>
+                            <th>삭제</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      
+                      <!--반복문으로 게시물 수만큼 반복-->
+                        <tr>
+                            <td>1</td>
+                            <td>자유게시판</td>
+                            <td class="gray-text">안녕하세요</td>
+                            <td><span class="blue-text">24/10/25</span></td>
+                            <td>5</td>
+                            <td><button class="delete-button">삭제</button></td>
+                        </tr>
+                        <!-- -->
+                      
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+
+
+
+        </div>
+
+        
+    </div>
+
+   <!-- footer -->
+</body>
+</html>

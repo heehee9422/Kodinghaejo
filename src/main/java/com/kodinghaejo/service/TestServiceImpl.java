@@ -34,7 +34,7 @@ public class TestServiceImpl implements TestService {
 	public String lngAvlChk(Long idx, String lng) throws Exception {
 		TestEntity testEntity = testRepository.findById(idx).get();
 		
-		return testLngRepository.findFirstByTestIdxAndLng(testEntity, lng) != null ? "Y" : "N";
+		return testLngRepository.findFirstByTestIdxAndLng(testEntity, lng).isPresent() ? "Y" : "N";
 	}
 	
 	//코딩테스트 언어별 문제 가져오기

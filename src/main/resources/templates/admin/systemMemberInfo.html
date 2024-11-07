@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="kr" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>회원정보 관리</title>
+<link rel="icon" href="/img/logo/favicon.png">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet"
+	href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+<script src="/js/pub-ui-custom.js"></script>
+</head>
+<div id="header" th:replace="include/header"></div>
+<body>
+	<div class="container column mt50">
+		<div class="column-row">
+			<div class="c-column-2">
+				<div id="system_menu" th:replace="include/system"></div>
+			</div>
+			<div class="c-column-8">
+				<div class="sys-system_menu">
+					<h2 class="mt20">회원 목록</h2>
+					<div class="search-bar">
+						<select name="searchType">
+							<option value="email">이메일</option>
+							<option value="nickname">닉네임</option>
+							<option value="name">이름</option>
+						</select> <input type="text" name="searchKeyword" placeholder="검색어 입력">
+						<button class="btn_search">검색</button>
+					</div>
+					<div class="sys-description-box mb20">
+						<h3 class="mt20">회원 수 : 10</h3>
+					</div>
+					<table>
+						<caption style="display: none;">관리자 게시판 입니다</caption>
+						<colgroup>
+							<col width="">
+							<col width="">
+							<col width="">
+							<col width="">
+							<col width="">
+							<col width="">
+							<col width="">
+							<col width="">
+						</colgroup>
+						<thead>
+							<tr>
+								<th>번호</th>
+								<th>권한</th>
+								<th>이메일</th>
+								<th>닉네임</th>
+								<th>이름</th>
+								<th>전화번호</th>
+								<th>가입일자</th>
+								<th>상세보기</th>
+								<th>회원탈퇴</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>1</td>
+								<td>MASTER</td>
+								<td>example1@example.com</td>
+								<td>user1</td>
+								<td>홍길동</td>
+								<td>010-1234-5678</td>
+								<td>2024-01-01</td>
+								<td><a href="" class="btn_view">상세보기</a></td>
+								<td><a href="" class="btn_delete">탈퇴</a></td>
+							</tr>
+							<tr>
+								<td>2</td>
+								<td>USER</td>
+								<td>example2@example.com</td>
+								<td>user2</td>
+								<td>이순신</td>
+								<td>010-8765-4321</td>
+								<td>2024-01-02</td>
+								<td><a href="" class="btn_view">상세보기</a></td>
+								<td><a href="" class="btn_delete">탈퇴</a></td>
+							</tr>
+							<tr>
+								<td>3</td>
+								<td>USER</td>
+								<td>example3@example.com</td>
+								<td>user3</td>
+								<td>김유신</td>
+								<td>010-1111-2222</td>
+								<td>2024-01-03</td>
+								<td><a href="" class="btn_view">상세보기</a></td>
+								<td><a href="" class="btn_delete">탈퇴</a></td>
+							</tr>
+							<tr>
+								<td>4</td>
+								<td>USER</td>
+								<td>example4@example.com</td>
+								<td>user4</td>
+								<td>강감찬</td>
+								<td>010-3333-4444</td>
+								<td>2024-01-04</td>
+								<td><a href="" class="btn_view">상세보기</a></td>
+								<td><a href="" class="btn_delete">탈퇴</a></td>
+							</tr>
+							<tr>
+								<td>5</td>
+								<td>USER</td>
+								<td>example5@example.com</td>
+								<td>user5</td>
+								<td>이몽룡</td>
+								<td>010-5555-6666</td>
+								<td>2024-01-05</td>
+								<td><a href="" class="btn_view">상세보기</a></td>
+								<td><a href="" class="btn_delete">탈퇴</a></td>
+							</tr>
+							<tr>
+								<td>6</td>
+								<td>USER</td>
+								<td>example6@example.com</td>
+								<td>user6</td>
+								<td>성춘향</td>
+								<td>010-7777-8888</td>
+								<td>2024-01-06</td>
+								<td><a href="" class="btn_view">상세보기</a></td>
+								<td><a href="" class="btn_delete">탈퇴</a></td>
+							</tr>
+							<tr>
+								<td>7</td>
+								<td>USER</td>
+								<td>example7@example.com</td>
+								<td>user7</td>
+								<td>춘향이</td>
+								<td>010-9999-0000</td>
+								<td>2024-01-07</td>
+								<td><a href="" class="btn_view">상세보기</a></td>
+								<td><a href="" class="btn_delete">탈퇴</a></td>
+							</tr>
+							<tr>
+								<td>8</td>
+								<td>USER</td>
+								<td>example8@example.com</td>
+								<td>user8</td>
+								<td>홍길동2</td>
+								<td>010-1212-3434</td>
+								<td>2024-01-08</td>
+								<td><a href="" class="btn_view">상세보기</a></td>
+								<td><a href="" class="btn_delete">탈퇴</a></td>
+							</tr>
+							<tr>
+								<td>9</td>
+								<td>USER</td>
+								<td>example9@example.com</td>
+								<td>user9</td>
+								<td>김삿갓</td>
+								<td>010-2323-4545</td>
+								<td>2024-01-09</td>
+								<td><a href="" class="btn_view">상세보기</a></td>
+								<td><a href="" class="btn_delete">탈퇴</a></td>
+							</tr>
+							<tr>
+								<td>10</td>
+								<td>USER</td>
+								<td>example10@example.com</td>
+								<td>user10</td>
+								<td>유관순</td>
+								<td>010-3434-5656</td>
+								<td>2024-01-10</td>
+								<td><a href="" class="btn_view">상세보기</a></td>
+								<td><a href="" class="btn_delete">탈퇴</a></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+
+
+	</div>
+</body>
+<footer>
+	<div id="footer" th:replace="include/footer"></div>
+</footer>
+</html>

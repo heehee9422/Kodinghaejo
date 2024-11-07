@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="kr" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>회원정보 관리</title>
+<link rel="icon" href="/img/logo/favicon.png">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet"
+	href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+<script src="/js/pub-ui-custom.js"></script>
+</head>
+<div id="header" th:replace="include/header"></div>
+<body>
+	<div class="container column mt50">
+		<div class="column-row">
+			<div class="c-column-2">
+				<div id="system_menu" th:replace="include/system"></div>
+			</div>
+			<div class="c-column-8">
+				<div class="sys-system_menu">
+					<h2>댓글 관리</h2>
+					<div class="search-bar mb20">
+						<select name="searchType">
+							<option value="email">이메일</option>
+							<option value="nickname">닉네임</option>
+							<option value="name">이름</option>
+						</select> <input type="text" name="searchKeyword" placeholder="검색어 입력">
+						<button class="btn_search">검색</button>
+					</div>
+					<div class="sys-description-box mb20">
+						<h3>회원 수 : 10</h3>
+					</div>
+					<table>
+						<caption style="display: none;">관리자 게시판 입니다</caption>
+						<colgroup>
+							<col width="">
+							<col width="">
+							<col width="">
+							<col width="">
+							<col width="">
+							<col width="">
+						</colgroup>
+						<thead>
+							<tr>
+								<th>번호</th>
+								<th>원글</th>
+								<th>댓글내용</th>
+								<th>작성자</th>
+								<th>작성일</th>
+								<th>삭제</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>1</td>
+								<td>이 문제 버그났어요.</td>
+								<td>저도 똑같아요.</td>
+								<td>한건희</td>
+								<td>2024-11-04</td>
+								<td><a href="" class="btn_delete">삭제</a></td>
+							</tr>
+							<tr>
+								<td>2</td>
+								<td>문제에 오류가 있는 것 같아요.</td>
+								<td>어디가 오류인지 궁금해요.</td>
+								<td>김민수</td>
+								<td>2024-11-03</td>
+								<td><a href="" class="btn_delete">삭제</a></td>
+							</tr>
+							<tr>
+								<td>3</td>
+								<td>힌트가 너무 부족해요.</td>
+								<td>저도 같은 생각입니다.</td>
+								<td>이영희</td>
+								<td>2024-11-02</td>
+								<td><a href="" class="btn_delete">삭제</a></td>
+							</tr>
+							<tr>
+								<td>4</td>
+								<td>입력 예제 수정이 필요합니다.</td>
+								<td>동의합니다.</td>
+								<td>박준형</td>
+								<td>2024-11-01</td>
+								<td><a href="" class="btn_delete">삭제</a></td>
+							</tr>
+							<tr>
+								<td>5</td>
+								<td>시간 초과가 자주 발생합니다.</td>
+								<td>제 코드도 같은 문제가 있어요.</td>
+								<td>최지수</td>
+								<td>2024-10-31</td>
+								<td><a href="" class="btn_delete">삭제</a></td>
+							</tr>
+							<tr>
+								<td>6</td>
+								<td>문제 설명이 더 필요해요.</td>
+								<td>저도 이해가 안 돼요.</td>
+								<td>유진아</td>
+								<td>2024-10-30</td>
+								<td><a href="" class="btn_delete">삭제</a></td>
+							</tr>
+							<tr>
+								<td>7</td>
+								<td>출력 예제가 이상합니다.</td>
+								<td>제 출력과 다릅니다.</td>
+								<td>정수현</td>
+								<td>2024-10-29</td>
+								<td><a href="" class="btn_delete">삭제</a></td>
+							</tr>
+							<tr>
+								<td>8</td>
+								<td>테스트 케이스가 부족해요.</td>
+								<td>맞아요, 케이스가 너무 적어요.</td>
+								<td>한성호</td>
+								<td>2024-10-28</td>
+								<td><a href="" class="btn_delete">삭제</a></td>
+							</tr>
+							<tr>
+								<td>9</td>
+								<td>문제가 잘 이해되지 않아요.</td>
+								<td>좀 더 설명이 필요해요.</td>
+								<td>이정민</td>
+								<td>2024-10-27</td>
+								<td><a href="" class="btn_delete">삭제</a></td>
+							</tr>
+							<tr>
+								<td>10</td>
+								<td>이 문제의 조건이 애매해요.</td>
+								<td>어떻게 풀어야 할지 모르겠어요.</td>
+								<td>송지훈</td>
+								<td>2024-10-26</td>
+								<td><a href="" class="btn_delete">삭제</a></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+</body>
+<footer>
+	<div id="footer" th:replace="include/footer"></div>
+</footer>
+</html>

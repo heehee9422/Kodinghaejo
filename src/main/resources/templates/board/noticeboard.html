@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="kr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>게시판</title>
+  <!-- Standard css -->
+  <link rel="icon" href="/img/logo/favicon.png">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+  <!-- pub-js link -->
+  <script src="/js/pub-ui-custom.js"></script>
+</head>
+
+<body>
+  <!-- header 영역 -->
+  <div id="header" th:replace="include/header"></div>
+  <div class="container">
+    <div class="main-content">
+      <div class="content-board-notice">
+        <h2>
+          코딩해조의 새로운 소식들!
+          <p>신규 콘텐츠, 이벤트, 기능 추가 등의 새로운 이야기를 들려드려요</span>
+        </h2>
+        <ul class="board-notice-list">
+          <!-- list-item -->
+          <li>
+            <a href="/">
+              <h3>
+                <!-- new 일때 : 2일 까지만? -->
+                <i class="xi-new"></i>
+                [업데이트 소식] 10월 1주차 - 홈페이지 등록
+              </h3>
+              <p>
+                <span><b>날짜</b>20241003</span>
+                <span><b>대상</b>자바를 공부하는 친구들</span>
+              </p>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <!-- footer영역 -->
+  <div id="footer"></div>
+</body>
+
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="kr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>게시판</title>
+  <!-- Standard css -->
+  <link rel="icon" href="/img/logo/favicon.png">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+  <!-- pub-js link -->
+  <script src="/js/pub-ui-custom.js"></script>
+
+  <script>
+  
+  const replyWriteForm = async() => {
+		
+	  	let rePrnt = document.querySelector('#rePrnt');
+		let prntIdx = document.querySelector('#prntIdx');
+	    let writer = document.querySelector('#writer');
+	    let email = document.querySelector('#email');
+	    let isUse = document.querySelector('#isUse');
+	   
+	    let content = editor.getMarkdown(); // 마크다운 텍스트로 가져오기
+	    
+
+	    if (content.trim() === '') {
+	        alert('내용을 입력하세요!!!');
+	        return false;
+	    }
+	    
+	    
+	  
+	    let formData = new FormData(document.getElementById('ReplyForm'));
+	    formData.append("content", content); // Toast UI Editor의 내용을 FormData에 추가
+	    
+	  
+	    await fetch('/board/replyWrite', {
+			method: 'POST',
+			body: formData
+		}).then((response)=> response.json())
+			.then((data)=> {
+				if(data.message === 'good'){
+					alert("댓글이 등록되었습니다.");
+				}
+		}).catch((error)=> {
+			alert("시스템 장애로 댓글 등록이 실패했습니다.");
+			console.log("error" + error);
+		})
+
+	}
+  
+  
+  
+  </script>
+
+</head>
+
+<body>
+
+  <!-- header 영역 -->
+   <div id="header" th:replace="include/header :: header"></div>
+  
+  <!-- 글 내용 -->
+  <div class="container" style="min-height: auto;">
+    <div class="content-board-free-view">
+      <div class="content-board-free-view-wrap">
+        <h4>[[${view.cat}]]</h4>
+        <h5>[[${view.title}]]</h5>
+        <div class="profile-title">
+          <img src="/img/test-profile/nonoping.png" alt="">
+          <div class="profile-title-content">
+            <p class="profile-name">[[${view.writer}]]</p>
+            <p class="profile-date">[[${view.regdate}]]</p>
+          </div>
+        </div>
+        <p>
+          [[${view.content}]]
+        </p>
+        <div class="profile-item">
+          <ol>
+            <li><i class="xi-eye-o"></i><span>{0}</span></li>
+            <li><i class="xi-comment-o"></i><span>{0}</span></li>
+          </ol>
+          <ol>
+            <li><i class="xi-heart-o"></i><span>{0}</span></li>
+            <li><i class="xi-cut"></i><span>신고하기</span></li>
+   
+     
+            <li><a th:href="@{/board/freeboardmodify(idx=${view.idx})}">수정하기</a></li>
+            <li><a th:href="@{/board/deactive(idx=${view.idx})}">삭제하기</a></li>
+     		
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+
+  <div class="container" style="background: #F9FAFB;">
+    <!-- 댓글 내용 -->
+    <div class="content-board-free-view-review">
+      <!-- 댓글 -->
+      <div class="free-review-box">
+        <h5>댓글</h5>
+   
+    
+    
+        <div class="free-review-list" th:each="reple : ${replies}" th:if="${reple.prntIdx} == ${view.idx} and ${reple.isUse} == 'Y'">
+
+          <div class="free-review-list-title">
+            <div class="profile-title">
+              <div class="profile-title-content">
+                <img src="/img/test-profile/nonoping.png" alt="">
+                <p class="profile-name" th:text="${reple.writer}"></p>             
+                <p class="profile-date" th:text="${reple.regdate}"></p>
+              </div>
+              <ol>
+                <li><i class="xi-heart-o"></i><span>{0}</span></li>
+                <li><i class="xi-cut"></i><span>신고하기</span></li>
+              </ol>
+            </div>
+          </div>
+          <div class="free-review-list-content">
+            <p th:text="${reple.content}"></p>
+            
+            <div class="user-free-board-tab">
+              <a href="#" class="btn_eidt">수정하기</a>
+              <!-- <a href="#" class="btn_eidt">확인</a> -->
+              <a th:href="@{/board/replyDeactive(idx=${reple.idx}, prntIdx=${reple.prntIdx})}" class="btn_cancel">삭제하기</a>
+
+            </div>
+          </div>
+        </div>
+     
+     
+     
+      </div>
+    </div>
+  
+  
+  
+    
+    <form class="ReplyForm" id="ReplyForm" name="ReplyForm" method="post" >
+	    <!-- 댓글 쓰기 내역 -->
+	    <div class="content-board-free-view-write">
+	      <h5>댓글 쓰기 영역</h5>
+	      <div id="content" style="width: 100%; height: 500px;"></div>
+	      
+	      
+	      <input type="hidden" id="email" name="email" value="admin@kodinghaejo.com">
+          <input type="hidden" id="writer" name="writer" value="관리자">
+          <input type="hidden" id="isUse" name="isUse" value="Y">
+          <input type="hidden" id="rePrnt" name="rePrnt" value="FR">
+          <input type="hidden" id="prntIdx" name="prntIdx" th:value="${view.idx}">
+	      
+	     <input type="button" value="댓글등록" onclick="replyWriteForm()">
+	      
+	    </div>
+    </form>
+  </div>
+  <!-- footer영역 -->
+   <div id="footer" th:replace="include/footer :: footer"></div>
+  <!--  <div id="footer" style="margin-top: 0;"></div>-->
+  <!-- toast API -->
+  <!-- 현재 그냥 사용 하시고 나중에 모듈 한꺼번에 묶어 주세요 -->
+  <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+  <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+  <script>
+  const editor = new toastui.Editor({
+      el: document.querySelector('#content'), // 에디터를 적용할 요소 (컨테이너)
+      height: '400px',                        // 에디터 영역의 높이 값 (OOOpx || auto)
+      initialEditType: 'markdown',            // 최초로 보여줄 에디터 타입 (markdown || wysiwyg)
+      initialValue: '내용을 입력해 주세요.',    // 내용의 초기 값으로, 반드시 마크다운 문자열 형태여야 함
+      initialEditType: 'wysiwyg',              // 마크다운 프리뷰 스타일 (tab || vertical)
+      
+       toolbarItems: [
+    		    // 기본 툴바 항목에서 'image' 항목을 제외하고 나열합니다.
+    	    ['heading', 'bold', 'italic', 'strike'],
+    	    ['hr', 'quote'],
+    	    ['ul', 'ol', 'task'],
+    	    ['table', 'link'],
+    	    // 'image' 항목을 제거했습니다.
+    	    ['code', 'codeblock']
+    	 ]
+  });
+  </script>
+</body>
+</html>

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="kr" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>codingHea</title>
+  <!-- Standard css -->
+  <link rel="icon" href="/img/logo/favicon.png">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+  <!-- TOAST UI Chart -->
+  <link rel="stylesheet" href="https://uicdn.toast.com/chart/latest/toastui-chart.min.css">
+  <script src="https://uicdn.toast.com/chart/latest/toastui-chart.min.js"></script>
+  
+  <!-- pub-js link -->
+  <script src="/js/pub-ui-custom.js"></script>
+  <style>
+	.info-chart-container {
+		width:auto;
+	    display: flex;
+	    flex-direction: column;
+	    flex: 1;
+	    background-color: #f0f0f0;
+	}
+	
+	.info-box-container {
+	    display: flex;
+	    margin-bottom: 20px;
+	}
+	
+	.info-box {
+		width: 300px;
+		height: 100px;
+	    background-color: #f0f0f0;
+	    border: 1px solid #ccc;
+	    border-radius: 5px;
+	    padding: 10px 15px;
+	    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+	    font-size: 14px;
+	    margin-top: 100px;
+	    margin-left: 10px;
+	    margin-right: 28px;
+	}
+	.sub-info-box {
+		display:flex;
+		justify-content: space-between;
+	}
+	
+	.info-box:last-child {
+	    margin-right: 0;
+	}
+	
+	.daily-count {
+		margin: 20px;
+	    font-size: 24px;
+	    font-weight: bold;
+	}
+	
+	.daily-label {
+		width: 100px;
+	    display: block;
+	    font-size: 14px;
+	    color: #555;
+	}
+	.xi-user-plus-o, .xi-log-in, .xi-trophy, .xi-pen {
+		margin-top:15px;
+		color: #f0f0f0;
+		background-color: #e0e0e0;
+		box-sizing: border-box; 
+	    border-radius: 10px; 
+	}
+    /* TOAST UI Chart CSS */
+    .chart-container {
+	    display: flex;
+	    width: 100%;
+	    gap: 20px;
+	}
+	
+	.pie-chart,
+	.bar-chart {
+	    width: 40%;
+	    height: 400px;
+	    padding: 130px;
+	}
+	canvas {
+		width: 600px !important;
+    	border-radius: 10px;
+	}
+  </style>
+</head>
+<div id="header" th:replace="include/header"></div>
+<body>
+    <div class="container column mt50">
+        <div class="column-row">
+			<div class="c-column-2">
+				<div id="system_menu" th:replace="include/system"></div> 
+			</div>
+			<div class="c-column-8">
+				<div class="sys-system_menu">
+			        <div class="info-chart-container"> <!-- 새로운 컨테이너 추가 -->
+					    <!-- 상단 박스 추가 -->
+					    <div class="info-box-container">
+					        <div class="info-box" style="margin-left:130px;">
+					        	<div class="sub-info-box">
+					        		<div>
+						        		<span class="daily-count">5</span>
+						        		<span class="daily-label">오늘 가입자 수</span>
+						        	</div>
+						        	<div>
+						        		<div class="xi-user-plus-o xi-3x"></div>
+						        	</div>
+					        	</div>
+					        </div>
+					        <div class="info-box">
+					            <div class="sub-info-box">
+					        		<div>
+						        		<span class="daily-count">119</span>
+						        		<span class="daily-label">오늘 방문자 수</span>
+						        	</div>
+						        	<div>
+						        		<div class="xi-log-in xi-3x"></div>
+						        	</div>
+					        	</div>
+					        </div>
+					        <div class="info-box">
+					            <div class="sub-info-box">
+					        		<div>
+						        		<span class="daily-count">112</span>
+						        		<span class="daily-label">오늘 푼 문제 수</span>
+						        	</div>
+						        	<div>
+						        		<div class="xi-trophy xi-3x"></div>
+						        	</div>
+					        	</div>
+					        </div>
+					        <div class="info-box">
+					            <div class="sub-info-box">
+					        		<div>
+						        		<span class="daily-count">114</span>
+						        		<span class="daily-label">오늘 게시글 수</span>
+						        	</div>
+						        	<div>
+						        		<div class="xi-pen xi-3x"></div>
+						        	</div>
+					        	</div>
+					        </div>
+					    </div>
+					
+					    <!-- 차트가 수평으로 배치되는 부분 -->
+					    <div class="chart-container">
+					        <div class="bar-chart">
+					            <div id="barChart"></div>
+					        </div>
+					        <div class="pie-chart">
+					            <div id="pieChart"></div>
+					        </div>
+					    </div>
+					</div>
+				</div>
+			</div>
+		</div>
+    </div>
+<script>
+	// Pie 차트 데이터
+	const pieChartData = {
+		categories: ['언어'],
+		series: [
+		  {
+			name: 'JAVA',
+			data: 46.02,
+		  },
+		  {
+			name: 'javascript',
+			data: 20.47,
+		  },
+		  {
+			name: 'sql',
+			data: 17.71,
+		  },
+		  {
+			name: 'C',
+			data: 0,
+		  },
+		  {
+			name: 'C++',
+			data: 0,
+		  },
+		  {
+			name: 'Python',
+			data: 0,
+		  },
+		],
+	};
+	
+	const barChartData = {
+			categories: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+			series: [
+			  {
+				name: '일반',
+				data: [100, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220]
+			  },
+			  {
+				name: '소셜',
+				data: [30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85]
+			  },
+			],
+		};
+	
+	// 공통 옵션
+	const commonOptions = {
+		chart: {
+			width: 600, height: 300,
+			title: {
+			      text: '문제풀이에 사용된 언어',
+			      align: 'center'
+			}
+		},
+		series: {
+			dataLabels: {
+				visible: true,
+				pieSeriesName: { visible: true },	
+			}
+		}
+	};
+	
+	const Option = {
+		chart: {
+			width: 700, height: 300,
+			title : {
+				text: '월별 가입자 수',
+				align: 'center'
+			}
+		},
+		xAxis: {
+		    title: '월',
+		    label: {
+		      interval: 1 // 레이블 간격 조정
+		    }
+		  },
+		  yAxis: {
+		    title: '가입자 수'
+		  },
+	};
+	
+	// 원형 차트 생성 및 렌더링
+	const pieChartContainer = document.getElementById('pieChart');
+	const pieChart = new toastui.Chart.pieChart({ el: pieChartContainer, data: pieChartData, options: commonOptions });
+	// 막대형 차트 생성 및 렌더링
+	const barChartContainer = document.getElementById('barChart');
+	const barChart = new toastui.Chart.columnChart({ el: barChartContainer, data: barChartData, options: Option });
+	
+	
+</script>		   
+</body>
+<div id="footer" th:replace="include/footer"></div>
+</html>

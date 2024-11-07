@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="kr" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>회원정보 관리</title>
+<link rel="icon" href="/img/logo/favicon.png">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet"
+	href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+<script src="/js/pub-ui-custom.js"></script>
+</head>
+<body>
+	<div id="header" th:replace="include/header"></div>
+	<div class="container column mt50">
+		<div class="column-row">
+			<div class="c-column-2">
+				<div id="system_menu" th:replace="include/system"></div>
+			</div>
+			<div class="c-column-8">
+				<div class="sys-system_menu">
+					<h2>질문게시판 관리</h2>
+					<div class="search-bar mb20">
+						<input type="text" name="searchKeyword" placeholder="검색어 입력">
+						<button class="btn_search">검색</button>
+					</div>
+					<div class="sys-description-box mb20">
+						<h3>질문글 수 : 10</h3>
+					</div>
+					<table>
+						<thead>
+							<tr>
+								<th>번호</th>
+								<th>문제번호</th>
+								<th>제목</th>
+								<th>작성자</th>
+								<th>작성일</th>
+								<th>삭제</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>1</td>
+								<td>1</td>
+								<td>이 문제 버그났어요.</td>
+								<td>한건희</td>
+								<td>2024-11-04</td>
+								<td><a href="" class="btn_delete">삭제</a></td>
+							</tr>
+							<tr>
+								<td>2</td>
+								<td>2</td>
+								<td>힌트가 필요해요.</td>
+								<td>김민수</td>
+								<td>2024-11-03</td>
+								<td><a href="" class="btn_delete">삭제</a></td>
+							</tr>
+							<tr>
+								<td>3</td>
+								<td>1</td>
+								<td>이게 맞는 풀이인가요?</td>
+								<td>이영희</td>
+								<td>2024-11-02</td>
+								<td><a href="" class="btn_delete">삭제</a></td>
+							</tr>
+							<tr>
+								<td>4</td>
+								<td>3</td>
+								<td>문제 설명이 부족해요.</td>
+								<td>박준형</td>
+								<td>2024-11-01</td>
+								<td><a href="" class="btn_delete">삭제</a></td>
+							</tr>
+							<tr>
+								<td>5</td>
+								<td>2</td>
+								<td>시간 복잡도가 너무 커요.</td>
+								<td>최지수</td>
+								<td>2024-10-31</td>
+								<td><a href="" class="btn_delete">삭제</a></td>
+							</tr>
+							<tr>
+								<td>6</td>
+								<td>1</td>
+								<td>다른 사람 풀이 볼 수 있나요?</td>
+								<td>유진아</td>
+								<td>2024-10-30</td>
+								<td><a href="" class="btn_delete">삭제</a></td>
+							</tr>
+							<tr>
+								<td>7</td>
+								<td>4</td>
+								<td>테스트 케이스 추가 요청합니다.</td>
+								<td>정수현</td>
+								<td>2024-10-29</td>
+								<td><a href="" class="btn_delete">삭제</a></td>
+							</tr>
+							<tr>
+								<td>8</td>
+								<td>3</td>
+								<td>이 문제는 너무 쉬워요.</td>
+								<td>한성호</td>
+								<td>2024-10-28</td>
+								<td><a href="" class="btn_delete">삭제</a></td>
+							</tr>
+							<tr>
+								<td>9</td>
+								<td>2</td>
+								<td>잘못된 예제 입력이 있습니다.</td>
+								<td>이정민</td>
+								<td>2024-10-27</td>
+								<td><a href="" class="btn_delete">삭제</a></td>
+							</tr>
+							<tr>
+								<td>10</td>
+								<td>1</td>
+								<td>문제 이해가 안 돼요.</td>
+								<td>송지훈</td>
+								<td>2024-10-26</td>
+								<td><a href="" class="btn_delete">삭제</a></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</body>
+<footer>
+	<div id="footer" th:replace="include/footer"></div>
+</footer>
+</html>

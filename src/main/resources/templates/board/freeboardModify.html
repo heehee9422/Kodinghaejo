@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="kr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>게시판</title>
+  <!-- Standard css -->
+  <link rel="icon" href="/img/logo/favicon.png">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+  <!-- pub-js link -->
+  <script src="/js/pub-ui-custom.js"></script>
+</head>
+<script>
+
+const modifyForm = async() => {
+	
+	 let cat = document.querySelector('select[name=category-section]').value; // 선택된 카테고리 값 가져오기
+    let title = document.querySelector('#title');
+    let writer = document.querySelector('#writer');
+    let email = document.querySelector('#email');
+    let isUse = document.querySelector('#isUse');
+    const idx = document.getElementById('idx').value; 
+
+    // Toast UI Editor의 content 내용 가져오기
+    let content = editor.getMarkdown(); // 마크다운 텍스트로 가져오기
+    
+ 
+    
+    //필수값 등록시 값 입력 여부 확인
+  
+    if(title.value === ''){
+        alert('제목을 입력하세요!!!');
+        title.focus();
+        return false;
+    }
+    
+    if (content.trim() === '') {
+        alert('내용을 입력하세요!!!');
+        return false;
+    } 
+    
+    
+    // FormData에 값 추가
+    let formData = new FormData(document.getElementById('ModifyForm'));
+    formData.append("cat", cat);
+    formData.set("content", content); // Editor 내용 추가
+    
+    // 서버에 수정 요청
+    try {
+      const response = await fetch('/board/modify', {
+        method: 'POST',
+        body: formData
+      });
+      const data = await response.json();
+      
+      if (data.message === 'good') {
+        alert("게시물이 수정되었습니다.");
+        document.location.href = `/board/freeboardView?idx=${idx}`;
+      } else {
+        alert("수정에 실패했습니다.");
+      }
+    } catch (error) {
+      alert("시스템 장애로 수정이 실패했습니다.");
+      console.error("Error:", error);
+    }
+    
+    
+    
+    
+}
+
+
+</script>
+
+
+
+
+
+<body>
+  <!-- header 영역 -->
+  <div id="header" th:replace="include/header :: header"></div>
+  <div class="container">
+    <div class="main-content">
+      <div class="content-board-notice-write">
+        <div class="content-board-notice-write-wrap">
+        
+        
+        
+        <form class="ModifyForm" id="ModifyForm" name="ModifyForm" method="post" enctype="multipart/form-data">     
+          <h2>게시물 수정</h2>
+          <div class="mt30"></div>
+          <div class="category-menu">
+            <label for="category-section">카테고리<span class="asterisk"></span></label>
+            <select name="category-section">
+                <option value="자유게시판" th:selected="${view.cat == '자유게시판'}">자유게시판</option>
+                <option value="커리어고민" th:selected="${view.cat == '커리어고민'}">커리어고민</option>
+              <!-- <option value="카테고리메뉴" disabled>카테고리메뉴</option> -->
+            </select>
+          
+          </div>
+          <div class="category-title">
+            <label for="title">제목<span class="asterisk"></span></label>
+            <input type="text" id="title" name="title" th:value="${view.title}" maxlength="100">
+            
+            <input type="hidden" id="idx" name="idx" th:value="${view.idx}">
+            <input type="hidden" id="email" name="email" value="{view.email}">
+            <input type="hidden" id="writer" name="writer" value="{view.writer}">
+            <input type="hidden" id="isUse" name="isUse" value="{view.isUse}">
+            
+          </div>
+            
+            
+             <div class="category-content ">
+            <label for="content">내용<span class="asterisk"></span></label>
+            <div id="content"></div>
+          </div>
+          
+          
+          <div class="category-footer mt30">
+          
+          <input type="button" value="수정완료" onclick="modifyForm()">
+            <button onclick="history.back();">뒤로가기</button>
+          </div>
+          </form> 
+          
+          
+          
+          
+          
+        </div>   
+      </div>
+    </div>
+  </div>
+ <!-- footer영역 -->
+   <div id="footer" th:replace="include/footer :: footer"></div>
+  <!-- toast API : 나중에 모듈로 작성해서 만들기-->
+  <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+  <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+  <script>
+ 
+ 
+  	const contentValue = `[[${view.content}]]`;
+  	
+    const editor = new toastui.Editor({
+      el: document.querySelector('#content'), // 에디터를 적용할 요소 (컨테이너)
+      height: '400px',                        // 에디터 영역의 높이 값 (OOOpx || auto)
+     
+      initialValue: contentValue,    // 내용의 초기 값으로, 반드시 마크다운 문자열 형태여야 함
+      initialEditType: 'wysiwyg',              // 마크다운 프리뷰 스타일 (tab || vertical)
+      
+       toolbarItems: [
+    		    // 기본 툴바 항목에서 'image' 항목을 제외하고 나열합니다.
+    	    ['heading', 'bold', 'italic', 'strike'],
+    	    ['hr', 'quote'],
+    	    ['ul', 'ol', 'task'],
+    	    ['table', 'link'],
+    	    // 'image' 항목을 제거했습니다.
+    	    ['code', 'codeblock']
+    	 ]
+  
+    });
+  </script>
+  <style>
+    .toastui-editor-mode-switch { display: none !important; }
+  </style>
+   
+</body>
+</html>

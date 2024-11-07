@@ -34,7 +34,7 @@ fetch("/include/footer.html")
   });
 
   // admin : nav
-  fetch("/page-admin/system.html")
+  fetch("/include/system.html")
   .then((response) => {
     return response.text();
   })

@@ -12,13 +12,13 @@
 		<div class="main-navbar-list">
 			<ul class="main-list-item login">
 				<!-- 로그아웃 시 -->
-				<th:block th:if="${ session.email == NULL }">
+				<th:block th:if="${ session.email == null }">
 				<li><a href="/member/login" class="btn_login" onclick="">로그인</a></li><!-- javascript:loginView('open') -->
 				<li><a href="/member/join" class="btn_sign">회원가입</a></li>
 				</th:block>
 				<!-- 로그인 했을경우 -->
-				<th:block th:if="${ session.email != NULL }">
-				<li><span class="login_profile"><img src="img/test-profile/handyping.png" alt="" style="width: 30px; height: 30px;"><b>[[ ${ session.nickname } ]]</b>님이 로그인 하셨습니다</span></li>
+				<th:block th:if="${ session.email != null }">
+				<li><span class="login_profile"><img src="img/test-profile/handyping.png" alt="" style="width: 30px; height: 30px;"><b>&#91;[[ ${ session.nickname } ]]&#93;</b>님이 로그인 하셨습니다</span></li>
 				<li><a href="javascript:beforeLogout()" class="btn_login">로그아웃</a></li>
 				<li><a href="/" class="btn_sign">MyPage</a></li>
 				</th:block>
@@ -53,6 +53,9 @@
 			<div class="menu-item">
 				<ul>
 					<li><b>개발자 라운지</b></li>
+					<th:block th:if="${ session.lvl == 'LVL-0001' }">
+					<li><a href="/system">시스템 관리</a></li>
+					</th:block>
 					<li><a href="/">채팅방 바로가기</a></li>
 				</ul>
 			</div>

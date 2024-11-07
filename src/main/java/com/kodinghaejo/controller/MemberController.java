@@ -196,4 +196,22 @@ public class MemberController {
 		}
 	}
 
+	
+	@GetMapping("/member/mypagemain")
+	public void getMypagemain() {
+		
+	}
+	@GetMapping("/member/mypageMyboard")
+	public void getMypageMyboard() {
+		
+	}
+	@GetMapping("/member/mypageMychat")
+	public void getMypageMychat() {
+		
+	}
+	@GetMapping("/member/mypageMytest")
+	public void getMypageMytest() {
+		
+	}
+
 }
