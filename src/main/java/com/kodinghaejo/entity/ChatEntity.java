@@ -33,7 +33,7 @@ public class ChatEntity {
 	@Column(name = "type", length = 10, nullable = false)
 	private String type;
 
-	@Column(name = "password", length = 20, nullable = true)
+	@Column(name = "password", length = 100, nullable = true)
 	private String password;
 
 	@Column(name = "title", length = 200, nullable = false)

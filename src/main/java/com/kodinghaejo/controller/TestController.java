@@ -26,7 +26,7 @@ public class TestController {
 
 	private final TestService service;
 
-	//코딩테스트 문제 화면
+	//코딩테스트 문제 상세 화면
 	@GetMapping("/test/challenge")
 	public void getChallenge(Model model, @RequestParam("idx") Long idx, @RequestParam("path") String path) throws Exception {
 		model.addAttribute("test", service.loadTest(idx));
@@ -40,18 +40,18 @@ public class TestController {
 	@ResponseBody
 	@PostMapping("/test/language")
 	public Map<String, Object> postLanguage(@RequestParam("test_idx") Long testIdx, @RequestParam("language") String language) throws Exception {
-		log.info("========== test_idx: {} ==========", testIdx);
-		log.info("========== language: {} ==========", language);
+		log.info("==================== test_idx: {} ====================", testIdx);
+		log.info("==================== language: {} ====================", language);
 		
 		TestLngEntity result =  service.loadTestLng(testIdx, language);
-		log.info("========== result.getIdx(): {} ==========", result.getIdx());
-		log.info("========== result.getTestIdx(): {} ==========", result.getTestIdx().getIdx());
-		log.info("========== result.getLng(): {} ==========", result.getLng());
-		log.info("========== result.getContent(): {} ==========", result.getContent());
-		log.info("========== result.getCorrect(): {} ==========", result.getCorrect());
-		log.info("========== result.getMainSrc(): {} ==========", result.getMainSrc());
-		log.info("========== result.getRegdate(): {} ==========", result.getRegdate());
-		log.info("========== result.getIsUse(): {} ==========", result.getIsUse());
+		log.info("==================== result.getIdx(): {} ====================", result.getIdx());
+		log.info("==================== result.getTestIdx(): {} ====================", result.getTestIdx().getIdx());
+		log.info("==================== result.getLng(): {} ====================", result.getLng());
+		log.info("==================== result.getContent(): {} ====================", result.getContent());
+		log.info("==================== result.getCorrect(): {} ====================", result.getCorrect());
+		log.info("==================== result.getMainSrc(): {} ====================", result.getMainSrc());
+		log.info("==================== result.getRegdate(): {} ====================", result.getRegdate());
+		log.info("==================== result.getIsUse(): {} ====================", result.getIsUse());
 		
 		Map<String, Object> data = new HashMap<>();
 		data.put("idx", result.getIdx());
@@ -67,26 +67,21 @@ public class TestController {
 	@PostMapping("/test/submit")
 	public String submitCode(@RequestParam("tl_idx") Long tlIdx, @RequestParam("code") String code,
 			@RequestParam("correct_src") String correctSrc, @RequestParam("main_src") String mainSrc,
-			@RequestParam("language") String language) {
-		try {
-			if (language.equals("javascript"))
-				code += "\n\nmodule.exports = solution;";
-			
-			//파일명 결정
-			String filename = "Solution." + language;
+			@RequestParam("language") String language) throws Exception {
+		if (language.equals("javascript"))
+			code += "\n\nmodule.exports = solution;";
+		
+		//파일명 결정
+		String filename = "Solution." + language;
 
-			//코드 파일 저장 경로
-			Path path = Paths.get("submissions/" + filename);
-			Files.createDirectories(path.getParent()); //경로가 없으면 생성
+		//코드 파일 저장 경로
+		Path path = Paths.get("submissions/" + filename);
+		Files.createDirectories(path.getParent()); //경로가 없으면 생성
 
-			Files.write(path, code.getBytes()); //코드 파일로 저장
-			service.createVerifyFiles(mainSrc, correctSrc);
-			
-			// 코드 실행 로직 호출
-			return service.testCode(language, path.toString()); //실행 결과 반환
-		} catch (Exception e) {
-			e.printStackTrace();
-			return "Error saving or executing code!";
-		}
+		Files.write(path, code.getBytes()); //코드 파일로 저장
+		service.createVerifyFiles(mainSrc, correctSrc);
+		
+		// 코드 실행 로직 호출
+		return service.testCode(language, path.toString()); //실행 결과 반환
 	}
 }

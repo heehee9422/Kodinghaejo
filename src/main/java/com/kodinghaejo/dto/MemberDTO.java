@@ -20,6 +20,7 @@ public class MemberDTO {
 	private String email;
 	private String emailAuth;
 	private String username;
+	private String nickname;
 	private String password;
 	private String tel;
 	private String website;
@@ -38,6 +39,7 @@ public class MemberDTO {
 	private LocalDateTime logindate;
 	private LocalDateTime logoutdate;
 	private LocalDateTime pwdate;
+	private LocalDateTime notifdate;
 	private String joinRoute;
 	private String accToken;
 	private String isUse;
@@ -47,6 +49,7 @@ public class MemberDTO {
 		this.email = entity.getEmail();
 		this.emailAuth = entity.getEmailAuth();
 		this.username = entity.getUsername();
+		this.nickname = entity.getNickname();
 		this.password = entity.getPassword();
 		this.tel = entity.getTel();
 		this.website = entity.getWebsite();
@@ -65,6 +68,7 @@ public class MemberDTO {
 		this.logindate = entity.getLogindate();
 		this.logoutdate = entity.getLogoutdate();
 		this.pwdate = entity.getPwdate();
+		this.notifdate = entity.getNotifdate();
 		this.joinRoute = entity.getJoinRoute();
 		this.accToken = entity.getAccToken();
 		this.isUse = entity.getIsUse();
@@ -76,6 +80,7 @@ public class MemberDTO {
 								.builder()
 								.email(dto.getEmail())
 								.username(dto.getUsername())
+								.nickname(dto.getNickname())
 								.password(dto.getPassword())
 								.tel(dto.getTel())
 								.website(dto.getWebsite())
@@ -94,6 +99,7 @@ public class MemberDTO {
 								.logindate(dto.getLogindate())
 								.logoutdate(dto.getLogoutdate())
 								.pwdate(dto.getPwdate())
+								.notifdate(dto.getNotifdate())
 								.joinRoute(dto.getJoinRoute())
 								.accToken(dto.getAccToken())
 								.accToken(dto.getAccToken())

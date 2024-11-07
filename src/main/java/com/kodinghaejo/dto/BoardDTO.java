@@ -24,6 +24,7 @@ public class BoardDTO {
 	private String writer;
 	private String title;
 	private String content;
+	private int hitCnt;
 	private LocalDateTime regdate;
 	private String isUse;
 
@@ -35,6 +36,7 @@ public class BoardDTO {
 		this.writer = entity.getWriter();
 		this.title = entity.getTitle();
 		this.content = entity.getContent();
+		this.hitCnt = entity.getHitCnt();
 		this.regdate = entity.getRegdate();
 		this.isUse = entity.getIsUse();
 	}
@@ -49,6 +51,7 @@ public class BoardDTO {
 								.writer(dto.getWriter())
 								.title(dto.getTitle())
 								.content(dto.getContent())
+								.hitCnt(dto.getHitCnt())
 								.regdate(dto.getRegdate())
 								.isUse(dto.getIsUse())
 								.build();

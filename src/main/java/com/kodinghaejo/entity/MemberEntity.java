@@ -32,8 +32,11 @@ public class MemberEntity {
 
 	@Column(name = "username", length = 50, nullable = false)
 	private String username;
+	
+	@Column(name = "nickname", length = 50, nullable = true)
+	private String nickname;
 
-	@Column(name = "password", length = 20, nullable = false)
+	@Column(name = "password", length = 100, nullable = false)
 	private String password;
 
 	@Column(name = "tel", length = 20, nullable = false)
@@ -86,6 +89,9 @@ public class MemberEntity {
 
 	@Column(name = "pwdate", nullable = true)
 	private LocalDateTime pwdate;
+	
+	@Column(name = "notifdate", nullable = true)
+	private LocalDateTime notifdate;
 
 	@Column(name = "join_route", length = 10, nullable = false)
 	private String joinRoute;
@@ -97,7 +103,7 @@ public class MemberEntity {
 	private String isUse;
 	
 	public void editInfo(MemberDTO member) {
-		this.username = member.getUsername();
+		this.nickname = member.getNickname();
 		this.tel = member.getTel();
 		this.website = member.getWebsite();
 		this.descr = member.getDescr();

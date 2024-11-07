@@ -26,7 +26,7 @@ import lombok.Setter;
 @Builder
 @Entity(name = "boardRecommend")
 @Table(name = "jpa_board_recommend")
-@IdClass(BoardRecommendEntityID.class)
+@IdClass(BoardRecommendEntityId.class)
 public class BoardRecommendEntity {
 
 	@Id
@@ -44,13 +44,7 @@ public class BoardRecommendEntity {
 	@Column(name = "good_chk", length = 2, nullable = true)
 	private String goodChk;
 
-	@Column(name = "bad_chk", length = 2, nullable = true)
-	private String badChk;
-
 	@Column(name = "good_date", nullable = true)
 	private LocalDateTime goodDate;
-
-	@Column(name = "bad_date", nullable = true)
-	private LocalDateTime badDate;
 
 }

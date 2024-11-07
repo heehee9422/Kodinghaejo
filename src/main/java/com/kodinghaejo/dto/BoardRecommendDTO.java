@@ -22,18 +22,14 @@ public class BoardRecommendDTO {
 	private MemberEntity email;
 	private BoardEntity boardIdx;
 	private String goodChk;
-	private String badChk;
 	private LocalDateTime goodDate;
-	private LocalDateTime badDate;
 
 	//Entity --> DTO 이동
 	public BoardRecommendDTO(BoardRecommendEntity entity) {
 		this.email = entity.getEmail();
 		this.boardIdx = entity.getBoardIdx();
 		this.goodChk = entity.getGoodChk();
-		this.badChk = entity.getBadChk();
 		this.goodDate = entity.getGoodDate();
-		this.badDate = entity.getBadDate();
 	}
 
 	//DTO --> Entity 이동
@@ -43,9 +39,7 @@ public class BoardRecommendDTO {
 										.email(dto.getEmail())
 										.boardIdx(dto.getBoardIdx())
 										.goodChk(dto.getGoodChk())
-										.badChk(dto.getBadChk())
 										.goodDate(dto.getGoodDate())
-										.badDate(dto.getBadDate())
 										.build();
 
 		return entity;

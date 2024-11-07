@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="kr" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>로그인</title>
+	<!-- Standard css -->
+	<link rel="icon" href="/img/logo/favicon.png" />
+	<link rel="stylesheet" href="/css/style.css" />
+	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css" />
+	<!-- pub-js link -->
+	<script src="/js/pub-ui-custom.js"></script>
+</head>
+<!-- 게시판 복사용 게시판 -->
+<body>
+	<!-- header 영역 -->
+	<div id="header" th:replace="include/header :: header"></div>
+	<div class="container">
+		<div class="main-content">
+			<div class="content-join" style="text-align: center;">
+				<div class="mt100"></div>
+				<h2>로그인</h2>
+				<form id="loginForm" name="loginForm" method="post">
+					<div class="join-email-form">
+						<label for="email">이메일</label>
+						<input type="text" id="email" name="email" placeholder="이메일" onkeydown="pressEnter()">
+					</div>
+					<div class="join-password-form">
+						<label for="password">비밀번호</label>
+						<input type="password" id="password" name="password" placeholder="비밀번호" onkeydown="pressEnter()">
+					</div>
+					<input type="button" value="로그인" onclick="checkLogin()">
+				</form>
+				
+				<div class="mt20">
+					<a href="/member/findId">아이디(이메일) 찾기</a>&nbsp;|&nbsp;<a href="/member/findPassword">비밀번호 찾기</a>&nbsp;|&nbsp;<a href="/member/join">회원가입</a>
+				</div>
+				
+				<!--div class="mt20">
+					<h4>SNS 계정으로 간편하게 로그인</h4>
+					<input type="button" value="구글" onclick="snsLogin('google')">
+					<input type="button" value="네이버" onclick="snsLogin('naver')">
+					<input type="button" value="카카오" onclick="snsLogin('kakao')">
+				</div-->
+			</div>
+		</div>
+	</div>
+	
+	<script type="text/javascript">
+		//스프링 시큐리티가 처리하는 로그인
+		const login = () => {
+			loginForm.action = '/member/login';
+			loginForm.submit();
+		}
+	
+		//스프링 시큐리티에 의한 로그인 처리 전, 서버에 email과 password를 전송하여 인증 처리
+		const checkLogin = async () => {
+			//유효성 검사
+			if (email.value == '') {
+				alert('이메일을 입력해주세요.');
+				email.focus();
+				return false;
+			}
+
+			if (password.value == '') {
+				alert('비밀번호를 입력해주세요.');
+				password.focus();
+				return false;
+			}
+			
+			let formData = new FormData(loginForm);
+			
+			await fetch('/member/checkLogin', {
+				method: 'POST',
+				body: formData
+			})
+			.then((response) => response.json())
+			.then((data) => {
+				switch (data.message) {
+					case 'good':
+						login();
+						break;
+					case 'ID_NOT_FOUND':
+						alert('해당 이메일로 가입된 계정이 존재하지 않습니다.');
+						break;
+					case 'PASSWORD_NOT_MATCH':
+						alert('비밀번호를 확인해주세요.');
+						break;
+					default:
+						alert('시스템 장애로 인해 로그인에 실패했습니다.');
+						break;
+				}
+			}).catch((error) => {
+				console.log('error: ' + error);
+			});
+		}
+		
+		//입력란에서 엔터 키를 누르면 로그인 실행
+		const pressEnter = () => {
+			if (event.keyCode == 13)
+				checkLogin();
+		}
+		
+		//SNS 로그인
+		const snsLogin = (type) => {
+			document.location = '/oauth2/authorization/' + type;
+		}
+	</script>
+	
+	<!-- footer영역 -->
+	<div id="footer" th:replace="include/footer :: footer"></div>
+</body>
+</html>

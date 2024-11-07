@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStreamReader;
 
 import org.springframework.stereotype.Service;
@@ -43,7 +42,7 @@ public class TestServiceImpl implements TestService {
 	public TestLngEntity loadTestLng(Long testIdx, String language) throws Exception {
 		TestEntity testEntity = testRepository.findById(testIdx).get();
 		
-		return testLngRepository.findFirstByTestIdxAndLng(testEntity, language);
+		return testLngRepository.findFirstByTestIdxAndLng(testEntity, language).get();
 	}
 	
 	//코드 제출 시 파일 생성
@@ -64,115 +63,61 @@ public class TestServiceImpl implements TestService {
 	
 	//코드 제출 시 검증 처리 
 	@Override
-    public String testCode(String language, String filePath) {
-        String absolutePath = new File(filePath).getAbsolutePath(); // 절대 경로로 변환
-        String imageName;
-        String containerName;
+	public String testCode(String language, String filePath) throws Exception {
+		String absolutePath = new File(filePath).getAbsolutePath(); // 절대 경로로 변환
+		String imageName;
+		String containerName;
 
-        if (language.equals("java") || language.equals("js")) {
-        	imageName = language + "-code";
-        	containerName = language + "-container";
-        } else {
-        	throw new IllegalArgumentException("지원하지 않는 언어: " + language);
-        }
+		if (language.equals("java") || language.equals("js")) {
+			imageName = language + "-code";
+			containerName = language + "-container";
+		} else {
+			throw new IllegalArgumentException("지원하지 않는 언어: " + language);
+		}
 
-        // 빌드 명령어
-        String buildCommand = "docker build -t " + imageName + " -f submissions/Dockerfile." + language + " submissions/";
-        
-        // 컨테이너 실행 명령어
-        String runCommand = "docker run --name " + containerName + " --rm --memory=512m --cpus=0.5 -v " 
-                             + absolutePath + ":/app/Solution." + language + " " + imageName;
+		// 빌드 명령어
+		String buildCommand = "docker build -t " + imageName + " -f submissions/Dockerfile." + language + " submissions/";
 
-        try {
-            // Docker 빌드 명령어 실행
-            ProcessBuilder buildProcessBuilder = new ProcessBuilder(buildCommand.split(" "));
-            Process buildProcess = buildProcessBuilder.start();
-            buildProcess.waitFor(); // 빌드 완료 대기
+		// 컨테이너 실행 명령어
+		String runCommand = "docker run --name " + containerName + " --rm --memory=512m --cpus=0.5 -v "
+							+ absolutePath + ":/app/Solution." + language + " " + imageName;
 
-            if (buildProcess.exitValue() != 0) {
-                return getProcessErrorOutput(buildProcess);
-            }
+		// Docker 빌드 명령어 실행
+		ProcessBuilder buildProcessBuilder = new ProcessBuilder(buildCommand.split(" "));
+		Process buildProcess = buildProcessBuilder.start();
+		buildProcess.waitFor(); // 빌드 완료 대기
 
-            // Docker 컨테이너 실행 명령어 실행
-            ProcessBuilder runProcessBuilder = new ProcessBuilder(runCommand.split(" "));
-            Process runProcess = runProcessBuilder.start();
+		if (buildProcess.exitValue() != 0) {
+			return getProcessErrorOutput(buildProcess);
+		}
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(runProcess.getInputStream()));
-            StringBuilder output = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                output.append(line).append("\n");
-            }
+		// Docker 컨테이너 실행 명령어 실행
+		ProcessBuilder runProcessBuilder = new ProcessBuilder(runCommand.split(" "));
+		Process runProcess = runProcessBuilder.start();
 
-            runProcess.waitFor(); // 프로세스 종료 대기
+		BufferedReader reader = new BufferedReader(new InputStreamReader(runProcess.getInputStream()));
+		StringBuilder output = new StringBuilder();
+		String line;
+		while ((line = reader.readLine()) != null) {
+			output.append(line).append("\n");
+		}
 
-            if (runProcess.exitValue() == 0) {
-                return output.toString();
-            } else {
-                return getProcessErrorOutput(runProcess);
-            }
+		runProcess.waitFor(); // 프로세스 종료 대기
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "Error executing code!";
-        }
-    }
+		if (runProcess.exitValue() == 0) {
+			return output.toString();
+		} else {
+			return getProcessErrorOutput(runProcess);
+		}
+	}
 
-    private String getProcessErrorOutput(Process process) throws Exception {
-        BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-        StringBuilder errorOutput = new StringBuilder();
-        String line;
-        while ((line = errorReader.readLine()) != null) {
-            errorOutput.append(line).append("\n");
-        }
-        return "Error:\n" + errorOutput.toString();
-    }
-    
-    public void createMainJavaFile() {
-        String filePath = "submissions/Main.java";  // 원하는 파일 경로 설정
-
-        String mainTemplate = "import java.util.*;\n" +
-        					  "\n" +
-        		              "public class Main {\n" +
-                              "    public static void main(String[] args) {\n" +
-                              "        Solution solution = new Solution();\n" +
-                              "        Verify verify = new Verify();\n" +
-                              "        Random rnd = new Random();\n" +
-                              "        int num1 = rnd.nextInt(10) + 1;\n" +
-                              "        int num2 = rnd.nextInt(10) + 1;\n" +
-                              "        int result_s = solution.solution(num1, num2);\n" +
-                              "        int result_v = verify.verify(num1, num2);\n" +
-                              "        System.out.println(\"Test: \" + (result_s == result_v ? \"Pass\" : \"Fail\"));\n" +
-                              "    }\n" +
-                              "}\n";
-
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-            writer.write(mainTemplate);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    
-    public void createMainJsFile() {
-    	String filePath = "submissions/Main.js";
-    	
-    	String mainTemplate = "function getRandomInt(min, max) {\n" +
-    						  "    return Math.floor(Math.random() * (max - min + 1)) + min;\n" +
-    						  "}\n" +
-    						  "let num1 = getRandomInt(1, 10);\n" +
-    						  "let num2 = getRandomInt(1, 10);\n" +
-    						  "\n" +
-    						  "const solution = require('./Solution');\n" +
-    						  "const verify = require('./Verify');\n" +
-    						  "\n" +
-    						  "const result_s = solution(num1,num2);\n" +
-    						  "const result_v = verify(num1,num2);\n" +
-    						  "console.log(\"Test: \" + (result_s == result_v ? \"Pass\" : \"Fail\"));";
-    	
-    	try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-            writer.write(mainTemplate);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }					  
-    }
+	private String getProcessErrorOutput(Process process) throws Exception {
+		BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+		StringBuilder errorOutput = new StringBuilder();
+		String line;
+		while ((line = errorReader.readLine()) != null) {
+			errorOutput.append(line).append("\n");
+		}
+		return "Error:\n" + errorOutput.toString();
+	}
 }

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class ChatMemberEntityID implements Serializable {
+public class ChatMemberEntityId implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private Long chatIdx;

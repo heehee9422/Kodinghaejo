@@ -2,11 +2,17 @@ package com.kodinghaejo.entity;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -20,24 +26,23 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity(name = "test")
-@Table(name = "jpa_test")
-public class TestEntity {
-	
+@Entity(name = "chatLog")
+@Table(name = "jpa_chat_log")
+public class ChatLogEntity {
+
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "TEST_SEQ")
-	@SequenceGenerator(name = "TEST_SEQ", sequenceName = "jpa_test_seq", initialValue = 1, allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "CHAT_LOG_SEQ")
+	@SequenceGenerator(name = "CHAT_LOG_SEQ", sequenceName = "jpa_chat_log_seq", initialValue = 1, allocationSize = 1)
 	@Column(name = "idx", nullable = false)
 	private Long idx;
 
-	@Column(name = "title", length = 200, nullable = false)
-	private String title;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	@JoinColumn(name = "chat_idx", nullable = false)
+	private ChatEntity chatIdx;
 
-	@Column(name = "diff", nullable = false)
-	private int diff;
-
-	@Column(name = "descr", length = 2000, nullable = false)
-	private String descr;
+	@Column(name = "content", length = 2000, nullable = false)
+	private String content;
 
 	@Column(name = "regdate", nullable = false)
 	private LocalDateTime regdate;
