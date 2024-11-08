@@ -34,6 +34,10 @@ body {
 .mt80 { margin-top: 80px !important;}
 .mt90 { margin-top: 90px !important;}
 .mt100 { margin-top: 100px !important;}
+.mb20 { margin-bottom: 20px !important;}
+.mb30 { margin-bottom: 30px !important;}
+.mb40 { margin-bottom: 40px !important;}
+.mb50 { margin-bottom: 50px !important;}
 
 .w100 {width: 100px;}
 .w120 {width: 120px;}
@@ -50,30 +54,32 @@ body {
   width: 100%;
   max-width: 1200px;
 }
-.container.column {
-  display: flex;
+.container.column .column-row {
+  width: 100%;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 0px 25px;
+  display: flex;
 }
-.container.column > .c-column-2 {
+.column-row > .c-column-2 {
   flex-basis: 20%;
 }
-.container.column > .c-column-3 {
+.column-row > .c-column-3 {
   flex-basis: 30%;
 }
-.container.column > .c-column-4 {
+.column-row > .c-column-4 {
   flex-basis: 40%;
 }
-.container.column > .c-column-5 {
+.column-row > .c-column-5 {
   flex-basis: 50%;
 }
-.container.column > .c-column-6 {
+.column-row > .c-column-6 {
   flex-basis: 60%;
 }
-.container.column > .c-column-7 {
+.column-row > .c-column-7 {
   flex-basis: 70%;
 }
-.container.column > .c-column-8 {
+.column-row > .c-column-8 {
   flex-basis: 80%;
 }
 /* default-btn-set */
@@ -85,10 +91,10 @@ input[type=button]
   background: #fff;
   color: #212529;;
   padding: 8px 12px;
-  /* display: block; */
   border-radius: 5px;
   font-size: 12px;
   cursor: pointer;
+  display: inline-block;
 }
 a[class*="btn_"]:hover,
 button:hover 
@@ -277,7 +283,7 @@ th {
 .toastui-editor-tooltip .text {
   color: #fff;
 }
-.toastui-editor-mode-switch { display: none !important; }
+/* .toastui-editor-mode-switch { display: none !important; } */
 /* ********* challenge : 코딩테스트 부분 **********/
 .challenge-navbar .navbar-breadcrumb { 
   width: 100%;
@@ -343,10 +349,6 @@ th {
   background: #d0e1ff;
   color: #44576c;
   transition: .4s all;
-}
-.challenge-nav .nav-item .dropdown-language .dropdown-menu .dropdown-item.active {
-  background: #44576c;
-  color: #fff;
 }
 /* challenge-content : background-color-validation */
 .wrap .challenge-content .challenge-content-list {
@@ -1032,45 +1034,52 @@ div[class*="-form"] {
 }
 
 /********** 관리자 : admin **********/
-/* 
 .system-menu {
-  position: fixed;
+  /* position: fixed; */
   padding: 20px;
-  border: 1px solid rgb(194, 194, 194);
-  box-sizing: border-box;
+  margin-right: 20px;
+  border: 1px solid #ced4da;
   border-radius: 10px;
+}
+.system-menu h4 {
+  padding-bottom: 15px;
+  margin-bottom: 10px;
+  border-bottom: 1px dashed #000;
+}
+.system-menu h4 i {
+  position: relative;
+  right: 3%;
+}
+.system-menu h4 a:hover {
+  color: #003675;
 }
 .system-menu ul {
   list-style-type: none;
   padding: 0;
+  margin: 0;
 }
-.system-menu li {
-  position: relative;
-  margin: 10px 0;
+.system-menu ul li {
+  margin: 5px 0;
 }
-.system-menu a {
-  text-decoration: none;
-  color: black;
-  padding: 5px 10px; 
+.system-menu ul li a {
+  padding: 8px 10px; 
   display: block; 
+  font-size: 14px; 
   border-radius: 4px; 
-  font-size: 16px; 
 }
-.system-menu a:hover {
+.system-menu ul li a:hover {
   background-color: #f0f0f0; 
 }
-
+/* 블럭처리로 네비 */
 .sub-menu {
   display: none; 
-  background-color: white; 
-  z-index: 10; 
   padding: 0; 
   margin: 0; 
-  position: relative; 
 }
-.system-menu li:hover .sub-menu {
+.system-menu ul li:hover .sub-menu {
   display: block; 
 }
+/* 블럭처리로 네비 끝 */
 .sub-menu li {
   margin: 5px 0; 
   padding-left: 10px; 
@@ -1078,31 +1087,76 @@ div[class*="-form"] {
 .sub-menu a {
   font-size: 14px; 
 } 
-
-.sys-member-list h2 {
+.sys-system_menu h2 {
   text-align: center;
   margin-bottom: 30px;
 }
-.sys-member-list .search-bar {
+.sys-system_menu .search-bar {
   display: flex;
+  width: 100%;
+  gap: 10px;
 }
-.sys-member-list .search-bar input[type="text"] {
-  width: 80%;
+.btn_search
+, a.btn_view 
+{
+  background-color: #003675;
+  padding: 10px 20px;
+  color: #fff;
+  border: none;
 }
-.view_btn {
-}
-.view-btn:hover {
-  background-color: #b0b0b0;
+.btn_search:hover 
+, a.btn_view:hover 
+{
+  background: #002B5E;
+  color: #fff;
+  border: none;
 }
 a.btn_delete {
-  padding: 10px 25px;
+  padding: 10px 20px;
   background-color: #dc3545;
   border: none;
   color: #fff;
 }
 a.btn_delete:hover {
   background-color: #c82333;
-} */
+}
+/* .sys-system_menu -- 테이블 위에 공간 아이템 TO-DO */
+.sys-system_menu .sys-description-box {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+.paginate {
+  width: 100%;
+  display: flex;
+  /* gap: 5px; */
+  justify-content: center;
+}
+.paginate a {
+  display: inline-block;
+  border: 1px solid #dee2e6;
+  padding: 8px 5px;
+  width: 40px;
+  text-align: center;
+  /* border-radius: 5px; */
+}
+.paginate a:first-of-type {
+  border-radius: 8px 0px 0 8px;
+}
+.paginate a:last-of-type {
+  border-radius: 0 8px 8px 0;
+}
+.paginate a:hover {
+  border: 1px solid #16408D;
+  color: #16408D;
+  font-weight: 400;
+}
+.paginate a.on {
+  background: #003675;
+  border: none;
+  font-weight: 500;
+  color: #fff;
+}
 
 /* animation kit */
 @keyframes fadeInDown {

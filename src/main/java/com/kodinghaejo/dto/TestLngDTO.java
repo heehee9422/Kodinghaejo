@@ -23,7 +23,8 @@ public class TestLngDTO {
 	private String lng;
 	private String content;
 	private String correct;
-	private String mainSrc;
+	private String runSrc;
+	private String submSrc;
 	private LocalDateTime regdate;
 	private String isUse;
 
@@ -34,7 +35,8 @@ public class TestLngDTO {
 		this.lng = entity.getLng();
 		this.content = entity.getContent();
 		this.correct = entity.getCorrect();
-		this.mainSrc = entity.getMainSrc();
+		this.runSrc = entity.getRunSrc();
+		this.submSrc = entity.getSubmSrc();
 		this.regdate = entity.getRegdate();
 		this.isUse = entity.getIsUse();
 	}
@@ -48,7 +50,8 @@ public class TestLngDTO {
 									.lng(dto.getLng())
 									.content(dto.getContent())
 									.correct(dto.getCorrect())
-									.mainSrc(dto.getMainSrc())
+									.runSrc(dto.getRunSrc())
+									.submSrc(dto.getSubmSrc())
 									.regdate(dto.getRegdate())
 									.isUse(dto.getIsUse())
 									.build();

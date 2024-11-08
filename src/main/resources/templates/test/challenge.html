@@ -69,8 +69,8 @@
 					<a href="/learn/courses/{reqno}" class="btn-show-question">질문하기</a>
 				</div>
 				<div class="func-buttons">
-					<button class="btn_check" type="button" id="run">실행</button>
-					<button class="btn_check" type="button" id="submit">제출</button>
+					<button class="btn_check" type="button" onclick="challenge('run')">실행</button>
+					<button class="btn_check" type="button" onclick="challenge('submit')">제출</button>
 				</div>
 			</div>
 		</div>
@@ -138,8 +138,8 @@
 			});
 		});
 		
-		//문제 관련 변수 (언어별 문제 인덱스, 정답 소스, 메인 소스)
-		let tlIdx, correctSrc, mainSrc;
+		//문제 관련 변수 (언어별 문제 인덱스, 정답 소스, 실행 메인 소스, 제출 메인 소스)
+		let tlIdx, correctSrc, runSrc, submSrc;
 		
 		//언어별 문제 가져오기
 		const loadTestLng = async () => {
@@ -160,7 +160,8 @@
 				tlIdx = data.idx;
 				editor.setValue(data.content_src.replaceAll('\\t', '\t').replaceAll('\\n', '\n'));
 				correctSrc = data.correct_src.replaceAll('\\t', '\t').replaceAll('\\n', '\n');
-				mainSrc = data.main_src.replaceAll('\\t', '\t').replaceAll('\\n', '\n');
+				runSrc = data.run_src.replaceAll('\\t', '\t').replaceAll('\\n', '\n');
+				submSrc = data.subm_src.replaceAll('\\t', '\t').replaceAll('\\n', '\n');
 			})
 			.catch((error) => {
 				console.log("error: " + error);
@@ -170,9 +171,7 @@
 
 		/*
 		//실행 버튼 클릭 시 코드 실행
-		document.getElementById("run").addEventListener("click", function() {
-			const code = editor.getValue();
-
+		document.getElementById("run").addEventListener("click", () => {
 			try {
 				if (selectedLanguage === 'javascript') {
 					let result = eval(code);
@@ -186,30 +185,125 @@
 				outputArea.innerText = "오류 발생: " + error.message;
 			}
 		});
-		*/
 		
-		//문제 제출
-		document.getElementById("submit").addEventListener("click", () => {
+		//제출 버튼 클릭 시 코드 실행
+		document.getElementById("submit").addEventListener("click", function() {
+			const code = editor.getValue();
+			const language = selectedLanguage;
 			
-			fetch('/test/submit', {
+			fetch('/submit', {
 				method: 'POST',
-				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+				},
 				body: new URLSearchParams({
-					'tl_idx': tlIdx,
-					'code': editor.getValue(),
-					'correct_src': correctSrc,
-					'main_src': mainSrc,
+					'code': code,
 					'language': selectedLanguage
 				})
 			})
-			.then((response) => response.text())
+			.then(response => response.text())
+			.then(data => {
+				outputArea.innerText = data; // 서버에서 받은 결과 표시
+			})
+			.catch(error => {
+				outputArea.innerText = "오류 발생: " + error.message;
+			});
+		});
+		*/
+		
+		//코드 실행 및 제출 시 처리
+		const challenge = async (type) => {
+			fetch('/test/challenge', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+				body: new URLSearchParams({
+					'type': type,
+					'tl_idx': tlIdx,
+					'code': editor.getValue(),
+					'correct_src': correctSrc,
+					'run_src': runSrc,
+					'subm_src': submSrc,
+					'language': selectedLanguage
+				})
+			})
+			.then((response) => response.json())
 			.then((data) => {
-				outputArea.innerText = data; //서버에서 받은 결과 표시
+				outputArea.innerText = '';
+				
+				if (data.message == "TYPE_NOT_AVAILABLE") { //type 값이 run, submit 모두 해당되지 않을 경우
+					outputArea.innerText = '유효하지 않은 요청입니다.';
+				} else if (data.message == "run") { //실행 시 결과
+					for (const i in data.subdata) {
+						let elm = document.createElement('table');
+						elm.setAttribute('data-index', i);
+
+						let result = '';
+						result += '<tbody>\n' +
+									'\t<tr>\n' +
+									'\t\t<td colspan="2">테스트 ' + (parseInt(i) + 1) + '</td>\n' +
+									'\t</tr>\n' +
+									'\t<tr>\n' +
+									'\t\t<td class="td-label" align="right">입력값 <span>〉</span></td>\n' +
+									'\t\t<td class="input">' + data.subdata[i].a + ', ' + data.subdata[i].d + ', ' + data.subdata[i].included + '</td>\n' +
+									'\t</tr>\n' +
+									'\t<tr>\n' +
+									'\t\t<td class="td-label" align="right">기댓값 <span>〉</span></td>\n' +
+									'\t\t<td class="output">' + data.subdata[i].resultV + '</td>\n' +
+									'\t</tr>\n' +
+									'\t<tr>\n' +
+									'\t\t<td class="td-label" align="right" valign="top">실행 결과 <span>〉</span></td>\n' +
+									'\t\t<td class="result ' + parseInt(data.subdata[i].resultS) == parseInt(data.subdata[i].resultV) ? 'pass' : 'fail' + '">' + data.subdata[i].resultV + '</td>\n' +
+									'\t</tr>\n' +
+									'\t<tr style="display: none;">\n' +
+									'\t\t<td class="td-label" align="right" valign="top">출력 <span>〉</span></td>\n' +
+									'\t\t<td class="stdout"></td>\n' +
+									'\t</tr>\n' +
+									'</tbody>';
+						
+						elm.innerHTML = result;
+						
+						outputArea.appendChild(elm);
+					}
+				} else if (data.message == "submit") { //제출 시 결과
+					let elm = document.createElement('table');
+					elm.setAttribute('class', 'console-test-group');
+					elm.setAttribute('data-category', 'correctness');
+					
+					let result = '<tbody>';
+					
+					for (const i in data.subdata) {
+						result += '\t<tr>\n' +
+									'\t\t<td valign="top" class="td-label">테스트 ' + (parseInt(i) + 1) + ' <span>〉</span></td>\n' +
+									'\t\t<td class="result ' + ((data.subdata[i].resultS == data.subdata[i].resultV) ? 'pass' : 'fail') + '">'
+									'\t</tr>\n' +
+									'\t<tr>\n' +
+									'\t\t<td class="td-label" align="right">입력값 <span>〉</span></td>\n' +
+									'\t\t<td class="input">' + data.subdata[i].a + ', ' + data.subdata[i].d + ', ' + data.subdata[i].included + '</td>\n' +
+									'\t</tr>\n' +
+									'\t<tr>\n' +
+									'\t\t<td class="td-label" align="right">기댓값 <span>〉</span></td>\n' +
+									'\t\t<td class="output">' + data.subdata[i].resultV + '</td>\n' +
+									'\t</tr>\n' +
+									'\t<tr>\n' +
+									'\t\t<td class="td-label" align="right" valign="top">출력 <span>〉</span></td>\n' +
+									'\t\t<td class="stdout">' + data.subdata[i].resultS + '</td>\n' +
+									'\t</tr>\n' +
+									'\t<tr>\n' +
+									'\t\t<td class="td-label" align="right" valign="top">실행 결과 <span>〉</span></td>\n' +
+									'\t\t<td class="result ' + parseInt(data.subdata[i].resultS) == parseInt(data.subdata[i].resultV) ? 'pass">통과' : 'fail">실패' + '</td>\n' +
+									'\t</tr>\n';
+					}
+					
+					result += '</tbody>';
+					
+					elm.innerHTML = result;
+					outputArea.appendChild(elm);
+				}
 			})
 			.catch((error) => {
 				outputArea.innerText = "오류 발생: " + error.message;
 			});
-		});
+		}
 		
 		loadTestLng();
 	</script>
