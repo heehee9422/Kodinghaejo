@@ -4,9 +4,12 @@ import java.io.File;
 import java.net.URLEncoder;
 import java.util.UUID;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,6 +21,7 @@ import com.kodinghaejo.service.MailService;
 import com.kodinghaejo.service.MemberService;
 import com.kodinghaejo.util.PasswordMaker;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -196,20 +200,52 @@ public class MemberController {
 		}
 	}
 
-	
-	@GetMapping("/member/mypagemain")
-	public void getMypagemain() {
-		
+	//회원 프로필 이미지 보기
+	@GetMapping("/member/img/{email}")
+	public void filedownload(@PathVariable("email") String email, HttpServletResponse rs) throws Exception {
+		//운영체제에 따라 이미지가 저장될 디렉토리 구조 설정 시작
+		String os = System.getProperty("os.name").toLowerCase();
+		String path;
+		if (os.contains("win"))
+			path = "C:\\Repository\\profile\\";
+		else
+			path = "/home/mklee/Repository/profile/";
+
+		//디렉토리가 존재하는지 체크해서 없다면 생성
+		File p = new File(path);
+		if (!p.exists()) p.mkdirs();
+		//운영체제에 따라 이미지가 저장될 디렉토리 구조 설정 종료
+
+		MemberDTO member = service.memberInfo(email);
+
+		//다운로드할 파일의 경로와 파일명을 매개변수로 입력받아 byte 데이터타입의 1차원 배열로 저장
+		byte[] fileByte = FileUtils.readFileToByteArray(new File(path + member.getStoredImg()));
+
+		//예) HTTP Response Header는 Content-Disposition: attachment; filename="hello.jpg";
+		//    HTTP Response Body에는 1차원 바이트 타입으로 변환된 배열
+		rs.setContentType("application/octet-stream");
+		rs.setContentLength(fileByte.length);
+		rs.setHeader("Content-Disposition", "attachment; filename=\"" + URLEncoder.encode(member.getOrgImg(), "UTF-8") + "\";");
+		rs.getOutputStream().write(fileByte); //stream을 통해 1차원 byte 타입 배열로 변환된 데이터(추후 파일로 변환)를 버퍼에 씀
+		rs.getOutputStream().flush(); //버퍼에 있는 내용을 write
+		rs.getOutputStream().close(); //스트림 닫기
 	}
-	@GetMapping("/member/mypageMyboard")
-	public void getMypageMyboard() {
-		
+
+	//내 정보(마이 페이지)
+	@GetMapping("/member/mypage/main")
+	public void getMypageMain(Model model, HttpSession session) {
+		MemberDTO member = service.memberInfo((String) session.getAttribute("email"));
+		model.addAttribute("member", member);
 	}
-	@GetMapping("/member/mypageMychat")
+
+	//나의 활동
+	@GetMapping("/member/mypage/mychat")
 	public void getMypageMychat() {
 		
 	}
-	@GetMapping("/member/mypageMytest")
+
+	//내 문제집
+	@GetMapping("/member/mypage/mytest")
 	public void getMypageMytest() {
 		
 	}

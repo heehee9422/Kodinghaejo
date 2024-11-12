@@ -27,6 +27,9 @@ public class BoardDTO {
 	private int hitCnt;
 	private LocalDateTime regdate;
 	private String isUse;
+	
+	//해당 게시물의 추천 수
+	private Long goodCnt;
 
 	//Entity --> DTO 이동
 	public BoardDTO(BoardEntity entity) {

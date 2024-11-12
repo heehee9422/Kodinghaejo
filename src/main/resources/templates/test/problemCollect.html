@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="kr" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>게시판</title>
+  <!-- Standard css -->
+  <link rel="icon" href="/img/logo/favicon.png">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+  <!-- pub-js link -->
+  <script src="/js/pub-ui-custom.js"></script>
+</head>
+<!-- 게시판 복사용 게시판 : 테스트 용도입니다-->
+<body>
+  <!-- header 영역 -->
+  <div id="header" th:replace="include/header"></div>
+  <div class="banner-zone">
+    <!-- 첫번째 영역 : 나중에 보자-->
+    <div class="banner-content">
+      <div class="content-banner-title">
+        <h3>⭐출석 이벤트⭐<br>수료생 극찬! 실무 중심 부트캠프</h3>
+        <p>IT 취업을 위한 탁월한 선택,</p>
+        <p>라이브 코딩을 통한 과제테스트 풀이 전략 공개!</p>
+      </div>
+      <div class="content-banner-img" style="padding-top: 40px;">
+        <img src="/img/aset01.png" alt="" style="position: relative; top: 65px; width: 150px;">
+        <img src="/img/aset02.png" alt="" style="width: 150px;">
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="content-problem-board mt50">
+      <div class="problem-board-title">
+        <!-- 검색창 : 커스텀 들어가야됨 -->
+        <div class="search-inp">
+          <input type="text" name="" id="" placeholder="풀고 싶은 문제 제목을 입력해 주세요">
+        </div>
+        <!--  -->
+        <div class="inp-group mt30">
+          <div class="select-inp problem">
+            <div class="list-box">
+              <div class="list-box-title"><span>상태</span></div>
+              <button type="button" class="toggle_btn" onclick="listDropdown()">상태를 선택해 주세요</button>
+              <div class="list-box-content" style="width: 30%">
+                <ul>
+                  <li><input type="checkbox" name="" id=""><a href="">안 푼 문제</a></li>
+                  <li><input type="checkbox" name="" id=""><a href="">풀고 있는 문제</a></li>
+                  <li><input type="checkbox" name="" id=""><a href="">푼 문제(스스로 해결)</a></li>
+                  <li><input type="checkbox" name="" id=""><a href="">푼 문제(다른 사람 풀이 확인)</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="select-inp problem">
+            <div class="list-box">
+              <div class="list-box-title"><span>언어</span></div>
+              <button type="button" class="toggle_btn"  onclick="listDropdown()">언어를 선택해 주세요</button>
+              <div class="list-box-content" style="width: 30%">
+                <ul>
+                  <li><input type="checkbox" name="" id=""><a href="">JAVA</a></li>
+                  <li><input type="checkbox" name="" id=""><a href="">JAVASCRIPT</a></li>
+                  <li><input type="checkbox" name="" id=""><a href="">SQL</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="select-inp problem">
+            <div class="list-box">
+              <div class="list-box-title"><span>난이도</span></div>
+              <button type="button" class="toggle_btn" onclick="listDropdown()">난이도를 선택해 주세요</button>
+              <div class="list-box-content" style="width: 30%">
+                <ul>
+                  <li><input type="checkbox" name="" id=""><a href="">LV. 0</a></li>
+                  <li><input type="checkbox" name="" id=""><a href="">LV. 1</a></li>
+                  <li><input type="checkbox" name="" id=""><a href="">LV. 2</a></li>
+                  <li><input type="checkbox" name="" id=""><a href="">LV. 3</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+      <div class="problem-board-table mt40">
+        <table>
+          <caption style="display: none;">관리자 게시판 입니다</caption>
+          <colgroup>
+            <col width="10%">
+            <col width="">
+            <col width="10%">
+            <col width="15%">
+            <col width="10%">
+            <!-- 참고하세요 -->
+            <!-- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/colgroup -->
+          </colgroup>
+          <thead>
+            <tr>
+              <th>상태</th>
+              <th>제목</th>
+              <th>난이도</th>
+              <th>완료한 사람</th>
+              <th>정답률</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>푼 문제</td>
+              <td>첫번째 게시글입니다.</td>
+              <td>0단계</td>
+              <td>김아무개씨</td>
+              <td>100%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="problem-board-table-paging">
+        <div class="paginate mt20" onclick="pagenation()">
+          <a href="" class="left-prev-arrow">
+            <svg width="12" height="12" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M11 1L1 11.1579L10.6891 21" stroke="black" stroke-linecap="round"/>
+              <path d="M21 1L11 11.1579L20.6891 21" stroke="black" stroke-linecap="round"/>
+            </svg>
+          </a>
+          <a href="" class="left-arrow"><i class="xi-angle-left-thin"></i></a>
+          <a href="#" class="on" role="button">1</a>
+          <a href="#">2</a>
+          <a href="#">3</a>
+          <a href="#">4</a>
+          <a href="#">100</a>
+          <a href="" class="right-arrow"><i class="xi-angle-right-thin"></i></a>
+          <a href="" class="right-next-arrow">
+            <svg width="12" height="12" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M11 1L21 11.1579L11.3109 21" stroke="black" stroke-linecap="round"/>
+              <path d="M1 1L11 11.1579L1.31088 21" stroke="black" stroke-linecap="round"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <!-- footer영역 -->
+  <div id="footer" th:replace="include/footer"></div>
+</body>
+</html>

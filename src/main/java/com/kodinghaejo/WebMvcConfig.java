@@ -9,10 +9,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-		/*
-		registry.addResourceHandler("/profile/**")
-				.addResourceLocations("file:///C:/Repository/profile");
-		 */
+//		registry.addResourceHandler("/profile/**")
+//						.addResourceLocations("file:///C:/Repository/profile");
 	}
 
 }

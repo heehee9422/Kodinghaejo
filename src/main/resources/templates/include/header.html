@@ -3,24 +3,26 @@
 		<div class="main-navbar-list">
 			<a href="/" class="navbar-logo"><img src="/img/logo/icon.png" alt="logo" style="height: 30px; margin-top: 13px; margin-right: 15px;"></a>
 			<ol class="main-list-item">
-				<li class="nav-hover"><a href="/">문제</a></li>
-				<li class="nav-hover"><a href="/">랭킹</a></li>
-				<li class="nav-hover"><a href="/freeboard.html">게시판</a></li>
-				<li class="nav-hover"><a href="/">개발자 라운지</a></li>
+				<li class="nav-hover"><a href="/test/problemCollect">문제</a></li>
+				<li class="nav-hover"><a href="/rank/rank">랭킹</a></li>
+				<li class="nav-hover"><a href="/board/freeboard">게시판</a></li>
+				<li class="nav-hover"><a href="/chat/chatmain">개발자 라운지</a></li>
 			</ol>
 		</div>
 		<div class="main-navbar-list">
 			<ul class="main-list-item login">
 				<!-- 로그아웃 시 -->
+				<!-- 추후 모달 처리 -->
 				<th:block th:if="${ session.email == null }">
-				<li><a href="/member/login" class="btn_login" onclick="">로그인</a></li><!-- javascript:loginView('open') -->
+				<!-- <li><a href="#" class="btn_login" onclick="loginView('open')">로그인</a></li> -->
+				<li><a href="/member/login" class="btn_login">로그인</a></li>
 				<li><a href="/member/join" class="btn_sign">회원가입</a></li>
 				</th:block>
-				<!-- 로그인 했을경우 -->
+				<!-- 로그인 했을 경우 -->
 				<th:block th:if="${ session.email != null }">
-				<li><span class="login_profile"><img src="img/test-profile/handyping.png" alt="" style="width: 30px; height: 30px;"><b>&#91;[[ ${ session.nickname } ]]&#93;</b>님이 로그인 하셨습니다</span></li>
+				<li><span class="login_profile"><img src="/img/test-profile/handyping.png" alt="" style="width: 30px; height: 30px;"><b>&#91;[[ ${ session.nickname } ]]&#93;</b>님이 로그인 하셨습니다</span></li>
+				<li><a href="/member/mypage/main" class="btn_sign">MyPage</a></li>
 				<li><a href="javascript:beforeLogout()" class="btn_login">로그아웃</a></li>
-				<li><a href="/" class="btn_sign">MyPage</a></li>
 				</th:block>
 			</ul>
 		</div>
@@ -31,42 +33,55 @@
 			<div class="menu-item">
 				<ul>
 					<li><b>문제</b></li>
-					<li><a href="/">JAVA</a></li>
-					<li><a href="/">JAVASCRIPT</a></li>
-					<li><a href="/">알고리즘 SQL</a></li>
+					<li><a href="/test/problemCollect">문제 모아 보기</a></li>
 				</ul>
 			</div>
 			<div class="menu-item">
 				<ul>
 					<li><b>랭킹</b></li>
-					<li><a href="/">이용자 랭킹보기</a></li>
+					<li><a href="/rank/rank">이용자 랭킹보기</a></li>
 				</ul>
 			</div>
 			<div class="menu-item">
 				<ul>
 					<li><b>게시판</b></li>
-					<li><a href="/noticeboard.html">공지 게시판</a></li>
-					<li><a href="/freeboard.html">자유 게시판</a></li>
+					<li><a href="/board/noticeboard">공지 게시판</a></li>
+					<li><a href="/board/freeboard">자유 게시판</a></li>
 					<li><a href="/">질문 모아보기 게시판</a></li>
 				</ul>
 			</div>
 			<div class="menu-item">
 				<ul>
 					<li><b>개발자 라운지</b></li>
-					<th:block th:if="${ session.lvl == 'LVL-0001' }">
-					<li><a href="/system">시스템 관리</a></li>
-					</th:block>
-					<li><a href="/">채팅방 바로가기</a></li>
+					<li><a href="/chat/chatmain">채팅방 바로가기</a></li>
 				</ul>
 			</div>
 		</div>
 	</div>
-	
+
 	<script type="text/javascript">
 		//로그아웃 전처리
 		const beforeLogout = () => {
 			if (confirm('로그아웃 하시겠습니까?'))
 				document.location = '/member/beforeLogout';
 		}
+		
+    if (document.querySelector(".main-navbar")) {
+      document.addEventListener("mouseover", function (event) {
+        if (
+          event.target.closest(".main-list-item .nav-hover") ||
+          event.target.closest(".main-nav-list-menu")
+        ) {
+          document.querySelector(".main-nav-list-menu").classList.add("active");
+          document.querySelector(".main-nav-list-menu").style.zIndex = 1000;
+        } else if (!event.target.closest(".main-navbar")) {
+          document
+            .querySelector(".main-nav-list-menu")
+            .classList.remove("active");
+          document.querySelector(".main-nav-list-menu").style.zIndex = 0;
+        }
+      });
+    }
 	</script>
+	
 </header>

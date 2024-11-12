@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="kr" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내 정보</title>
+    <!-- Standard css -->
+    <link rel="icon" href="/img/logo/favicon.png">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+    <!-- pub-js link -->
+    <script src="/js/pub-ui-custom.js"></script>
+</head>
+
+<body>
+    <!-- header-->
+    <div id="header" th:replace="include/header"></div>
+
+    <div class="container column bgcontain-mypage">
+        <div class="column-row myPage">
+            <div class="c-column-2">
+                <div id="mypage_manu" th:replace="include/mypage"></div>
+            </div>
+            <div class="c-column-8">
+                <div class="mypage_content">
+
+                    <h5>나의 랭킹</h5>
+                    <div class="mypage_box">
+                        <p>LV.5 랭킹 999위</p>
+                        <p>풀어본문제 : 9999</p>
+                        <p>맞춘문제 : 9999</p>
+                        <p>정답률 : 9999</p>
+                    </div>
+
+                    <h5>풀어본 문제</h5>
+                    <div class="mypage_box">
+                        <div class="problem-info">
+                            <p class="test-number">999번 문제</p>
+                            <a href=""><p class="test-description">A+B를 구하여 출력하는 코드를 작성하시오</p></a>
+                            <p class="submission-date">제출일 2024-10-25</p>
+                        </div>
+                        <hr class="dashed">
+                        <div class="problem-info">
+                            <p class="test-number">999번 문제</p>
+                            <a href=""><p class="test-description">A+B를 구하여 출력하는 코드를 작성하시오</p></a>
+                            <p class="submission-date">제출일 2024-10-25</p>
+                        </div>
+                    </div>
+                    <button style="width: 100%; border-radius: 0 0 5px 5px;"><i class="xi-plus-min"></i> 문제 더보기</button>
+
+                </div>
+            </div>
+
+            <!--             
+            <div class="test-list">
+            <div class="test-card">
+                <div class="problem-info">
+                    <div class="test-number">00번</div>
+                    <div class="test-description">A+B를 구하여 출력하는 코드를 작성하시오 <span class="star-icon">★</span></div>
+                    <div class="submission-date">제출일 2024-10-25</div>
+                </div>
+                <div>
+                    <div class="status wrong">오답</div>
+                    <div class="retry-button">다시 풀어보기</div>
+                </div>
+            </div>
+          
+         </div>
+
+
+         <p style="font-size: 20px; font-weight: bold;"> 북마크한 문제</p>
+         <div class="test-list">
+            
+            <div class="test-card">
+                <div class="problem-info">
+                    <div class="test-number">00번</div>
+                    <div class="test-description">A+B를 구하여 출력하는 코드를 작성하시오 <span class="star-icon">★</span></div>
+                    <div class="submission-date">제출일 2024-10-25</div>
+                </div>
+                <div>
+                    <div class="status wrong">오답</div>
+                    <div class="retry-button">다시 풀어보기</div>
+                </div>
+            </div> 
+    -->
+        </div>
+    </div>
+    <!-- footer -->
+    <div id="footer" th:replace="include/footer"></div>
+
+</body>
+
+</html>

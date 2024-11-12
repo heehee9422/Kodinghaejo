@@ -274,24 +274,8 @@
 					for (const i in data.subdata) {
 						result += '\t<tr>\n' +
 									'\t\t<td valign="top" class="td-label">테스트 ' + (parseInt(i) + 1) + ' <span>〉</span></td>\n' +
-									'\t\t<td class="result ' + ((data.subdata[i].resultS == data.subdata[i].resultV) ? 'pass' : 'fail') + '">'
-									'\t</tr>\n' +
-									'\t<tr>\n' +
-									'\t\t<td class="td-label" align="right">입력값 <span>〉</span></td>\n' +
-									'\t\t<td class="input">' + data.subdata[i].a + ', ' + data.subdata[i].d + ', ' + data.subdata[i].included + '</td>\n' +
-									'\t</tr>\n' +
-									'\t<tr>\n' +
-									'\t\t<td class="td-label" align="right">기댓값 <span>〉</span></td>\n' +
-									'\t\t<td class="output">' + data.subdata[i].resultV + '</td>\n' +
-									'\t</tr>\n' +
-									'\t<tr>\n' +
-									'\t\t<td class="td-label" align="right" valign="top">출력 <span>〉</span></td>\n' +
-									'\t\t<td class="stdout">' + data.subdata[i].resultS + '</td>\n' +
-									'\t</tr>\n' +
-									'\t<tr>\n' +
-									'\t\t<td class="td-label" align="right" valign="top">실행 결과 <span>〉</span></td>\n' +
-									'\t\t<td class="result ' + parseInt(data.subdata[i].resultS) == parseInt(data.subdata[i].resultV) ? 'pass">통과' : 'fail">실패' + '</td>\n' +
-									'\t</tr>\n';
+									'\t\t<td class="result ' + (data.subdata[i].resultS == data.subdata[i].resultV ? 'pass">통과' : 'fail">실패') + '</td>\n' +
+									'\t</tr>';
 					}
 					
 					result += '</tbody>';

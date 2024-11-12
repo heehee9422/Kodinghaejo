@@ -9,6 +9,32 @@
 <link rel="stylesheet"
 	href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css" />
 <script src="/js/pub-ui-custom.js"></script>
+<script>
+const deleteFreeBoard = (idx) => {
+    if (confirm("해당 게시글을 삭제하시겠습니까?")) {
+        fetch(`/admin/systemBoardDelete/${idx}`, {
+            method: 'DELETE'
+        })
+        .then(response => {
+            console.log("Response status:", response.status);
+            return response.text().then(message => ({ status: response.status, message }));
+        })
+        .then(({ status, message }) => {
+            if (status === 200) {
+                alert(message); // 서버에서 전달한 성공 메시지
+                location.reload(); // 페이지 새로고침하여 목록 갱신
+            } else {
+                alert(`삭제 실패: ${message}`);
+            }
+        })
+        .catch(error => {
+            console.error('삭제 중 오류 발생:', error);
+            alert("삭제 요청 중 오류가 발생했습니다.");
+        });
+    }
+}
+</script>
+
 </head>
 <body>
 	<div id="header" th:replace="include/header"></div>
@@ -22,12 +48,14 @@
 			<div class="c-column-8">
 				<div class="sys-system_menu">
 					<h2>자유게시판 관리</h2>
-					<div class="search-bar">
-						<input type="text" name="searchKeyword" placeholder="검색어 입력" />
-						<button class="btn_search">검색</button>
+					<div class="search-bar mb20">
+						<form method="get" action="/admin/systemFreeBoard">
+					        <input type="text" name="searchKeyword" placeholder="검색어 입력" th:value="${searchKeyword}" />
+					        <button type="submit" class="btn_search">검색</button>
+					    </form>
 					</div>
 					<div class="sys-description-box mb20">
-						<h3 class="mt20">게시글 수 : 10</h3>
+						<h3 class="mt20">게시글 수 : <span th:text="${boardCount}"></span></h3>
 					</div>
 					<table>
 						<caption style="display: none;">관리자 게시판 입니다</caption>
@@ -56,15 +84,15 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td>1</td>
-								<td>첫번째 게시글입니다.</td>
-								<td>홍길동</td>
-								<td>2024-11-04</td>
-								<td>4</td>
+							<tr th:each="board : ${boards}">
+								<td th:text="${board.idx}">1</td>
+								<td th:text="${board.title}">첫번째 게시글입니다.</td>
+								<td th:text="${board.writer}">홍길동</td>
+								<td th:text="${board.regdate}">2024-11-04</td>
+								<td th:text="${board.hitCnt}">4</td>
 								<td>3</td>
 								<td>0</td>
-								<td><a href="" class="btn_delete">삭제</a></td>
+								<td><a href="" class="btn_delete" th:onclick="'deleteFreeBoard(' + ${board.idx} + ')'">삭제</a></td>
 							</tr>
 						</tbody>
 					</table>

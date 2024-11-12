@@ -62,7 +62,11 @@ public class WebSecurityConfig {
 //				.requestMatchers("/member/**").permitAll()
 //				.requestMatchers("/board/**").hasAnyAuthority("USER", "MASTER")
 //				.requestMatchers("/master/**").hasAnyAuthority("MASTER")
-				.requestMatchers("/**").permitAll()
+				.requestMatchers("/").permitAll()
+				.requestMatchers("/member/**").permitAll()
+				.requestMatchers("/member/mypage/**").hasAnyAuthority("LVL-0001", "LVL-0002")
+				.requestMatchers("/board/**").permitAll()
+				.requestMatchers("/admin/**").hasAnyAuthority("LVL-0001")
 				.anyRequest().authenticated());
 
 		//세션 설정

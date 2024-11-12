@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>문제 수정</title>
+<!-- Standard css -->
+<link rel="icon" href="/img/logo/favicon.png">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet"
+	href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+<link rel="stylesheet"
+	href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+<!-- pub-js link -->
+<script src="/js/pub-ui-custom.js"></script>
+<!-- CodeMirror Kit -->
+<script src="/js/codemirror/codemirror-5.65.18/lib/codemirror.js"></script>
+<script src="/js/codemirror/codemirror-5.65.18/mode/sql/sql.js"></script>
+<script
+	src="/js/codemirror/codemirror-5.65.18/mode/javascript/javascript.js"></script>
+<script src="/js/codemirror/codemirror-5.65.18/mode/clike/clike.js"></script>
+<link rel="stylesheet"
+	href="/js/codemirror/codemirror-5.65.18/lib/codemirror.css">
+<link rel="stylesheet"
+	href="/js/codemirror/codemirror-5.65.18/theme/monokai.css">
+</head>
+<script>
+let languageIndex = parseInt('[[ ${ #lists.size(test.testLngList) } ]]');
+let editors = [];
+</script>
+<body>
+	<!-- header 영역 -->
+	<div id="header" th:replace="include/header"></div>
+	<div class="container">
+		<div class="main-content">
+			<div class="content-board-notice-write">
+				<div class="content-board-notice-write-wrap">
+					<h2>문제 수정</h2>
+					<div class="mt30"></div>
+					<form class="WriteForm" id="WriteForm" name="writeForm"
+						method="post">
+						<div class="category-menu">
+							<label for="diff">난이도</label>
+					        <select id="diff" name="diff">
+					            <option value="0" th:selected="${test.diff == 0}">0단계</option>
+					            <option value="1" th:selected="${test.diff == 1}">1단계</option>
+					            <option value="2" th:selected="${test.diff == 2}">2단계</option>
+					        </select>
+						</div>
+						<div class="category-title">
+							<label for="title">제목<span class="asterisk"></span></label>
+							<input type="text" name="title" id="title" maxlength="100" th:value="${test.title}">
+						</div>
+						<div class="category-content mt20">
+							<label for="content">내용<span class="asterisk"></span></label>
+							<div id="content"></div>
+						</div>
+						<!-- 언어별 문제 정보 추가 섹션 -->
+						<h2>언어별 문제 정보</h2>
+						<div id="language-sections">
+							<th:block th:if="${ test.testLngList != null }">
+								<div th:each="testLng, index : ${ test.testLngList }">
+									<div style="margin-bottom: 15px;">
+										<label for="language">언어:</label>
+										<select th:name="@{'testLngList[' + ${ index.count - 1 } + '].language'}" th:onchange="@{'changeMode(this, ' + ${ index.count - 1 } + ')'}" required>
+											<option value="java" th:selected="${ testLng.lng == 'LNG-0001' }">Java</option>
+											<option value="javascript" th:selected="${ testLng.lng == 'LNG-0002' }">JavaScript</option>
+		            					</select>
+		        					</div>
+		
+							        <div style="margin-bottom: 15px;">
+							            <label for="content">예제 코드</label>
+							            <div class="codemirror-editor" th:id="@{ 'content-editor-' + ${ index.count - 1 } }"></div>
+							        </div>
+		
+							        <div style="margin-bottom: 15px;">
+							            <label for="correct">정답 코드</label>
+							            <div class="codemirror-editor" th:id="@{ 'correct-editor-' + ${ index.count - 1 } }"></div>
+							        </div>
+		
+							        <div style="margin-bottom: 15px;">
+							            <label for="subm_src">메인 코드</label>
+							            <div class="codemirror-editor" th:id="@{ 'subm-src-editor-' + ${ index.count - 1 } }"></div>
+							        </div>
+							        
+							        <div style="margin-bottom: 15px;">
+							            <label for="run_src">실행 코드</label>
+							            <div class="codemirror-editor" th:id="@{ 'run-src-editor-' + ${ index.count - 1 } }"></div>
+							        </div>
+									<script>
+										mode = ('[[ ${ testLng.lng } ]]' === 'LNG-0001') ? 'text/x-java' : 
+														('[[ ${ testLng.lng } ]]' === 'LNG-0002') ? 'text/javascript' : '';
+									
+								        contentEditor = CodeMirror(document.getElementById('content-editor-[[ ${ index.count - 1 } ]]'), {
+								            mode: mode,
+								            theme: "monokai",
+								            lineNumbers: true,
+								            tabSize: 2,
+								            lineWrapping: true
+								        });
+	
+								        correctEditor = CodeMirror(document.getElementById('correct-editor-[[ ${ index.count - 1 }]]'), {
+								            mode: mode,
+								            theme: "monokai",
+								            lineNumbers: true,
+								            tabSize: 2,
+								            lineWrapping: true
+								        });
+	
+								        submSrcEditor = CodeMirror(document.getElementById('subm-src-editor-[[ ${ index.count - 1 }]]'), {
+								            mode: mode,
+								            theme: "monokai",
+								            lineNumbers: true,
+								            tabSize: 2,
+								            lineWrapping: true
+								        });
+								        
+								        runSrcEditor = CodeMirror(document.getElementById('run-src-editor-[[ ${ index.count - 1 }]]'), {
+								            mode: mode,
+								            theme: "monokai",
+								            lineNumbers: true,
+								            tabSize: 2,
+								            lineWrapping: true
+								        });
+								        
+								        contentEditor.setValue("[[${testLng.content}]]".replaceAll('\\t', '\t').replaceAll('\\n', '\n'));
+								        correctEditor.setValue("[[${testLng.correct}]]".replaceAll('\\t', '\t').replaceAll('\\n', '\n'));
+								        submSrcEditor.setValue("[[${testLng.submSrc}]]".replaceAll('\\t', '\t').replaceAll('\\n', '\n'));
+								        runSrcEditor.setValue("[[${testLng.runSrc}]]".replaceAll('\\t', '\t').replaceAll('\\n', '\n'));
+								        
+								        editors[parseInt('[[${index.count - 1}]]')] = { contentEditor, correctEditor, submSrcEditor, runSrcEditor };
+									</script>
+								</div>
+							</th:block>
+						</div>
+							
+						<button type="button" onclick="addLanguageSection()">언어
+							추가</button>
+						<div class="category-footer mt30">
+
+							<input type="button" id="modifyButton" onclick="testModify()" data-id="${test.idx}" value="문제 수정">
+							<input type="button" onclick="history.back();" value="뒤로가기">
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- footer영역 -->
+	<div id="footer" th:replace="include/footer"></div>
+
+	<!-- toast API -->
+	<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>	
+	
+	<script th:inline="javascript">
+	    // Thymeleaf를 사용하여 `descr`을 `editorDescr` 변수에 할당
+	    const editorDescr = /*[[${test.descr}]]*/ '';
+	</script>
+	
+	<script>
+   	const editor = new toastui.Editor({
+        el: document.querySelector('#content'),
+        previewStyle: 'vertical',
+        height: '400px',
+        initialEditType: 'markdown',
+        initialValue: editorDescr
+    });
+	
+    
+    
+    function addLanguageSection() {
+        const languageSections = document.getElementById('language-sections');
+        const newSection = document.createElement('div');
+        newSection.classList.add('language-section');
+
+        newSection.innerHTML = `
+        	<div style="margin-bottom: 15px;">
+            <label for="language">언어:</label>
+            <select name="testLngList[${languageIndex}].language" onchange="changeMode(this, ${languageIndex})" required>
+              <option value="java">Java</option>
+              <option value="javascript">JavaScript</option>
+            </select>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label for="content">예제 코드</label>
+            <div class="codemirror-editor" id="content-editor-${languageIndex}"></div>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label for="correct">정답 코드</label>
+            <div class="codemirror-editor" id="correct-editor-${languageIndex}"></div>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label for="subm_src">메인 코드</label>
+            <div class="codemirror-editor" id="subm-src-editor-${languageIndex}"></div>
+        </div>
+        
+        <div style="margin-bottom: 15px;">
+        <label for="run_src">실행 코드</label>
+        <div class="codemirror-editor" id="run-src-editor-${languageIndex}"></div>
+    </div>
+        `;
+
+        languageSections.appendChild(newSection);
+
+        initCodeMirror(languageIndex);
+
+        languageIndex++;
+    }
+
+    function changeMode(selectElement, index) {
+        const selectedLanguage = selectElement.value;
+        let mode = "";
+
+        if (selectedLanguage === "java") {
+            mode = "text/x-java";
+        } else if (selectedLanguage === "javascript") {
+            mode = "text/javascript";
+        }
+
+        updateCodeMirror(index, mode);
+    }
+
+    // CodeMirror 초기화
+    function initCodeMirror(index, mode = "text/x-java") {
+        const contentEditor = CodeMirror(document.getElementById(`content-editor-${index}`), {
+            mode: mode,
+            theme: "monokai",
+            lineNumbers: true,
+            tabSize: 2,
+            lineWrapping: true
+        });
+
+        const correctEditor = CodeMirror(document.getElementById(`correct-editor-${index}`), {
+            mode: mode,
+            theme: "monokai",
+            lineNumbers: true,
+            tabSize: 2,
+            lineWrapping: true
+        });
+
+        const submSrcEditor = CodeMirror(document.getElementById(`subm-src-editor-${index}`), {
+            mode: mode,
+            theme: "monokai",
+            lineNumbers: true,
+            tabSize: 2,
+            lineWrapping: true
+        });
+        
+        const runSrcEditor = CodeMirror(document.getElementById(`run-src-editor-${index}`), {
+            mode: mode,
+            theme: "monokai",
+            lineNumbers: true,
+            tabSize: 2,
+            lineWrapping: true
+        });
+
+        editors[index] = { contentEditor, correctEditor, submSrcEditor, runSrcEditor };
+    }
+
+    function updateCodeMirror(index, mode) {
+        if (editors[index]) {
+            const { contentEditor, correctEditor, submSrcEditor, runSrcEditor } = editors[index];
+
+            contentEditor.setOption("mode", mode);
+            correctEditor.setOption("mode", mode);
+            submSrcEditor.setOption("mode", mode);
+            runSrcEditor.setOption("mode", mode);
+
+        }
+    }
+    
+    const testModify = async () => {
+        let title = document.querySelector('#title');
+        let content = editor.getMarkdown();  // 에디터에서 markdown 내용을 가져옴
+        // 제목과 내용 검사
+        if (title.value === '') {
+            alert('제목을 입력하세요!!!');
+            title.focus();
+            return false;
+        }
+        if (content === '') {
+            alert('내용을 입력하세요!!!');
+            return false;
+        }
+        const data = {
+        	idx: parseInt('[[ ${ test.idx } ]]'),
+            title: title.value,
+            descr: content,
+            diff: document.querySelector("select[name='diff']").value,
+            regdate: new Date().toISOString(),
+            isUse: "Y",
+            testLngList: [],
+        };
+        
+        editors.forEach((editor, index) => {
+            const languageCode = document.querySelector(`select[name='testLngList[${index}].language']`).value;
+            console.log(languageCode);
+            data.testLngList.push({
+                lng: languageCode === 'java' ? 'LNG-0001' : 'LNG-0002',
+                content: editor.contentEditor.getValue().replaceAll('\n', '\\n').replaceAll('\t', '\\t'),
+                correct: editor.correctEditor.getValue().replaceAll('\n', '\\n').replaceAll('\t', '\\t'),
+                submSrc: editor.submSrcEditor.getValue().replaceAll('\n', '\\n').replaceAll('\t', '\\t'),
+                runSrc: editor.runSrcEditor.getValue().replaceAll('\n', '\\n').replaceAll('\t', '\\t'),
+                regdate: data.regdate,
+                isUse: data.isUse
+            });
+        });
+        console.log(data);
+        
+        await fetch('/admin/testboardModify', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then((response) => response.json())
+            .then((data) => {
+                if (data.message === 'good') {
+                    alert("문제 수정이 완료되었습니다.");
+                    document.location.href = '/admin/systemTest';
+                } else {
+                    alert("시스템 오류로 문제가 등록되지 않았습니다." + data.message);
+                }
+            }).catch((error) => {
+                alert("시스템 오류로 문제가 등록되지 않았습니다.");
+                console.log("error : " + error);
+            });
+    };
+  </script>
+<style>
+.toastui-editor-mode-switch {
+	display: none !important;
+}
+</style>
+</body>
+</html>

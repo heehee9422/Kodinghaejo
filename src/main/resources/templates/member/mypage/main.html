@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="kr">
+<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>내 정보</title>
+		<!-- Standard css -->
+		<link rel="icon" href="/img/logo/favicon.png">
+		<link rel="stylesheet" href="/css/style.css">
+		<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+		<!-- pub-js link -->
+		<script src="/js/pub-ui-custom.js"></script>
+</head>
+
+<body>
+	<!-- header-->
+	<div id="header" th:replace="include/header"></div>
+	<div class="container column bgcontain-mypage">
+		<div class="column-row myPage">
+			<div class="c-column-2">
+				<div id="mypage_manu" th:replace="include/mypage"></div>
+			</div>
+			<div class="c-column-8">
+				<div class="mypage_content">
+
+					<h5>내 정보</h5>
+					<div class="mypage_box">
+						<div class="mypage_profile">
+							<div class="profile_img">
+								<th:block th:if="${ member.imgSize != null && member.imgSize > 0 }">
+								<img th:src="@{ '/member/img/' + ${ member.email } }">
+								</th:block>
+								<th:block th:if="${ member.imgSize == null || member.imgSize == 0 }">
+								<img src="/img/test-profile/coolping.png">
+								</th:block>
+							</div>
+							<div class="profile_name">
+								<p class="profile_email">[[ ${ member.email } ]]</p>
+								<!-- 인증 안했을때 -->
+								<th:block th:if="${ member.emailAuth == 'N' }">
+								<p class="profile_email_crtf"><a href="#">이메일을 인증해주세요</a></p>
+								</th:block>
+								<th:block th:if="${ member.emailAuth == 'Y' }">
+								<p class="profile_email_crtf_ok"><i class="xi-marker-check"></i><span>인증 되었습니다</span></p>
+								</th:block>
+								<!-- <p>닉네임</p> -->
+							</div>
+						</div>
+					</div>
+
+					<h5>기본정보</h5>
+					<div class="mypage_box">
+						<div class="profile_list">
+							<h6 class="mb20">프로필</h6>
+							<ul>
+								<th:block th:if="${ member.website != null && member.website != '' }">
+								<li><b>블로그</b> : <a th:href="${ member.website }">[[ ${ member.website } ]]</a></li>
+								</th:block>
+								<li><b>전화번호</b> : [[ ${ member.tel } ]]</li>
+								<li><b>가입일자</b> : <span th:text="${ #temporals.format(member.regdate, 'yyyy-MM-dd a hh:mm:ss') }"></span></li>
+								<li><b>주요기술</b> : JAVA, JAVASCRIPT, SQL</li>
+								<li><b>희망 직무</b> : 직무1, 직무2, 직무3 </li></li>
+							</ul>
+							<h6>자기소개</h6>
+							<p><th:block th:if="${ member.descr == null && member.descr == '' }"></th:block>작성된 자기소개글이 없습니다.<th:block th:if="${ member.descr != null && member.descr != '' }">[[ ${ member.descr } ]]</th:block></p>
+							<div class="profile_btn_grup">
+								<input type="button" value="자기소개 변경하기" onclick="">
+								<input type="button" value="내 정보 수정" onclick="">
+							</div>
+						</div>
+					</div>
+							
+					<h5>비밀번호</h5>
+					<div class="mypage_box">
+						<p>최근 업데이트 일 : <th:block th:if="${ member.regdate == member.pwdate }">없음</th:block><th:block th:if="${ member.regdate != member.pwdate }"><span th:text="${ #temporals.format(member.pwdate, 'yyyy-MM-dd a hh:mm:ss') }"></span></th:block></p>
+						<div class="profile_btn_grup">
+							<input type="button" value="비밀번호 수정" onclick="editPassword()">
+						</div>
+					</div>
+
+					<h5>회원탈퇴</h5>
+					<div class="mypage_box">
+						<p>회원 탈퇴 시 테스트 정보가 삭제됩니다.</p>
+						<div class="profile_btn_grup">
+							<input type="button" id="btn_memdelete" class="btn_memdelete" value="회원탈퇴하기" onclick="deleteAccount()">
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+	
+	<script type="text/javascript">
+		//비밀번호 변경
+		const editPassword = () => {
+			document.location = '/member/editPassword';
+		}
+	
+		//회원 탈퇴
+		const deleteAccount = () => {
+			if (confirm('정말 회원 탈퇴를 하시겠습니까?'))
+				document.location = '/member/deleteAccount';
+		}
+	</script>
+
+	<!-- footer -->
+	<div id="footer" th:replace="include/footer"></div>
+</body>
+
+</html>

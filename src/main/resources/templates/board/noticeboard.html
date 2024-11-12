@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="kr">
+<html xmlns:th="http://www.thymeleaf.org" lang="kr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,19 +20,19 @@
       <div class="content-board-notice">
         <h2>
           코딩해조의 새로운 소식들!
-          <p>신규 콘텐츠, 이벤트, 기능 추가 등의 새로운 이야기를 들려드려요</span>
+          <p>신규 콘텐츠, 이벤트, 기능 추가 등의 새로운 이야기를 들려드려요</p>
         </h2>
         <ul class="board-notice-list">
           <!-- list-item -->
-          <li>
-            <a href="/">
+          <li th:each="notice : ${notices}">
+            <a th:href="@{/board/notice/{id}(id=${notice.idx})}">
               <h3>
                 <!-- new 일때 : 2일 까지만? -->
-                <i class="xi-new"></i>
-                [업데이트 소식] 10월 1주차 - 홈페이지 등록
+                <i class="xi-new" th:if="${notice.regdate.isAfter(T(java.time.LocalDateTime).now().minusDays(2))}"></i>
+                <span th:text="${notice.title}">[업데이트 소식] 10월 1주차 - 홈페이지 등록</span>
               </h3>
               <p>
-                <span><b>날짜</b>20241003</span>
+                <span><b><span th:text="${notice.regdate}">2024-10-03</span></span>
                 <span><b>대상</b>자바를 공부하는 친구들</span>
               </p>
             </a>
@@ -42,7 +42,7 @@
     </div>
   </div>
   <!-- footer영역 -->
-  <div id="footer"></div>
+  <div id="footer" th:replace="include/footer"></div>
 </body>
 
 </html>

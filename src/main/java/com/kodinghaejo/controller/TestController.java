@@ -25,6 +25,10 @@ import lombok.extern.log4j.Log4j2;
 public class TestController {
 
 	private final TestService service;
+	
+	//코딩테스트 문제 모아보기
+	@GetMapping("/test/problemCollect")
+	public void getProblemCollect() { }
 
 	//코딩테스트 문제 상세 화면
 	@GetMapping("/test/challenge")

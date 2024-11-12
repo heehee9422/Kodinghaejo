@@ -20,9 +20,11 @@
 			<div class="c-column-8">
 				<div class="sys-system_menu">
 					<h2>문제 목록</h2>
-					<div class="search-bar">
-						<input type="text" name="searchKeyword" placeholder="검색어 입력">
-						<button class="btn_search">검색</button>
+					<div class="search-bar mb20">
+						<form method="get" action="/admin/systemTest">
+					        <input type="text" name="searchKeyword" placeholder="검색어 입력" th:value="${searchKeyword}" />
+					        <button type="submit" class="btn_search">검색</button>
+					    </form>
 					</div>
 					<div class="sys-description-box mb20">
 						<div class="box-itme">
@@ -56,7 +58,9 @@
 						<tbody>
 							<tr th:each="test : ${tests}">
 								<td th:text="${test.idx}">1</td>
-								<td th:text="${test.title}">첫번째 문제입니다.</td>
+								<td>
+									<a th:href="@{/admin/testboardModify?id={id}(id=${test.idx})}" th:text="${test.title}">첫번째 문제입니다.</a>
+								</td>
 								<td th:text="${test.diff}">1레벨</td>
 								<td>
 						            <ul>

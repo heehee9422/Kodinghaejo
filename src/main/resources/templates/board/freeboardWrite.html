@@ -74,7 +74,7 @@ const registerForm = async() => {
 
 <body>
   <!-- header 영역 -->
-  <div id="header" th:replace="include/header"></div>
+  <div id="header" th:replace="include/header :: header"></div>
   <div class="container">
     <div class="main-content">
       <div class="content-board-notice-write">
@@ -97,9 +97,9 @@ const registerForm = async() => {
           <div class="category-title">
             <label for="title">제목<span class="asterisk"></span></label>
             <input type="text" id="title" name="title" placeholder="제목을 입력해 주세요" maxlength="100">
-            
-            <input type="hidden" id="email" name="email" value="admin@kodinghaejo.com">
-            <input type="hidden" id="writer" name="writer" value="관리자">
+ 
+            <input type="hidden" id="email" name="email" th:value="${session.email}">
+            <input type="hidden" id="writer" name="writer" th:value="${session.username}">
             <input type="hidden" id="isUse" name="isUse" value="Y">
             
           </div>
@@ -110,13 +110,13 @@ const registerForm = async() => {
             <div id="content"></div>
           </div>
           
-          </form> 
           
           <div class="category-footer mt30">
           
           <input type="button" value="전송" onclick="registerForm()">
             <button onclick="history.back();">뒤로가기</button>
           </div>
+          </form> 
           
           
           
@@ -127,7 +127,7 @@ const registerForm = async() => {
     </div>
   </div>
  <!-- footer영역 -->
-   <div id="footer" th:replace="include/footer"></div>
+   <div id="footer" th:replace="include/footer :: footer"></div>
   <!-- toast API : 나중에 모듈로 작성해서 만들기-->
   <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
   <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />

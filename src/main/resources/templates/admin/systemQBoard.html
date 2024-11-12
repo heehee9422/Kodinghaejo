@@ -9,6 +9,33 @@
 <link rel="stylesheet"
 	href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
 <script src="/js/pub-ui-custom.js"></script>
+
+<script>
+const deleteQBoard = (idx) => {
+    if (confirm("해당 게시글을 삭제하시겠습니까?")) {
+        fetch(`/admin/systemQBoardDelete/${idx}`, {
+            method: 'DELETE'
+        })
+        .then(response => {
+            console.log("Response status:", response.status);
+            return response.text().then(message => ({ status: response.status, message }));
+        })
+        .then(({ status, message }) => {
+            if (status === 200) {
+                alert(message); // 서버에서 전달한 성공 메시지
+                location.reload(); // 페이지 새로고침하여 목록 갱신
+            } else {
+                alert(`삭제 실패: ${message}`);
+            }
+        })
+        .catch(error => {
+            console.error('삭제 중 오류 발생:', error);
+            alert("삭제 요청 중 오류가 발생했습니다.");
+        });
+    }
+}
+</script>
+
 </head>
 <body>
 	<div id="header" th:replace="include/header"></div>
@@ -21,11 +48,13 @@
 				<div class="sys-system_menu">
 					<h2>질문게시판 관리</h2>
 					<div class="search-bar mb20">
-						<input type="text" name="searchKeyword" placeholder="검색어 입력">
-						<button class="btn_search">검색</button>
+						<form method="get" action="/admin/systemQBoard">
+					        <input type="text" name="searchKeyword" placeholder="검색어 입력" th:value="${searchKeyword}" />
+					        <button type="submit" class="btn_search">검색</button>
+					    </form>
 					</div>
 					<div class="sys-description-box mb20">
-						<h3>질문글 수 : 10</h3>
+						<h3>질문글 수 : <span th:text="${questionCount}"></span></h3>
 					</div>
 					<table>
 						<thead>
@@ -39,85 +68,13 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td>1</td>
-								<td>1</td>
-								<td>이 문제 버그났어요.</td>
-								<td>한건희</td>
-								<td>2024-11-04</td>
-								<td><a href="" class="btn_delete">삭제</a></td>
-							</tr>
-							<tr>
-								<td>2</td>
-								<td>2</td>
-								<td>힌트가 필요해요.</td>
-								<td>김민수</td>
-								<td>2024-11-03</td>
-								<td><a href="" class="btn_delete">삭제</a></td>
-							</tr>
-							<tr>
-								<td>3</td>
-								<td>1</td>
-								<td>이게 맞는 풀이인가요?</td>
-								<td>이영희</td>
-								<td>2024-11-02</td>
-								<td><a href="" class="btn_delete">삭제</a></td>
-							</tr>
-							<tr>
-								<td>4</td>
-								<td>3</td>
-								<td>문제 설명이 부족해요.</td>
-								<td>박준형</td>
-								<td>2024-11-01</td>
-								<td><a href="" class="btn_delete">삭제</a></td>
-							</tr>
-							<tr>
-								<td>5</td>
-								<td>2</td>
-								<td>시간 복잡도가 너무 커요.</td>
-								<td>최지수</td>
-								<td>2024-10-31</td>
-								<td><a href="" class="btn_delete">삭제</a></td>
-							</tr>
-							<tr>
-								<td>6</td>
-								<td>1</td>
-								<td>다른 사람 풀이 볼 수 있나요?</td>
-								<td>유진아</td>
-								<td>2024-10-30</td>
-								<td><a href="" class="btn_delete">삭제</a></td>
-							</tr>
-							<tr>
-								<td>7</td>
-								<td>4</td>
-								<td>테스트 케이스 추가 요청합니다.</td>
-								<td>정수현</td>
-								<td>2024-10-29</td>
-								<td><a href="" class="btn_delete">삭제</a></td>
-							</tr>
-							<tr>
-								<td>8</td>
-								<td>3</td>
-								<td>이 문제는 너무 쉬워요.</td>
-								<td>한성호</td>
-								<td>2024-10-28</td>
-								<td><a href="" class="btn_delete">삭제</a></td>
-							</tr>
-							<tr>
-								<td>9</td>
-								<td>2</td>
-								<td>잘못된 예제 입력이 있습니다.</td>
-								<td>이정민</td>
-								<td>2024-10-27</td>
-								<td><a href="" class="btn_delete">삭제</a></td>
-							</tr>
-							<tr>
-								<td>10</td>
-								<td>1</td>
-								<td>문제 이해가 안 돼요.</td>
-								<td>송지훈</td>
-								<td>2024-10-26</td>
-								<td><a href="" class="btn_delete">삭제</a></td>
+							<tr th:each="question : ${questions}">
+								<td th:text="${question.idx}">1</td>
+								<td th:text="${question.testIdx}">1</td>
+								<td th:text="${question.title}">이 문제 버그났어요.</td>
+								<td th:text="${question.writer}">한건희</td>
+								<td th:text="${question.regdate}">2024-11-04</td>
+								<td><a href="" class="btn_delete" th:onclick="'deleteQBoard(' + ${question.idx} + ')'">삭제</a></td>
 							</tr>
 						</tbody>
 					</table>

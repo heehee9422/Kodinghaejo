@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="kr" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>내 정보</title>
+	<!-- Standard css -->
+	<link rel="icon" href="/img/logo/favicon.png">
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+	<!-- pub-js link -->
+	<script src="/js/pub-ui-custom.js"></script>
+</head>
+<body>
+	<!-- header-->
+	<div id="header" th:replace="include/header"></div>
+	<div class="container column bgcontain-mypage">
+		<div class="column-row myPage">
+			<div class="c-column-2">
+				<div id="mypage_manu" th:replace="include/mypage"></div>
+			</div>
+			<div class="c-column-8">
+				<div class="mypage_content">
+					<h5>내가 쓴 글 관리</h5>
+
+					<div class="mypage_box">
+						<div class="mypage_box_item">
+							<h6>내가 작성한 게시글 <span>[[ ${ boardTotalElement } ]]</span></h6>
+							<table>
+								<caption style="display: none;">mypage테이블 입니다</caption>
+								<colgroup>
+									<col width="">
+									<col width="">
+									<col width="">
+									<col width="">
+									<col width="">
+									<col width="">
+								</colgroup>
+								<thead>
+									<tr>
+										<th>순번</th>
+											<th>게시판</th>
+											<th>제목</th>
+											<th>작성일</th>
+											<th>조회수</th>
+											<th>좋아요수</th>
+											<th>삭제</th>
+									</tr>
+								</thead>
+								<tbody>
+									<th:block th:if="${ boardTotalElement > 0 }">
+									<tr th:each="board, index : ${ boardList }">
+										<td th:text="${ boardTotalElement - (boardPage - 1) * postNum - index.count + 1 }"></td>
+										<td><a th:href="@{ '/board/freeboard?idx=' + board.idx }">[[ ${ board.cat } ]]</a></td>
+										<td>[[ ${ board.title } ]]</td>
+										<td th:text="${ #temporals.format(board.regdate, 'yyyy-MM-dd a hh:mm:ss') }"></td>
+										<td>[[ ${ board.hitCnt } ]]</td>
+										<td>[[ ${ board.goodCnt } ]]</td>
+										<td><button class="btn_delete" th:onclick="|deleteBoard(${ board.idx })|">삭제</button></td>
+									</tr>
+									</th:block>
+									<th:block th:if="${ boardTotalElement == 0 }">
+									<tr>
+										<td colspan="7">작성한 게시글이 없습니다.</td>
+									</tr>
+									</th:block>
+								</tbody>
+							</table>
+							<div class="problem-board-table-paging">
+								[( ${ boardPageList } )]
+							</div>
+						</div>
+						<hr class="dashed">
+						<div class="mypage_box_item">
+								<h6>댓글 <span>[[ ${ replyTotalElement } ]]</span></h6>
+								<table>
+									<caption style="display: none;">mypage테이블 입니다</caption>
+									<colgroup>
+										<col width="">
+										<col width="">
+										<col width="">
+										<col width="">
+										<col width="">
+										<col width="">
+										<col width="">
+									</colgroup>
+									<thead>
+										<tr>
+											<th>순번</th>
+											<th>원글</th>
+											<th>제목</th>
+											<th>작성일</th>
+											<th>조회수</th>
+											<th>좋아요수</th>
+											<th>삭제</th>
+										</tr>
+									</thead>
+									<tbody>
+										<th:block th:if="${ replyTotalElement > 0 }">
+										<tr th:each="reply, index : ${ replyList }">
+											<td th:text="${ replyTotalElement - (replyPage - 1) * postNum - index.count + 1 }"></td>
+											<td><a href="#">안녕하세요</a></td>
+											<td>그래요</td>
+											<td>24/10/25</td>
+											<td>5</td>
+											<td>5</td>
+											<td><button class="btn_delete">삭제</button></td>
+										</tr>
+										</th:block>
+										<th:block th:if="${ replyTotalElement == 0 }">
+											<tr>
+												<td colspan="7">작성한 댓글이 없습니다.</td>
+											</tr>
+										</th:block>
+									</tbody>
+								</table>
+								<div class="problem-board-table-paging">
+									[( ${ replyPageList } )]
+								</div>
+						</div>
+						
+					</div>	 
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- footer -->
+	<div id="footer" th:replace="include/footer"></div>
+</body>
+
+<script>
+	pagenation();
+</script>
+
+</html>

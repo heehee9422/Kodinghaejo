@@ -10,6 +10,31 @@
 	href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
 <script src="/js/pub-ui-custom.js"></script>
 
+<script>
+const deleteEmptyChats = () => {
+    if (confirm("채팅방을 정리하시겠습니까?")) {
+        fetch(`/admin/systemChatDelete`, {
+            method: 'DELETE'
+        })
+        .then(response => {
+            if (response.ok) {
+                alert("채팅방이 정리되었습니다.");
+                location.reload();
+            } else {
+                // 상태 코드 출력 (디버깅 용도)
+                console.log('Error Status:', response.status);
+                alert("채팅방 정리에 실패했습니다.");
+            }
+        })
+        .catch(error => {
+            console.error('삭제 중 오류 발생:', error);
+            alert("삭제 요청 중 오류가 발생했습니다.");
+        });
+    }
+}
+</script>
+
+
 </head>
 
 <body>
@@ -22,16 +47,18 @@
 			<div class="c-column-8">
 				<div class="sys-system_menu">
 					<h2>채팅방 관리</h2>
-					<div class="search-bar">
-						<input type="text" name="searchKeyword" placeholder="검색어 입력">
-						<button class="btn_search">검색</button>
+					<div class="search-bar mb20">
+						<form method="get" action="/admin/systemChat">
+					        <input type="text" name="searchKeyword" placeholder="검색어 입력" th:value="${searchKeyword}" />
+					        <button type="submit" class="btn_search">검색</button>
+					    </form>
 					</div>
 					<div class="sys-description-box mb20">
 						<div class="box-itme">
-							<h3 class="mt20">채팅방 수 : 5</h3>
+							<h3 class="mt20">채팅방 수 : <span th:text="${chatCount}"></span></h3>
 						</div>
 						<div class="box-itme">
-							<button class="deletechat-btn mt20">인원 없는 채팅방 삭제</button>
+							<button class="deletechat-btn mt20" onclick="deleteEmptyChats()">인원 없는 채팅방 삭제</button>
 						</div>
 					</div>
 					<table>
@@ -61,104 +88,14 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td>1</td>
-								<td>같이 코딩공부하실분</td>
+							<tr th:each="chat : ${chats}">
+								<td th:text="${chat.idx}">1</td>
+								<td th:text="${chat.title}">같이 코딩공부하실분</td>
 								<td>홍길동</td>
-								<td>2024-11-04</td>
-								<td>4</td>
+								<td th:text="${chat.regdate}">2024-11-04</td>
+								<td th:text="${chat.limit}">4</td>
 								<td>11</td>
 								<td>0</td>
-								<td><a href="" class="btn_view">상세보기</a></td>
-							</tr>
-							<tr>
-								<td>2</td>
-								<td>프로젝트 팀 구합니다</td>
-								<td>김영희</td>
-								<td>2024-11-03</td>
-								<td>6</td>
-								<td>23</td>
-								<td>1</td>
-								<td><a href="" class="btn_view">상세보기</a></td>
-							</tr>
-							<tr>
-								<td>3</td>
-								<td>알고리즘 스터디</td>
-								<td>이철수</td>
-								<td>2024-11-02</td>
-								<td>8</td>
-								<td>18</td>
-								<td>0</td>
-								<td><a href="" class="btn_view">상세보기</a></td>
-							</tr>
-							<tr>
-								<td>4</td>
-								<td>프로그래밍 언어 토론방</td>
-								<td>박지수</td>
-								<td>2024-11-01</td>
-								<td>5</td>
-								<td>27</td>
-								<td>2</td>
-								<td><a href="" class="btn_view">상세보기</a></td>
-							</tr>
-							<tr>
-								<td>5</td>
-								<td>JS 초보 스터디</td>
-								<td>최민호</td>
-								<td>2024-10-31</td>
-								<td>3</td>
-								<td>15</td>
-								<td>0</td>
-								<td><a href="" class="btn_view">상세보기</a></td>
-							</tr>
-							<tr>
-								<td>6</td>
-								<td>백엔드 개발자 모임</td>
-								<td>윤정아</td>
-								<td>2024-10-30</td>
-								<td>9</td>
-								<td>30</td>
-								<td>3</td>
-								<td><a href="" class="btn_view">상세보기</a></td>
-							</tr>
-							<tr>
-								<td>7</td>
-								<td>코딩 챌린지 그룹</td>
-								<td>서준호</td>
-								<td>2024-10-29</td>
-								<td>7</td>
-								<td>21</td>
-								<td>0</td>
-								<td><a href="" class="btn_view">상세보기</a></td>
-							</tr>
-							<tr>
-								<td>8</td>
-								<td>리액트 공부방</td>
-								<td>정미나</td>
-								<td>2024-10-28</td>
-								<td>6</td>
-								<td>14</td>
-								<td>1</td>
-								<td><a href="" class="btn_view">상세보기</a></td>
-							</tr>
-							<tr>
-								<td>9</td>
-								<td>데이터베이스 스터디</td>
-								<td>강수연</td>
-								<td>2024-10-27</td>
-								<td>4</td>
-								<td>10</td>
-								<td>0</td>
-								<td><a href="" class="btn_view">상세보기</a></td>
-							</tr>
-							<tr>
-								<td>10</td>
-								<td>AI와 머신러닝 토론방</td>
-								<td>이상훈</td>
-								<td>2024-10-26</td>
-								<td>10</td>
-								<td>35</td>
-								<td>5</td>
 								<td><a href="" class="btn_view">상세보기</a></td>
 							</tr>
 						</tbody>

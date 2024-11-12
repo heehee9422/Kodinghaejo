@@ -20,16 +20,19 @@
 			<div class="c-column-8">
 				<div class="sys-system_menu">
 					<h2 class="mt20">회원 목록</h2>
-					<div class="search-bar">
-						<select name="searchType">
-							<option value="email">이메일</option>
-							<option value="nickname">닉네임</option>
-							<option value="name">이름</option>
-						</select> <input type="text" name="searchKeyword" placeholder="검색어 입력">
-						<button class="btn_search">검색</button>
+					<div class="search-bar mb20">
+					    <form method="get" action="/admin/systemMemberInfo">
+					        <select name="searchType" th:value="${searchType}">
+					            <option value="email" th:selected="${searchType == 'email'}">이메일</option>
+					            <option value="nickname" th:selected="${searchType == 'nickname'}">닉네임</option>
+					            <option value="name" th:selected="${searchType == 'name'}">이름</option>
+					        </select>
+					        <input type="text" name="searchKeyword" placeholder="검색어 입력" th:value="${searchKeyword}" />
+					        <button type="submit" class="btn_search">검색</button>
+					    </form>
 					</div>
 					<div class="sys-description-box mb20">
-						<h3 class="mt20">회원 수 : 10</h3>
+						<h3 class="mt20">회원 수 : <span th:text="${memberCount}"></span></h3>
 					</div>
 					<table>
 						<caption style="display: none;">관리자 게시판 입니다</caption>
@@ -57,113 +60,14 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
+							<tr th:each="member : ${members}">
 								<td>1</td>
-								<td>MASTER</td>
-								<td>example1@example.com</td>
-								<td>user1</td>
-								<td>홍길동</td>
-								<td>010-1234-5678</td>
-								<td>2024-01-01</td>
-								<td><a href="" class="btn_view">상세보기</a></td>
-								<td><a href="" class="btn_delete">탈퇴</a></td>
-							</tr>
-							<tr>
-								<td>2</td>
-								<td>USER</td>
-								<td>example2@example.com</td>
-								<td>user2</td>
-								<td>이순신</td>
-								<td>010-8765-4321</td>
-								<td>2024-01-02</td>
-								<td><a href="" class="btn_view">상세보기</a></td>
-								<td><a href="" class="btn_delete">탈퇴</a></td>
-							</tr>
-							<tr>
-								<td>3</td>
-								<td>USER</td>
-								<td>example3@example.com</td>
-								<td>user3</td>
-								<td>김유신</td>
-								<td>010-1111-2222</td>
-								<td>2024-01-03</td>
-								<td><a href="" class="btn_view">상세보기</a></td>
-								<td><a href="" class="btn_delete">탈퇴</a></td>
-							</tr>
-							<tr>
-								<td>4</td>
-								<td>USER</td>
-								<td>example4@example.com</td>
-								<td>user4</td>
-								<td>강감찬</td>
-								<td>010-3333-4444</td>
-								<td>2024-01-04</td>
-								<td><a href="" class="btn_view">상세보기</a></td>
-								<td><a href="" class="btn_delete">탈퇴</a></td>
-							</tr>
-							<tr>
-								<td>5</td>
-								<td>USER</td>
-								<td>example5@example.com</td>
-								<td>user5</td>
-								<td>이몽룡</td>
-								<td>010-5555-6666</td>
-								<td>2024-01-05</td>
-								<td><a href="" class="btn_view">상세보기</a></td>
-								<td><a href="" class="btn_delete">탈퇴</a></td>
-							</tr>
-							<tr>
-								<td>6</td>
-								<td>USER</td>
-								<td>example6@example.com</td>
-								<td>user6</td>
-								<td>성춘향</td>
-								<td>010-7777-8888</td>
-								<td>2024-01-06</td>
-								<td><a href="" class="btn_view">상세보기</a></td>
-								<td><a href="" class="btn_delete">탈퇴</a></td>
-							</tr>
-							<tr>
-								<td>7</td>
-								<td>USER</td>
-								<td>example7@example.com</td>
-								<td>user7</td>
-								<td>춘향이</td>
-								<td>010-9999-0000</td>
-								<td>2024-01-07</td>
-								<td><a href="" class="btn_view">상세보기</a></td>
-								<td><a href="" class="btn_delete">탈퇴</a></td>
-							</tr>
-							<tr>
-								<td>8</td>
-								<td>USER</td>
-								<td>example8@example.com</td>
-								<td>user8</td>
-								<td>홍길동2</td>
-								<td>010-1212-3434</td>
-								<td>2024-01-08</td>
-								<td><a href="" class="btn_view">상세보기</a></td>
-								<td><a href="" class="btn_delete">탈퇴</a></td>
-							</tr>
-							<tr>
-								<td>9</td>
-								<td>USER</td>
-								<td>example9@example.com</td>
-								<td>user9</td>
-								<td>김삿갓</td>
-								<td>010-2323-4545</td>
-								<td>2024-01-09</td>
-								<td><a href="" class="btn_view">상세보기</a></td>
-								<td><a href="" class="btn_delete">탈퇴</a></td>
-							</tr>
-							<tr>
-								<td>10</td>
-								<td>USER</td>
-								<td>example10@example.com</td>
-								<td>user10</td>
-								<td>유관순</td>
-								<td>010-3434-5656</td>
-								<td>2024-01-10</td>
+								<td th:text="${member.lvl == 'LVL-0001' ? 'MASTER' : 'USER'}">MASTER</td>
+								<td th:text="${member.email}">example1@example.com</td>
+								<td th:text="${member.nickname}">user1</td>
+								<td th:text="${member.username}">홍길동</td>
+								<td th:text="${member.tel}">010-1234-5678</td>
+								<td th:text="${member.regdate}">2024-01-01</td>
 								<td><a href="" class="btn_view">상세보기</a></td>
 								<td><a href="" class="btn_delete">탈퇴</a></td>
 							</tr>

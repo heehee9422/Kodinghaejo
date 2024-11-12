@@ -9,6 +9,32 @@
 <link rel="stylesheet"
 	href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
 <script src="/js/pub-ui-custom.js"></script>
+<script>
+const deleteNotice = (idx) => {
+    if (confirm("공지사항을 삭제하시겠습니까?")) {
+        fetch(`/admin/systemBoardDelete/${idx}`, {
+            method: 'DELETE'
+        })
+        .then(response => {
+            console.log("Response status:", response.status);
+            return response.text().then(message => ({ status: response.status, message }));
+        })
+        .then(({ status, message }) => {
+            if (status === 200) {
+                alert(message); // 서버에서 전달한 성공 메시지
+                location.reload(); // 페이지 새로고침하여 목록 갱신
+            } else {
+                alert(`삭제 실패: ${message}`);
+            }
+        })
+        .catch(error => {
+            console.error('삭제 중 오류 발생:', error);
+            alert("삭제 요청 중 오류가 발생했습니다.");
+        });
+    }
+}
+</script>
+
 </head>
 <div id="header" th:replace="include/header"></div>
 <body>
@@ -20,18 +46,16 @@
 			<div class="c-column-8">
 				<div class="sys-system_menu">
 					<h2>공지사항 관리</h2>
-					<div class="search-bar mb20">
-						<select name="searchType">
-							<option value="email">이메일</option>
-							<option value="nickname">닉네임</option>
-							<option value="name">이름</option>
-						</select> <input type="text" name="searchKeyword" placeholder="검색어 입력">
-						<button class="btn_search">검색</button>
+					<div class="search-bar mb-20">
+						<form method="get" action="/admin/systemNotice">
+					        <input type="text" name="searchKeyword" placeholder="검색어 입력" th:value="${searchKeyword}" />
+					        <button type="submit" class="btn_search">검색</button>
+					    </form>
 					</div>
 					<div class="sys-description-box  mb20">
-						<h3>공지글 수 : 10</h3>
+						<h3>공지글 수 : <span th:text="${boardCount}"></span></h3>
 						<div class="box-itme">
-							<button class="noticewrite-button"><a href="/noticeboardWrite">공지 작성</a></button>
+							<button class="noticewrite-button"><a href="/admin/noticeboardWrite">공지 작성</a></button>
 						</div>
 					</div>
 					<table>
@@ -57,95 +81,16 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td>1</td>
-								<td>첫번째 공지글입니다.</td>
-								<td>운영자</td>
-								<td>2024-11-04</td>
-								<td>4</td>
+							<tr th:each="board : ${boards}">
+								<td th:text="${board.idx}">1</td>
+								<td>
+									<a th:href="@{/admin/noticeboardModify?id={id}(id=${board.idx})}" th:text ="${board.title}">첫번째 공지사항입니다.</a>
+								</td>
+								<td th:text="${board.writer}">운영자</td>
+								<td th:text="${board.regdate}">2024-11-04</td>
+								<td th:text="${board.hitCnt}">4</td>
 								<td>3</td>
-								<td><a href="" class="btn_delete">삭제</a></td>
-							</tr>
-							<tr>
-								<td>2</td>
-								<td>두번째 공지글입니다.</td>
-								<td>운영자</td>
-								<td>2024-11-03</td>
-								<td>6</td>
-								<td>5</td>
-								<td><a href="" class="btn_delete">삭제</a></td>
-							</tr>
-							<tr>
-								<td>3</td>
-								<td>세번째 공지글입니다.</td>
-								<td>운영자</td>
-								<td>2024-11-02</td>
-								<td>10</td>
-								<td>8</td>
-								<td><a href="" class="btn_delete">삭제</a></td>
-							</tr>
-							<tr>
-								<td>4</td>
-								<td>네번째 공지글입니다.</td>
-								<td>운영자</td>
-								<td>2024-11-01</td>
-								<td>7</td>
-								<td>6</td>
-								<td><a href="" class="btn_delete">삭제</a></td>
-							</tr>
-							<tr>
-								<td>5</td>
-								<td>다섯번째 공지글입니다.</td>
-								<td>운영자</td>
-								<td>2024-10-31</td>
-								<td>3</td>
-								<td>2</td>
-								<td><a href="" class="btn_delete">삭제</a></td>
-							</tr>
-							<tr>
-								<td>6</td>
-								<td>여섯번째 공지글입니다.</td>
-								<td>운영자</td>
-								<td>2024-10-30</td>
-								<td>5</td>
-								<td>3</td>
-								<td><a href="" class="btn_delete">삭제</a></td>
-							</tr>
-							<tr>
-								<td>7</td>
-								<td>일곱번째 공지글입니다.</td>
-								<td>운영자</td>
-								<td>2024-10-29</td>
-								<td>2</td>
-								<td>1</td>
-								<td><a href="" class="btn_delete">삭제</a></td>
-							</tr>
-							<tr>
-								<td>8</td>
-								<td>여덟번째 공지글입니다.</td>
-								<td>운영자</td>
-								<td>2024-10-28</td>
-								<td>12</td>
-								<td>10</td>
-								<td><a href="" class="btn_delete">삭제</a></td>
-							</tr>
-							<tr>
-								<td>9</td>
-								<td>아홉번째 공지글입니다.</td>
-								<td>운영자</td>
-								<td>2024-10-27</td>
-								<td>9</td>
-								<td>7</td>
-								<td><a href="" class="btn_delete">삭제</a></td>
-							</tr>
-							<tr>
-								<td>10</td>
-								<td>열번째 공지글입니다.</td>
-								<td>운영자</td>
-								<td>2024-10-26</td>
-								<td>8</td>
-								<td>6</td>
-								<td><a href="" class="btn_delete">삭제</a></td>
+								<td><a href="" class="btn_delete" th:onclick="'deleteNotice(' + ${board.idx} + ')'">삭제</a></td>
 							</tr>
 						</tbody>
 					</table>

@@ -50,7 +50,7 @@ public class AuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 		String url = "/";
 		
 		//비밀번호 변경 알림일자 도래 시
-		if (member.getNotifdate().toString().compareTo(LocalDateTime.now().toString()) < 0)
+		if (member.getNotifdate() != null && member.getNotifdate().toString().compareTo(LocalDateTime.now().toString()) < 0)
 			url = "/member/pwNotice";
 		
 		setDefaultTargetUrl(url);
