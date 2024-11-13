@@ -16,7 +16,7 @@
 	<script>
 		async function toggleLike(postIdx, action) {
 			try {
-				const response = await fetch('/board/toggleLike', {
+				const response = await fetch('/board/m/toggleLike', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json'
@@ -53,7 +53,7 @@
 				<div class="content-board-free">
 					<div class="content-board-free-title">
 						<h3>자유롭게 이야기를 나누어 보세요</h3>
-						<button class="board-free-btn" onclick="location.href='/board/freeboardWrite'" >작성하기</button>
+						<button class="board-free-btn" onclick="location.href='/board/m/freeboardWrite'" >작성하기</button>
 					</div>
 					<div class="content-board-free-content">
 						<div class="free-content-box">

@@ -67,26 +67,26 @@ public class BoardController {
 			
 		
 	//게시물 쓰기화면 보기
-	@GetMapping("/board/freeboardWrite")
+	@GetMapping("/board/m/freeboardWrite")
 	public void getFreeboardWrite() { }
 	
 	//게시물 등록
 	@ResponseBody
-	@PostMapping("/board/write")
+	@PostMapping("/board/m/write")
 	public String postUpload(BoardDTO board) throws Exception {
 		service.write(board);
 		return "{\"message\":\"good\"}";
 	}	
 	
 	//게시물 수정화면 보기
-	@GetMapping("/board/freeboardmodify")
+	@GetMapping("/board/m/freeboardmodify")
 	public void getModify(@RequestParam("idx") Long idx,Model model) throws Exception {
 		model.addAttribute("view", service.view(idx));
 	}
 	
 	//게시물 수정
 	@ResponseBody
-	@PostMapping("/board/modify")
+	@PostMapping("/board/m/modify")
 	public String postModify(BoardDTO board) throws Exception {
 		service.modify(board);
 		Long idx = board.getIdx();
@@ -124,7 +124,7 @@ public class BoardController {
 	}
 	
 	//게시물 비활성화
-	@GetMapping("/board/deactive")
+	@GetMapping("/board/m/deactive")
 	public String deactivePost(BoardDTO board)throws Exception	{
 		service.deactivePost(board);
 		Long idx = board.getIdx();
@@ -133,7 +133,7 @@ public class BoardController {
 
 	//댓글 등록
 	@ResponseBody
-	@PostMapping("/board/replyWrite")
+	@PostMapping("/board/m/replyWrite")
 	public String replyWrite(ReplyDTO reply) throws Exception {
 		service.replyWrite(reply);
 		return "{\"message\":\"good\"}";
@@ -141,7 +141,7 @@ public class BoardController {
 		
 		
 	//댓글 비활성화
-	@GetMapping("/board/replyDeactive")
+	@GetMapping("/board/m/replyDeactive")
 	public String replyDeactive(ReplyInterface reply,@RequestParam("idx") Long idx, @RequestParam("prntIdx") Long prntIdx) throws Exception {						
 		System.out.println(prntIdx);
 		//service.replyDeactive(reply);
@@ -150,7 +150,7 @@ public class BoardController {
 
 	//댓글 수정
 	@ResponseBody
-	@PostMapping("/board/replyModify")
+	@PostMapping("/board/m/replyModify")
 	public String replyModify(ReplyInterface reply)throws Exception {						
 
 		System.out.println(reply.getContent());
@@ -161,7 +161,7 @@ public class BoardController {
 	
 	//좋아요 up,dowm
 	@ResponseBody
-	@PostMapping("/board/toggleLike")
+	@PostMapping("/board/m/toggleLike")
 	public Map<String, Object> toggleLike(@RequestBody Map<String, Object> requestData, HttpSession session) {
 		String email = (String) session.getAttribute("email");
 		Long postIdx = Long.valueOf(requestData.get("postIdx").toString());
@@ -180,7 +180,7 @@ public class BoardController {
 
 	//신고하기
 	@ResponseBody
-	@PostMapping("/board/report")
+	@PostMapping("/board/m/report")
 	public Map<String, String> reportPost(@RequestBody Map<String, Object> requestData, HttpSession session) {
 		String email = (String) session.getAttribute("email");
 		Long postIdx = Long.valueOf(requestData.get("postIdx").toString());
@@ -206,8 +206,10 @@ public class BoardController {
 		
 		return "/board/noticeboard";
 	}
+
+	//==================== 마이 페이지 ====================
 	
-	//내 게시판(마이 페이지)
+	//내 게시판
 	@GetMapping("/member/mypage/myboard")
 	public void getMypageMyboard(Model model, @RequestParam(name = "boardPage", defaultValue = "1") int boardPageNum, 
 			@RequestParam(name = "replyPage", defaultValue = "1") int replyPageNum, HttpSession session) throws Exception {

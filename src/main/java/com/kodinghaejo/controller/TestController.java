@@ -32,9 +32,8 @@ public class TestController {
 
 	//코딩테스트 문제 상세 화면
 	@GetMapping("/test/challenge")
-	public void getChallenge(Model model, @RequestParam("idx") Long idx, @RequestParam("path") String path) throws Exception {
+	public void getChallenge(Model model, @RequestParam("idx") Long idx) throws Exception {
 		model.addAttribute("test", service.loadTest(idx));
-		model.addAttribute("path", path);
 		model.addAttribute("java", service.lngAvlChk(idx, "LNG-0001"));
 		model.addAttribute("js", service.lngAvlChk(idx, "LNG-0002"));
 		model.addAttribute("oracle", service.lngAvlChk(idx, "LNG-0003"));

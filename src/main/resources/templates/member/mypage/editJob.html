@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="kr" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>희망 직무 변경</title>
+	<!-- Standard css -->
+	<link rel="icon" href="/img/logo/favicon.png" />
+	<link rel="stylesheet" href="/css/style.css" />
+	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css" />
+	<!-- pub-js link -->
+	<script src="/js/pub-ui-custom.js"></script>
+	<!-- common-code-js link -->
+	<script src="/js/common-code.js"></script>
+	<script type="text/javascript" th:inline="javascript">
+		var commonCode = /*[[ ${ commonCode } ]]*/'공통코드';
+	</script>
+</head>
+<!-- 게시판 복사용 게시판 -->
+<body>
+	<!-- header 영역 -->
+	<div id="header" th:replace="include/header"></div>
+	<div class="container column bgcontain-mypage">
+		<div class="column-row myPage">
+			<div class="c-column-2">
+				<div id="mypage_manu" th:replace="include/mypage"></div>
+			</div>
+			<div class="c-column-8">
+				<div class="mypage_content">
+
+					<h5>희망 직무 변경</h5>
+					<div class="mypage_box">
+						<form id="editForm" name="editForm" method="post">
+							<h6>희망하는 직군을 최대 3개까지 선택할 수 있습니다.</h6>
+							<div id="selectedArea"></div>
+							<div id="hiddenArea">
+								<input type="hidden" name="job" th:value="${ member.job1 }">
+								<input type="hidden" name="job" th:value="${ member.job2 }">
+								<input type="hidden" name="job" th:value="${ member.job3 }">
+							</div>
+							
+							<div class="mt20">
+								<input type="button" value="취소" onclick="history.back()">
+								<input type="button" value="저장" onclick="saveJob()">
+							</div>
+						</form>
+						
+						<script type="text/javascript">
+							//변수 선언
+							var selectCnt = 0; //선택된 직군 수
+							const selectedArea = document.querySelector('#selectedArea'); //선택한 직군 목록
+							let hiddens = document.getElementsByName('job'); //선택한 기술 값이 저장된 실제 hidden 요소들
+
+							//초기 세팅
+							for (let i = 0; i < hiddens.length; i++)
+								if (hiddens[i].value != '') selectCnt++;
+							
+							/*
+								color
+								선택된 것 #44576c
+								선택 가능한 것 #999
+								선택 불가능한 것 #ddd
+							*/
+							for (const i in commonCode.job) {
+								var child = document.createElement('p');
+								child.setAttribute('id', commonCode.job[i].code);
+								child.innerText = commonCode.job[i].val;
+								child.style.display = 'inline-block';
+								child.style.color = (selectCnt == 3) ? '#aaa' : '#000';
+								child.style.backgroundColor = (selectCnt == 3) ? '#ddd' : '#999';
+								child.style.margin = '5px';
+								child.style.padding = '0 5px';
+								child.style.cursor = 'pointer';
+								child.onclick = () => { selectJob(commonCode.job[i].code); };
+								selectedArea.appendChild(child);
+							}
+							
+							for (let i = 0; i < hiddens.length; i++) {
+								if (hiddens[i].value != '') {
+									document.querySelector('#' + hiddens[i].value).style.backgroundColor
+										= '#44576c';
+									document.querySelector('#' + hiddens[i].value).style.color
+										= '#fff';
+								}
+							}
+							
+							//직군 선택
+							const selectJob = (code) => {
+								let isSelected = false;
+								
+								//선택한 직군 값이 저장된 실제 hidden 요소들
+								let hiddens = document.getElementsByName('job');
+								let hiddenValues = [];
+								
+								for (let i = 0; i < hiddens.length; i++) {
+									//이미 선택했던 직군을 클릭한 경우
+									if (hiddens[i].value == code) {
+										selectCnt--;
+										isSelected = true;
+										hiddens[i].value = '';
+									}
+									
+									if (hiddens[i].value != '') hiddenValues.push(hiddens[i].value);
+									hiddens[i].value = '';
+								}
+
+								//이미 기술 3개가 선택되어 있을 경우
+								if (selectCnt == 3) {
+									for (let i = 0; i < hiddenValues.length; i++)
+										hiddens[i].value = hiddenValues[i];
+									return false;
+								}
+								
+								//기존에 선택되지 않았던 직군을 클릭한 경우
+								if (!isSelected) {
+									hiddenValues.push(code);
+									selectCnt++;
+								}
+								
+								for (const i in commonCode.job) {
+									document.querySelector('#' + commonCode.job[i].code).style.backgroundColor
+										= (selectCnt == 3) ? '#ddd' : '#999';
+									document.querySelector('#' + commonCode.job[i].code).style.color
+										= (selectCnt == 3) ? '#aaa' : '#000';
+								}
+
+								for (let i = 0; i < hiddenValues.length; i++) {
+									document.querySelector('#' + hiddenValues[i]).style.backgroundColor
+									 = '#44576c';
+									document.querySelector('#' + hiddenValues[i]).style.color
+									 = '#fff';
+									
+									hiddens[i].value = hiddenValues[i];
+								}
+							}
+							
+							//변경된 직무 저장
+							const saveJob = () => {
+								let hiddens = document.getElementsByName('job');
+								
+								fetch('/member/mypage/editJob', {
+									method: 'POST',
+									headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+									body: new URLSearchParams({
+										'job1': hiddens[0].value,
+										'job2': hiddens[1].value,
+										'job3': hiddens[2].value
+									})
+								})
+								.then((response) => response.json())
+								.then((data) => {
+									if (data.message == 'good') {
+										alert("변경사항이 저장되었습니다.");
+										history.go(0);
+									} else {
+										alert('시스템 장애로 인해 변경사항 저장에 실패했습니다.');
+									}
+								})
+								.catch((error) => {
+									console.log('error: ' + error);
+									alert('시스템 장애로 인해 변경사항 저장에 실패했습니다.');
+								});
+							}
+						</script>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+	<!-- footer영역 -->
+	<div id="footer" th:replace="include/footer"></div>
+</body>
+</html>

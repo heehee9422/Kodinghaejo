@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="kr" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>주요 기술 변경</title>
+	<!-- Standard css -->
+	<link rel="icon" href="/img/logo/favicon.png" />
+	<link rel="stylesheet" href="/css/style.css" />
+	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css" />
+	<!-- pub-js link -->
+	<script src="/js/pub-ui-custom.js"></script>
+	<!-- common-code-js link -->
+	<script src="/js/common-code.js"></script>
+	<script type="text/javascript" th:inline="javascript">
+		var commonCode = /*[[ ${ commonCode } ]]*/'공통코드';
+	</script>
+</head>
+<!-- 게시판 복사용 게시판 -->
+<body>
+	<!-- header 영역 -->
+	<div id="header" th:replace="include/header"></div>
+	<div class="container column bgcontain-mypage">
+		<div class="column-row myPage">
+			<div class="c-column-2">
+				<div id="mypage_manu" th:replace="include/mypage"></div>
+			</div>
+			<div class="c-column-8">
+				<div class="mypage_content">
+
+					<h5>주요 기술 변경</h5>
+					<div class="mypage_box">
+						<form id="editForm" name="editForm" method="post">
+							<h6>자신 있는 기술을 최대 3개 선택하세요.</h6>
+							<div id="selectedArea">
+								<p th:if="${ member.tec1 != null && member.tec1 != '' }" th:id="${ member.tec1 }" onclick="removeTec(this.id)" style="display:inline-block; color: #fff; background-color: #44576c; margin: 5px; padding: 0 5px; cursor: pointer; "></p>
+								<p th:if="${ member.tec2 != null && member.tec2 != '' }" th:id="${ member.tec2 }" onclick="removeTec(this.id)" style="display:inline-block; color: #fff; background-color: #44576c; margin: 5px; padding: 0 5px;  cursor: pointer;"></p>
+								<p th:if="${ member.tec3 != null && member.tec3 != '' }" th:id="${ member.tec3 }" onclick="removeTec(this.id)" style="display:inline-block; color: #fff; background-color: #44576c; margin: 5px; padding: 0 5px; cursor: pointer;"></p>
+							</div>
+							<div class="mt20">
+								<p>그 밖의 기술 등록</p>
+								<input id="inputTec" placeholder="기술 이름으로 검색" oninput="searchTec()">
+								<div id="tecList" style="display: none; background-color: #fff; max-height: 300px; overflow-y: scroll;"></div>
+								<div id="searchFailed" style="display: none;">해당하는 기술이 없습니다. 영어로만 검색해주세요.</div>
+							</div>
+							<div id="hiddenArea">
+								<input type="hidden" name="tec" th:value="${ member.tec1 }">
+								<input type="hidden" name="tec" th:value="${ member.tec2 }">
+								<input type="hidden" name="tec" th:value="${ member.tec3 }">
+							</div>
+							
+							<div class="mt20">
+								<input type="button" value="취소" onclick="history.back()">
+								<input type="button" value="저장" onclick="saveTec()">
+							</div>
+						</form>
+						
+						<script type="text/javascript">
+							//변수 선언
+							var selectCnt = 0; //선택된 기술 수
+							
+							//초기 세팅
+							//선택한 기술 값이 저장된 실제 hidden 요소들
+							let hiddens = document.getElementsByName('tec');
+							for (let i = 0; i < hiddens.length; i++) {
+								if (hiddens[i].value != '') {
+									selectCnt++;
+									document.querySelector('#' + hiddens[i].value).innerText = getCodeValue(commonCode, 'tec', hiddens[i].value);
+								}
+							}
+							
+							const inputTec = document.querySelector('#inputTec'); //기술 검색 input box
+							const selectedArea = document.querySelector('#selectedArea'); //선택한 기술 목록
+							const tecList = document.querySelector('#tecList'); //검색된 기술 목록
+							const searchFailed = document.querySelector('#searchFailed'); //검색결과 없음 표시
+							
+							//기술 이름으로 검색
+							const searchTec = () => {
+								//검색된 기술 목록 초기화
+								tecList.innerHTML = '';
+								
+								//검색어가 없을 경우
+								if (inputTec.value == '') {
+									tecList.style.display = 'none';
+									searchFailed.style.display = 'none';
+									return false;
+								}
+								
+								let isSearch = false; //검색결과 유무
+								
+								for (const i in commonCode.tec) {
+									if (commonCode.tec[i].val.toLowerCase().indexOf(inputTec.value.toLowerCase()) != -1) {
+										isSearch = true; //검색결과 유무 변경처리
+										
+										//검색목록 항목 구성
+										var opt = document.createElement('div');
+										opt.innerText = commonCode.tec[i].val;
+										opt.style.height = '30px';
+										opt.style.cursor = 'pointer';
+										opt.onclick = () => { selectTec(commonCode.tec[i].code, commonCode.tec[i].val) };
+										
+										tecList.appendChild(opt); //항목을 검색목록에 추가
+									}
+								}
+								
+								//검색결과가 있으면 검색목록 표시, 없으면 검색결과 없음 표시
+								tecList.style.display = (isSearch) ? 'block' : 'none';
+								searchFailed.style.display = (isSearch) ? 'none' : 'block';
+							}
+							
+							//기술 선택
+							const selectTec = (code, value) => {
+								//선택한 기술 값이 저장된 실제 hidden 요소들
+								let hiddens = document.getElementsByName('tec');
+								for (let i = 0; i < hiddens.length; i++) {
+									//선택한 기술이 이미 포함되어 있을 경우
+									if (hiddens[i].value == code) {
+										alert('이미 포함된 기술입니다.');
+										return false;
+									}
+								}
+
+								//이미 기술 3개가 선택되어 있을 경우
+								if (selectCnt == 3) {
+									alert('기술은 최대 3개까지 선택 가능합니다.');
+									return false;
+								}
+								
+								//검색 초기화
+								inputTec.value = '';
+								searchTec();
+								inputTec.focus();
+								
+								hiddens[selectCnt].value = code;
+								selectCnt++;
+								
+								var child = document.createElement('p');
+								child.setAttribute('id', code);
+								child.innerText = value;
+								child.style.display = 'inline-block';
+								child.style.color = '#fff';
+								child.style.backgroundColor = '#44576c';
+								child.style.margin = '5px';
+								child.style.padding = '0 5px';
+								child.style.cursor = 'pointer';
+								child.onclick = () => { removeTec(code); };
+								
+								selectedArea.appendChild(child);
+							}
+							
+							//선택된 기술 제거
+							const removeTec = (code) => {
+								selectedArea.removeChild(document.querySelector('#' + code));
+								selectCnt--;
+								
+								let hiddens = document.getElementsByName('tec');
+								let hiddenValues = [];
+								for (let i = 0; i < hiddens.length; i++) {
+									if (hiddens[i].value == code) hiddens[i].value = '';
+									if (hiddens[i].value != '') hiddenValues.push(hiddens[i].value);
+									hiddens[i].value = '';
+								}
+								
+								console.log('hiddenValues = ' + hiddenValues);
+								for (let i = 0; i < hiddenValues.length; i++)
+									hiddens[i].value = hiddenValues[i];
+							}
+							
+							//변경된 기술 저장
+							const saveTec = () => {
+								let hiddens = document.getElementsByName('tec');
+								
+								fetch('/member/mypage/editTec', {
+									method: 'POST',
+									headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+									body: new URLSearchParams({
+										'tec1': hiddens[0].value,
+										'tec2': hiddens[1].value,
+										'tec3': hiddens[2].value
+									})
+								})
+								.then((response) => response.json())
+								.then((data) => {
+									if (data.message == 'good') {
+										alert("변경사항이 저장되었습니다.");
+										history.go(0);
+									} else {
+										alert('시스템 장애로 인해 변경사항 저장에 실패했습니다.');
+									}
+								})
+								.catch((error) => {
+									console.log('error: ' + error);
+									alert('시스템 장애로 인해 변경사항 저장에 실패했습니다.');
+								});
+							}
+						</script>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+	<!-- footer영역 -->
+	<div id="footer" th:replace="include/footer"></div>
+</body>
+</html>

@@ -2,6 +2,7 @@ package com.kodinghaejo.controller;
 
 import java.io.File;
 import java.net.URLEncoder;
+import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kodinghaejo.dto.MemberDTO;
+import com.kodinghaejo.service.BaseService;
 import com.kodinghaejo.service.MailService;
 import com.kodinghaejo.service.MemberService;
 import com.kodinghaejo.util.PasswordMaker;
@@ -33,6 +35,7 @@ public class MemberController {
 	
 	private final MemberService service;
 	private final MailService mailService;
+	private final BaseService baseService;
 	private final BCryptPasswordEncoder pwEncoder;
 	
 	//로그인
@@ -231,9 +234,68 @@ public class MemberController {
 		rs.getOutputStream().close(); //스트림 닫기
 	}
 
-	//내 정보(마이 페이지)
+	//==================== 마이 페이지 ====================
+
+	//내 정보
 	@GetMapping("/member/mypage/main")
 	public void getMypageMain(Model model, HttpSession session) {
+		MemberDTO member = service.memberInfo((String) session.getAttribute("email"));
+		Map<String, Object> commonCode = baseService.loadUsedCommonCode();
+		model.addAttribute("member", member);
+		model.addAttribute("commonCode", commonCode);
+	}
+
+	//주요 기술 변경
+	@GetMapping("/member/mypage/editTec")
+	public void getMypageEditTec(Model model, HttpSession session) {
+		MemberDTO member = service.memberInfo((String) session.getAttribute("email"));
+		Map<String, Object> commonCode = baseService.loadUsedCommonCode();
+		model.addAttribute("member", member);
+		model.addAttribute("commonCode", commonCode);
+	}
+	
+	//주요 기술 변경 저장
+	@ResponseBody
+	@PostMapping("/member/mypage/editTec")
+	public String postMypageEditTec(@RequestParam(name = "tec1", defaultValue = "") String tec1,
+			@RequestParam(name = "tec2", defaultValue = "") String tec2,
+			@RequestParam(name = "tec3", defaultValue = "") String tec3,
+			HttpSession session) {
+		log.info("===== tec1: {}, tec2: {}, tec3: {} =====", tec1, tec2, tec3);
+		
+		String email = (String) session.getAttribute("email");
+		service.editTec(email, tec1, tec2, tec3);
+		
+		return "{ \"message\": \"good\" }";
+	}
+	
+	//희망 직무 변경
+	@GetMapping("/member/mypage/editJob")
+	public void getMypageEditJob(Model model, HttpSession session) {
+		MemberDTO member = service.memberInfo((String) session.getAttribute("email"));
+		Map<String, Object> commonCode = baseService.loadUsedCommonCode();
+		model.addAttribute("member", member);
+		model.addAttribute("commonCode", commonCode);
+	}
+	
+	//희망직무 변경 저장
+	@ResponseBody
+	@PostMapping("/member/mypage/editJob")
+	public String postMypageEditJob(@RequestParam(name = "job1", defaultValue = "") String job1,
+			@RequestParam(name = "job2", defaultValue = "") String job2,
+			@RequestParam(name = "job3", defaultValue = "") String job3,
+			HttpSession session) {
+		log.info("===== job1: {}, job2: {}, job3: {} =====", job1, job2, job3);
+		
+		String email = (String) session.getAttribute("email");
+		service.editJob(email, job1, job2, job3);
+		
+		return "{ \"message\": \"good\" }";
+	}
+
+	//내 정보 수정
+	@GetMapping("/member/mypage/editInfo")
+	public void getMypageMyedit(Model model, HttpSession session) {
 		MemberDTO member = service.memberInfo((String) session.getAttribute("email"));
 		model.addAttribute("member", member);
 	}

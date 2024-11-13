@@ -47,7 +47,7 @@ const registerForm = async() => {
     
  
     
-    await fetch('/board/write', {
+    await fetch('/board/m/write', {
 		method: 'POST',
 		body: formData
 	}).then((response)=> response.json())
@@ -74,7 +74,7 @@ const registerForm = async() => {
 
 <body>
   <!-- header 영역 -->
-  <div id="header" th:replace="include/header :: header"></div>
+  <div id="header" th:replace="include/header"></div>
   <div class="container">
     <div class="main-content">
       <div class="content-board-notice-write">
@@ -110,13 +110,13 @@ const registerForm = async() => {
             <div id="content"></div>
           </div>
           
+          </form> 
           
           <div class="category-footer mt30">
           
           <input type="button" value="전송" onclick="registerForm()">
             <button onclick="history.back();">뒤로가기</button>
           </div>
-          </form> 
           
           
           
@@ -127,7 +127,7 @@ const registerForm = async() => {
     </div>
   </div>
  <!-- footer영역 -->
-   <div id="footer" th:replace="include/footer :: footer"></div>
+   <div id="footer" th:replace="include/footer"></div>
   <!-- toast API : 나중에 모듈로 작성해서 만들기-->
   <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
   <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />

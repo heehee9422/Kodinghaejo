@@ -54,6 +54,26 @@ public class MemberServiceImpl implements MemberService {
 		memberRepository.save(memberEntity);
 	}
 	
+	//주요 기술 변경(마이 페이지)
+	@Override
+	public void editTec(String email, String tec1, String tec2, String tec3) {
+		MemberEntity memberEntity = memberRepository.findById(email).get();
+		memberEntity.setTec1(tec1);
+		memberEntity.setTec2(tec2);
+		memberEntity.setTec3(tec3);
+		memberRepository.save(memberEntity);
+	}
+	
+	//희망 직무 변경(마이 페이지)
+	@Override
+	public void editJob(String email, String job1, String job2, String job3) {
+		MemberEntity memberEntity = memberRepository.findById(email).get();
+		memberEntity.setJob1(job1);
+		memberEntity.setJob2(job2);
+		memberEntity.setJob3(job3);
+		memberRepository.save(memberEntity);
+	}
+	
 	//비밀번호 변경
 	//비밀번호 찾기(임시비밀번호 발급)
 	@Override

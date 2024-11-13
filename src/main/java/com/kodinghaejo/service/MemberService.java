@@ -13,6 +13,12 @@ public interface MemberService {
 	//기본정보 수정
 	public void editMemberInfo(MemberDTO member);
 	
+	//주요 기술 변경(마이 페이지)
+	public void editTec(String email, String tec1, String tec2, String tec3);
+	
+	//희망 직무 변경(마이 페이지)
+	public void editJob(String email, String job1, String job2, String job3);
+	
 	//비밀번호 변경
 	//비밀번호 찾기(임시비밀번호 발급)
 	public void editPassword(MemberDTO member);

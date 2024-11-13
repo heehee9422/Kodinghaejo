@@ -52,7 +52,7 @@
 			loginForm.action = '/member/login';
 			loginForm.submit();
 		}
-	
+
 		//스프링 시큐리티에 의한 로그인 처리 전, 서버에 email과 password를 전송하여 인증 처리
 		const checkLogin = async () => {
 			//유효성 검사
@@ -80,12 +80,18 @@
 					case 'good':
 						login();
 						break;
+						
 					case 'ID_NOT_FOUND':
 						alert('해당 이메일로 가입된 계정이 존재하지 않습니다.');
+						email.focus();
 						break;
+						
 					case 'PASSWORD_NOT_MATCH':
 						alert('비밀번호를 확인해주세요.');
+						password.value = '';
+						password.focus();
 						break;
+						
 					default:
 						alert('시스템 장애로 인해 로그인에 실패했습니다.');
 						break;
