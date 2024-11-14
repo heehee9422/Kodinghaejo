@@ -136,7 +136,9 @@ span.card-small-blue-tag {
   height: 46px;
 }
 select
-, input[type="text"] 
+, textarea
+, input[type="text"]
+, input[type="password"]
 {
   border: 1px solid #ced4da;
   padding:10px;
@@ -144,7 +146,9 @@ select
   cursor: pointer;
 }
 select:focus
+, textarea:focus
 , input[type="text"]:focus
+, input[type="password"]:focus
 {
   border: 1px solid #333;
 }
@@ -297,7 +301,7 @@ hr.dashed{
 .toastui-editor-tooltip .text {
   color: #fff;
 }
-/* ********* problemCollect : 코딩테스트 부분 **********/
+/* ********* collect : 코딩테스트 부분 **********/
 .banner-zone {
   width: 100%;
   background: #0F0F13;

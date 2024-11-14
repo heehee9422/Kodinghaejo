@@ -99,7 +99,7 @@ const registerForm = async() => {
             <input type="text" id="title" name="title" placeholder="제목을 입력해 주세요" maxlength="100">
  
             <input type="hidden" id="email" name="email" th:value="${session.email}">
-            <input type="hidden" id="writer" name="writer" th:value="${session.username}">
+            <input type="hidden" id="writer" name="writer" th:value="${session.nickname}">
             <input type="hidden" id="isUse" name="isUse" value="Y">
             
           </div>

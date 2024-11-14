@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>게시판</title>
+	<title>[[ ${ view.title } ]]&nbsp;&#124;&nbsp;코딩해조</title>
 	<!-- Standard css -->
 	<link rel="icon" href="/img/logo/favicon.png">
 	<link rel="stylesheet" href="/css/style.css">
@@ -28,7 +28,7 @@
 			let formData = new FormData(document.getElementById('ReplyForm'));
 			formData.append("content", content); // Toast UI Editor의 내용을 FormData에 추가
 			
-			await fetch('/board/replyWrite', {
+			await fetch('/board/m/replyWrite', {
 				method: 'POST',
 				body: formData
 			})
@@ -68,7 +68,7 @@
 				formData.append("idx", replyIdx);
 				formData.append("content", updatedContent);
 
-				const response = await fetch('/board/replyModify', {
+				const response = await fetch('/board/m/replyModify', {
 					method: 'POST',
 					body: formData
 				});
@@ -88,7 +88,7 @@
 		
 		async function toggleLike(postIdx, action) {
 			try {
-				const response = await fetch('/board/toggleLike', {
+				const response = await fetch('/board/m/toggleLike', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json'
@@ -119,7 +119,7 @@
 		//신고하기
 		async function reportPost(postIdx) {
 			try {
-				const response = await fetch('/board/report', {
+				const response = await fetch('/board/m/report', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json'
@@ -169,8 +169,8 @@
 						<li><i th:if="${isLiked == 'no'}" th:onclick="|toggleLike('${view.idx}', 'up')|" th:id="@{'like-up-' + ${view.idx}}" class="xi-heart-o"></i><i th:if="${isLiked == 'yes'}" th:onclick="|toggleLike('${view.idx}', 'down')|" th:id="@{'like-down-' + ${view.idx}}" class="xi-heart"></i><span id="like-count-${view.idx}" th:text="${likeCount}">{0}</span></li>
 						<li><i class="xi-cut" th:onclick="|reportPost('${view.Idx}')|" th:id="@{'report-button-' + ${view.idx}}"></i><span>신고하기</span></li>
 			     	<th:block th:if="${session.email == view.email.email}">
-            <li><a th:href="@{/board/freeboardmodify(idx=${view.idx})}">수정하기</a></li>
-            <li><a th:href="@{/board/deactive(idx=${view.idx})}">삭제하기</a></li>
+            <li><a th:href="@{/board/m/freeboardModify(idx=${view.idx})}">수정하기</a></li>
+            <li><a th:href="@{/board/m/deactive(idx=${view.idx})}">삭제하기</a></li>
 			     	</th:block>
 					</ol>
 				</div>
@@ -213,7 +213,7 @@
 							<a th:href="|javascript:replySave('${reple.idx}')|" th:id="@{'save-btn-' + ${reple.idx}}" class="btn_edit" style="display: none;">저장하기</a>
 							<!-- <a href="#" class="btn_eidt">확인</a> -->
 							<a href="#" class="btn_cancel" style="display: none;">취소</a>
-							<a th:href="@{/board/replyDeactive(idx=${reple.idx}, prntIdx=${reple.prntIdx})}" class="btn_cancel">삭제하기</a>
+							<a th:href="@{/board/m/replyDeactive(idx=${reple.idx}, prntIdx=${reple.prntIdx})}" class="btn_cancel">삭제하기</a>
 						</div>
 						</th:block>
 					</div>

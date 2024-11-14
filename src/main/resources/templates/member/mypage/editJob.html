@@ -31,15 +31,14 @@
 					<h5>희망 직무 변경</h5>
 					<div class="mypage_box">
 						<form id="editForm" name="editForm" method="post">
-							<h6>희망하는 직군을 최대 3개까지 선택할 수 있습니다.</h6>
+							<h5>희망하는 직군을 최대 3개까지 선택할 수 있습니다.</h5>
 							<div id="selectedArea"></div>
 							<div id="hiddenArea">
 								<input type="hidden" name="job" th:value="${ member.job1 }">
 								<input type="hidden" name="job" th:value="${ member.job2 }">
 								<input type="hidden" name="job" th:value="${ member.job3 }">
 							</div>
-							
-							<div class="mt20">
+							<div class="profile_btn_grup">
 								<input type="button" value="취소" onclick="history.back()">
 								<input type="button" value="저장" onclick="saveJob()">
 							</div>
@@ -58,7 +57,7 @@
 							/*
 								color
 								선택된 것 #44576c
-								선택 가능한 것 #999
+								선택 가능한 것 #bbb
 								선택 불가능한 것 #ddd
 							*/
 							for (const i in commonCode.job) {
@@ -66,8 +65,8 @@
 								child.setAttribute('id', commonCode.job[i].code);
 								child.innerText = commonCode.job[i].val;
 								child.style.display = 'inline-block';
-								child.style.color = (selectCnt == 3) ? '#aaa' : '#000';
-								child.style.backgroundColor = (selectCnt == 3) ? '#ddd' : '#999';
+								child.style.color = (selectCnt == 3) ? '#bbb' : '#000';
+								child.style.backgroundColor = (selectCnt == 3) ? '#ddd' : '#bbb';
 								child.style.margin = '5px';
 								child.style.padding = '0 5px';
 								child.style.cursor = 'pointer';
@@ -119,9 +118,9 @@
 								
 								for (const i in commonCode.job) {
 									document.querySelector('#' + commonCode.job[i].code).style.backgroundColor
-										= (selectCnt == 3) ? '#ddd' : '#999';
+										= (selectCnt == 3) ? '#ddd' : '#bbb';
 									document.querySelector('#' + commonCode.job[i].code).style.color
-										= (selectCnt == 3) ? '#aaa' : '#000';
+										= (selectCnt == 3) ? '#bbb' : '#000';
 								}
 
 								for (let i = 0; i < hiddenValues.length; i++) {
@@ -151,7 +150,7 @@
 								.then((data) => {
 									if (data.message == 'good') {
 										alert("변경사항이 저장되었습니다.");
-										history.go(0);
+										document.location = '/member/mypage/main';
 									} else {
 										alert('시스템 장애로 인해 변경사항 저장에 실패했습니다.');
 									}

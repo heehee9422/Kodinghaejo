@@ -107,12 +107,6 @@ public class MemberEntity {
 		this.tel = member.getTel();
 		this.website = member.getWebsite();
 		this.descr = member.getDescr();
-		this.tec1 = member.getTec1();
-		this.tec2 = member.getTec2();
-		this.tec3 = member.getTec3();
-		this.job1 = member.getJob1();
-		this.job2 = member.getJob2();
-		this.job3 = member.getJob3();
 		this.orgImg = member.getOrgImg();
 		this.storedImg = member.getStoredImg();
 		this.imgSize = member.getImgSize();

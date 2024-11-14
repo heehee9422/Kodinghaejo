@@ -31,14 +31,15 @@
 					<h5>주요 기술 변경</h5>
 					<div class="mypage_box">
 						<form id="editForm" name="editForm" method="post">
-							<h6>자신 있는 기술을 최대 3개 선택하세요.</h6>
+							<h5>자신 있는 기술을 최대 3개 선택하세요.</h5>
 							<div id="selectedArea">
 								<p th:if="${ member.tec1 != null && member.tec1 != '' }" th:id="${ member.tec1 }" onclick="removeTec(this.id)" style="display:inline-block; color: #fff; background-color: #44576c; margin: 5px; padding: 0 5px; cursor: pointer; "></p>
 								<p th:if="${ member.tec2 != null && member.tec2 != '' }" th:id="${ member.tec2 }" onclick="removeTec(this.id)" style="display:inline-block; color: #fff; background-color: #44576c; margin: 5px; padding: 0 5px;  cursor: pointer;"></p>
 								<p th:if="${ member.tec3 != null && member.tec3 != '' }" th:id="${ member.tec3 }" onclick="removeTec(this.id)" style="display:inline-block; color: #fff; background-color: #44576c; margin: 5px; padding: 0 5px; cursor: pointer;"></p>
 							</div>
+							<div class="mt20" id="selectedNone" style="display: none;">선택하신 기술이 없습니다.</div>
 							<div class="mt20">
-								<p>그 밖의 기술 등록</p>
+								<h5>그 밖의 기술 등록</h5>
 								<input id="inputTec" placeholder="기술 이름으로 검색" oninput="searchTec()">
 								<div id="tecList" style="display: none; background-color: #fff; max-height: 300px; overflow-y: scroll;"></div>
 								<div id="searchFailed" style="display: none;">해당하는 기술이 없습니다. 영어로만 검색해주세요.</div>
@@ -48,8 +49,7 @@
 								<input type="hidden" name="tec" th:value="${ member.tec2 }">
 								<input type="hidden" name="tec" th:value="${ member.tec3 }">
 							</div>
-							
-							<div class="mt20">
+							<div class="profile_btn_grup">
 								<input type="button" value="취소" onclick="history.back()">
 								<input type="button" value="저장" onclick="saveTec()">
 							</div>
@@ -58,6 +58,12 @@
 						<script type="text/javascript">
 							//변수 선언
 							var selectCnt = 0; //선택된 기술 수
+							
+							const inputTec = document.querySelector('#inputTec'); //기술 검색 input box
+							const selectedArea = document.querySelector('#selectedArea'); //선택한 기술 목록
+							const selectedNone = document.querySelector('#selectedNone'); //선택한 기술 없음 표시
+							const tecList = document.querySelector('#tecList'); //검색된 기술 목록
+							const searchFailed = document.querySelector('#searchFailed'); //검색결과 없음 표시
 							
 							//초기 세팅
 							//선택한 기술 값이 저장된 실제 hidden 요소들
@@ -69,11 +75,8 @@
 								}
 							}
 							
-							const inputTec = document.querySelector('#inputTec'); //기술 검색 input box
-							const selectedArea = document.querySelector('#selectedArea'); //선택한 기술 목록
-							const tecList = document.querySelector('#tecList'); //검색된 기술 목록
-							const searchFailed = document.querySelector('#searchFailed'); //검색결과 없음 표시
-							
+							if (selectCnt == 0) selectedNone.style.display = 'block';
+
 							//기술 이름으로 검색
 							const searchTec = () => {
 								//검색된 기술 목록 초기화
@@ -110,6 +113,8 @@
 							
 							//기술 선택
 							const selectTec = (code, value) => {
+								selectedNone.style.display = 'none';
+								
 								//선택한 기술 값이 저장된 실제 hidden 요소들
 								let hiddens = document.getElementsByName('tec');
 								for (let i = 0; i < hiddens.length; i++) {
@@ -161,9 +166,10 @@
 									hiddens[i].value = '';
 								}
 								
-								console.log('hiddenValues = ' + hiddenValues);
 								for (let i = 0; i < hiddenValues.length; i++)
 									hiddens[i].value = hiddenValues[i];
+								
+								if (selectCnt == 0) selectedNone.style.display = 'block';
 							}
 							
 							//변경된 기술 저장
@@ -183,7 +189,7 @@
 								.then((data) => {
 									if (data.message == 'good') {
 										alert("변경사항이 저장되었습니다.");
-										history.go(0);
+										document.location = '/member/mypage/main';
 									} else {
 										alert('시스템 장애로 인해 변경사항 저장에 실패했습니다.');
 									}

@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>게시판</title>
+		<title>자유 게시판&nbsp;&#124;&nbsp;코딩해조</title>
 		<!-- Standard css -->
 		<link rel="icon" href="/img/logo/favicon.png" />
 		<link rel="stylesheet" href="/css/style.css" />
@@ -53,7 +53,7 @@
 				<div class="content-board-free">
 					<div class="content-board-free-title">
 						<h3>자유롭게 이야기를 나누어 보세요</h3>
-						<button class="board-free-btn" onclick="location.href='/board/m/freeboardWrite'" >작성하기</button>
+						<button th:if="${ session.email != null }" class="board-free-btn" onclick="location.href='/board/m/freeboardWrite'" >작성하기</button>
 					</div>
 					<div class="content-board-free-content">
 						<div class="free-content-box">

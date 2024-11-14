@@ -40,6 +40,7 @@
 								</th:block>
 							</div>
 							<div class="profile_name">
+								<p class="profile_email">[[ ${ member.nickname } ]]&nbsp;&#40;[[ ${ member.username } ]]&#41;</p>
 								<p class="profile_email">[[ ${ member.email } ]]</p>
 								<!-- 인증 안했을때 -->
 								<th:block th:if="${ member.emailAuth == 'N' }">
@@ -65,14 +66,14 @@
 								<li><b>희망직무</b> : <span id="myJob"></span></li>
 								<script type="text/javascript">
 									//주요기술 세팅
-									let myTec = getCodeValue(commonCode, 'tec', '[[ ${ member.tec1 } ]]');
+									let myTec = ('[[ ${ member.tec1 } ]]' == '') ? '' : getCodeValue(commonCode, 'tec', '[[ ${ member.tec1 } ]]');
 									myTec += ('[[ ${ member.tec2 } ]]' == '') ? '' : ', ' + getCodeValue(commonCode, 'tec', '[[ ${ member.tec2 } ]]');
 									myTec += ('[[ ${ member.tec3 } ]]' == '') ? '' : ', ' + getCodeValue(commonCode, 'tec', '[[ ${ member.tec3 } ]]');
 									myTec += (myTec == '') ? '선택 없음' : '';
 									document.querySelector('#myTec').innerHTML = myTec;
 
 									//희망직무 세팅
-									let myJob = getCodeValue(commonCode, 'job', '[[ ${ member.job1 } ]]');
+									let myJob = ('[[ ${ member.job1 } ]]' == '') ? '' : getCodeValue(commonCode, 'job', '[[ ${ member.job1 } ]]');
 									myJob += ('[[ ${ member.job2 } ]]' == '') ? '' : ', ' + getCodeValue(commonCode, 'job', '[[ ${ member.job2 } ]]');
 									myJob += ('[[ ${ member.job3 } ]]' == '') ? '' : ', ' + getCodeValue(commonCode, 'job', '[[ ${ member.job3 } ]]');
 									myJob += (myJob == '') ? '선택 없음' : '';
@@ -80,7 +81,7 @@
 								</script>
 							</ul>
 							<h6>자기소개</h6>
-							<p><th:block th:if="${ member.descr == null && member.descr == '' }"></th:block>작성된 자기소개글이 없습니다.<th:block th:if="${ member.descr != null && member.descr != '' }">[[ ${ member.descr } ]]</th:block></p>
+							<p><th:block th:if="${ member.descr == null || member.descr == '' }">작성된 자기소개글이 없습니다.</th:block><th:block th:if="${ member.descr != null && member.descr != '' }">[[ ${ member.descr } ]]</th:block></p>
 							<div class="profile_btn_grup">
 								<input type="button" value="주요 기술 변경" onclick="edit('Tec')">
 								<input type="button" value="희망 직무 변경" onclick="edit('Job')">

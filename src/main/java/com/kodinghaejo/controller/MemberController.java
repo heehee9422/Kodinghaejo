@@ -88,14 +88,15 @@ public class MemberController {
 	@ResponseBody
 	@PostMapping("/member/join")
 	public String postJoin(MemberDTO member, @RequestParam("kind") String kind,
-			@RequestParam(name = "imgUpload", required = false) MultipartFile mpf) throws Exception {
+			@RequestParam(name = "fileUpload", required = false) MultipartFile mpf,
+			HttpSession session) throws Exception {
 		//========== 운영체제에 따라 이미지가 저장될 디렉토리 구조 설정 시작 ==========
 		String os = System.getProperty("os.name").toLowerCase();
 		String path;
 		if (os.contains("win"))
-			path = "C:\\Repository\\profile\\";
+			path = "C:\\Repository\\Kodinghaejo\\profile\\";
 		else 
-			path = "/home/user/Repository/profile/";
+			path = "/home/user/Repository/Kodinghaejo/profile/";
 		
 		//디렉토리 존재여부 확인 --> 없을 경우 생성 처리
 		File p = new File(path);
@@ -133,12 +134,16 @@ public class MemberController {
 		
 		//기본정보 수정
 		if (kind.equals("U")) {
+			if (member.getNickname().equals("")) member.setNickname(member.getUsername());
+			
 			//프로필 이미지 변경 시 기존 이미지 파일 삭제
-			if (mpf != null && !mpf.isEmpty()) {
+			if (mpf != null && !mpf.isEmpty() ) {
 				MemberDTO before = service.memberInfo(member.getEmail());
 				File file = new File(path + before.getStoredImg());
 				file.delete();
 			}
+			
+			session.setAttribute("nickname", member.getNickname());
 			
 			//수정 내용 반영
 			service.editMemberInfo(member);
@@ -210,9 +215,9 @@ public class MemberController {
 		String os = System.getProperty("os.name").toLowerCase();
 		String path;
 		if (os.contains("win"))
-			path = "C:\\Repository\\profile\\";
+			path = "C:\\Repository\\Kodinghaejo\\profile\\";
 		else
-			path = "/home/mklee/Repository/profile/";
+			path = "/home/mklee/Repository/Kodinghaejo/profile/";
 
 		//디렉토리가 존재하는지 체크해서 없다면 생성
 		File p = new File(path);
