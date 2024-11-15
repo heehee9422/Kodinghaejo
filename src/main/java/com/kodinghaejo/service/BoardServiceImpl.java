@@ -28,6 +28,8 @@ import com.kodinghaejo.entity.repository.BoardRepository;
 import com.kodinghaejo.entity.repository.FileRepository;
 import com.kodinghaejo.entity.repository.MemberRepository;
 import com.kodinghaejo.entity.repository.ReplyRepository;
+import com.kodinghaejo.entity.repository.TestQuestionAnswerRepository;
+import com.kodinghaejo.entity.repository.TestQuestionRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -41,6 +43,8 @@ public class BoardServiceImpl implements BoardService {
 	private final FileRepository fileRepository;
 	private final MemberRepository memberRepository;
 	private final ReplyRepository replyRepository;
+	private final TestQuestionRepository testQuestionRepository;
+	private final TestQuestionAnswerRepository testQuestionAnswerRepository;
 
 	//게시물 등록하기
 	@Override
@@ -254,9 +258,23 @@ public class BoardServiceImpl implements BoardService {
 	
 	//내가 작성한 댓글(마이 페이지)
 	@Override
-	public Page<ReplyEntity> mypageReplyList(String email, int pageNum, int postNum) {
+	public Page<ReplyDTO> mypageReplyList(String email, int pageNum, int postNum) {
+		MemberEntity memberEntity = memberRepository.findById(email).get();
+		
 		PageRequest pageRequest = PageRequest.of(pageNum - 1, postNum, Sort.by(Direction.DESC, "idx"));
-		return replyRepository.findByEmailAndIsUse(email, "Y", pageRequest);
+		Page<ReplyEntity> replyEntities = replyRepository.findByEmailAndIsUse(memberEntity, "Y", pageRequest);
+		List<ReplyDTO> replyDTOs = new ArrayList<>();
+		
+		for (ReplyEntity replyEntity : replyEntities) {
+			ReplyDTO reply = new ReplyDTO(replyEntity);
+			String prntTitle = (replyEntity.getRePrnt().equals("QA")) ? testQuestionAnswerRepository.findById(replyEntity.getPrntIdx()).get().getContent() :
+													(replyEntity.getRePrnt().equals("Q")) ? testQuestionRepository.findById(replyEntity.getPrntIdx()).get().getTitle() :
+													(replyEntity.getRePrnt().equals("FR")) ? boardRepository.findById(replyEntity.getPrntIdx()).get().getTitle() : "";
+			reply.setPrntTitle(prntTitle);
+			replyDTOs.add(reply);
+		}
+		
+		return new PageImpl<>(replyDTOs, pageRequest, replyEntities.getTotalElements());
 	}
 
 }

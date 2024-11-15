@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kodinghaejo.entity.TestLngEntity;
 import com.kodinghaejo.service.TestService;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -73,7 +75,7 @@ public class TestController {
 	public String postChallenge(@RequestParam("type") String type, @RequestParam("tl_idx") Long tlIdx,
 			@RequestParam("code") String code, @RequestParam("correct_src") String correctSrc,
 			@RequestParam("run_src") String runSrc, @RequestParam("subm_src") String submSrc,
-			@RequestParam("language") String language) throws Exception {
+			@RequestParam("language") String language, HttpSession session) throws Exception {
 		if (!type.equals("run") && !type.equals("submit"))
 			return "{\"message\":\"TYPE_NOT_AVAILABLE\"}";
 		
@@ -92,7 +94,21 @@ public class TestController {
 		service.createVerifyFiles((type.equals("run") ? runSrc : type.equals("submit") ? submSrc : ""), correctSrc);
 		
 		// 코드 실행 로직 호출
-		return service.testCode(language, path.toString()); //실행 결과 반환
+		String result = service.testCode(language, path.toString()); //실행 결과 반환
+		
+		//제출결과 DB 저장
+		if (type.equals("submit")) {
+			@SuppressWarnings("unchecked")
+			Map<String, Object> data = new ObjectMapper().readValue(result, Map.class);
+			
+			String email = (String) session.getAttribute("email");
+			int passCnt = (int) data.get("passcnt");
+			String submSts = ((passCnt * 5) >= 70) ? "Y" : "N";
+			
+			service.submitTest(tlIdx, email, submSts, code);
+		}
+		
+		return result;
 	}
 
 }

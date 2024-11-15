@@ -33,7 +33,6 @@ public class ChatMemberDTO {
 		this.nickname = entity.getNickname();
 		this.manager = entity.getManager();
 		this.regdate = entity.getRegdate();
-		this.isUse = entity.getIsUse();
 	}
 	
 	//DTO --> Entity 이동
@@ -45,7 +44,6 @@ public class ChatMemberDTO {
 									.nickname(dto.getNickname())
 									.manager(dto.getManager())
 									.regdate(dto.getRegdate())
-									.isUse(dto.getIsUse())
 									.build();
 		
 		return entity;

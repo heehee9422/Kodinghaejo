@@ -10,6 +10,7 @@
 	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
 	<!-- pub-js link -->
 	<script src="/js/pub-ui-custom.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <script>
 
@@ -30,13 +31,17 @@ const registerForm = async() => {
 		//필수값 등록시 값 입력 여부 확인
 	
 		if(title.value === ''){
-				alert('제목을 입력하세요!!!');
+				Swal.fire({
+		    		icon:"warning",
+		    		text:"제목을 입력하세요"});
 				title.focus();
 				return false;
 		}
 		
 		if (content.trim() === '') {
-				alert('내용을 입력하세요!!!');
+				Swal.fire({
+		    		icon:"warning",
+		    		text:"내용을 입력하세요"});
 				return false;
 		} 
 		
@@ -53,11 +58,21 @@ const registerForm = async() => {
 	}).then((response)=> response.json())
 		.then((data)=> {
 			if(data.message === 'good'){
-				alert("게시물이 등록되었습니다.");
-				document.location.href='/admin/systemNotice';
+				Swal.fire({
+		            title: "게시물이 등록되었습니다.",
+		            icon: "success",
+		            confirmButtonText: "확인" 
+		        }).then((result) => {
+		            if (result.isConfirmed) {
+		            	document.location.href='/admin/systemNotice';
+		            }
+		        });
 			}
 	}).catch((error)=> {
-		alert("시스템 장애로 게시물 등록이 실패했습니다.");
+		Swal.fire({
+			  icon: "error",
+			  text: "시스템 장애로 게시물 등록이 실패했습니다",
+			});
 		console.log("error" + error);
 	})
 		 

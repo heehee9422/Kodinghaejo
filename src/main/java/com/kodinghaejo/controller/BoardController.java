@@ -79,7 +79,7 @@ public class BoardController {
 	}	
 	
 	//게시물 수정화면 보기
-	@GetMapping("/board/m/freeboardmodify")
+	@GetMapping("/board/m/freeboardModify")
 	public void getModify(@RequestParam("idx") Long idx,Model model) throws Exception {
 		model.addAttribute("view", service.view(idx));
 	}
@@ -213,12 +213,12 @@ public class BoardController {
 	@GetMapping("/member/mypage/myboard")
 	public void getMypageMyboard(Model model, @RequestParam(name = "boardPage", defaultValue = "1") int boardPageNum, 
 			@RequestParam(name = "replyPage", defaultValue = "1") int replyPageNum, HttpSession session) throws Exception {
-		int postNum = 10;
+		int postNum = 5;
 		int pageListCount = 5;
 		
 		PageUtil page = new PageUtil();
 		Page<BoardDTO> boardList = service.mypageBoardList((String) session.getAttribute("email"), boardPageNum, postNum);
-		Page<ReplyEntity> replyList = service.mypageReplyList((String) session.getAttribute("email"), replyPageNum, postNum);
+		Page<ReplyDTO> replyList = service.mypageReplyList((String) session.getAttribute("email"), replyPageNum, postNum);
 		int boardTotalCount = (int) boardList.getTotalElements();
 		int replyTotalCount = (int) replyList.getTotalElements();
 		

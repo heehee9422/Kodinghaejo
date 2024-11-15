@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>주요 기술 변경</title>
+	<title>주요 기술 변경&nbsp;&#124;&nbsp;코딩해조</title>
 	<!-- Standard css -->
 	<link rel="icon" href="/img/logo/favicon.png" />
 	<link rel="stylesheet" href="/css/style.css" />
@@ -37,7 +37,7 @@
 								<p th:if="${ member.tec2 != null && member.tec2 != '' }" th:id="${ member.tec2 }" onclick="removeTec(this.id)" style="display:inline-block; color: #fff; background-color: #44576c; margin: 5px; padding: 0 5px;  cursor: pointer;"></p>
 								<p th:if="${ member.tec3 != null && member.tec3 != '' }" th:id="${ member.tec3 }" onclick="removeTec(this.id)" style="display:inline-block; color: #fff; background-color: #44576c; margin: 5px; padding: 0 5px; cursor: pointer;"></p>
 							</div>
-							<div class="mt20" id="selectedNone" style="display: none;">선택하신 기술이 없습니다.</div>
+							<div class="mt20" id="selectedNone" style="display: none;">선택한 기술이 없습니다.</div>
 							<div class="mt20">
 								<h5>그 밖의 기술 등록</h5>
 								<input id="inputTec" placeholder="기술 이름으로 검색" oninput="searchTec()">

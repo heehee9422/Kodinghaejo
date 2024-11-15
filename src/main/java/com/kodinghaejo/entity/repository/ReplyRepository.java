@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.kodinghaejo.dto.ReplyInterface;
+import com.kodinghaejo.entity.MemberEntity;
 import com.kodinghaejo.entity.ReplyEntity;
 
 public interface ReplyRepository extends JpaRepository<ReplyEntity, Long> {
@@ -22,7 +23,10 @@ public interface ReplyRepository extends JpaRepository<ReplyEntity, Long> {
 	
 	List<ReplyEntity> findByContentContaining(String searchKeyword);
 
-	//내가 작성한 댓글(마이 페이지)
-	public Page<ReplyEntity> findByEmailAndIsUse(String email, String isUse, PageRequest pageRequest);
+	//내가 작성한 댓글 확인
+	//마이페이지(페이징)
+	public Page<ReplyEntity> findByEmailAndIsUse(MemberEntity email, String isUse, PageRequest pageRequest);
+	//탈퇴 전 확인
+	public List<ReplyEntity> findByEmailAndIsUse(MemberEntity email, String isUse);
 	
 }

@@ -47,4 +47,7 @@ public class TestBookmarkEntity {
 	@Column(name = "add_date", nullable = true)
 	private LocalDateTime addDate;
 
+	@Column(name = "is_use", length = 2, nullable = false)
+	private String isUse;
+
 }

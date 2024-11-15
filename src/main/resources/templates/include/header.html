@@ -20,7 +20,13 @@
 				</th:block>
 				<!-- 로그인 했을 경우 -->
 				<th:block th:if="${ session.email != null }">
-				<li><span class="login_profile"><img th:src="@{ '/member/img/' + ${ session.email } }" alt="" style="width: 30px; height: 30px;"><b>&#91;[[ ${ session.nickname } ]]&#93;</b>님이 로그인 하셨습니다</span></li>
+				<li>
+					<span class="login_profile">
+						<img th:if="${ session.storedImg != null }" th:src="@{ '/member/img/' + ${ session.email } }" alt="" style="width: 30px; height: 30px;">
+						<img th:if="${ session.storedImg == null }" src="/img/test-profile/coolping.png" alt="" style="width: 30px; height: 30px;">
+						<b>&#91;[[ ${ session.nickname } ]]&#93;</b>님이 로그인 하셨습니다
+					</span>
+				</li>
 				<li><a href="/member/mypage/main" class="btn_sign">My Page</a></li>
 				<li><a href="javascript:beforeLogout()" class="btn_login">로그아웃</a></li>
 				</th:block>
@@ -59,11 +65,22 @@
 		</div>
 	</div>
 
+	<!-- SweetAlert2 link -->
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	
 	<script type="text/javascript">
 		//로그아웃 전처리
 		const beforeLogout = () => {
-			if (confirm('로그아웃 하시겠습니까?'))
-				document.location = '/member/beforeLogout';
+			Swal.fire({
+						icon: 'warning',
+						text: '로그아웃 하시겠습니까?',
+						showCancelButton: true,
+						confirmButtonText: '네, 로그아웃 합니다.',
+						cancelButtonText: '취소'
+					})
+					.then((result) => {
+						document.location = '/member/beforeLogout';
+					});
 		}
 		
     if (document.querySelector(".main-navbar")) {

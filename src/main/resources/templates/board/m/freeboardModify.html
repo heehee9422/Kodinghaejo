@@ -10,6 +10,7 @@
 	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
 	<!-- pub-js link -->
 	<script src="/js/pub-ui-custom.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <script>
 	const modifyForm = async() => {
@@ -25,13 +26,17 @@
 		
 		//필수값 등록시 값 입력 여부 확인
 		if(title.value === ''){
-			alert('제목을 입력하세요!!!');
+			Swal.fire({
+					icon:"warning",
+					text:"제목을 입력하세요"});
 			title.focus();
 			return false;
 		}
 		
 		if (content.trim() === '') {
-			alert('내용을 입력하세요!!!');
+			Swal.fire({
+					icon:"warning",
+					text:"내용을 입력하세요"});
 			return false;
 		} 
 		
@@ -49,13 +54,26 @@
 			const data = await response.json();
 			
 			if (data.message === 'good') {
-				alert("게시물이 수정되었습니다.");
-				document.location.href = `/board/freeboardView?idx=${idx}`;
+				Swal.fire({
+								title: "게시물이 수정되었습니다.",
+								icon: "success",
+								confirmButtonText: "확인" //확인 눌러야 로케이션 되는
+						}).then((result) => {
+								if (result.isConfirmed) {
+										document.location.href = `/board/freeboardView?idx=${idx}`;
+								}
+						});
 			} else {
-				alert("수정에 실패했습니다.");
+				Swal.fire({
+						icon: "error",
+						text: "수정에 실패했습니다!",
+					});
 			}
 		} catch (error) {
-			alert("시스템 장애로 수정이 실패했습니다.");
+			Swal.fire({
+					icon: "error",
+					text: "시스템 장애로 수정에 실패했습니다!",
+				});
 			console.error("Error:", error);
 		}
 	}
@@ -133,6 +151,7 @@
 			]
 		});
 	</script>
+	
 	<style>
 		.toastui-editor-mode-switch { display: none !important; }
 	</style>

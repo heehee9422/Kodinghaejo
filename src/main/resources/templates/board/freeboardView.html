@@ -3,87 +3,153 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>[[ ${ view.title } ]]&nbsp;&#124;&nbsp;코딩해조</title>
+	<title>게시판</title>
 	<!-- Standard css -->
 	<link rel="icon" href="/img/logo/favicon.png">
 	<link rel="stylesheet" href="/css/style.css">
 	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
 	<!-- pub-js link -->
 	<script src="/js/pub-ui-custom.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	
-	<script>
-		const replyWriteForm = async() => {
-			let rePrnt = document.querySelector('#rePrnt');
-			let prntIdx = document.querySelector('#prntIdx');
-			let writer = document.querySelector('#writer');
-			let email = document.querySelector('#email');
-			let isUse = document.querySelector('#isUse');
-			let content = editor.getMarkdown(); // 마크다운 텍스트로 가져오기
+<script>
+	const replyWriteForm = async() => {
+		let rePrnt = document.querySelector('#rePrnt');
+		let prntIdx = document.querySelector('#prntIdx');
+		let writer = document.querySelector('#writer');
+		let email = document.querySelector('#email');
+		let isUse = document.querySelector('#isUse');
+		let content = editor.getMarkdown(); // 마크다운 텍스트로 가져오기
 
-			if (content.trim() === '') {
-				alert('내용을 입력하세요!!!');
-				return false;
+		if (content.trim() === '') {
+			Swal.fire({
+				  icon: "warning",
+				  text: "내용을 입력해 주세요.",
+				});
+			return false;[]
+		}
+			
+		let formData = new FormData(document.getElementById('ReplyForm'));
+		formData.append("content", content); // Toast UI Editor의 내용을 FormData에 추가
+			
+		await fetch('/board/m/replyWrite', {
+			method: 'POST',
+			body: formData
+		})
+		.then((response)=> response.json())
+		.then((data)=> {
+			if(data.message === 'good'){
+				Swal.fire({
+		            title: "댓글이 등록되었습니다.",
+		            icon: "success",
+		            confirmButtonText: "확인"
+		        }).then((result) => {
+		            if (result.isConfirmed) {
+		            	location.reload(true);
+		            }
+		        });
 			}
+		})
+		.catch((error)=> {
+			Swal.fire({
+				  icon: "error",
+				  text: "시스템 장애로 댓글등록에 실패했습니다!",
+				});
+			console.log("error" + error);
+		})
+	}
+		
+		
+	//댓글 비활성화 알람추가
+	async function replyDeactive(replyIdx, prntIdx) {	
+	    try {
+	        const result = await 
+	        Swal.fire({
+	            title: "댓글을 삭제하시겠습니까?",
+	            icon: "warning",
+	            showCancelButton: true,
+	            confirmButtonText: "네, 삭제합니다",
+	            cancelButtonText: "취소"
+	        });
+
+	        if (result.isConfirmed) {
+	            const response = await fetch(`/board/m/replyDeactive?idx=${replyIdx}&prntIdx=${prntIdx}`, {
+	                method: 'GET'
+	            });
+
+	        if (response.ok) {
+	             Swal.fire("댓글이 삭제되었습니다.", "", "success").then(() => {
+	                    location.reload();
+	                });
+	  } else {
+	              Swal.fire("댓글 삭제에 실패했습니다.", "", "error");
+	            }
+	        }
+	 } catch (error) {
+		        console.error("댓글 비활성화 중 오류 발생:", error);
+		        Swal.fire("댓글 비활성화 중 오류가 발생했습니다.", "", "error");
+		    }
+		}
+		
+		
+	function replyModify(replyIdx) {
+		const contentP = document.getElementById('reply-text-' + replyIdx);
+		const editTextarea = document.getElementById('reply-edit-' + replyIdx);
+		const editButton = document.getElementById('edit-btn-'+ replyIdx);
+		const saveButton = document.getElementById('save-btn-'+ replyIdx);
+
+		// 기존 댓글 내용을 textarea에 복사하고 보여줌
+		editTextarea.value = contentP.innerText;
+		contentP.style.display = 'none';	// 기존 텍스트 숨기기
+		editTextarea.style.display = 'block';	// textarea 표시
+		editButton.style.display = 'none';	// "수정하기" 버튼 숨기기
+		saveButton.style.display = 'inline';	// "저장하기" 버튼 표시
+	}
+		
+	async function replySave(replyIdx){
+		const editTextarea = document.getElementById('reply-edit-' + replyIdx);
+		const updatedContent = editTextarea.value.trim();
 			
-			let formData = new FormData(document.getElementById('ReplyForm'));
-			formData.append("content", content); // Toast UI Editor의 내용을 FormData에 추가
+		if (updatedContent.trim() === '') {
+			Swal.fire({
+	    		icon:"warning",
+	    		text:"내용을 입력하세요"});
+			return false;[]
+		}
 			
-			await fetch('/board/m/replyWrite', {
+		try {
+			const formData = new FormData();
+			formData.append("idx", replyIdx);
+			formData.append("content", updatedContent);
+
+			const response = await fetch('/board/m/replyModify', {
 				method: 'POST',
 				body: formData
-			})
-			.then((response)=> response.json())
-			.then((data)=> {
-				if(data.message === 'good'){
-					alert("댓글이 등록되었습니다.");
-					location.reload(true);
-				}
-			})
-			.catch((error)=> {
-				alert("시스템 장애로 댓글 등록이 실패했습니다.");
-				console.log("error" + error);
-			})
-		}
-		
-		function replyModify(replyIdx) {
-			const contentP = document.getElementById('reply-text-' + replyIdx);
-			const editTextarea = document.getElementById('reply-edit-' + replyIdx);
-			const editButton = document.getElementById('edit-btn-'+ replyIdx);
-			const saveButton = document.getElementById('save-btn-'+ replyIdx);
+			});
 
-			// 기존 댓글 내용을 textarea에 복사하고 보여줌
-			editTextarea.value = contentP.innerText;
-			contentP.style.display = 'none';	// 기존 텍스트 숨기기
-			editTextarea.style.display = 'block';	// textarea 표시
-			editButton.style.display = 'none';	// "수정하기" 버튼 숨기기
-			saveButton.style.display = 'inline';	// "저장하기" 버튼 표시
-		}
-		
-		async function replySave(replyIdx){
-			const editTextarea = document.getElementById('reply-edit-' + replyIdx);
-			const updatedContent = editTextarea.value.trim();
-			
-			try {
-				const formData = new FormData();
-				formData.append("idx", replyIdx);
-				formData.append("content", updatedContent);
-
-				const response = await fetch('/board/m/replyModify', {
-					method: 'POST',
-					body: formData
-				});
-
-				if (response.ok) {
-					alert("수정이 완료되었습니다.");
-				} else {
-					alert("수정에 실패했습니다.");
+		if (response.ok) {
+			Swal.fire({
+				icon: "success",
+	            title: "댓글이 수정되었습니다.",
+	            confirmButtonText: "확인" //확인 눌러야 로케이션 되는
+		        }).then((result) => {
+		       if (result.isConfirmed) {
+	            	location.reload(true);
+		            }
+		        });
+		} else {
+				Swal.fire({
+					  icon: "error",
+					  text: "수정에 실패했습니다!",
+					});
 				}
 			} catch (error) {
-				console.error("Error:", error);
-				alert("서버 오류로 인해 수정에 실패했습니다.");
-			} finally {
-					location.reload(true);
-			}
+			console.error("Error:", error);
+			Swal.fire({
+				  icon: "error",
+				  text: "시스템 장애로 수정에 실패했습니다!",
+				});
+			} 
 		}
 		
 		async function toggleLike(postIdx, action) {
@@ -116,29 +182,80 @@
 			}
 		}
 		
-		//신고하기
-		async function reportPost(postIdx) {
-			try {
-				const response = await fetch('/board/m/report', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({ postIdx })
-				});
-						
-				const data = await response.json();
-						
-				if (data.status === "success") {
-					alert(data.message);	// 게시물이 신고되었습니다.
-				} else if (data.status === "failure") {
-					alert(data.message);	// 이미 신고한 게시물입니다.
-				}
-			} catch (error) {
-				console.error("신고 처리 중 오류 발생:", error);
-				alert("신고 처리 중 오류가 발생했습니다.");
-			}
+	//신고하기
+	async function reportPost(postIdx) {
+	    const result = await Swal.fire({
+	        title: "게시글을 신고하시겠습니까?",
+	        icon: "warning",
+	        showCancelButton: true,
+	        confirmButtonText: "네, 신고합니다",
+	        cancelButtonText: "취소"
+	    });
+	  
+		if (result.isConfirmed) {
+			 try {
+		         const response = await fetch('/board/m/report', {
+		             method: 'POST',
+		             headers: {
+		                   'Content-Type': 'application/json'
+		               },
+		               body: JSON.stringify({ postIdx })
+		           });
+		            const data = await response.json();
+
+		            if (data.status === "success") {
+		                Swal.fire({
+		                    icon: "success",
+		                    text: data.message // 예: "게시물이 신고되었습니다."
+		                });
+		            } else if (data.status === "failure") {
+		                Swal.fire({
+		                    icon: "info",
+		                    text: data.message // 예: "이미 신고한 게시물입니다."
+		                });
+		            }
+		    } catch (error) {
+		          console.error("신고 처리 중 오류 발생:", error);
+		           Swal.fire({
+		             	icon: "error",
+		                text: "시스템 장애로 신고에 실패했습니다!"
+		            });
+		        }
+		    }
 		}
+	
+	
+	//게시글비활성화
+	async function deactive(viewidx) {
+    try {
+        const result = await Swal.fire({
+            title: "게시글을 삭제하시겠습니까?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "네, 삭제합니다",
+            cancelButtonText: "취소"
+        });
+
+        if (result.isConfirmed) {
+            const response = await fetch(`/board/m/deactive?idx=${viewidx}`, {
+                method: 'GET'
+            });
+
+            if (response.ok) {
+                Swal.fire("게시글이 삭제되었습니다.", "", "success").then(() => {
+                	location.href = "/board/freeboard";
+                });
+            } else {
+                Swal.fire("게시글 삭제에 실패했습니다.", "", "error");
+            }
+        }
+    } catch (error) {
+        console.error("게시글 비활성화 중 오류 발생:", error);
+        Swal.fire("게시글 비활성화 중 오류가 발생했습니다.", "", "error");
+    }
+}
+	
+		
 	</script>
 </head>
 
@@ -169,8 +286,9 @@
 						<li><i th:if="${isLiked == 'no'}" th:onclick="|toggleLike('${view.idx}', 'up')|" th:id="@{'like-up-' + ${view.idx}}" class="xi-heart-o"></i><i th:if="${isLiked == 'yes'}" th:onclick="|toggleLike('${view.idx}', 'down')|" th:id="@{'like-down-' + ${view.idx}}" class="xi-heart"></i><span id="like-count-${view.idx}" th:text="${likeCount}">{0}</span></li>
 						<li><i class="xi-cut" th:onclick="|reportPost('${view.Idx}')|" th:id="@{'report-button-' + ${view.idx}}"></i><span>신고하기</span></li>
 			     	<th:block th:if="${session.email == view.email.email}">
-            <li><a th:href="@{/board/m/freeboardModify(idx=${view.idx})}">수정하기</a></li>
-            <li><a th:href="@{/board/m/deactive(idx=${view.idx})}">삭제하기</a></li>
+            <li><a th:href="@{/board/m/freeboardmodify(idx=${view.idx})}">수정하기</a></li>
+            <li><a th:href="|javascript:deactive('${view.idx}')|"> 삭제하기</a></li>
+            <!--  <li><a th:href="@{/board/m/deactive(idx=${view.idx})}">삭제하기</a></li>-->
 			     	</th:block>
 					</ol>
 				</div>
@@ -213,7 +331,8 @@
 							<a th:href="|javascript:replySave('${reple.idx}')|" th:id="@{'save-btn-' + ${reple.idx}}" class="btn_edit" style="display: none;">저장하기</a>
 							<!-- <a href="#" class="btn_eidt">확인</a> -->
 							<a href="#" class="btn_cancel" style="display: none;">취소</a>
-							<a th:href="@{/board/m/replyDeactive(idx=${reple.idx}, prntIdx=${reple.prntIdx})}" class="btn_cancel">삭제하기</a>
+							<a th:href="|javascript:replyDeactive('${reple.idx}','${reple.prntIdx}')|" th:id="@{'deactive-btn-' + ${reple.idx}}" class="btn_cancel"> 삭제하기</a>
+							<!--  <a th:href="@{/board/m/replyDeactive(idx=${reple.idx}, prntIdx=${reple.prntIdx})}" class="btn_cancel">삭제하기</a>-->
 						</div>
 						</th:block>
 					</div>
@@ -233,8 +352,8 @@
 				<input type="hidden" id="rePrnt" name="rePrnt" value="FR">
 				<input type="hidden" id="prntIdx" name="prntIdx" th:value="${view.idx}">
 
-				<button class="view-write-btn" onclick="replyWriteForm()">댓글 등록</button>
 			</form>
+			<button class="view-write-btn" onclick="replyWriteForm()">댓글 등록</button>
 		</div>
 		</th:block>
 	</div>

@@ -23,6 +23,7 @@ public class TestBookmarkDTO {
 	private TestEntity testIdx;
 	private String addChk;
 	private LocalDateTime addDate;
+	private String isUse;
 
 	//Entity --> DTO 이동
 	public TestBookmarkDTO(TestBookmarkEntity entity) {
@@ -30,6 +31,7 @@ public class TestBookmarkDTO {
 		this.testIdx = entity.getTestIdx();
 		this.addChk = entity.getAddChk();
 		this.addDate = entity.getAddDate();
+		this.isUse = entity.getIsUse();
 	}
 
 	//DTO --> Entity 이동
@@ -40,6 +42,7 @@ public class TestBookmarkDTO {
 										.testIdx(dto.getTestIdx())
 										.addChk(dto.getAddChk())
 										.addDate(dto.getAddDate())
+										.isUse(dto.getIsUse())
 										.build();
 
 		return entity;

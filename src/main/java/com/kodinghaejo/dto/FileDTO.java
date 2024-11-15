@@ -3,7 +3,6 @@ package com.kodinghaejo.dto;
 import java.time.LocalDateTime;
 
 import com.kodinghaejo.entity.FileEntity;
-import com.kodinghaejo.entity.MemberEntity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +20,7 @@ public class FileDTO {
 	private Long idx;
 	private String filePrnt;
 	private Long prntIdx;
-	private MemberEntity email;
+	private String email;
 	private String type;
 	private String orgFile;
 	private String storedFile;

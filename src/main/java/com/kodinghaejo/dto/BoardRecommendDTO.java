@@ -25,6 +25,7 @@ public class BoardRecommendDTO {
 	private String badChk;
 	private LocalDateTime goodDate;
 	private LocalDateTime badDate;
+	private String isUse;
 
 	//Entity --> DTO 이동
 	public BoardRecommendDTO(BoardRecommendEntity entity) {
@@ -34,6 +35,7 @@ public class BoardRecommendDTO {
 		this.badChk = entity.getBadChk();
 		this.goodDate = entity.getGoodDate();
 		this.badDate = entity.getBadDate();
+		this.isUse = entity.getIsUse();
 	}
 
 	//DTO --> Entity 이동
@@ -46,6 +48,7 @@ public class BoardRecommendDTO {
 										.badChk(dto.getBadChk())
 										.goodDate(dto.getGoodDate())
 										.badDate(dto.getBadDate())
+										.isUse(dto.getIsUse())
 										.build();
 
 		return entity;

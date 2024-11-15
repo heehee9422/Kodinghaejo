@@ -19,7 +19,7 @@ public class PageUtil {
 		String pageList = "";
 
 		if (totalPage > 1) {
-			pageList += "<div class=\"pagenate mt20\">\n";
+			pageList += "<div class=\"paginate mt20\">\n";
 			
 			for (int i = 1; i <= pageListCount; i++) {
 				//1. <<, < 출력
@@ -39,7 +39,22 @@ public class PageUtil {
 					pageList += "\t<a href=\"" + src + "?page=" + Integer.toString(prevPage) + "&keyword=" + keyword + "\" class=\"left-arrow\"><i class=\"xi-angle-left-thin\"></i></a>\n";
 				}
 				//2. 페이지 출력 중단
-				if (totalPage < (section - 1) * pageListCount + i) { break; }
+				if (totalPage < (section - 1) * pageListCount + i) {
+					int nextPage = (totalPage >= i + (section - 1) * pageListCount + 1) ? (section * pageListCount + 1) : totalPage;
+					int lastPage = (totalPage >= i + (section - 1) * pageListCount + 1) ? ((totalSection - 1) * pageListCount + (totalPage % pageListCount)) : totalPage;
+					
+					//>(다음 페이지로 이동) 출력
+					pageList += "\t<a href=\"/member/mypage/myboard?page=" + Integer.toString(nextPage) + "&keyword=" + keyword + "\" class=\"right-arrow\"><i class=\"xi-angle-right-thin\"></i></a>\n";
+					
+					//>>(마지막 페이지로 이동) 출력
+					pageList += "\t<a href=\"/member/mypage/myboard?page=" + Integer.toString(lastPage) + "&keyword=" + keyword + "\" class=\"right-next-arrow\">\n"
+										+ "\t\t<svg width=\"12\" height=\"12\" viewBox=\"0 0 22 22\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n"
+										+ "\t\t\t<path d=\"M11 1L21 11.1579L11.3109 21\" stroke=\"black\" stroke-linecap=\"round\"></path>\n"
+										+ "\t\t\t<path d=\"M1 1L11 11.1579L1.31088 21\" stroke=\"black\" stroke-linecap=\"round\"></path>\n"
+										+ "\t\t</svg>\n"
+										+ "\t</a>\n";
+					break;
+				}
 				//3. 인자로 가져 온 페이지 값과 계산해서 나온 페이지 값이 같으면 해당 페이지 활성상태 표시, 링크는 무조건 붙임.
 				if (pageNum != (section - 1) * pageListCount + i)
 					pageList += "\t<a href=\"" + src + "?page=" + Integer.toString((section - 1) * pageListCount + i) + "&keyword=" + keyword + "\">" + Integer.toString((section - 1) * pageListCount + i) + "</a>\n";
@@ -50,7 +65,7 @@ public class PageUtil {
 				if (i == pageListCount) {
 					// && totalSection > 1 && totalPage >= i + (section - 1) * pageListCount + 1
 					int nextPage = (totalPage >= i + (section - 1) * pageListCount + 1) ? (section * pageListCount + 1) : totalPage;
-					int lastPage = (totalPage >= i + (section - 1) * pageListCount + 1) ? (totalSection * pageListCount) : totalPage;
+					int lastPage = (totalPage >= i + (section - 1) * pageListCount + 1) ? ((totalSection - 1) * pageListCount + (totalPage % pageListCount)) : totalPage;
 					
 					//>(다음 페이지로 이동) 출력
 					pageList += "\t<a href=\"" + src + "?page=" + Integer.toString(nextPage) + "&keyword=" + keyword + "\" class=\"right-arrow\"><i class=\"xi-angle-right-thin\"></i></a>\n";
@@ -111,7 +126,7 @@ public class PageUtil {
 		String pageList = "";
 
 		if (totalPage > 1) {
-			pageList += "<div class=\"pagenate mt20\">\n";
+			pageList += "<div class=\"paginate mt20\">\n";
 			
 			for (int i = 1; i <= pageListCount; i++) {
 				//1. <<, < 출력
@@ -131,7 +146,23 @@ public class PageUtil {
 					pageList += "\t<a href=\"/member/mypage/myboard?" + pageName + "=" + Integer.toString(prevPage) + "&" + subPageName + "=" + subPage + "\" class=\"left-arrow\"><i class=\"xi-angle-left-thin\"></i></a>\n";
 				}
 				//2. 페이지 출력 중단
-				if (totalPage < (section - 1) * pageListCount + i) { break; }
+				if (totalPage < (section - 1) * pageListCount + i) {
+					// && totalSection > 1 && totalPage >= i + (section - 1) * pageListCount + 1
+					int nextPage = (totalPage >= i + (section - 1) * pageListCount + 1) ? (section * pageListCount + 1) : totalPage;
+					int lastPage = (totalPage >= i + (section - 1) * pageListCount + 1) ? ((totalSection - 1) * pageListCount + (totalPage % pageListCount)) : totalPage;
+					
+					//>(다음 페이지로 이동) 출력
+					pageList += "\t<a href=\"/member/mypage/myboard?" + pageName + "=" + Integer.toString(nextPage) + "&" + subPageName + "=" + subPage + "\" class=\"right-arrow\"><i class=\"xi-angle-right-thin\"></i></a>\n";
+					
+					//>>(마지막 페이지로 이동) 출력
+					pageList += "\t<a href=\"/member/mypage/myboard?" + pageName + "=" + Integer.toString(lastPage) + "&" + subPageName + "=" + subPage + "\" class=\"right-next-arrow\">\n"
+										+ "\t\t<svg width=\"12\" height=\"12\" viewBox=\"0 0 22 22\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n"
+										+ "\t\t\t<path d=\"M11 1L21 11.1579L11.3109 21\" stroke=\"black\" stroke-linecap=\"round\"></path>\n"
+										+ "\t\t\t<path d=\"M1 1L11 11.1579L1.31088 21\" stroke=\"black\" stroke-linecap=\"round\"></path>\n"
+										+ "\t\t</svg>\n"
+										+ "\t</a>\n";
+					break;
+				}
 				//3. 인자로 가져 온 페이지 값과 계산해서 나온 페이지 값이 같으면 해당 페이지 활성상태 표시, 링크는 무조건 붙임.
 				if (page != (section - 1) * pageListCount + i)
 					pageList += "\t<a href=\"/member/mypage/myboard?" + pageName + "=" + Integer.toString((section - 1) * pageListCount + i) + "&" + subPageName + "=" + subPage + "\">" + Integer.toString((section - 1) * pageListCount + i) + "</a>\n";
@@ -142,7 +173,7 @@ public class PageUtil {
 				if (i == pageListCount) {
 					// && totalSection > 1 && totalPage >= i + (section - 1) * pageListCount + 1
 					int nextPage = (totalPage >= i + (section - 1) * pageListCount + 1) ? (section * pageListCount + 1) : totalPage;
-					int lastPage = (totalPage >= i + (section - 1) * pageListCount + 1) ? (totalSection * pageListCount) : totalPage;
+					int lastPage = (totalPage >= i + (section - 1) * pageListCount + 1) ? ((totalSection - 1) * pageListCount + (totalPage % pageListCount)) : totalPage;
 					
 					//>(다음 페이지로 이동) 출력
 					pageList += "\t<a href=\"/member/mypage/myboard?" + pageName + "=" + Integer.toString(nextPage) + "&" + subPageName + "=" + subPage + "\" class=\"right-arrow\"><i class=\"xi-angle-right-thin\"></i></a>\n";

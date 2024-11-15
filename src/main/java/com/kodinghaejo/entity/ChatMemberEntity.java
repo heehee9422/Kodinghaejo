@@ -32,7 +32,7 @@ public class ChatMemberEntity {
 	@Id
 	@ManyToOne(fetch = FetchType.LAZY)
 	@OnDelete(action = OnDeleteAction.CASCADE)
-	@JoinColumn(name = "idx", nullable = false)
+	@JoinColumn(name = "chat_idx", nullable = false)
 	private ChatEntity chatIdx;
 	
 	@Id
@@ -49,8 +49,5 @@ public class ChatMemberEntity {
 	
 	@Column(name = "regdate", nullable = false)
 	private LocalDateTime regdate;
-
-	@Column(name = "is_use", length = 2, nullable = false)
-	private String isUse;
 	
 }

@@ -9,9 +9,58 @@
 <link rel="stylesheet"
 	href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
 <script src="/js/pub-ui-custom.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+
 const deleteEmptyChats = () => {
+    Swal.fire({
+        title: "채팅방을 정리하시겠습니까?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "네, 정리합니다",
+        cancelButtonText: "취소"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/admin/systemChatDelete`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (response.ok) {
+                    Swal.fire({
+                        title: "성공",
+                        text: "채팅방이 정리되었습니다.",
+                        icon: "success",
+                        confirmButtonText: "확인"
+                    }).then(() => {
+                        location.reload(); // 성공 시 페이지 새로고침
+                    });
+                } else {
+                    console.log('Error Status:', response.status);
+                    Swal.fire({
+                        title: "오류",
+                        text: "채팅방 정리에 실패했습니다.",
+                        icon: "error",
+                        confirmButtonText: "확인"
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('삭제 중 오류 발생:', error);
+                Swal.fire({
+                    title: "오류",
+                    text: "삭제 요청 중 오류가 발생했습니다.",
+                    icon: "error",
+                    confirmButtonText: "확인"
+                });
+            });
+        }
+    });
+};
+
+/*
+const deleteEmptyChats = () => {
+	
     if (confirm("채팅방을 정리하시겠습니까?")) {
         fetch(`/admin/systemChatDelete`, {
             method: 'DELETE'
@@ -32,6 +81,7 @@ const deleteEmptyChats = () => {
         });
     }
 }
+*/
 </script>
 
 

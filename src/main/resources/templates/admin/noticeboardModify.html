@@ -10,42 +10,43 @@
 	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
 	<!-- pub-js link -->
 	<script src="/js/pub-ui-custom.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <script>
 
 const registerForm = async() => {
 	
-	let cat = document.querySelector('select[name=category-section]').value; // 선택된 카테고리 값 가져오기
+	let cat = document.querySelector('select[name=category-section]').value;
 		let title = document.querySelector('#title');
 		let writer = document.querySelector('#writer');
 		let email = document.querySelector('#email');
 		let isUse = document.querySelector('#isUse');
 		
-
-		// Toast UI Editor의 content 내용 가져오기
-		let content = editor.getMarkdown(); // 마크다운 텍스트로 가져오기
-		
- 
+		let content = editor.getMarkdown();
 		
 		//필수값 등록시 값 입력 여부 확인
 	
 		if(title.value === ''){
-				alert('제목을 입력하세요!!!');
+				Swal.fire({
+		    		icon:"warning",
+		    		text:"제목을 입력하세요"});
 				title.focus();
 				return false;
 		}
 		
 		if (content.trim() === '') {
-				alert('내용을 입력하세요!!!');
+				Swal.fire({
+		    		icon:"warning",
+		    		text:"내용을 입력하세요"});
 				return false;
 		} 
 		
-		
 		let formData = new FormData(document.getElementById('WriteForm'));
-		formData.append("cat", cat); // 선택된 카테고리 값을 FormData에 추가
-		formData.append("content", content); // Toast UI Editor의 내용을 FormData에 추가
+		formData.append("cat", cat);
+		formData.append("content", content);
 		
- 
+ 		const idx = parseInt('[[ ${board.idx} ]]');
+		formData.append("idx", idx);
 		
 		await fetch('/admin/noticeWrite', {
 		method: 'POST',
@@ -53,11 +54,21 @@ const registerForm = async() => {
 	}).then((response)=> response.json())
 		.then((data)=> {
 			if(data.message === 'good'){
-				alert("게시물이 등록되었습니다.");
-				document.location.href='/admin/systemNotice';
+				Swal.fire({
+		            title: "공지사항이 수정되었습니다.",
+		            icon: "success",
+		            confirmButtonText: "확인" 
+		        }).then((result) => {
+		            if (result.isConfirmed) {
+		            	document.location.href='/admin/systemNotice';
+		            }
+		        });
 			}
 	}).catch((error)=> {
-		alert("시스템 장애로 게시물 등록이 실패했습니다.");
+		Swal.fire({
+			  icon: "error",
+			  text: "시스템 장애로 게시물 등록이 실패했습니다",
+			});
 		console.log("error" + error);
 	})
 		 
@@ -83,7 +94,7 @@ const registerForm = async() => {
 				
 				
 				<form class="WriteForm" id="WriteForm" name="WriteForm" method="post" enctype="multipart/form-data">		 
-					<h2>공지사항 작성</h2>
+					<h2>공지사항 수정</h2>
 					<div class="mt30"></div>
 					<div class="category-menu">
 						<label for="category-section">카테고리<span class="asterisk"></span></label>
@@ -136,14 +147,12 @@ const registerForm = async() => {
 	</script> 
 	<script>
 		const editor = new toastui.Editor({
-			el: document.querySelector('#content'), // 에디터를 적용할 요소 (컨테이너)
-			height: '400px',												// 에디터 영역의 높이 값 (OOOpx || auto)
-			initialEditType: 'markdown',						// 최초로 보여줄 에디터 타입 (markdown || wysiwyg)
-			initialValue: editorContent,		// 내용의 초기 값으로, 반드시 마크다운 문자열 형태여야 함
-			initialEditType: 'wysiwyg',							// 마크다운 프리뷰 스타일 (tab || vertical)
-			
+			el: document.querySelector('#content'),
+			height: '400px',
+			initialEditType: 'markdown',
+			initialValue: editorContent,
+
 			 toolbarItems: [
-						// 기본 툴바 항목에서 'image' 항목을 제외하고 나열합니다.
 					['heading', 'bold', 'italic', 'strike'],
 					['hr', 'quote'],
 					['ul', 'ol', 'task'],

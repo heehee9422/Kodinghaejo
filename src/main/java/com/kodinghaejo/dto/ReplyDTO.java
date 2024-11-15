@@ -2,6 +2,7 @@ package com.kodinghaejo.dto;
 
 import java.time.LocalDateTime;
 
+import com.kodinghaejo.entity.MemberEntity;
 import com.kodinghaejo.entity.ReplyEntity;
 
 import lombok.AllArgsConstructor;
@@ -20,7 +21,7 @@ public class ReplyDTO {
 	private Long idx;
 	private String rePrnt;
 	private Long prntIdx;
-	private String email;
+	private MemberEntity email;
 	private String writer;
 	private String content;
 	private LocalDateTime regdate;

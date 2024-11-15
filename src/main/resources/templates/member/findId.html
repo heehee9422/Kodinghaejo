@@ -10,6 +10,8 @@
 	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css" />
 	<!-- pub-js link -->
 	<script src="/js/pub-ui-custom.js"></script>
+	<!-- SweetAlert2 link -->
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <!-- 게시판 복사용 게시판 -->
 <body>
@@ -83,11 +85,24 @@
 			.then((response) => response.json())
 			.then((data) => {
 				if (data.message == 'good') {
-					alert('회원님의 아이디(이메일) 찾기 결과\n[ ' + data.id + ' ] 입니다.');
+					Swal.fire({
+								icon: 'success',
+								title: '아이디(이메일) 찾기 결과',
+								html: data.id,
+								confirmButtonText: '확인'
+							});
 				} else if (data.message == 'ID_NOT_FOUND') {
-					alert('해당 정보와 일치하는 아이디(이메일)가 존재하지 않습니다.');
+					Swal.fire({
+								icon: 'error',
+								text: '해당 정보와 일치하는 아이디(이메일)가 존재하지 않습니다.',
+								confirmButtonText: '확인'
+							});
 				} else {
-					alert('시스템 장애로 인해 아이디(이메일) 찾기에 실패했습니다.')
+					Swal.fire({
+						icon: 'error',
+						text: '시스템 장애로 인해 아이디(이메일) 찾기에 실패했습니다.',
+						confirmButtonText: '확인'
+					});
 				}
 			}).catch((error) => {
 				console.log('error: ' + error);

@@ -5,14 +5,19 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
+import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Service;
 
 import com.kodinghaejo.dto.TestDTO;
+import com.kodinghaejo.entity.MemberEntity;
 import com.kodinghaejo.entity.TestEntity;
 import com.kodinghaejo.entity.TestLngEntity;
+import com.kodinghaejo.entity.TestSubmitEntity;
+import com.kodinghaejo.entity.repository.MemberRepository;
 import com.kodinghaejo.entity.repository.TestLngRepository;
 import com.kodinghaejo.entity.repository.TestRepository;
+import com.kodinghaejo.entity.repository.TestSubmitRepository;
 
 import lombok.AllArgsConstructor;
 
@@ -20,8 +25,10 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class TestServiceImpl implements TestService {
 	
+	private final MemberRepository memberRepository;
 	private final TestRepository testRepository;
 	private final TestLngRepository testLngRepository;
+	private final TestSubmitRepository testSubmitRepository;
 	
 	//코딩테스트 문제 가져오기
 	@Override
@@ -111,6 +118,7 @@ public class TestServiceImpl implements TestService {
 		}
 	}
 
+	//코드 검증 처리 중 에러 발생 시 처리 메소드
 	private String getProcessErrorOutput(Process process) throws Exception {
 		BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 		StringBuilder errorOutput = new StringBuilder();
@@ -120,4 +128,24 @@ public class TestServiceImpl implements TestService {
 		}
 		return "Error:\n" + errorOutput.toString();
 	}
+	
+
+	//코드 제출 처리
+	@Override
+	public void submitTest(Long tlIdx, String email, String submSts, String code) {
+		TestLngEntity testLngEntity = testLngRepository.findById(tlIdx).get();
+		MemberEntity memberEntity = memberRepository.findById(email).get();
+		
+		TestSubmitEntity testSubmitEntity = TestSubmitEntity
+																					.builder()
+																					.tlIdx(testLngEntity)
+																					.email(memberEntity)
+																					.submSts(submSts)
+																					.content(code)
+																					.regdate(LocalDateTime.now())
+																					.build();
+		
+		testSubmitRepository.save(testSubmitEntity);
+	}
+	
 }

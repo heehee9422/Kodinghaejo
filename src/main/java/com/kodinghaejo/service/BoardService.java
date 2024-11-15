@@ -74,6 +74,6 @@ public Map<Long, Long> getAllBoardLikeCounts(List<Long> prntIdx);
 	public Page<BoardDTO> mypageBoardList(String email, int pageNum, int postNum);
 
 	//내가 작성한 댓글(마이 페이지)
-	Page<ReplyEntity> mypageReplyList(String email, int pageNum, int postNum);
+	Page<ReplyDTO> mypageReplyList(String email, int pageNum, int postNum);
 	
 }

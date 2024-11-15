@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>내 정보</title>
+	<title>내 정보&nbsp;&#124;&nbsp;코딩해조</title>
 	<!-- Standard css -->
 	<link rel="icon" href="/img/logo/favicon.png">
 	<link rel="stylesheet" href="/css/style.css">
@@ -94,13 +94,13 @@
 					<div class="mypage_box">
 						<p>최근 업데이트 일 : <th:block th:if="${ member.regdate == member.pwdate }">없음</th:block><th:block th:if="${ member.regdate != member.pwdate }"><span th:text="${ #temporals.format(member.pwdate, 'yyyy-MM-dd a hh:mm:ss') }"></span></th:block></p>
 						<div class="profile_btn_grup">
-							<input type="button" value="비밀번호 수정" onclick="edit('Password')">
+							<input type="button" value="비밀번호 변경" onclick="edit('Password')">
 						</div>
 					</div>
 
 					<h5>회원탈퇴</h5>
 					<div class="mypage_box">
-						<p>회원 탈퇴 시 테스트 정보가 삭제됩니다.</p>
+						<p>회원 탈퇴 시 참여 중인 모든 채팅방에서 퇴장조치되며, 응시한 테스트 정보가 삭제됩니다.</p>
 						<div class="profile_btn_grup">
 							<input type="button" id="btn_memdelete" class="btn_memdelete" value="회원탈퇴하기" onclick="deleteAccount()">
 						</div>
@@ -119,8 +119,19 @@
 	
 		//회원 탈퇴
 		const deleteAccount = () => {
-			if (confirm('정말 회원 탈퇴를 하시겠습니까?'))
-				document.location = '/member/mypage/deleteAccount';
+			if (!confirm('정말 회원 탈퇴를 하시겠습니까?\n동일한 이메일로는 다시 가입할 수 없습니다.'))
+				return false;
+			
+			fetch('/member/mypage/deleteAccount', {
+				method: 'GET'
+			})
+			.then((response) => response.json())
+			.then((data) => {
+				if (data.message == 'good') {
+					alert('탈퇴 처리가 정상적으로 완료되었습니다.\n메인 화면으로 이동합니다.');
+					document.location.href = '/';
+				}
+			});
 		}
 	</script>
 

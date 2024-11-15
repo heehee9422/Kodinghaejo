@@ -23,6 +23,7 @@
 	href="/js/codemirror/codemirror-5.65.18/lib/codemirror.css">
 <link rel="stylesheet"
 	href="/js/codemirror/codemirror-5.65.18/theme/monokai.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 	<!-- header 영역 -->
@@ -222,12 +223,16 @@ ex)정수 num1과 num2가 주어질 때, num1에서 num2를 뺀 값을 return하
         let content = editor.getMarkdown();  // 에디터에서 markdown 내용을 가져옴
         // 제목과 내용 검사
         if (title.value === '') {
-            alert('제목을 입력하세요!!!');
+        	Swal.fire({
+	    		icon:"warning",
+	    		text:"제목을 입력하세요"});
             title.focus();
             return false;
         }
         if (content === '') {
-            alert('내용을 입력하세요!!!');
+        	Swal.fire({
+	    		icon:"warning",
+	    		text:"내용을 입력하세요"});
             return false;
         }
         const data = {
@@ -263,13 +268,26 @@ ex)정수 num1과 num2가 주어질 때, num1에서 num2를 뺀 값을 return하
         }).then((response) => response.json())
             .then((data) => {
                 if (data.message === 'good') {
-                    alert("문제 작성이 완료되었습니다.");
-                    document.location.href = '/admin/systemTest';
+                	Swal.fire({
+                		icon: "success",
+    		            title: "문제 작성이 완료되었습니다.",
+    		            confirmButtonText: "확인" 
+    		        }).then((result) => {
+    		            if (result.isConfirmed) {
+    		                document.location.href = `/admin/systemTest`;
+    		            }
+    		        });
                 } else {
-                    alert("시스템 오류로 문제가 등록되지 않았습니다.");
+                	Swal.fire({
+          			  icon: "error",
+          			  text: "시스템 오류로 문제 등록이 실패했습니다",
+          			});
                 }
             }).catch((error) => {
-                alert("시스템 오류로 문제가 등록되지 않았습니다.");
+            	Swal.fire({
+        			  icon: "error",
+        			  text: "시스템 오류로 문제가 등록되지 않았습니다" 
+        			});
                 console.log("error : " + error);
             });
     };

@@ -44,6 +44,9 @@ public interface MemberService {
 	//회원 첨부파일 목록
 	public List<FileEntity> getMemberFileList(String email);
 	
+	//본인이 방장인 채팅방의 갯수 확인
+	public Long countChatManager(String email);
+	
 	//계정 삭제
 	public void deleteAccount(String email);
 

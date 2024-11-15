@@ -128,6 +128,9 @@ public class MemberController {
 		
 		//회원가입
 		if (kind.equals("I")) {
+			if (service.checkEmail(member.getEmail()) == -1)
+				return "{ \"message\": \"DELETE_ACCOUNT_DENY\" }";
+			
 			member.setPassword(pwEncoder.encode(member.getPassword()));
 			service.join(member);
 		}
@@ -300,9 +303,60 @@ public class MemberController {
 
 	//내 정보 수정
 	@GetMapping("/member/mypage/editInfo")
-	public void getMypageMyedit(Model model, HttpSession session) {
+	public void getMypageEditInfo(Model model, HttpSession session) {
 		MemberDTO member = service.memberInfo((String) session.getAttribute("email"));
 		model.addAttribute("member", member);
+	}
+	
+	//비밀번호 변경(화면)
+	@GetMapping("/member/mypage/editPassword")
+	public void getMypageEditPassword(Model model, HttpSession session) {
+		MemberDTO member = service.memberInfo((String) session.getAttribute("email"));
+		model.addAttribute("member", member);
+	}
+	
+	//비밀번호 변경(처리)
+	@ResponseBody
+	@PostMapping("/member/mypage/editPassword")
+	public String postMypageEditPassword(@RequestParam("oldPassword") String oldPassword,
+			@RequestParam("password") String password, HttpSession session) throws Exception {
+		String email = (String) session.getAttribute("email");
+		
+		//입력받은 기존 비밀번호가 실제 비밀번호와 일치하는지 확인
+		if (!pwEncoder.matches(oldPassword, service.memberInfo(email).getPassword()))
+			return "{ \"message\": \"PASSWORD_NOT_MATCH\" }";
+		
+		//기존 비밀번호와 신규 비밀번호가 동일할 경우 거부
+		if (pwEncoder.matches(password, service.memberInfo(email).getPassword()))
+			return "{ \"message\": \"SAME_PASSWORD_DENY\" }";
+		
+		//신규 비밀번호로 변경
+		MemberDTO member = new MemberDTO();
+		member.setEmail(email);
+		member.setPassword(pwEncoder.encode(password));
+		service.editPassword(member);
+		service.lastdateUpdate(email, "password");
+		
+		return "{ \"message\": \"good\" }";
+	}
+	
+	//회원탈퇴
+	@ResponseBody
+	@GetMapping("/member/mypage/deleteAccount")
+	public String getDeleteAccount(HttpSession session) throws Exception {
+		String email = (String) session.getAttribute("email");
+		
+		//본인이 방장인 채팅방이 존재할 경우 거부
+		if (service.countChatManager(email) > 0)
+			return "{ \"message\": \"EXIST_CHAT_MANAGER\" }";
+		
+		//회원 가입정보 삭제
+		service.deleteAccount(email);
+		
+		//세션 삭제
+		session.invalidate();
+
+		return "{ \"message\": \"good\" }";
 	}
 
 	//나의 활동

@@ -10,6 +10,8 @@
 	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css" />
 	<!-- pub-js link -->
 	<script src="/js/pub-ui-custom.js"></script>
+	<!-- SweetAlert2 link -->
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <!-- 게시판 복사용 게시판 -->
 <body>
@@ -57,13 +59,19 @@
 		const checkLogin = async () => {
 			//유효성 검사
 			if (email.value == '') {
-				alert('이메일을 입력해주세요.');
+				Swal.fire({
+							icon: 'warning',
+							text: '이메일을 입력해주세요.'
+						});
 				email.focus();
 				return false;
 			}
 
 			if (password.value == '') {
-				alert('비밀번호를 입력해주세요.');
+				Swal.fire({
+							icon: 'warning',
+							text: '비밀번호를 입력해주세요.'
+						});
 				password.focus();
 				return false;
 			}
@@ -82,18 +90,27 @@
 						break;
 						
 					case 'ID_NOT_FOUND':
-						alert('해당 이메일로 가입된 계정이 존재하지 않습니다.');
+						Swal.fire({
+									icon: 'error',
+									text: '해당 이메일로 가입된 계정이 존재하지 않습니다.'
+								});
 						email.focus();
 						break;
 						
 					case 'PASSWORD_NOT_MATCH':
-						alert('비밀번호를 확인해주세요.');
+						Swal.fire({
+							icon: 'error',
+							text: '비밀번호를 확인해주세요.'
+						});
 						password.value = '';
 						password.focus();
 						break;
 						
 					default:
-						alert('시스템 장애로 인해 로그인에 실패했습니다.');
+						Swal.fire({
+							icon: 'error',
+							text: '시스템 장애로 인해 로그인에 실패했습니다.'
+						});
 						break;
 				}
 			}).catch((error) => {

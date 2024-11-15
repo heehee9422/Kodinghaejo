@@ -47,7 +47,10 @@ public interface BoardRepository extends JpaRepository<BoardEntity, Long> {
 	int countAllBoards();
 	*/
 
-	//마이페이지 -> 본인이 작성한 게시글 확인(사용가능 상태인 걸로)
+	//본인이 작성한 게시글 확인
+	//마이페이지(페이징)
 	public Page<BoardEntity> findByEmailAndIsUse(MemberEntity email, String isUse, Pageable pageable);
+	//탈퇴 전 확인
+	public List<BoardEntity> findByEmailAndIsUse(MemberEntity email, String isUse);
 
 }
