@@ -25,7 +25,6 @@ import com.kodinghaejo.entity.MemberEntity;
 import com.kodinghaejo.entity.ReplyEntity;
 import com.kodinghaejo.entity.repository.BoardRecommendRepository;
 import com.kodinghaejo.entity.repository.BoardRepository;
-import com.kodinghaejo.entity.repository.FileRepository;
 import com.kodinghaejo.entity.repository.MemberRepository;
 import com.kodinghaejo.entity.repository.ReplyRepository;
 import com.kodinghaejo.entity.repository.TestQuestionAnswerRepository;
@@ -37,10 +36,9 @@ import lombok.AllArgsConstructor;
 @Service
 @AllArgsConstructor
 public class BoardServiceImpl implements BoardService {
-	
+
 	private final BoardRepository boardRepository;
 	private final BoardRecommendRepository boardRecommendRepository;
-	private final FileRepository fileRepository;
 	private final MemberRepository memberRepository;
 	private final ReplyRepository replyRepository;
 	private final TestQuestionRepository testQuestionRepository;
@@ -51,21 +49,39 @@ public class BoardServiceImpl implements BoardService {
 	public void write(BoardDTO board) throws Exception {
 		board.setRegdate(LocalDateTime.now());
 		board.setHitCnt(0);
-		boardRepository.save(board.dtoToEntity(board));	
+		boardRepository.save(board.dtoToEntity(board));
 	}
-	
+
 	//게시물 리스트보기
 	@Override
 	public List<BoardEntity> getPosts(){
 		return boardRepository.findByIsUseOrderByRegdateDesc("Y");
 	}
-	
+	@Override
+	public Page<BoardDTO> getBoardList(int pageNum, int postNum, String email) {
+		MemberEntity memberEntity = (email == null) ? null : memberRepository.findById(email).get();
+		
+		PageRequest pageRequest = PageRequest.of(pageNum - 1, postNum, Sort.by(Direction.DESC, "idx"));
+		Page<BoardEntity> boardEntities = boardRepository.findByCatNotAndIsUseOrderByRegdateDesc("CAT-0001", "Y", pageRequest);
+		List<BoardDTO> boardDTOs = new ArrayList<>();
+		
+		for (BoardEntity boardEntity : boardEntities) {
+			BoardDTO boardDTO = new BoardDTO(boardEntity);
+			boardDTO.setReplyCnt(replyRepository.countByRePrntAndPrntIdxAndIsUse("FR", boardEntity.getIdx(), "Y"));
+			boardDTO.setGoodChk((email == null || email.equals("")) ? "N" : (boardRecommendRepository.countByEmailAndBoardIdxAndGoodChkAndIsUse(memberEntity, boardEntity, "Y", "Y") == 0) ? "N" : "Y");
+			boardDTO.setGoodCnt(boardRecommendRepository.countByBoardIdxAndGoodChkAndIsUse(boardEntity, "Y", "Y"));
+			boardDTOs.add(boardDTO);
+		}
+		
+		return new PageImpl<>(boardDTOs, pageRequest, boardEntities.getTotalElements());
+	}
+
 	//게시물 내용 보기
 	@Override
 	public BoardDTO view(Long idx) throws Exception {
 		return boardRepository.findById(idx).map(view -> new BoardDTO(view)).get();
 	}
-	
+
 	//게시물 수정하기
 	@Override
 	public void modify(BoardDTO board)throws Exception{
@@ -74,20 +90,30 @@ public class BoardServiceImpl implements BoardService {
 		boardEntity.setContent(board.getContent());
 		boardEntity.setCat(board.getCat());
 		boardRepository.save(boardEntity);
-		
 	}
-	
-	//게시물 비활성화 (isUse y->n)
+
+	//게시물 비활성화 (isUse Y -> N)
 	@Override
 	public void deactivePost(BoardDTO board)throws Exception {
 		BoardEntity boardEntity = boardRepository.findById(board.getIdx()).get();
 		boardEntity.setIsUse("N"); // isUse 값을 N으로 설정하여 비활성화
 		boardRepository.save(boardEntity);
 	}
+	@Override
+	public void deleteBoard(Long idx) throws Exception {
+		BoardEntity boardEntity = boardRepository.findById(idx).get();
+		boardEntity.setIsUse("N"); // isUse 값을 N으로 설정하여 비활성화
+		boardRepository.save(boardEntity);
+	}
 
 	//댓글 목록보기
+	@Override
 	public List<ReplyEntity>replyView(Long prntIdx){
 		return replyRepository.findByPrntIdx(prntIdx);
+	}
+	@Override
+	public List<ReplyInterface> viewReply(ReplyInterface reply) {
+		return replyRepository.findByRePrntAndPrntIdxAndIsUse(reply.getRePrnt(), reply.getPrntIdx(), "Y");
 	}
 
 	//댓글 등록
@@ -96,29 +122,55 @@ public class BoardServiceImpl implements BoardService {
 		reply.setRegdate(LocalDateTime.now());
 		replyRepository.save(reply.dtoToEntity(reply));
 	}
-			
-	// 댓글 삭제 (isUse를 "N"으로 설정)
 	@Override
-	public void replyDeactive(ReplyInterface reply) {
-		ReplyEntity replyEntity = replyRepository.findById(reply.getIdx()).get();
-		replyEntity.setIsUse("N");
+	public void writeReply(ReplyInterface reply) throws Exception {
+		MemberEntity memberEntity = memberRepository.findById(reply.getEmail()).get();
+		
+		ReplyEntity replyEntity = ReplyEntity
+																.builder()
+																.rePrnt(reply.getRePrnt())
+																.prntIdx(reply.getPrntIdx())
+																.email(memberEntity)
+																.writer(reply.getWriter())
+																.content(reply.getContent())
+																.regdate(LocalDateTime.now())
+																.isUse("U")
+																.build();
 		replyRepository.save(replyEntity);
 	}
-	
+
 	//댓글 수정
 	@Override
 	public void replyModify(ReplyInterface reply){
 		ReplyEntity replyEntity = replyRepository.findById(reply.getIdx()).get();
-		replyEntity.setContent(reply.getContent());	
+		replyEntity.setContent(reply.getContent());
+		replyRepository.save(replyEntity);
+	}
+	@Override
+	public void editReply(ReplyInterface reply) throws Exception {
+		ReplyEntity replyEntity = replyRepository.findById(reply.getIdx()).get();
+		replyEntity.setContent(reply.getContent());
 		replyRepository.save(replyEntity);
 	}
 
-	//댓글수 확인
+	// 댓글 삭제 (isUse를 "N"으로 설정)
+	@Override
+	public void deleteReply(ReplyInterface reply) {
+		ReplyEntity replyEntity = replyRepository.findById(reply.getIdx()).get();
+		replyEntity.setIsUse("N");
+		replyRepository.save(replyEntity);
+	}
+
+	//댓글 수 확인
 	@Override
 	public int getReplyCountByPostId(Long prntIdx) {
 		return replyRepository.countRepliesByPostId(prntIdx);
 	}
-	
+	@Override
+	public Long getReplyCount(String rePrnt, Long prntIdx) {
+		return replyRepository.countByRePrntAndPrntIdxAndIsUse(rePrnt, prntIdx, "Y");
+	}
+
 	// 다수의 게시물 ID에 대한 댓글 수를 조회하여 Map으로 반환
 	@Override
 	public Map<Long, Integer> getReplyCounts(List<Long> prntIdx) {
@@ -128,23 +180,27 @@ public class BoardServiceImpl implements BoardService {
 		return prntIdx.stream()
 									.collect(Collectors.toMap(postId -> postId, postId -> replyRepository.countRepliesByPostId(postId)));
 	}
-	
+
 	//게시물 내용 조회수 증가
 	@Override
 	public void hitno(Long seqno) throws Exception {
 		boardRepository.hitno(seqno);
 	}
-	
-	
+
+
 	// 개별 게시물의 좋아요 수를 반환하는 메서드
+	@Override
+	public long getRecommendCount(Long bidx){
+		return boardRecommendRepository.countByBoardIdx(bidx);
+	}
+
+	// 모든 게시물의 좋아요 수를 조회하는 메서드
 	@Override
 	public long getLikeCount(Long bidx){
 		
 		long likeCount =  boardRecommendRepository.countByBoardIdx(bidx);
 		return likeCount > 0 ? likeCount : 0;
 	}
-
-	// 모든 게시물의 좋아요 수를 조회하는 메서드
 	@Override
 	public Map<Long, Long> getAllBoardLikeCounts(List<Long> postIds) {
 		Map<Long, Long> likeCounts = new HashMap<>();
@@ -157,23 +213,24 @@ public class BoardServiceImpl implements BoardService {
 
 		return likeCounts;
 	}
-	
+
 	//좋아요 상태 확인
 	@Override
 	public String isPostLikedByUser(String email, Long boardIdx) {
-		int count = boardRecommendRepository.countByEmailAndBoardIdx(email, boardIdx);
+		int count = 0;//boardRecommendRepository.countByEmailAndBoardIdx(email, boardIdx);
 		return count > 0 ? "yes" : "no";
 	}
 
+	@Override
 	@Transactional
 	public boolean likeUp(String email, Long postIdx) {
 		BoardRecommendEntityId id = new BoardRecommendEntityId(email, postIdx);
-		
+
 		MemberEntity member = memberRepository.findById(email)
 														.orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 사용자가 없습니다: " + email));
 		BoardEntity board = boardRepository.findById(postIdx)
 													.orElseThrow(() -> new IllegalArgumentException("해당 게시물 ID가 없습니다: " + postIdx));
-		
+
 		if (boardRecommendRepository.existsById(id)) {
 			return false;
 		}
@@ -186,6 +243,7 @@ public class BoardServiceImpl implements BoardService {
 		return true;
 	}
 
+	@Override
 	@Transactional
 	public boolean likeDown(String email, Long postIdx) {
 		BoardRecommendEntityId id = new BoardRecommendEntityId(email, postIdx);
@@ -196,6 +254,29 @@ public class BoardServiceImpl implements BoardService {
 		return false;
 	}
 	
+	//게시물 추천 처리
+	@Override
+	public void recommend(Long boardIdx, String email, String kind) {
+		BoardRecommendEntity boardRecommendEntity;
+		
+		if (boardRecommendRepository.findById(new BoardRecommendEntityId(email, boardIdx)).isEmpty()) {
+			boardRecommendEntity = BoardRecommendEntity
+															.builder()
+															.email(memberRepository.findById(email).get())
+															.boardIdx(boardRepository.findById(boardIdx).get())
+															.goodChk(kind)
+															.goodDate(LocalDateTime.now())
+															.isUse("Y")
+															.build();
+		} else {
+			boardRecommendEntity = boardRecommendRepository.findById(new BoardRecommendEntityId(email, boardIdx)).get();
+			boardRecommendEntity.setGoodChk(kind);
+			boardRecommendEntity.setGoodDate(LocalDateTime.now());
+		}
+		
+		boardRecommendRepository.save(boardRecommendEntity);
+	}
+
 	//신고하기
 	@Transactional
 	@Override
@@ -223,58 +304,13 @@ public class BoardServiceImpl implements BoardService {
 			return "already_reported";
 		}
 	}
-	
+
 	//공지사항 화면
 	@Override
-	public List<BoardDTO> getAllNotices() {
-		List<BoardEntity> boardEntities = boardRepository.findByCat("공지사항");
-		List<BoardDTO> boardDTOs = new ArrayList<>();
-		
-		for (BoardEntity board : boardEntities) {
-			BoardDTO boardDTO = new BoardDTO(board);
-			boardDTOs.add(boardDTO);
-		}
-		
-		return boardDTOs;
-	}
-	
-	//내가 작성한 게시글(마이 페이지)
-	@Override
-	public Page<BoardDTO> mypageBoardList(String email, int pageNum, int postNum) {
-		MemberEntity memberEntity = memberRepository.findById(email).get();
-		
+	public Page<BoardEntity> getAllNotices(int pageNum, int postNum) {
 		PageRequest pageRequest = PageRequest.of(pageNum - 1, postNum, Sort.by(Direction.DESC, "idx"));
-		Page<BoardEntity> boardEntities = boardRepository.findByEmailAndIsUse(memberEntity, "Y", pageRequest);
-		List<BoardDTO> boardDTOs = new ArrayList<>();
 		
-		for (BoardEntity boardEntity : boardEntities) {
-			BoardDTO board = new BoardDTO(boardEntity);
-			board.setGoodCnt(boardRecommendRepository.countByBoardIdxAndGoodChk(boardEntity, "Y"));
-			boardDTOs.add(board);
-		}
-		
-		return new PageImpl<>(boardDTOs, pageRequest, boardEntities.getTotalElements());
-	}
-	
-	//내가 작성한 댓글(마이 페이지)
-	@Override
-	public Page<ReplyDTO> mypageReplyList(String email, int pageNum, int postNum) {
-		MemberEntity memberEntity = memberRepository.findById(email).get();
-		
-		PageRequest pageRequest = PageRequest.of(pageNum - 1, postNum, Sort.by(Direction.DESC, "idx"));
-		Page<ReplyEntity> replyEntities = replyRepository.findByEmailAndIsUse(memberEntity, "Y", pageRequest);
-		List<ReplyDTO> replyDTOs = new ArrayList<>();
-		
-		for (ReplyEntity replyEntity : replyEntities) {
-			ReplyDTO reply = new ReplyDTO(replyEntity);
-			String prntTitle = (replyEntity.getRePrnt().equals("QA")) ? testQuestionAnswerRepository.findById(replyEntity.getPrntIdx()).get().getContent() :
-													(replyEntity.getRePrnt().equals("Q")) ? testQuestionRepository.findById(replyEntity.getPrntIdx()).get().getTitle() :
-													(replyEntity.getRePrnt().equals("FR")) ? boardRepository.findById(replyEntity.getPrntIdx()).get().getTitle() : "";
-			reply.setPrntTitle(prntTitle);
-			replyDTOs.add(reply);
-		}
-		
-		return new PageImpl<>(replyDTOs, pageRequest, replyEntities.getTotalElements());
+		return boardRepository.findByCat("공지사항", pageRequest);
 	}
 
 }

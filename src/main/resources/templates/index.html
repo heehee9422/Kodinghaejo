@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <html lang="kr" xmlns:th="http://www.thymeleaf.org">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>코딩해조</title>
-	<!-- Standard css -->
-	<link rel="icon" href="/img/logo/favicon.png">
-	<link rel="stylesheet" href="/css/style.css">
-	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
-	<!-- pub-js link -->
-	<script src="/js/pub-ui-custom.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>코딩해조</title>
+<!-- Standard css -->
+<link rel="icon" href="/img/logo/favicon.png">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+<!-- pub-js link -->
+<script src="/js/pub-ui-custom.js"></script>
 </head>
 <body>
 	<!-- header 영역 -->
-	<div id="header" th:replace="include/header"></div>
+	<div id="header" th:replace="/include/header"></div>
+	<!-- pop-banner-zone영역 : 해더 밑에 붙여 주세요-->
+	<div id="popBanner" th:replace="/include/popBanner"></div>
 	<div class="container">
 		<!-- main-banner -->
 		<div class="main-banner">
@@ -68,7 +70,9 @@
 									<span class="card-small-blue-tag">태그릿</span>
 								</div>
 								<hr>
-								<p class="card-ui-box-rank">난이도 <b>{1레벨}</b></p>
+								<p class="card-ui-box-rank">
+									난이도 <b>{1레벨}</b>
+								</p>
 							</div>
 							<!-- 카드 UI 총 수량 3개 까지만 허용 -->
 							<!-- item : card-ui-list -->
@@ -82,7 +86,7 @@
 					<div class="item-middle-card">
 						<h3>이용자 랭킹 순위 보기</h3>
 						<div class="item-middle-ui-card-box">
-							<div class="card-middle-ui-list"	onclick="location.href='/'">
+							<div class="card-middle-ui-list" onclick="location.href='/'">
 								<img src="/img/test-profile/coolping.png" alt="profile">
 								<div class="card-item">
 									<div class="card-profile">
@@ -101,14 +105,24 @@
 					</div>
 				</div>
 			</div>
-			
+
 		</div>
-	<script type="text/javascript">
-		loadCommonCode();
-	</script>
 
 	</div>
 	<!-- footer영역 -->
-	<div id="footer" th:replace="include/footer"></div>
+	<div id="footer" th:replace="/include/footer"></div>
 </body>
+
+<!-- 커피챗 한잔해 : 메인에 만 -->
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="pongpongs" data-description="Support me on Buy me a coffee!" data-message="저희의 프로젝트를 지속할 수 있도록 연구비를 지원해주세요!" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+
+<script type="text/javascript">
+	window.onload = () => {
+		if (getCookie("myCookie") !== null) {
+			document.querySelector('.banner-img').style.display = 'none';
+			document.querySelector('.pop-info').style.display = 'none';
+		} 
+	};
+</script>
+
 </html>

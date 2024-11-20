@@ -12,28 +12,50 @@
 
 <script>
 const deleteQBoard = (idx) => {
-    if (confirm("해당 게시글을 삭제하시겠습니까?")) {
-        fetch(`/admin/systemQBoardDelete/${idx}`, {
-            method: 'DELETE'
-        })
-        .then(response => {
-            console.log("Response status:", response.status);
-            return response.text().then(message => ({ status: response.status, message }));
-        })
-        .then(({ status, message }) => {
-            if (status === 200) {
-                alert(message); // 서버에서 전달한 성공 메시지
-                location.reload(); // 페이지 새로고침하여 목록 갱신
-            } else {
-                alert(`삭제 실패: ${message}`);
-            }
-        })
-        .catch(error => {
-            console.error('삭제 중 오류 발생:', error);
-            alert("삭제 요청 중 오류가 발생했습니다.");
-        });
-    }
-}
+    Swal.fire({
+        title: "질문을 삭제하시겠습니까?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "삭제",
+        cancelButtonText: "취소",
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/admin/systemQBoardDelete/${idx}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                console.log("Response status:", response.status);
+                return response.text().then(message => ({ status: response.status, message }));
+            })
+            .then(({ status, message }) => {
+                if (status === 200) {
+                    Swal.fire({
+                        title: message,
+                        icon: "success",
+                        confirmButtonText: "확인" 
+                    }).then((result) => {
+                        if(result.isConfirmed) {
+                            location.reload();
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        text: message,
+                    });
+                }
+            })
+            .catch(error => {
+                Swal.fire({
+                    icon: "error",
+                    text: "시스템 장애로 댓글 삭제에 실패했습니다",
+                });
+                console.error('삭제 중 오류 발생:', error);
+            });
+        }
+    });
+};
 </script>
 
 </head>
@@ -54,7 +76,7 @@ const deleteQBoard = (idx) => {
 					    </form>
 					</div>
 					<div class="sys-description-box mb20">
-						<h3>질문글 수 : <span th:text="${questionCount}"></span></h3>
+						<h3>질문글 수 : <span th:text="${totalCount}"></span></h3>
 					</div>
 					<table>
 						<thead>
@@ -65,26 +87,28 @@ const deleteQBoard = (idx) => {
 								<th>작성자</th>
 								<th>작성일</th>
 								<th>삭제</th>
+								<th>활성여부</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr th:each="question : ${questions}">
 								<td th:text="${question.idx}">1</td>
-								<td th:text="${question.testIdx}">1</td>
+								<td th:text="${question.testIdx.idx}">1</td>
 								<td th:text="${question.title}">이 문제 버그났어요.</td>
 								<td th:text="${question.writer}">한건희</td>
 								<td th:text="${question.regdate}">2024-11-04</td>
-								<td><a href="" class="btn_delete" th:onclick="'deleteQBoard(' + ${question.idx} + ')'">삭제</a></td>
+								<td><a th:href="|javascript:deleteQBoard(${question.idx})|" class="btn_delete" >삭제</a></td>
+								<td th:text="${question.isUse}"></td>
 							</tr>
 						</tbody>
 					</table>
+					<div class="pagination">
+						[(${pageList})]
+					</div>
 				</div>
 			</div>
 		</div>
-
 	</div>
-</body>
-<footer>
 	<div id="footer" th:replace="include/footer"></div>
-</footer>
+</body>
 </html>

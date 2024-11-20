@@ -15,40 +15,38 @@
 <script>
 
 const registerForm = async() => {
-	
 	let cat = document.querySelector('select[name=category-section]').value;
-		let title = document.querySelector('#title');
-		let writer = document.querySelector('#writer');
-		let email = document.querySelector('#email');
-		let isUse = document.querySelector('#isUse');
+	let title = document.querySelector('#title');
+	let writer = document.querySelector('#writer');
+	let email = document.querySelector('#email');
+	let isUse = document.querySelector('#isUse');
 		
-		let content = editor.getMarkdown();
-		
-		//필수값 등록시 값 입력 여부 확인
+	let content = editor.getMarkdown();
 	
-		if(title.value === ''){
-				Swal.fire({
-		    		icon:"warning",
-		    		text:"제목을 입력하세요"});
-				title.focus();
-				return false;
-		}
+	if(title.value === ''){
+			Swal.fire({
+		    	icon:"warning",
+		    	text:"제목을 입력하세요"});
+			title.focus();
+			return false;
+	}
 		
-		if (content.trim() === '') {
-				Swal.fire({
-		    		icon:"warning",
-		    		text:"내용을 입력하세요"});
-				return false;
-		} 
+	if (content.trim() === '') {
+			Swal.fire({
+		    	icon:"warning",
+		   		text:"내용을 입력하세요"});
+			return false;
+	} 
 		
-		let formData = new FormData(document.getElementById('WriteForm'));
-		formData.append("cat", cat);
-		formData.append("content", content);
+	let formData = new FormData(document.getElementById('WriteForm'));
+	formData.append("cat", cat);
+	formData.append("content", content);
 		
- 		const idx = parseInt('[[ ${board.idx} ]]');
-		formData.append("idx", idx);
-		
-		await fetch('/admin/noticeWrite', {
+	const idx = parseInt('[[ ${board.idx} ]]');
+	formData.append("idx", idx);
+ 
+	await fetch('/admin/noticeboardModify', {
+
 		method: 'POST',
 		body: formData
 	}).then((response)=> response.json())
@@ -71,27 +69,16 @@ const registerForm = async() => {
 			});
 		console.log("error" + error);
 	})
-		 
-		
 
 }
-
-
 </script>
-
-
-
-
-
 <body>
 	<!-- header 영역 -->
-	<div id="header" th:replace="include/header"></div>
+<div id="header" th:replace="include/header"></div>
 	<div class="container">
 		<div class="main-content">
 			<div class="content-board-notice-write">
 				<div class="content-board-notice-write-wrap">
-				
-				
 				
 				<form class="WriteForm" id="WriteForm" name="WriteForm" method="post" enctype="multipart/form-data">		 
 					<h2>공지사항 수정</h2>
@@ -100,44 +87,31 @@ const registerForm = async() => {
 						<label for="category-section">카테고리<span class="asterisk"></span></label>
 						<select name="category-section">
 							<option value="공지사항" th:selected ="${board.cat == '공지사항'}">공지사항</option>
-							<!-- <option value="카테고리메뉴" disabled>카테고리메뉴</option> -->
 						</select>
-					
 					</div>
 					<div class="category-title">
 						<label for="title">제목<span class="asterisk"></span></label>
 						<input type="text" id="title" name="title" maxlength="100" th:value="${board.title}">
-						
+
 						<input type="hidden" id="email" name="email" value="admin@kodinghaejo.com">
 						<input type="hidden" id="writer" name="writer" value="관리자">
 						<input type="hidden" id="isUse" name="isUse" value="Y">
-						
 					</div>
-						
-						
-						 <div class="category-content ">
+					<div class="category-content ">
 						<label for="content">내용<span class="asterisk"></span></label>
 						<div id="content"></div>
 					</div>
-					
-					</form> 
-					
+				</form> 
 					<div class="category-footer mt30">
-					
-					<input type="button" id="modifyButton" value="수정" onclick="registerForm()" data-id="${board.idx}">
+						<input type="button" id="modifyButton" value="수정" onclick="registerForm()" data-id="${board.idx}">
 						<button onclick="history.back();">뒤로가기</button>
 					</div>
-					
-					
-					
-					
-					
 				</div>	 
 			</div>
 		</div>
 	</div>
  <!-- footer영역 -->
-	 <div id="footer" th:replace="include/footer"></div>
+<div id="footer" th:replace="include/footer"></div>
 	<!-- toast API : 나중에 모듈로 작성해서 만들기-->
 	<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
 	<link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
@@ -147,17 +121,16 @@ const registerForm = async() => {
 	</script> 
 	<script>
 		const editor = new toastui.Editor({
-			el: document.querySelector('#content'),
+			el: document.querySelector('#content'), 
 			height: '400px',
 			initialEditType: 'markdown',
-			initialValue: editorContent,
-
+			initialValue: editorContent,	
+			
 			 toolbarItems: [
 					['heading', 'bold', 'italic', 'strike'],
 					['hr', 'quote'],
 					['ul', 'ol', 'task'],
 					['table', 'link'],
-					// 'image' 항목을 제거했습니다.
 					['code', 'codeblock']
 			 ]
 	
@@ -166,6 +139,5 @@ const registerForm = async() => {
 	<style>
 		.toastui-editor-mode-switch { display: none !important; }
 	</style>
-	 
 </body>
 </html>

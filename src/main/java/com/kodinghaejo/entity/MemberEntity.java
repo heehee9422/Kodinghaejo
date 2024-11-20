@@ -32,7 +32,7 @@ public class MemberEntity {
 
 	@Column(name = "username", length = 50, nullable = false)
 	private String username;
-	
+
 	@Column(name = "nickname", length = 50, nullable = true)
 	private String nickname;
 
@@ -89,7 +89,7 @@ public class MemberEntity {
 
 	@Column(name = "pwdate", nullable = true)
 	private LocalDateTime pwdate;
-	
+
 	@Column(name = "notifdate", nullable = true)
 	private LocalDateTime notifdate;
 
@@ -101,7 +101,7 @@ public class MemberEntity {
 
 	@Column(name = "is_use", length = 2, nullable = false)
 	private String isUse;
-	
+
 	public void editInfo(MemberDTO member) {
 		this.nickname = member.getNickname();
 		this.tel = member.getTel();

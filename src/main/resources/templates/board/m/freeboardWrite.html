@@ -10,17 +10,15 @@
 	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
 	<!-- pub-js link -->
 	<script src="/js/pub-ui-custom.js"></script>
-	<!-- SweetAlert2 link -->
-	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 	<!-- header 영역 -->
-	<div id="header" th:replace="include/header"></div>
+	<div id="header" th:replace="/include/header"></div>
 	<div class="container">
 		<div class="main-content">
 			<div class="content-board-notice-write">
 				<div class="content-board-notice-write-wrap">
-					<form class="WriteForm" id="WriteForm" name="WriteForm" method="post" enctype="multipart/form-data">		 
+					<form class="writeForm" id="writeForm" name="writeForm" method="post" enctype="multipart/form-data">		 
 						<h2>자유롭게 글을 작성해 보세요</h2>
 						<div class="mt30"></div>
 						<div class="category-menu">
@@ -53,8 +51,9 @@
 		</div>
 	</div>
 	<!-- footer영역 -->
-	<div id="footer" th:replace="include/footer"></div>
+	<div id="footer" th:replace="/include/footer"></div>
 
+	<!-- Custom Script -->
 	<script>
 		const registerForm = async() => {
 			let cat = document.querySelector('select[name=category-section]').value; // 선택된 카테고리 값 가져오기
@@ -86,7 +85,7 @@
 				return false;
 			} 
 				
-			let formData = new FormData(document.getElementById('WriteForm'));
+			let formData = new FormData(document.getElementById('writeForm'));
 			formData.append("cat", cat); // 선택된 카테고리 값을 FormData에 추가
 			formData.append("content", content); // Toast UI Editor의 내용을 FormData에 추가
 				

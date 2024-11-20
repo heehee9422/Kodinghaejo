@@ -12,9 +12,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class TestBookmarkEntityId implements Serializable {
-	
+
 	private static final long serialVersionUID = 1L;
 	private String email;
-	private Long testIdx;	
+	private Long testIdx;
 
 }

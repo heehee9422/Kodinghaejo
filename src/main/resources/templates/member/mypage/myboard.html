@@ -13,11 +13,11 @@
 </head>
 <body>
 	<!-- header-->
-	<div id="header" th:replace="include/header"></div>
+	<div id="header" th:replace="/include/header"></div>
 	<div class="container column bgcontain-mypage">
 		<div class="column-row myPage">
 			<div class="c-column-2">
-				<div id="mypage_manu" th:replace="include/mypage"></div>
+				<div id="mypage_manu" th:replace="/include/mypage"></div>
 			</div>
 			<div class="c-column-8">
 				<div class="mypage_content">
@@ -39,12 +39,12 @@
 								<thead>
 									<tr>
 										<th>순번</th>
-											<th>카테고리</th>
-											<th>제목</th>
-											<th>작성일</th>
-											<th>조회수</th>
-											<th>좋아요수</th>
-											<th>삭제</th>
+										<th>카테고리</th>
+										<th>제목</th>
+										<th>작성일</th>
+										<th>조회수</th>
+										<th>좋아요수</th>
+										<th>삭제</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -52,7 +52,7 @@
 									<tr th:each="board, index : ${ boardList }">
 										<td th:text="${ boardTotalElement - (boardPage - 1) * postNum - index.count + 1 }"></td>
 										<td>[[ ${ board.cat } ]]</td>
-										<td><a th:href="@{ '/board/freeboard?idx=' + board.idx }">[[ ${ board.title } ]]</a></td>
+										<td><a th:href="@{ '/board/freeboardView?idx=' + ${ board.idx } }">[[ ${ board.title } ]]</a></td>
 										<td th:text="${ #temporals.format(board.regdate, 'yyyy-MM-dd a hh:mm:ss') }"></td>
 										<td>[[ ${ board.hitCnt } ]]</td>
 										<td>[[ ${ board.goodCnt } ]]</td>
@@ -98,7 +98,7 @@
 											<td><a href="#">[[ ${ reply.prntTitle } ]]</a></td>
 											<td th:text="${ reply.content }"></td>
 											<td th:text="${ #temporals.format(reply.regdate, 'yyyy-MM-dd a hh:mm:ss') }"></td>
-											<td><button class="btn_delete">삭제</button></td>
+											<td><button class="btn_delete" th:onclick="|deleteReply(${ reply.idx })|">삭제</button></td>
 										</tr>
 										</th:block>
 										<th:block th:if="${ replyTotalElement == 0 }">
@@ -112,14 +112,87 @@
 									[( ${ replyPageList } )]
 								</div>
 						</div>
-						
-					</div>	 
+
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 	<!-- footer -->
-	<div id="footer" th:replace="include/footer"></div>
+	<div id="footer" th:replace="/include/footer"></div>
+	
+	<!-- Custom Script -->
+	<script type="text/javascript">
+		//게시글 삭제
+		const deleteBoard = async (idx) => {
+			await Swal.fire({
+				icon: 'warning',
+				text: '게시글을 삭제하시겠습니까?',
+				showCancelButton: true,
+				confirmButtonText: '네, 삭제합니다',
+				cancelButtonText: '취소'
+			})
+			.then((result) => {
+				if (result.isConfirmed) {
+					fetch('/board/m/deleteBoard?idx=' + idx, {
+						method: 'GET'
+					})
+					.then((response) => response.json())
+					.then((data) => {
+						if (data.message == 'good') {
+							Swal.fire({
+								icon: 'success',
+								text: '게시글이 삭제되었습니다.',
+								confirmButtonText: '확인'
+							})
+							.then(() => {
+								location.href = '/member/mypage/myboard?boardPage=[[ ${ boardPage } ]]&replyPage=[[ ${ replyPage } ]]';
+							});
+						} else {
+							Swal.fire({
+								icon: 'error',
+								text: '게시글 삭제에 실패했습니다.',
+								confirmButtonText: '확인'
+							});
+						}
+					})
+				}
+			});
+		}
+		
+		//댓글 삭제
+		const deleteReply = async (idx) => {
+			await Swal.fire({
+				icon: 'warning',
+				text: '댓글을 삭제하시겠습니까?',
+				showCancelButton: true,
+				confirmButtonText: '네, 삭제합니다',
+				cancelButtonText: '취소'
+			})
+			.then((result) => {
+				if (result.isConfirmed) {
+					let formData = new FormData();
+					formData.append("idx", idx);
+					
+					fetch('/board/m/reply?kind=D', {
+						method: 'POST',
+						body: formData
+					})
+					.then((response) => response.json())
+					.then((data) => {
+						Swal.fire({
+							icon: 'success',
+							text: '댓글이 삭제되었습니다.',
+							confirmButtonText: '확인'
+						})
+						.then(() => {
+							location.href = '/member/mypage/myboard?boardPage=[[ ${ boardPage } ]]&replyPage=[[ ${ replyPage } ]]';
+						});
+					})
+				}
+			});
+		}
+	</script>
 </body>
 
 <script>

@@ -7,7 +7,7 @@ public class PasswordMaker {
 		//숫자 + 영문대소문자 n자리 임시패스워드 생성
 		StringBuffer tempPw = new StringBuffer();
 		Random rnd = new Random();
-		
+
 		for (int i = 0; i < n; i++) {
 		    int rIndex = rnd.nextInt(3); //0 ~ 2 의 숫자 중에서 랜덤하게 발생
 		    switch (rIndex) {

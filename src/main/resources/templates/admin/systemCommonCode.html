@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="kr" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>회원정보 관리</title>
+<link rel="icon" href="/img/logo/favicon.png">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet"
+	href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+<script src="/js/pub-ui-custom.js"></script>
+<script>
+const deleteCode = (code) => {
+    Swal.fire({
+        title: '정말 삭제하시겠습니까?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: '삭제',
+        cancelButtonText: '취소',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const formData = new FormData();
+            formData.append("code", code);
+
+            fetch('/admin/systemCommonCodeDelete', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({ 'code': code })
+            })
+            .then(response => {
+                if (response.ok) {
+                    Swal.fire({
+                        title: '삭제가 완료되었습니다.',
+                        icon: 'success',
+                        confirmButtonText: '확인'
+                    }).then(() => {
+                        location.reload(); // 삭제 후 페이지 새로고침
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        text: '삭제에 실패했습니다.'
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('오류 발생:', error);
+                Swal.fire({
+                    icon: 'error',
+                    text: '삭제 중 오류가 발생했습니다.'
+                });
+            });
+        }
+    });
+};
+</script>
+</head>
+<body>
+<div id="header" th:replace="include/header"></div>
+	<div class="container column mt50">
+		<div class="column-row">
+			<div class="c-column-2">
+				<div id="system_menu" th:replace="include/system"></div>
+			</div>
+			<div class="c-column-8">
+				<div class="sys-system_menu">
+					<h2>공통코드 관리</h2>
+					<div class="search-bar mb-20">
+						<form method="get" action="/admin/systemCommonCode">
+					        <input type="text" name="searchKeyword" placeholder="검색어 입력" th:value="${searchKeyword}" />
+					        <button type="submit" class="btn_search">검색</button>
+					    </form>
+					</div>
+					<div class="sys-description-box  mb20">
+						<h3>공통코드 수 : <span th:text="${totalCount}"></span></h3>
+						<div class="box-itme">
+							<button class="codewrite-button"><a href="/admin/systemCommonCodeWrite">코드 추가</a></button>
+						</div>
+					</div>
+					<table>
+						<caption style="display: none;">공통코드 입니다</caption>
+						<colgroup>
+							<col width="">
+							<col width="">
+							<col width="">
+							<col width="">
+							<col width="">
+							<col width="">
+							<col width="">
+						</colgroup>
+						<thead>
+							<div class="code-category mb20">
+								<form method="get" action="/admin/systemCommonCode">
+							        <!-- 필터 버튼 -->
+							        <button type="submit" name="filter" value="ALL" 
+							                th:classappend="${filter == 'ALL'} ? 'active' : ''">전체</button>
+							        <button type="submit" name="filter" value="TEC" 
+							                th:classappend="${filter == 'TEC'} ? 'active' : ''">TEC</button>
+							        <button type="submit" name="filter" value="JOB" 
+							                th:classappend="${filter == 'JOB'} ? 'active' : ''">JOB</button>
+							        <button type="submit" name="filter" value="LVL" 
+							                th:classappend="${filter == 'LVL'} ? 'active' : ''">LVL</button>
+							        <button type="submit" name="filter" value="LNG" 
+							                th:classappend="${filter == 'LNG'} ? 'active' : ''">LNG</button>
+							        <button type="submit" name="filter" value="CAT" 
+							                th:classappend="${filter == 'CAT'} ? 'active' : ''">CAT</button>
+							    </form>
+							</div>
+							<tr>
+								<th>번호</th>
+								<th>Code</th>
+								<th>Type</th>
+								<th>Value</th>
+								<th>삭제</th>
+								<th>활성여부</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="code, stat : ${codes}">
+								<td th:text="${(page - 1) * postNum + stat.index + 1}">1</td>
+								<td>
+									<a th:text ="${code.code}">코드명</a>
+								</td>
+								<td th:text="${code.type}">타입</td>
+								<td th:text="${code.val}">Value</td>
+								<td><a class="btn_delete" th:data-name="${code.code}" onclick="deleteCode(this.dataset.name)">삭제</a></td>
+								<td th:text="${code.isUse}">활성여부</td>
+							</tr>
+						</tbody>
+					</table>
+					<div class="pagination">
+						[(${pageList})]
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+<div id="footer" th:replace="include/footer"></div>
+</body>
+
+</html>

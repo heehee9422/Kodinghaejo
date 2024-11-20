@@ -85,9 +85,9 @@ public class WebSecurityConfig {
 			.csrf((csrf) -> csrf.disable());
 		http
 			.cors((cors) -> cors.disable());
-		
+
 		log.info("==================== 스프링 시큐리티 설정 완료 ====================");
-		
+
 		return http.build();
 	}
 

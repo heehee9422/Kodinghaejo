@@ -21,23 +21,23 @@ import lombok.AllArgsConstructor;
 public class AuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
 	private final MemberService service;
-	
+
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 			Authentication authentication) throws IOException, ServletException {
 		//authentication.getName() --> 로그인 시 입력받은 email 값을 가져온다.
 		MemberDTO member = service.memberInfo(authentication.getName());
-		
+
 		//로그인 날짜 및 회원 로그 등록
 		service.lastdateUpdate(member.getEmail(), "login");
 		service.memberLogRegistry(member.getEmail(), "login");
-		
+
 		//닉네임 값이 없을 경우 이름으로 대체
 		String nickname = (service.memberInfo(member.getEmail()).getNickname() != null &&
 							!service.memberInfo(member.getEmail()).getNickname().equals("")) ?
 								service.memberInfo(member.getEmail()).getNickname() :
 								service.memberInfo(member.getEmail()).getUsername();
-		
+
 		//세션 생성
 		HttpSession session = request.getSession();
 		session.setMaxInactiveInterval(3600 * 24 * 7); //세션 유지 기간 설정
@@ -47,15 +47,15 @@ public class AuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 		session.setAttribute("lvl", service.memberInfo(member.getEmail()).getLvl());
 		session.setAttribute("joinRoute", service.memberInfo(member.getEmail()).getJoinRoute());
 		session.setAttribute("storedImg", member.getStoredImg());
-		
+
 		String url = "/";
-		
+
 		//비밀번호 변경 알림일자 도래 시
 		if (member.getNotifdate() != null && member.getNotifdate().toString().compareTo(LocalDateTime.now().toString()) < 0)
 			url = "/member/pwNotice";
-		
+
 		setDefaultTargetUrl(url);
-		
+
 		super.onAuthenticationSuccess(request, response, authentication);
 	}
 

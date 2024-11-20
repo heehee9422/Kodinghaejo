@@ -25,7 +25,7 @@ public class TestSubmitDTO {
 	private String submSts;
 	private String content;
 	private LocalDateTime regdate;
-	
+
 	//제출한 문제의 언어
 	private String lng;
 

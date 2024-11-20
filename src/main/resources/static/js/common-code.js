@@ -49,7 +49,7 @@ const setSelectOption = (codeObj, target, type, code) => {
 	switch (type) {
 		case 'lvl':
 			for (const i in codeObj.lvl) {
-				var opt = document.createElement('option');
+				let opt = document.createElement('option');
 				opt.setAttribute('value', codeObj.lvl[i].code);
 				opt.innerText = codeObj.lvl[i].val;
 				if (codeObj.lvl[i].code == code) opt.setAttribute('selected', '');
@@ -59,7 +59,7 @@ const setSelectOption = (codeObj, target, type, code) => {
 		
 		case 'tec':
 			for (const i in codeObj.tec) {
-				var opt = document.createElement('option');
+				let opt = document.createElement('option');
 				opt.setAttribute('value', codeObj.tec[i].code);
 				opt.innerText = codeObj.tec[i].val;
 				if (codeObj.tec[i].code == code) opt.setAttribute('selected', '');
@@ -69,7 +69,7 @@ const setSelectOption = (codeObj, target, type, code) => {
 			
 		case 'job':
 			for (const i in codeObj.job) {
-				var opt = document.createElement('option');
+				let opt = document.createElement('option');
 				opt.setAttribute('value', codeObj.job[i].code);
 				opt.innerText = codeObj.job[i].val;
 				if (codeObj.job[i].code == code) opt.setAttribute('selected', '');
@@ -79,7 +79,7 @@ const setSelectOption = (codeObj, target, type, code) => {
 			
 		case 'lng':
 			for (const i in codeObj.lng) {
-				var opt = document.createElement('option');
+				let opt = document.createElement('option');
 				opt.setAttribute('value', codeObj.lng[i].code);
 				opt.innerText = codeObj.lng[i].val;
 				if (codeObj.lng[i].code == code) opt.setAttribute('selected', '');
@@ -89,7 +89,7 @@ const setSelectOption = (codeObj, target, type, code) => {
 			
 		case 'cat':
 			for (const i in codeObj.cat) {
-				var opt = document.createElement('option');
+				let opt = document.createElement('option');
 				opt.setAttribute('value', codeObj.cat[i].code);
 				opt.innerText = codeObj.cat[i].val;
 				if (codeObj.cat[i].code == code) opt.setAttribute('selected', '');

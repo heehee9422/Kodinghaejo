@@ -11,30 +11,51 @@
 <script src="/js/pub-ui-custom.js"></script>
 <script>
 const deleteFreeBoard = (idx) => {
-    if (confirm("해당 게시글을 삭제하시겠습니까?")) {
-        fetch(`/admin/systemBoardDelete/${idx}`, {
-            method: 'DELETE'
-        })
-        .then(response => {
-            console.log("Response status:", response.status);
-            return response.text().then(message => ({ status: response.status, message }));
-        })
-        .then(({ status, message }) => {
-            if (status === 200) {
-                alert(message); // 서버에서 전달한 성공 메시지
-                location.reload(); // 페이지 새로고침하여 목록 갱신
-            } else {
-                alert(`삭제 실패: ${message}`);
-            }
-        })
-        .catch(error => {
-            console.error('삭제 중 오류 발생:', error);
-            alert("삭제 요청 중 오류가 발생했습니다.");
-        });
-    }
-}
+	Swal.fire({
+        title: "게시글을 삭제하시겠습니까?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "삭제",
+        cancelButtonText: "취소",
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/admin/systemBoardDelete/${idx}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                console.log("Response status:", response.status);
+                return response.text().then(message => ({ status: response.status, message }));
+            })
+            .then(({ status, message }) => {
+                if (status === 200) {
+                    Swal.fire({
+                        title: message,
+                        icon: "success",
+                        confirmButtonText: "확인" 
+                    }).then((result) => {
+                        if(result.isConfirmed) {
+                            location.reload();
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        text: message,
+                    });
+                }
+            })
+            .catch(error => {
+                Swal.fire({
+                    icon: "error",
+                    text: "시스템 장애로 게시물 등록이 실패했습니다",
+                });
+                console.error('삭제 중 오류 발생:', error);
+            });
+        }
+    });
+};
 </script>
-
 </head>
 <body>
 	<div id="header" th:replace="include/header"></div>
@@ -55,7 +76,7 @@ const deleteFreeBoard = (idx) => {
 					    </form>
 					</div>
 					<div class="sys-description-box mb20">
-						<h3 class="mt20">게시글 수 : <span th:text="${boardCount}"></span></h3>
+						<h3 class="mt20">게시글 수 : <span th:text="${totalCount}"></span></h3>
 					</div>
 					<table>
 						<caption style="display: none;">관리자 게시판 입니다</caption>
@@ -81,6 +102,7 @@ const deleteFreeBoard = (idx) => {
 								<th>추천수</th>
 								<th>신고수</th>
 								<th>삭제</th>
+								<th>활성여부</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -90,43 +112,22 @@ const deleteFreeBoard = (idx) => {
 								<td th:text="${board.writer}">홍길동</td>
 								<td th:text="${board.regdate}">2024-11-04</td>
 								<td th:text="${board.hitCnt}">4</td>
-								<td>3</td>
-								<td>0</td>
-								<td><a href="" class="btn_delete" th:onclick="'deleteFreeBoard(' + ${board.idx} + ')'">삭제</a></td>
+								<td th:text="${board.goodCnt}">3</td>
+								<td th:text="${board.badCnt}">0</td>
+								<td>
+								<a th:href="|javascript:deleteFreeBoard(${board.idx})|" class="btn_delete">삭제</a></td>
+								<td th:text="${board.isUse}"></td>
 							</tr>
 						</tbody>
 					</table>
-					<!-- svg 나중에 수정해줄께 -->
-					<div class="paginate mt20">
-						<a href="" class="left-prev-arrow"> <svg width="12"
-								height="12" viewBox="0 0 22 22" fill="none"
-								xmlns="http://www.w3.org/2000/svg">
-              <path d="M11 1L1 11.1579L10.6891 21" stroke="black"
-									stroke-linecap="round" />
-              <path d="M21 1L11 11.1579L20.6891 21" stroke="black"
-									stroke-linecap="round" />
-            </svg>
-						</a> <a href="" class="left-arrow"><i class="xi-angle-left-thin"></i></a>
-						<a href="#" class="on" role="button">1</a> <a href="#">2</a> <a
-							href="#">3</a> <a href="#">4</a> <a href="#">100</a> <a href=""
-							class="right-arrow"><i class="xi-angle-right-thin"></i></a> <a
-							href="" class="right-next-arrow"> <svg width="12" height="12"
-								viewBox="0 0 22 22" fill="none"
-								xmlns="http://www.w3.org/2000/svg">
-              <path d="M11 1L21 11.1579L11.3109 21" stroke="black"
-									stroke-linecap="round" />
-              <path d="M1 1L11 11.1579L1.31088 21" stroke="black"
-									stroke-linecap="round" />
-            </svg>
-						</a>
+					<div class="pagination">
+						[(${pageList})]
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-
-</body>
-<footer>
 	<div id="footer" th:replace="include/footer"></div>
-</footer>
+</body>
+
 </html>

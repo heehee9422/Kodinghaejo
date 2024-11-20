@@ -17,18 +17,18 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class MemberLogDTO {
-	
+
 	private MemberEntity email;
 	private LocalDateTime regdate;
 	private String status;
-	
+
 	//Entity --> DTO 이동
 	public MemberLogDTO(MemberLogEntity entity) {
 		this.email = entity.getEmail();
 		this.regdate = entity.getRegdate();
 		this.status = entity.getStatus();
 	}
-	
+
 	//DTO --> Entity 이동
 	public MemberLogEntity dtoToEntity(MemberLogDTO dto) {
 		MemberLogEntity entity = MemberLogEntity
@@ -37,7 +37,7 @@ public class MemberLogDTO {
 									.regdate(dto.getRegdate())
 									.status(dto.getStatus())
 									.build();
-		
+
 		return entity;
 	}
 

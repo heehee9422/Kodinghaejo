@@ -43,13 +43,13 @@ public class BoardRecommendEntity {
 
 	@Column(name = "good_chk", length = 2, nullable = true)
 	private String goodChk;
-	
+
 	@Column(name = "bad_chk", length = 2, nullable = true)
 	private String badChk;
 
 	@Column(name = "good_date", nullable = true)
 	private LocalDateTime goodDate;
-	
+
 	@Column(name = "bad_date", nullable = true)
 	private LocalDateTime badDate;
 

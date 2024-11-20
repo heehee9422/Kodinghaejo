@@ -6,16 +6,21 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kodinghaejo.dto.TestDTO;
 import com.kodinghaejo.entity.TestLngEntity;
+import com.kodinghaejo.service.BaseService;
 import com.kodinghaejo.service.TestService;
+import com.kodinghaejo.util.PageUtil;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
@@ -27,10 +32,43 @@ import lombok.extern.log4j.Log4j2;
 public class TestController {
 
 	private final TestService service;
-	
+	private final BaseService baseService;
+
 	//코딩테스트 문제 모아보기
 	@GetMapping("/test/collect")
-	public void getCollect() { }
+	public void getCollect(Model model,
+			@SessionAttribute(name = "email", required = false) String email,
+			@RequestParam(name = "page", defaultValue = "1") int pageNum,
+			@RequestParam(name = "keyword", defaultValue = "") String keyword,
+			@RequestParam(name = "subm", defaultValue = "") String submSts,
+			@RequestParam(name = "lng", defaultValue = "") String lng,
+			@RequestParam(name = "diff", defaultValue = "") String diff) {
+		int postNum = 10;
+		int pageListCount = 5;
+		
+		PageUtil page = new PageUtil();
+		Page<TestDTO> list = service.getTestList(pageNum, postNum, email, keyword, submSts, lng, diff);
+		int totalCount = (int) list.getTotalElements();
+		
+		String params = "";
+		params += (keyword.equals("")) ? "" : ("&keyword=" + keyword);
+		params += (submSts.equals("")) ? "" : ("&subm=" + submSts);
+		params += (lng.equals("")) ? "" : ("&lng=" + lng);
+		params += (diff.equals("")) ? "" : ("&diff=" + diff);
+
+		Map<String, Object> commonCode = baseService.loadUsedCommonCode();
+		
+		model.addAttribute("list", list);
+		model.addAttribute("totalElement", totalCount);
+		model.addAttribute("postNum", postNum);
+		model.addAttribute("page", pageNum);
+		model.addAttribute("keyword", keyword);
+		model.addAttribute("subm", submSts);
+		model.addAttribute("lng", lng);
+		model.addAttribute("diff", diff);
+		model.addAttribute("pageList", page.getPageList("/test/collect", "page", pageNum, postNum, pageListCount, totalCount, params));
+		model.addAttribute("commonCode", commonCode);
+	}
 
 	//코딩테스트 문제 상세 화면
 	@GetMapping("/test/challenge")
@@ -40,14 +78,14 @@ public class TestController {
 		model.addAttribute("js", service.lngAvlChk(idx, "LNG-0002"));
 		model.addAttribute("oracle", service.lngAvlChk(idx, "LNG-0003"));
 	}
-	
+
 	//코딩테스트 언어별 문제 가져오기
 	@ResponseBody
 	@PostMapping("/test/language")
 	public Map<String, Object> postLanguage(@RequestParam("test_idx") Long testIdx, @RequestParam("language") String language) throws Exception {
 		log.info("==================== test_idx: {} ====================", testIdx);
 		log.info("==================== language: {} ====================", language);
-		
+
 		TestLngEntity result =  service.loadTestLng(testIdx, language);
 		log.info("==================== result.getIdx(): {} ====================", result.getIdx());
 		log.info("==================== result.getTestIdx(): {} ====================", result.getTestIdx().getIdx());
@@ -58,14 +96,14 @@ public class TestController {
 		log.info("==================== result.getSubmSrc(): {} ====================", result.getSubmSrc());
 		log.info("==================== result.getRegdate(): {} ====================", result.getRegdate());
 		log.info("==================== result.getIsUse(): {} ====================", result.getIsUse());
-		
+
 		Map<String, Object> data = new HashMap<>();
 		data.put("idx", result.getIdx());
 		data.put("content_src", result.getContent());
 		data.put("correct_src", result.getCorrect());
 		data.put("run_src", result.getRunSrc());
 		data.put("subm_src", result.getSubmSrc());
-		
+
 		return data;
 	}
 
@@ -78,11 +116,11 @@ public class TestController {
 			@RequestParam("language") String language, HttpSession session) throws Exception {
 		if (!type.equals("run") && !type.equals("submit"))
 			return "{\"message\":\"TYPE_NOT_AVAILABLE\"}";
-		
+
 		//자바스크립트인 경우
 		if (language.equals("javascript"))
 			code += "\n\nmodule.exports = solution;";
-		
+
 		//파일명 결정
 		String filename = "Solution." + language;
 
@@ -92,22 +130,22 @@ public class TestController {
 
 		Files.write(path, code.getBytes()); //코드 파일로 저장
 		service.createVerifyFiles((type.equals("run") ? runSrc : type.equals("submit") ? submSrc : ""), correctSrc);
-		
+
 		// 코드 실행 로직 호출
 		String result = service.testCode(language, path.toString()); //실행 결과 반환
-		
+
 		//제출결과 DB 저장
 		if (type.equals("submit")) {
 			@SuppressWarnings("unchecked")
 			Map<String, Object> data = new ObjectMapper().readValue(result, Map.class);
-			
+
 			String email = (String) session.getAttribute("email");
 			int passCnt = (int) data.get("passcnt");
 			String submSts = ((passCnt * 5) >= 70) ? "Y" : "N";
-			
+
 			service.submitTest(tlIdx, email, submSts, code);
 		}
-		
+
 		return result;
 	}
 

@@ -1,282 +1,124 @@
 <!DOCTYPE html>
-<html lang="kr">
+<html lang="kr" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>게시판</title>
-  <!-- Standard css -->
-  <link rel="icon" href="/img/logo/favicon.png">
-  <link rel="stylesheet" href="/css/style.css">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
-  <!-- pub-js link -->
-  <script src="/js/pub-ui-custom.js"></script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>게시판</title>
+	<!-- Standard css -->
+	<link rel="icon" href="/img/logo/favicon.png">
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+	<!-- pub-js link -->
+	<script src="/js/pub-ui-custom.js"></script>
 </head>
-<!-- 게시판 복사용 게시판 : 테스트 용도입니다-->
-<style>
-  #chatroom {
-    width: auto;
-    height: 900px;
-  }
-
-  .chatlist {
-    width: 20%;
-    height: 100%;
-    float: left;
-    box-sizing: border-box;
-    background: #E7E7E7;
-  }
-
-  .search {
-    margin-top: 11px;
-    margin-bottom: 18px;
-    margin-left: 12px;
-    margin-right: 12px;
-    width: auto;
-    height: auto;
-    position: relative;
-    border-radius: 10px;
-    background: #ffffff;
-  }
-
-  .CRul {
-    text-align: center;
-    margin: 0;
-    padding: 0;
-  }
-
-  .CRli {
-    list-style: none;
-    margin: 10px;
-    border: 1px solid #000;
-    text-align: left;
-  }
-
-  .chatinfo {
-    border-left: 1px solid #000;
-    width: 30%;
-    height: 100%;
-    float: right;
-    box-sizing: border-box;
-
-  }
-
-  .ciuserul {
-    text-align: center;
-    margin: 0;
-    padding: 0;
-  }
-
-  .ciuserli {
-    list-style: none;
-    margin: 10px;
-    border: 1px solid #000;
-    text-align: left;
-  }
-
-  .msgbox {
-    width: 50%;
-    height: 100%;
-    float: left;
-    box-sizing: border-box;
-    overflow: auto;
-
-  }
-
-  .msguser {
-    margin-left: 10px;
-    width: auto;
-    border-bottom: 1px solid #000;
-  }
-
-  .MSGul {
-    margin: 0;
-    padding: 0;
-    width: 60%;
-  }
-
-  .MSGli {
-    list-style: none;
-    margin: 10px;
-    background: #E7E7E7;
-  }
-
-  .msgsend {
-    margin-left: 10px;
-    width: 48.7%;
-    border-top: 1px solid #000;
-    position: absolute;
-    bottom: 35px;
-  }
-
-  #messageInput {
-    margin-top: 10px;
-    width: 70%;
-    border: 0px;
-  }
-
-  .cisearch {
-    border-bottom: 1px solid #000;
-  }
-
-  .ciimg {
-    border-top: 1px solid #000;
-  }
-
-  .cifile {
-    border-top: 1px solid #000;
-  }
-
-  .ci {
-    border-top: 1px solid #000;
-  }
-</style>
 
 <body>
-  <!-- header 영역 -->
-  <div id="header" th:replace="include/header"></div>
-  <div id="chatroom">
-    <section class="chatlist">
-      <div class="search">
-        채팅방, 참여자 검색
-      </div>
-      <div class="chatroom">
-        <ul class="CRul">
-          <li class="CRli">채팅방</li>
-        </ul>
-      </div>
-    </section>
-    <section class="chatinfo">
+	<!-- header 영역 -->
+	<div id="header" th:replace="/include/header"></div>
+	<div class="banner-zone">
+		<!-- 첫번째 영역 : 나중에 보자-->
+		<div class="banner-content">
+			<div class="content-banner-title">
+				<h3>누구나 🙌 자유롭게 채팅방에 참여해 보세요</h3>
+				<p>진로 상담 문제 질문</p>
+				<p>등 다양한 주제로 대화에 참여해 보세요</p>
+			</div>
+			<div class="content-banner-img" style="padding-top: 40px;">
+				<img src="/img/message.png" alt="" style="position: relative; top: 30px; width: 150px;">
+				<img src="/img/aset02.png" alt="" style="position: relative; width: 80px; right: 30px; bottom: 55px;">
+			</div>
+		</div>
+	</div>
+	<div class="container">
+		<div class="main-content mt50">
+			<div class="chat-title-nav">
+				<div class="chat-title clearfix">
+					<h4>채팅 검색</h4>
+					<div class="search-inp">
+						<input type="text" name="" id="" placeholder="채팅방 제목 또는 사용자를 검색해 주세요">
+					</div>
+					<hr class="dashed mt20 mb20">
+					<div class="chat-tag-wrap">
+						<h4>태그별 모아보기</h4>
+						<div class="chat-tag-title">
+							<button>자유주제</button>
+							<button>커리어고민</button>
+							<button>질문하기</button>
+							<button>문제질문</button>
+						</div>
+						<hr class="dashed mt20 mb20">
+						<div class="chat-tag-item">
+							<!-- 버튼 클릭시 추가 되고 -> 해당 버튼 클릭시 태그 삭제 됨 -->
+							<button>자유주제</button>
+							<!-- 
+								<button>커리어고민</button>
+								<button>질문하기</button>
+								<button>문제질문</button>
+							-->
+						</div>
+						<p></p>
+					</div>
+					<div class="filter-group">
+						<button class="filter">필터 초기화</button>
+						<button class="filter">필터 검색</button>
+					</div>
+				</div>
+			</div>
 
-      <div class="cisearch">
-        대화 내용 검색
-      </div>
+			<div class="content-chat-wrap">
+				<details open>
+					<summary><i class="xi-forum-o"></i>컨텐츠 영역</summary>
+					<div class="chat-list">
+						<div class="chat-list-head">
+							<button>채팅방 개설</button>
+						</div>
+						<div class="chat-list-item">
+							<img src="/img/test-profile/handyping.png" alt="이미지 등록 안했을 경우에 방장 이미지로" >
+							<ol>
+								<li class="title"><a href="/page-chat/chatView.html">자유로운 대화를 하는 방</a></li>
+								<li class="tag">
+									<a href="#"><span class="card-small-red-tag">자유주제</span></a>
+									<a href="#"><span class="card-small-yellow-tag">커리어고민</span></a>
+									<a href="#"><span class="card-small-green-tag">질문하기</span></a>
+									<a href="#"><span class="card-small-blue-tag">문제질문</span></a>
+								</li>
+								<li class="meet-user"><a href="#">참여자 수 </a><span>{count}</span></li>
+							</ol>
+						</div>
+						
+					</div>
+				</details>
+			</div>
 
-      <div class="ciuser">
-        대화상대
-        <ul class="ciuserul">
-          <li class="ciuserli">
-            참가자
-          </li>
-        </ul>
-      </div>
-
-      <div class="ciimg">
-        <img src="img/test-profile/coolping.png" width="180px" height="180px">
-        <img src="img/test-profile/handyping.png" width="180px" height="180px">
-        <p>이미지 더 보기</p>
-      </div>
-
-      <div class="cifile">
-        <img src="img/test-profile/moseyping.png" width="180px" height="180px">
-        <img src="img/test-profile/narrping.png" width="180px" height="180px">
-        <p>파일 더 보기</p>
-      </div>
-
-      <div class="ci">
-        채팅방 정보
-        <p>
-          채팅방 정보 내용
-        </p>
-      </div>
-
-    </section> 
-
-    <section class="msgbox">
-      <div class="msguser">
-        대화 상대
-      </div>
-      <div class="msgreceive">
-        <ul class="MSGul">
-          <li class="MSGli"> 대화 내용</li>
-        </ul>
-      </div>
-
-      <div class="msgsend">
-        <input type="text" id="messageInput" placeholder="메시지를 입력하세요">
-        <input type="button" id="btn_sendMessage" class="btn_sendMessage" value="메시지 전송">
-        <button>첨부 파일</button>
-      </div>
-    </section>
-  </div>
-
-  <!-- 
-  <script>
-  let username = document.querySelector('#username');
-	let message = document.querySelector('#message');
-	let str = '';
-	
-	window.addEventListener('keydown', (e) => {
-           if (e.key === 'Enter') {
-               send();
-           }
-       })
-	
-   const send = () => {
-	    
-	    if(message.value === ''){
-	          alert("메세지를 입력하세요");
-	          message.focus();
-	          return false;
-	    }
-    	
-	    const text = {
-	    	status: "chatting",
-	    	user: username.value,
-	    	message: message.value
-	    }
-	    
-	    websocket.send(JSON.stringify(text));
-	    message.value = '';
-    	
-    }
-
-    const onclose = () => {
- 	    const text = {
-		    	status: "close",
-		    	user: username.value,
-		    	message: username.value + '님이 방을 나가셨습니다.' 
-	    }
-        websocket.send(text);
-    }
-    
-    const onopen = () =>  {
-	    const text = {
-		    	status: "open",
-		    	user: username.value,
-		    	message: username.value + '님이 입장하셨습니다.' 
-	    }
-        websocket.send(JSON.stringify(text));
-    }
-
-    const onmessage = (msg) => {
-    	let data = JSON.parse(msg.data);
-    	let host_user = username.value;
-    	let guest_user = data.user;
-    	
-    	switch(data.status) {
-    	
-    	case 'open': 
-    			str = "<div><b><span class='open'>" + data.message + "</span></b></div>";
-    			break;
-    	case 'chatting':
-        		if(host_user === guest_user) 		
-        			str = "<div style='text-align:right'><b><span class='hostChatting'>" + data.user + ":" + data.message + "</span></b></div>";
-        		else 
-        			str = "<div style='text-align:left'><b><span class='guestChatting'>" + data.user + ":" + data.message + "</span></b></div>";	
-    			break;    	
-    	}
-    	
-        document.querySelector('.msgZone').innerHTML += str;
-    }
-   		
-	document.querySelector('#btn_sendMessage').addEventListener('click', send);
-	
-	var websocket = new WebSocket('ws://127.0.0.1:8080/ws/chat');	
-    websocket.onmessage = onmessage;
-    websocket.onopen = onopen;
-    websocket.onclose = onclose;
-    </script> -->
-
+			<div class="content-chat-wrap">
+				<details>
+					<summary><i class="xi-speech-o"></i>유저 리스트 <span>{count}</span></summary>
+					<div class="chat-list">
+						<div class="chat-list-head">
+							<button>유저 검색</button>
+						</div>
+						<div class="chat-list-item">
+							<img src="/img/test-profile/handyping.png" alt="이미지 등록 안했을 경우에 방장 이미지로" >
+							<ol>
+								<li class="user">
+									<b><a href="#">김아무개</a></b>
+									<p>레벨 999</p>
+								</li>
+							</ol>
+						</div>
+					</div>
+				</details>
+			</div>
+		</div>
+	</div>
+	<!-- 아코디언 영역 커스텀 -- 나중에 -->
+	<!-- https://apost.dev/1026/ -->
+	<!-- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/details -->
+	<!-- footer영역 -->
+	<div id="footer" th:replace="/include/footer"></div>
 </body>
-
+<script>
+	
+</script>
 </html>

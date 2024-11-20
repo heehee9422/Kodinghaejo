@@ -1,17 +1,21 @@
 <!DOCTYPE html>
 <html lang="kr" xmlns:th="http://www.thymeleaf.org">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>코딩테스트 연습&nbsp;&#124;&nbsp;코딩해조</title>
-	<!-- Standard css -->
-	<link rel="icon" href="/img/logo/favicon.png">
-	<link rel="stylesheet" href="/css/style.css">
-	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
-	<!-- pub-js link -->
-	<script src="/js/pub-ui-custom.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>코딩테스트 연습&nbsp;&#124;&nbsp;코딩해조</title>
+<!-- Standard css -->
+<link rel="icon" href="/img/logo/favicon.png">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet"
+	href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+<!-- pub-js link -->
+<script src="/js/pub-ui-custom.js"></script>
 </head>
 <body>
+	<div id="load" class="delay-filed" style="display: none;">
+		<div class="delay-icon"><i class="xi-spinner-5"></i></div>
+	</div>
 	<div class="challenge-navbar">
 		<ol class="navbar-breadcrumb">
 			<a href="/" class="navbar-logo"><img src="/img/logo/icon_b.png" alt="logo" style="height: 30px; margin-top: 5px;"></a>
@@ -26,20 +30,22 @@
 			<!-- 제목 & 북마커 -->
 			<div class="challenge-nav">
 				<div class="nav-item">
-					<i class="xi-bookmark-o"></i>
-					<span class="challenge-title">[[ ${ test.title } ]]</span>
+					<i class="xi-bookmark-o"></i> <span class="challenge-title">[[ ${ test.title } ]]</span>
 				</div>
 				<div class="nav-item">
 					<div class="dropdown-language">
 						<div class="dropdown-menu" id="language">
 							<th:block th:if="${ java == 'Y' }">
-							<button type="button" class="dropdown-item btn-language" data-language="java">Java</button>
+								<button type="button" class="dropdown-item btn-language"
+									data-language="java">Java</button>
 							</th:block>
 							<th:block th:if="${ js == 'Y' }">
-							<button type="button" class="dropdown-item btn-language" data-language="js">JavaScript</button>
+								<button type="button" class="dropdown-item btn-language"
+									data-language="js">JavaScript</button>
 							</th:block>
 							<th:block th:if="${ oracle == 'Y' }">
-							<button type="button" class="dropdown-item btn-language" data-language="sql">SQL</button>
+								<button type="button" class="dropdown-item btn-language"
+									data-language="sql">SQL</button>
 							</th:block>
 						</div>
 					</div>
@@ -69,8 +75,8 @@
 				</div>
 				<div class="func-buttons">
 					<th:block th:if="${ session.email != null }">
-					<button class="btn_check" type="button" onclick="challenge('run')">실행</button>
-					<button class="btn_check" type="button" onclick="challenge('submit')">제출</button>
+						<button class="btn_check" type="button" onclick="challenge('run')">실행</button>
+						<button class="btn_check" type="button" onclick="challenge('submit')">제출</button>
 					</th:block>
 					<button th:if="${ session.email == null }" class="btn_check" type="button" onclick="location.href='/member/login'">로그인</button>
 				</div>
@@ -85,8 +91,15 @@
 	<script src="/js/codemirror/codemirror-5.65.18/mode/javascript/javascript.js"></script>
 	<link rel="stylesheet" href="/js/codemirror/codemirror-5.65.18/lib/codemirror.css">
 	<link rel="stylesheet" href="/js/codemirror/codemirror-5.65.18/theme/monokai.css">
+	
+	<!-- SweetAlert2 link -->
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	
 	<!-- Custom Script -->
 	<script type="text/javascript">
+		//로딩 대기화면
+		const loading_page = document.getElementById("load");
+	
 		//textarea element 가져오기
 		let textarea_content = document.getElementById('batch_content');
 		
@@ -118,7 +131,8 @@
 
 		//초기 언어에 대한 세팅
 		document.querySelectorAll('.btn-language').forEach((btn) => {
-			if (btn.matches('button[data-language="' + selectedLanguage + '"]')) btn.classList.add('active');
+			if (btn.matches('button[data-language="' + selectedLanguage + '"]'))
+				btn.classList.add('active');
 		});
 
 		//언어 버튼 클릭 시 모드 변경
@@ -126,8 +140,8 @@
 			button.addEventListener('click', (e) => {
 				selectedLanguage = e.target.getAttribute('data-language');
 				let mode = selectedLanguage === 'java' ? 'text/x-java' :
-							selectedLanguage === 'js' ? 'text/javascript' :
-							selectedLanguage === 'oracle' ? 'text/x-sql' : '';
+										selectedLanguage === 'js' ? 'text/javascript' :
+										selectedLanguage === 'oracle' ? 'text/x-sql' : '';
 				
 				editor.setOption('mode', mode);
 				//editor.setValue(''); 
@@ -146,8 +160,8 @@
 		//언어별 문제 가져오기
 		const loadTestLng = async () => {
 			let lngCode = selectedLanguage === 'java' ? 'LNG-0001' :
-							selectedLanguage === 'js' ? 'LNG-0002' :
-							selectedLanguage === 'oracle' ? 'LNG-0003' : '';
+										selectedLanguage === 'js' ? 'LNG-0002' :
+										selectedLanguage === 'oracle' ? 'LNG-0003' : '';
 			
 			await fetch('/test/language', {
 				method: 'POST',
@@ -170,51 +184,12 @@
 				alert("시스템 장애로 인해 문제 로딩에 실패했습니다.");
 			});
 		}
-
-		/*
-		//실행 버튼 클릭 시 코드 실행
-		document.getElementById("run").addEventListener("click", () => {
-			try {
-				if (selectedLanguage === 'javascript') {
-					let result = eval(code);
-					outputArea.innerText = result;
-				} else if (selectedLanguage === 'java') {
-					outputArea.innerText = editor.getValue();
-				} else if (selectedLanguage === 'sql') {
-					outputArea.innerText = editor.getValue();
-				}
-			} catch (error) {
-				outputArea.innerText = "오류 발생: " + error.message;
-			}
-		});
-		
-		//제출 버튼 클릭 시 코드 실행
-		document.getElementById("submit").addEventListener("click", function() {
-			const code = editor.getValue();
-			const language = selectedLanguage;
-			
-			fetch('/submit', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/x-www-form-urlencoded',
-				},
-				body: new URLSearchParams({
-					'code': code,
-					'language': selectedLanguage
-				})
-			})
-			.then(response => response.text())
-			.then(data => {
-				outputArea.innerText = data; // 서버에서 받은 결과 표시
-			})
-			.catch(error => {
-				outputArea.innerText = "오류 발생: " + error.message;
-			});
-		});
-		*/
 		
 		//코드 실행 및 제출 시 처리
 		const challenge = async (type) => {
+			//로딩화면 등장
+			loading_page.style.display = 'block';
+			
 			fetch('/test/challenge', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -230,11 +205,15 @@
 			})
 			.then((response) => response.json())
 			.then((data) => {
+				//로딩화면 퇴장
+				loading_page.style.display = 'none';
+				
 				outputArea.innerText = '';
 				
 				if (data.message == "TYPE_NOT_AVAILABLE") { //type 값이 run, submit 모두 해당되지 않을 경우
 					outputArea.innerText = '유효하지 않은 요청입니다.';
 				} else if (data.message == "run") { //실행 시 결과
+					alert('passcnt: ' + data.passcnt);
 					for (let i = 0; i < data.subdata.length; i++) {
 						let elm = document.createElement('table');
 						elm.setAttribute('data-index', i);
@@ -270,27 +249,32 @@
 
 						let result = '';
 						result += '<tbody>\n' +
-									'\t<tr>\n' +
-									'\t\t<td colspan="2">테스트 ' + (i + 1) + '</td>\n' +
-									'\t</tr>\n' +
-									'\t<tr>\n' +
-									'\t\t<td class="td-label" align="right">입력값 <span>〉</span></td>\n' +
-									'\t\t<td class="input">' + data.subdata[i].a + ', ' + data.subdata[i].d + ', ' + data.subdata[i].included + '</td>\n' +
-									'\t</tr>\n' +
-									'\t<tr>\n' +
-									'\t\t<td class="td-label" align="right">기댓값 <span>〉</span></td>\n' +
-									'\t\t<td class="output">' + data.subdata[i].resultV + '</td>\n' +
-									'\t</tr>\n' +
-									'\t<tr>\n' +
-									'\t\t<td class="td-label" align="right" valign="top">실행 결과 <span>〉</span></td>\n' +
-									'\t\t<td class="result ' + pf + '">' + msg + '</td>\n' +
-									'\t</tr>\n' +
-									'</tbody>';
+											'\t<tr>\n' +
+											'\t\t<td colspan="2">테스트 ' + (i + 1) + '</td>\n' +
+											'\t</tr>\n' +
+											'\t<tr>\n' +
+											'\t\t<td class="td-label" align="right">입력값 <span>〉</span></td>\n' +
+											'\t\t<td class="input">' + data.subdata[i].a + ', ' + data.subdata[i].d + ', ' + data.subdata[i].included + '</td>\n' +
+											'\t</tr>\n' +
+											'\t<tr>\n' +
+											'\t\t<td class="td-label" align="right">기댓값 <span>〉</span></td>\n' +
+											'\t\t<td class="output">' + data.subdata[i].resultV + '</td>\n' +
+											'\t</tr>\n' +
+											'\t<tr>\n' +
+											'\t\t<td class="td-label" align="right" valign="top">실행 결과 <span>〉</span></td>\n' +
+											'\t\t<td class="result ' + pf + '">' + msg + '</td>\n' +
+											'\t</tr>\n' +
+											'</tbody>';
 						
 						elm.innerHTML = result;
 						
 						outputArea.appendChild(elm);
 					}
+					
+					outputArea.innerHTML += '<h4 class="mt20">테스트 결과</h4>' +
+																	'<p class="' + ((data.passcnt == 2) ? 'pass' : 'fail') + '">2개 중 ' + data.passcnt + '개 성공</p>';
+					
+					if (data.passcnt == 2) outputArea.innerHTML += '<p>샘플 테스트 케이스를 통과했다는 의미로, 작성한 코드가 문제의 정답은 아닐 수 있습니다.</p>'
 				} else if (data.message == "submit") { //제출 시 결과
 					let elm = document.createElement('table');
 					elm.setAttribute('class', 'console-test-group');
@@ -298,17 +282,35 @@
 					
 					let result = '<tbody>';
 					
-					for (const i in data.subdata) {
+					for (let i = 0; i < data.subdata.length; i++) {
 						result += '\t<tr>\n' +
-									'\t\t<td valign="top" class="td-label">테스트 ' + (parseInt(i) + 1) + ' <span>〉</span></td>\n' +
-									'\t\t<td class="result ' + (data.subdata[i].resultS == data.subdata[i].resultV ? 'pass">통과' : 'fail">실패') + '</td>\n' +
-									'\t</tr>';
+											'\t\t<td valign="top" class="td-label">테스트 ' + (i + 1) + ' <span>〉</span></td>\n' +
+											'\t\t<td class="result ' + (data.subdata[i].resultS == data.subdata[i].resultV ? 'pass">통과' : 'fail">실패') + '</td>\n' +
+											'\t</tr>';
 					}
 					
 					result += '</tbody>';
 					
 					elm.innerHTML = result;
+					
 					outputArea.appendChild(elm);
+					
+					outputArea.innerHTML += '<h4 class="mt20">채점 결과</h4><p>점수: ' + (data.passcnt * 5) + ' / 100 점</p>';
+					
+					if ((data.passcnt * 5) >= 70) {
+						Swal.fire({
+							icon: 'success',
+							title: '정답입니다!',
+							confirmButtonText: '확인'
+						});
+					} else {
+						Swal.fire({
+							icon: 'error',
+							title: '틀렸습니다!',
+							text: '결과를 확인해주세요.',
+							confirmButtonText: '확인'
+						});
+					}
 				}
 			})
 			.catch((error) => {

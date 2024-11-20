@@ -52,7 +52,7 @@ public class TestLngEntity {
 
 	@Column(name = "run_src", length = 2000, nullable = false)
 	private String runSrc;
-	
+
 	@Column(name = "subm_src", length = 2000, nullable = false)
 	private String submSrc;
 

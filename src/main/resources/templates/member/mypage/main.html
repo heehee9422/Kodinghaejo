@@ -19,11 +19,11 @@
 
 <body>
 	<!-- header-->
-	<div id="header" th:replace="include/header"></div>
+	<div id="header" th:replace="/include/header"></div>
 	<div class="container column bgcontain-mypage">
 		<div class="column-row myPage">
 			<div class="c-column-2">
-				<div id="mypage_manu" th:replace="include/mypage"></div>
+				<div id="mypage_manu" th:replace="/include/mypage"></div>
 			</div>
 			<div class="c-column-8">
 				<div class="mypage_content">
@@ -64,21 +64,6 @@
 								<li><b>가입일자</b> : <span th:text="${ #temporals.format(member.regdate, 'yyyy-MM-dd a hh:mm:ss') }"></span></li>
 								<li><b>주요기술</b> : <span id="myTec"></span></li>
 								<li><b>희망직무</b> : <span id="myJob"></span></li>
-								<script type="text/javascript">
-									//주요기술 세팅
-									let myTec = ('[[ ${ member.tec1 } ]]' == '') ? '' : getCodeValue(commonCode, 'tec', '[[ ${ member.tec1 } ]]');
-									myTec += ('[[ ${ member.tec2 } ]]' == '') ? '' : ', ' + getCodeValue(commonCode, 'tec', '[[ ${ member.tec2 } ]]');
-									myTec += ('[[ ${ member.tec3 } ]]' == '') ? '' : ', ' + getCodeValue(commonCode, 'tec', '[[ ${ member.tec3 } ]]');
-									myTec += (myTec == '') ? '선택 없음' : '';
-									document.querySelector('#myTec').innerHTML = myTec;
-
-									//희망직무 세팅
-									let myJob = ('[[ ${ member.job1 } ]]' == '') ? '' : getCodeValue(commonCode, 'job', '[[ ${ member.job1 } ]]');
-									myJob += ('[[ ${ member.job2 } ]]' == '') ? '' : ', ' + getCodeValue(commonCode, 'job', '[[ ${ member.job2 } ]]');
-									myJob += ('[[ ${ member.job3 } ]]' == '') ? '' : ', ' + getCodeValue(commonCode, 'job', '[[ ${ member.job3 } ]]');
-									myJob += (myJob == '') ? '선택 없음' : '';
-									document.querySelector('#myJob').innerHTML = myJob;
-								</script>
 							</ul>
 							<h6>자기소개</h6>
 							<p><th:block th:if="${ member.descr == null || member.descr == '' }">작성된 자기소개글이 없습니다.</th:block><th:block th:if="${ member.descr != null && member.descr != '' }">[[ ${ member.descr } ]]</th:block></p>
@@ -110,8 +95,26 @@
 
 		</div>
 	</div>
+
+	<!-- footer -->
+	<div id="footer" th:replace="/include/footer"></div>
 	
+	<!-- Custom Script -->
 	<script type="text/javascript">
+		//주요기술 세팅
+		let myTec = ('[[ ${ member.tec1 } ]]' == '') ? '' : getCodeValue(commonCode, 'tec', '[[ ${ member.tec1 } ]]');
+		myTec += ('[[ ${ member.tec2 } ]]' == '') ? '' : ', ' + getCodeValue(commonCode, 'tec', '[[ ${ member.tec2 } ]]');
+		myTec += ('[[ ${ member.tec3 } ]]' == '') ? '' : ', ' + getCodeValue(commonCode, 'tec', '[[ ${ member.tec3 } ]]');
+		myTec += (myTec == '') ? '선택 없음' : '';
+		document.querySelector('#myTec').innerHTML = myTec;
+	
+		//희망직무 세팅
+		let myJob = ('[[ ${ member.job1 } ]]' == '') ? '' : getCodeValue(commonCode, 'job', '[[ ${ member.job1 } ]]');
+		myJob += ('[[ ${ member.job2 } ]]' == '') ? '' : ', ' + getCodeValue(commonCode, 'job', '[[ ${ member.job2 } ]]');
+		myJob += ('[[ ${ member.job3 } ]]' == '') ? '' : ', ' + getCodeValue(commonCode, 'job', '[[ ${ member.job3 } ]]');
+		myJob += (myJob == '') ? '선택 없음' : '';
+		document.querySelector('#myJob').innerHTML = myJob;
+		
 		//자기소개 변경하기, 내 정보 수정, 비밀번호 수정
 		const edit = (type) => {
 			document.location = '/member/mypage/edit' + type;
@@ -134,9 +137,6 @@
 			});
 		}
 	</script>
-
-	<!-- footer -->
-	<div id="footer" th:replace="include/footer"></div>
 </body>
 
 </html>
