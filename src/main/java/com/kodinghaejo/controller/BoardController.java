@@ -1,7 +1,6 @@
 package com.kodinghaejo.controller;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.data.domain.Page;
@@ -15,9 +14,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
 import com.kodinghaejo.dto.BoardDTO;
-import com.kodinghaejo.dto.ReplyDTO;
 import com.kodinghaejo.dto.ReplyInterface;
 import com.kodinghaejo.entity.BoardEntity;
+import com.kodinghaejo.entity.ReplyEntity;
 import com.kodinghaejo.service.BoardService;
 import com.kodinghaejo.util.PageUtil;
 
@@ -40,11 +39,12 @@ public class BoardController {
 		Page<BoardDTO> list = service.getBoardList(1, postNum, email);
 		
 		model.addAttribute("list", list);
+		model.addAttribute("totalPage", list.getTotalPages());
 	}
 
 	@ResponseBody
 	@PostMapping("/board/freeboard")
-	public Page<BoardDTO> postFreeboard(@RequestParam("page") int page, @SessionAttribute(name = "email", required = false) String email) {
+	public Page<BoardDTO> postFreeboard(@RequestParam("page") int page, @RequestParam("email") String email) {
 		int postNum = 12;
 		
 		return service.getBoardList(page, postNum, email);
@@ -65,7 +65,7 @@ public class BoardController {
 	//게시물 수정화면 보기
 	@GetMapping("/board/m/freeboardModify")
 	public void getModify(@RequestParam("idx") Long idx,Model model) throws Exception {
-		model.addAttribute("view", service.view(idx));
+//		model.addAttribute("view", service.view(idx));
 	}
 
 	//게시물 수정
@@ -79,25 +79,14 @@ public class BoardController {
 	//게시물 상세화면 보기
 	@GetMapping("/board/freeboardView")
 	public void getFreeboardView(@RequestParam("idx") Long idx,
-			Model model, HttpSession session)throws Exception {
-		model.addAttribute("view", service.view(idx));
-
-		//세션 email 값 가져 오기
-		String sessionEmail = (String) session.getAttribute("email");
+			Model model, @SessionAttribute(name = "email", required = false) String email)throws Exception {
+		BoardDTO view = service.view(idx, email);
+		
+		model.addAttribute("view", view);
 
 			//조회수 증가
-		if (sessionEmail != null) {
-		 	if(!sessionEmail.equals(service.view(idx).getEmail().getEmail())){
-		 		service.hitno(idx);
-			}
-		}
-
-		//좋아요 갯수 보여주는
-//		model.addAttribute("likeCount",service.getLikeCount(idx));
-
-		String isLiked = service.isPostLikedByUser(sessionEmail, idx);
-		model.addAttribute("isLiked", isLiked);
-
+		if (email != null && !email.equals(view.getEmail().getEmail()))
+			service.hitno(idx);
 
 	}
 
@@ -109,37 +98,21 @@ public class BoardController {
 		return "{ \"message\": \"good\" }";
 	}
 	
-	//댓글 처리
+	//댓글 목록
 	@ResponseBody
-	@PostMapping("/board/m/reply")
-	public List<ReplyInterface> postReply(ReplyInterface reply,
-			@RequestParam("kind") String kind) throws Exception {
-		switch (kind) {
-			case "I": //댓글 등록
-				service.writeReply(reply);
-				break;
-
-			case "U": //댓글 수정
-				service.editReply(reply);
-				break;
-
-			case "D": //댓글 삭제
-				service.deleteReply(reply);
-				break;
-
-		}
+	@PostMapping("/board/replyView")
+	public Page<ReplyEntity> replyView(@RequestParam("page") int page, @RequestParam("board_idx") Long boardIdx) throws Exception {
+		int postNum = 12;
 		
-		return service.viewReply(reply);
+		return service.viewReply(page, postNum, boardIdx);
 	}
 
 	//댓글 등록
 	@ResponseBody
 	@PostMapping("/board/m/replyWrite")
-	public String replyWrite(ReplyDTO reply) throws Exception {
-		service.replyWrite(reply);
-		return "{\"message\":\"good\"}";
+	public ReplyEntity replyWrite(ReplyInterface reply) throws Exception {
+		return service.writeReply(reply);
 	}
-
 
 	//댓글 비활성화
 	@GetMapping("/board/m/replyDeactive")

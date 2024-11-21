@@ -27,8 +27,7 @@ public class ReplyDTO {
 	private LocalDateTime regdate;
 	private String isUse;
 
-	//원글 제목
-	private String prntTitle;
+	private String prntTitle; //원글 제목
 
 	//Entity --> DTO 이동
 	public ReplyDTO(ReplyEntity entity) {

@@ -21,7 +21,7 @@ public interface BoardService {
 	public Page<BoardDTO> getBoardList(int pageNum, int postNum, String email);
 
 	//게시물 상세 내용 보기
-	public BoardDTO view(Long idx) throws Exception;
+	public BoardDTO view(Long idx, String email) throws Exception;
 
 	//게시물 수정
 	public void modify(BoardDTO board)throws Exception;
@@ -31,12 +31,12 @@ public interface BoardService {
 	public void deleteBoard(Long idx) throws Exception;
 
 	//댓글 목록보기
-	public List<ReplyEntity>replyView(Long prntIdx);
-	public List<ReplyInterface> viewReply(ReplyInterface reply);
+	public List<ReplyEntity> replyView(Long prntIdx);
+	public Page<ReplyEntity> viewReply(int pageNum, int postNum, Long boardIdx);
 
 	//댓글등록
 	public void replyWrite(ReplyDTO reply) throws Exception;
-	public void writeReply(ReplyInterface reply) throws Exception;
+	public ReplyEntity writeReply(ReplyInterface reply) throws Exception;
 	
 	//댓글 수정
 	public void replyModify(ReplyInterface replyDTO);

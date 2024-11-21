@@ -85,11 +85,11 @@ const deleteEmptyChats = () => {
 </script>
 </head>
 <body>
-	<div id="header" th:replace="include/header"></div>
+	<div id="header" th:replace="~{ /include/header }"></div>
 	<div class="container column mt50">
 		<div class="column-row">
 			<div class="c-column-2">
-				<div id="system_menu" th:replace="include/system"></div>
+				<div id="system_menu" th:replace="~{ /include/system }"></div>
 			</div>
 			<div class="c-column-8">
 				<div class="sys-system_menu">
@@ -154,7 +154,7 @@ const deleteEmptyChats = () => {
 			</div>
 		</div>
 	</div>
-	<div id="footer" th:replace="include/footer"></div>
+	<div id="footer" th:replace="~{ /include/footer }"></div>
 </body>
 
 </html>

@@ -71,7 +71,7 @@ const registerForm = async() => {
 </script>
 <body>
 	<!-- header 영역 -->
-	<div id="header" th:replace="include/header"></div>
+	<div id="header" th:replace="~{ include/header }"></div>
 	<div class="container">
 		<div class="main-content">
 			<div class="content-board-notice-write">
@@ -107,7 +107,7 @@ const registerForm = async() => {
 		</div>
 	</div>
  <!-- footer영역 -->
-	<div id="footer" th:replace="include/footer"></div>
+	<div id="footer" th:replace="~{ include/footer }"></div>
 	<!-- toast API : 나중에 모듈로 작성해서 만들기-->
 	<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
 	<link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />

@@ -27,8 +27,6 @@ import com.kodinghaejo.entity.repository.BoardRecommendRepository;
 import com.kodinghaejo.entity.repository.BoardRepository;
 import com.kodinghaejo.entity.repository.MemberRepository;
 import com.kodinghaejo.entity.repository.ReplyRepository;
-import com.kodinghaejo.entity.repository.TestQuestionAnswerRepository;
-import com.kodinghaejo.entity.repository.TestQuestionRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -41,8 +39,6 @@ public class BoardServiceImpl implements BoardService {
 	private final BoardRecommendRepository boardRecommendRepository;
 	private final MemberRepository memberRepository;
 	private final ReplyRepository replyRepository;
-	private final TestQuestionRepository testQuestionRepository;
-	private final TestQuestionAnswerRepository testQuestionAnswerRepository;
 
 	//게시물 등록하기
 	@Override
@@ -59,7 +55,7 @@ public class BoardServiceImpl implements BoardService {
 	}
 	@Override
 	public Page<BoardDTO> getBoardList(int pageNum, int postNum, String email) {
-		MemberEntity memberEntity = (email == null) ? null : memberRepository.findById(email).get();
+		MemberEntity memberEntity = (email == null || email.equals("")) ? null : memberRepository.findById(email).get();
 		
 		PageRequest pageRequest = PageRequest.of(pageNum - 1, postNum, Sort.by(Direction.DESC, "idx"));
 		Page<BoardEntity> boardEntities = boardRepository.findByCatNotAndIsUseOrderByRegdateDesc("CAT-0001", "Y", pageRequest);
@@ -78,8 +74,16 @@ public class BoardServiceImpl implements BoardService {
 
 	//게시물 내용 보기
 	@Override
-	public BoardDTO view(Long idx) throws Exception {
-		return boardRepository.findById(idx).map(view -> new BoardDTO(view)).get();
+	public BoardDTO view(Long idx, String email) throws Exception {
+		BoardEntity boardEntity = boardRepository.findById(idx).get();
+		MemberEntity memberEntity = (email == null || email.equals("")) ? null : memberRepository.findById(email).get();
+		
+		BoardDTO boardDTO = new BoardDTO(boardEntity);
+		boardDTO.setReplyCnt(replyRepository.countByRePrntAndPrntIdxAndIsUse("FR", boardEntity.getIdx(), "Y"));
+		boardDTO.setGoodChk((email == null || email.equals("")) ? "N" : (boardRecommendRepository.countByEmailAndBoardIdxAndGoodChkAndIsUse(memberEntity, boardEntity, "Y", "Y") == 0) ? "N" : "Y");
+		boardDTO.setGoodCnt(boardRecommendRepository.countByBoardIdxAndGoodChkAndIsUse(boardEntity, "Y", "Y"));
+		
+		return boardDTO;
 	}
 
 	//게시물 수정하기
@@ -112,8 +116,9 @@ public class BoardServiceImpl implements BoardService {
 		return replyRepository.findByPrntIdx(prntIdx);
 	}
 	@Override
-	public List<ReplyInterface> viewReply(ReplyInterface reply) {
-		return replyRepository.findByRePrntAndPrntIdxAndIsUse(reply.getRePrnt(), reply.getPrntIdx(), "Y");
+	public Page<ReplyEntity> viewReply(int pageNum, int postNum, Long boardIdx) {
+		PageRequest pageRequest = PageRequest.of(pageNum - 1, postNum, Sort.by(Direction.DESC, "idx"));
+		return replyRepository.findByRePrntAndPrntIdxAndIsUse("FR", boardIdx, "Y", pageRequest);
 	}
 
 	//댓글 등록
@@ -123,7 +128,7 @@ public class BoardServiceImpl implements BoardService {
 		replyRepository.save(reply.dtoToEntity(reply));
 	}
 	@Override
-	public void writeReply(ReplyInterface reply) throws Exception {
+	public ReplyEntity writeReply(ReplyInterface reply) throws Exception {
 		MemberEntity memberEntity = memberRepository.findById(reply.getEmail()).get();
 		
 		ReplyEntity replyEntity = ReplyEntity
@@ -134,9 +139,11 @@ public class BoardServiceImpl implements BoardService {
 																.writer(reply.getWriter())
 																.content(reply.getContent())
 																.regdate(LocalDateTime.now())
-																.isUse("U")
+																.isUse("Y")
 																.build();
 		replyRepository.save(replyEntity);
+		
+		return replyEntity;
 	}
 
 	//댓글 수정

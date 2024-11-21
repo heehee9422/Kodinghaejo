@@ -14,7 +14,7 @@
 
 <body>
 <!-- header 영역 -->
-<div id="header" th:replace="/include/header"></div>
+<div id="header" th:replace="~{ /include/header }"></div>
 	<div class="container">
 		<div class="main-content">
 			<div class="content-board-free">
@@ -61,31 +61,81 @@
 	<div id="footer" th:replace="/include/footer"></div>
 	
 	<!-- Custom Script -->
-	<script>
+	<script type="text/javascript">
+		//페이징 변수
+		var page = 1;
+		var totalPage = parseInt('[[ ${ totalPage } ]]');
+		
+		//게시물 페이징
+		const loadBoard = async () => {
+			let formData = new FormData();
+			formData.append('page', page);
+			formData.append('email', '[[ ${ session.email } ]]');
+			
+			await fetch('/board/freeboard', {
+				method: 'POST',
+				body: formData
+			})
+			.then((response) => response.json())
+			.then((data) => {
+				addBoardList(data);
+			})
+			.catch((error) => {
+				console.log('error: ' + error);
+				Swal.fire({
+					icon: 'error',
+					text: '시스템 장애로 인해 게시물 가져오기에 실패했습니다.',
+					confirmButtonText: '확인'
+				});
+			})
+		}
+		
+		const addBoardList = (data) => {
+			const jsonInfo = data.content;
+			
+			let boardList = document.querySelector('.free-content-box');
+			
+			for (const i in jsonInfo) {
+				let elm = document.createElement('div');
+				elm.classList.add('content-box-item');
+				
+				let result = '';
+				result += '<h4>' + jsonInfo[i].cat + '</h4>\n' +
+									'<a href="/board/freeboardView?idx=' + jsonInfo[i].idx + '">\n' +
+									'\t<h5>' + jsonInfo[i].title + '</h5>\n' +
+									'\t<p class="content-title">' + jsonInfo[i].content + '</p>\n' +
+									'</a>\n' +
+									'<div class="profile-title">\n' +
+									'\t<p class="profile-name">' + jsonInfo[i].writer + '</p>\n' +
+									'\t<p class="profile-date">' + jsonInfo[i].regdate + '</p>\n' +
+									'</div>\n' +
+									'<div class="profile-item">\n' +
+									'\t<ol>\n' +
+									'\t\t<li><i class="xi-eye-o"></i><span>' + jsonInfo[i].hitCnt + '</span></li>\n' +
+									'\t\t<li><i class="xi-comment-o"></i><span>' + jsonInfo[i].replyCnt + '</span></li>' +
+									'\t</ol>\n' +
+									'\t<div class="like">\n' +
+									'\t\t<a href="javascript:recommend(\'' + jsonInfo[i].idx + '\')" id="good-' + jsonInfo[i].idx + '" kind="' + jsonInfo[i].goodChk + '" class="xi-heart' + ((jsonInfo[i].goodChk == 'Y') ? '' : '-o') + '"></a>\n' +
+									'\t\t<span id="good-count-' + jsonInfo[i].idx + '">' + jsonInfo[i].goodCnt + '</span>\n' +
+									'\t</div>\n' +
+									'</div>';
+				
+				elm.innerHTML = result;
+				boardList.appendChild(elm);
+			}
+		}
+		
+		//게시물 추천
 		const recommend = async (idx) => {
 			if ('[[ ${ session.email } ]]' == '') return false;
 			
 			const goodBtn = document.querySelector('#good-' + idx);
 			const goodCnt = document.querySelector('#good-count-' + idx);
 			let goodCntNum = parseInt(goodCnt.innerText);
-			let kind = '';
+			let kind = (goodBtn.getAttribute("kind") == 'Y') ? 'N' : 
+									(goodBtn.getAttribute("kind") == 'N') ? 'Y' : '';
 			
-			if (goodBtn.getAttribute("kind") == 'Y') {
-				goodBtn.classList.remove('xi-heart');
-				goodBtn.classList.add('xi-heart-o');
-				goodCntNum--;
-				kind = 'N';
-			} else if (goodBtn.getAttribute("kind") == 'N') {
-				goodBtn.classList.remove('xi-heart-o');
-				goodBtn.classList.add('xi-heart');
-				goodCntNum++;
-				kind = 'Y';
-			} else {
-				return false;
-			}
-			
-			goodBtn.setAttribute('kind', kind);
-			goodCnt.innerText = goodCntNum;
+			if (kind == '') return false;
 			
 			await fetch('/board/m/recommend', {
 				method: 'POST',
@@ -98,8 +148,40 @@
 			})
 			.then((response) => response.json())
 			.then((data) => {
+				if (data.message == 'good') {
+					if (kind == 'Y') {
+						goodBtn.classList.remove('xi-heart-o');
+						goodBtn.classList.add('xi-heart');
+						goodCntNum++;
+					} else if (kind == 'N') {
+						goodBtn.classList.remove('xi-heart');
+						goodBtn.classList.add('xi-heart-o');
+						goodCntNum--;
+					}
+				
+					goodBtn.setAttribute('kind', kind);
+					goodCnt.innerText = goodCntNum;
+				} else {
+					Swal.fire({
+						icon: 'error',
+						text: '시스템 장애로 인해 게시물 추천에 실패했습니다.',
+						confirmButtonText: '확인'
+					});
+				}
 			})
 		}
+		
+		//스크롤 맨 아래로 이동 시 다음 페이지 호출
+		window.addEventListener('scroll', () => {
+			var isScrollAtBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight;
+			
+			if (isScrollAtBottom) {
+				if (page >= totalPage) return false;
+				
+				page++;
+				loadBoard();
+			}
+		})
 	
 		async function toggleLike(postIdx, action) {
 			try {

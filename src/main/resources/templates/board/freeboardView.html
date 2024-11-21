@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="kr">
+<html lang="kr" xmlns:th="http://www.thymeleaf.org">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,34 +14,35 @@
 
 <body>
 	<!-- header 영역 -->
-	<div id="header" th:replace="/include/header"></div>
+	<div id="header" th:replace="~{ /include/header }"></div>
 	
 	<!-- 글 내용 -->
 	<div class="container" style="min-height: auto;">
 		<div class="content-board-free-view">
 			<div class="content-board-free-view-wrap">
-				<h4>[[${view.cat}]]</h4>
-				<h5>[[${view.title}]]</h5>
+				<h4>[[ ${ view.cat } ]]</h4>
+				<h5>[[ ${ view.title } ]]</h5>
 				<div class="profile-title">
 					<img src="/img/test-profile/nonoping.png" alt="">
 					<div class="profile-title-content">
-						<p class="profile-name">[[${view.writer}]]</p>
-						<p class="profile-date">[[${view.regdate}]]<!-- 5시간전 --></p>
+						<p class="profile-name">[[ ${ view.writer } ]]</p>
+						<p class="profile-date">[[ ${ view.regdate } ]]<!-- 5시간전 --></p>
 					</div>
 				</div>
-				<p>[[${view.content}]]</p>
+				<div id="content"></div>
+				<!--p>[[${view.content}]]</p-->
 				<div class="profile-item">
 					<ol>
-						<li><i class="xi-eye-o"></i><span th:text="${view.hitCnt}">{0}</span></li>
-						<li><i class="xi-comment-o"></i><span th:text="${replyCount}">{0}</span></li>
+						<li><i class="xi-eye-o"></i><span th:text="${ view.hitCnt }">{0}</span></li>
+						<li><i class="xi-comment-o"></i><span id="replyCnt" th:text="${ view.replyCnt }">{0}</span></li>
 					</ol>
 					<ol>
-						<li><i th:if="${isLiked == 'no'}" th:onclick="|toggleLike('${view.idx}', 'up')|" th:id="@{'like-up-' + ${view.idx}}" class="xi-heart-o"></i><i th:if="${isLiked == 'yes'}" th:onclick="|toggleLike('${view.idx}', 'down')|" th:id="@{'like-down-' + ${view.idx}}" class="xi-heart"></i><span id="like-count-${view.idx}" th:text="${likeCount}">{0}</span></li>
+						<li><i th:if="${view.goodChk == 'N'}" th:onclick="|toggleLike('${view.idx}', 'up')|" th:id="@{'like-up-' + ${view.idx}}" class="xi-heart-o"></i><i th:if="${view.goodChk == 'Y'}" th:onclick="|toggleLike('${view.idx}', 'down')|" th:id="@{'like-down-' + ${view.idx}}" class="xi-heart"></i><span id="like-count-${view.idx}" th:text="${view.goodCnt}">{0}</span></li>
 						<li><i class="xi-cut" th:onclick="|reportPost('${view.Idx}')|" th:id="@{'report-button-' + ${view.idx}}"></i><span>신고하기</span></li>
-				 		<th:block th:if="${session.email == view.email.email}">
+						<th:block th:if="${session.email == view.email.email}">
 						<li><a th:href="@{/board/m/freeboardmodify(idx=${view.idx})}">수정하기</a></li>
 						<li><a th:href="|javascript:deactive('${view.idx}')|"> 삭제하기</a></li>
-				 	</th:block>
+						</th:block>
 					</ol>
 				</div>
 				<a href="javascript:history.back()" class="btn_menu" style="float: right; margin-top: 20px;">목록가기</a>
@@ -51,6 +52,19 @@
 	</div>
 
 	<div class="container" style="background: #F9FAFB;">
+		<!-- 댓글 쓰기 내역 -->
+		<div th:if="${ session.email != null }" class="content-board-free-view-write">
+			<form class="replyForm" id="replyForm" name="replyForm" method="post" >
+				<h5>댓글 쓰기 영역</h5>
+				<div id="replyWriteArea" style="width: 100%; height: 500px;"></div>
+				<input type="hidden" id="rePrnt" name="rePrnt" value="FR">
+				<input type="hidden" id="prntIdx" name="prntIdx" th:value="${ view.idx }">
+				<input type="hidden" id="email" name="email" th:value="${ session.email }">
+				<input type="hidden" id="writer" name="writer" th:value="${ session.nickname }">
+			</form>
+			<button class="view-write-btn" onclick="replyWrite()">댓글 등록</button>
+		</div>
+		<div th:if="${ session.email == null }" id="replyWriteArea" class="hidden"></div>
 		<!-- 댓글 내용 -->
 		<div class="content-board-free-view-review">
 			<!-- 댓글 -->
@@ -59,26 +73,9 @@
 				<div id="replyList"></div>
 			</div>
 		</div>
-		<!-- 댓글 쓰기 내역 -->
-		<th:block th:if="${ session.email != null}">
-		<div class="content-board-free-view-write">
-			<form class="replyForm" id="replyForm" name="replyForm" method="post" >
-				<h5>댓글 쓰기 영역</h5>
-				<div id="content" style="width: 100%; height: 500px;"></div>
-				
-				<input type="hidden" id="email" name="email" th:value="${session.email}">
-				<input type="hidden" id="writer" name="writer" th:value="${session.username}">
-				<input type="hidden" id="isUse" name="isUse" value="Y">
-				<input type="hidden" id="rePrnt" name="rePrnt" value="FR">
-				<input type="hidden" id="prntIdx" name="prntIdx" th:value="${view.idx}">
-
-			</form>
-			<button class="view-write-btn" onclick="replyWrite()">댓글 등록</button>
-		</div>
-		</th:block>
 	</div>
 	<!-- footer영역 -->
-	<div id="footer" th:replace="/include/footer"></div>
+	<div id="footer" th:replace="~{ /include/footer }"></div>
 	
 	<!-- toast API -->
 	<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
@@ -86,13 +83,20 @@
 	
 	<!-- Custom Script -->
 	<script type="text/javascript">
-		//에디터 세팅
+		//토스트 UI - 뷰어
+		const viewer = new toastui.Editor.factory({
+			el: document.querySelector('#content'),
+			viewer: true,
+			initialValue: '[[ ${ view.content } ]]'
+		});
+		
+		//토스트 UI - 에디터
 		const editor = new toastui.Editor({
-			el: document.querySelector('#content'), //에디터를 적용할 요소 (컨테이너)
-			height: '400px',												//에디터 영역의 높이 값 (OOOpx || auto)
-			initialEditType: 'markdown',						//최초로 보여줄 에디터 타입 (markdown || wysiwyg)
-			placeholder: '내용을 입력해주세요.',		//내용의 초기 값으로, 반드시 마크다운 문자열 형태여야 함
-			previewStyle: 'vertical',								//마크다운 프리뷰 스타일 (tab || vertical)
+			el: document.querySelector('#replyWriteArea'),	//에디터를 적용할 요소 (컨테이너)
+			height: '400px',																//에디터 영역의 높이 값 (OOOpx || auto)
+			initialEditType: 'markdown',										//최초로 보여줄 에디터 타입 (markdown || wysiwyg)
+			placeholder: '내용을 입력해주세요.',						//내용의 초기 값으로, 반드시 마크다운 문자열 형태여야 함
+			previewStyle: 'vertical',												//마크다운 프리뷰 스타일 (tab || vertical)
 			toolbarItems: [
 				//기본 툴바 항목에서 'image' 항목을 제외하고 나열합니다.
 				[ 'heading', 'bold', 'italic', 'strike' ],
@@ -104,16 +108,46 @@
 			]
 		});
 		
+		//========== 댓글 관련 처리 ==========
+		var page = 1;
+		var totalPage = 1;
+
+		//최초 접근 시 댓글 목록 가져오기
+		const replyLoad = async () => {
+			let formData = new FormData();
+			formData.append('page', page);
+			formData.append('board_idx', '[[ ${ view.idx } ]]');
+			
+			await fetch('/board/replyView', {
+				method: 'POST',
+				body: formData
+			})
+			.then((response) => response.json())
+			.then((data) => replyList(data))
+			.catch((error) => {
+				console.log('error: ' + error);
+				Swal.fire({
+					icon: 'error',
+					text: '시스템 장애로 인해 댓글을 가져오는 데 실패했습니다.',
+					confirmButtonText: '확인'
+				});
+			});
+		}
+		
 		//댓글 목록 보기
 		const replyList = (data) => {
 			const sessionEmail = '[[ ${ session.email } ]]';
-			const jsonInfo = data;
+			
+			const jsonInfo = data.content;
+			
+			totalPage = data.totalPages;
+			replyCnt.innerText = data.totalElements;
 			
 			const replyList = document.querySelector('#replyList');
-			replyList.innerHTML = '';
 			
 			for (const i in jsonInfo) {
-				let profileImg = (jsonInfo[i].storedImg == null || jsonInfo[i].storedImg == '') ? '/img/test-profile/nonoping.png' : ('/member/img' + jsonInfo[i].email);
+				
+				let profileImg = (jsonInfo[i].email.storedImg == null || jsonInfo[i].email.storedImg == '') ? '/img/test-profile/nonoping.png' : ('/member/img' + jsonInfo[i].email.email);
 				
 				const elm = document.createElement('div');
 				elm.setAttribute('id', 'reply-' + jsonInfo[i].idx);
@@ -141,29 +175,58 @@
 				}
 				
 				result += '</div>';
+				
+				elm.innerHTML = result;
+				replyList.appendChild(elm);
 			}
 		}
 		
-		const replyLoad = async () => {
-			let formData = new FormData();
-			formData.append('boardIdx', '[[ ${ view.idx } ]]');
+		//스크롤 맨 아래로 이동 시 다음 페이지 호출
+		window.addEventListener('scroll', () => {
+			var isScrollAtBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight;
 			
-			await fetch('/board/reply?kind=L', {
+			if (isScrollAtBottom) {
+				if (page >= totalPage) return false;
+				
+				page++;
+				replyLoad();
+			}
+		})
+		
+		//댓글 작성
+		const replyWrite = async () => {
+			let content = editor.getMarkdown();
+			
+			if (content.trim() == '') {
+				Swal.fire({
+					icon: 'warning',
+					text: '내용을 입력해주세요.',
+					confirmButtonText: '확인'
+				});
+				return false;
+			}
+				
+			let formData = new FormData(replyForm);
+			formData.append("content", content); //Toast UI Editor의 내용을 FormData에 추가
+				
+			await fetch('/board/m/replyWrite', {
 				method: 'POST',
 				body: formData
 			})
 			.then((response) => response.json())
 			.then((data) => replyList(data))
 			.catch((error) => {
-				console.log('error: ' + error);
 				Swal.fire({
-					icon: 'error',
-					text: '시스템 장애로 인해 댓글을 가져오는 데 실패했습니다.',
-					confirmButtonText: '확인'
+					icon: "error",
+					text: "시스템 장애로 댓글등록에 실패했습니다!",
 				});
-			});
+				console.log("error" + error);
+			})
 		}
-/*
+		
+		//========== 댓글 관련 처리 종료 ==========
+
+		/*
 		const replyWrite = async () => {
 			let content = editor.getMarkdown(); //마크다운 텍스트로 가져오기
 	
