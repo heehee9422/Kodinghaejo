@@ -14,11 +14,11 @@
 <!-- 게시판 복사용 게시판 -->
 <body>
 	<!-- header 영역 -->
-	<div id="header" th:replace="include/header"></div>
+	<div id="header" th:replace="/include/header"></div>
 	<div class="container column bgcontain-mypage">
 		<div class="column-row myPage">
 			<div class="c-column-2">
-				<div id="mypage_manu" th:replace="include/mypage"></div>
+				<div id="mypage_manu" th:replace="/include/mypage"></div>
 			</div>
 			<div class="c-column-8">
 				<div class="mypage_content">
@@ -84,7 +84,11 @@
 
 		</div>
 	</div>
+
+	<!-- footer영역 -->
+	<div id="footer" th:replace="/include/footer"></div>
 	
+	<!-- Custom CSS -->
 	<style type="text/css">
 		p.bad {
 			color: #f00;
@@ -100,6 +104,7 @@
 		}
 	</style>
 	
+	<!-- Custom Script -->
 	<script type="text/javascript">
 		var telOk = 'Y'; //전화번호 확인 검증여부
 		var websiteOk = 'Y'; //웹사이트 확인 검증여부
@@ -200,8 +205,5 @@
 			}
 		}
 	</script>
-
-	<!-- footer영역 -->
-	<div id="footer" th:replace="include/footer"></div>
 </body>
 </html>

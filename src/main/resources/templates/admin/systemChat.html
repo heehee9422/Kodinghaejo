@@ -83,10 +83,7 @@ const deleteEmptyChats = () => {
 }
 */
 </script>
-
-
 </head>
-
 <body>
 	<div id="header" th:replace="include/header"></div>
 	<div class="container column mt50">
@@ -105,7 +102,7 @@ const deleteEmptyChats = () => {
 					</div>
 					<div class="sys-description-box mb20">
 						<div class="box-itme">
-							<h3 class="mt20">채팅방 수 : <span th:text="${chatCount}"></span></h3>
+							<h3 class="mt20">채팅방 수 : <span th:text="${totalCount}"></span></h3>
 						</div>
 						<div class="box-itme">
 							<button class="deletechat-btn mt20" onclick="deleteEmptyChats()">인원 없는 채팅방 삭제</button>
@@ -150,12 +147,14 @@ const deleteEmptyChats = () => {
 							</tr>
 						</tbody>
 					</table>
+					<div class="pagination">
+						[(${pageList})]
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-</body>
-<footer>
 	<div id="footer" th:replace="include/footer"></div>
-</footer>
+</body>
+
 </html>

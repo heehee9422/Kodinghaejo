@@ -52,7 +52,7 @@ public class BoardEntity {
 
 	@Column(name = "content", length = 2000, nullable = false)
 	private String content;
-	
+
 	@Column(name = "hit_cnt", nullable = true)
 	private int hitCnt;
 

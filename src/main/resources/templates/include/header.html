@@ -64,10 +64,21 @@
 			</div>
 		</div>
 	</div>
+	
+	<!-- notice-pop menu 
+	<div class="notice-pop-menu">
+		<h4>알림</h4>
+		<ol>
+			<li><a href="#">공지 제목 부분</a><span>{data}</span></li>
+		</ol>
+		<a href="" class="pop-menu-btn">공지 더보기</a>
+	</div>
+	-->
 
 	<!-- SweetAlert2 link -->
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	
+	<!-- Custom Script -->
 	<script type="text/javascript">
 		//로그아웃 전처리
 		const beforeLogout = () => {
@@ -79,26 +90,24 @@
 						cancelButtonText: '취소'
 					})
 					.then((result) => {
-						document.location = '/member/beforeLogout';
+						if (result.isConfirmed)
+							document.location = '/member/beforeLogout';
 					});
 		}
-		
-    if (document.querySelector(".main-navbar")) {
-      document.addEventListener("mouseover", function (event) {
-        if (
-          event.target.closest(".main-list-item .nav-hover") ||
-          event.target.closest(".main-nav-list-menu")
-        ) {
-          document.querySelector(".main-nav-list-menu").classList.add("active");
-          document.querySelector(".main-nav-list-menu").style.zIndex = 1000;
-        } else if (!event.target.closest(".main-navbar")) {
-          document
-            .querySelector(".main-nav-list-menu")
-            .classList.remove("active");
-          document.querySelector(".main-nav-list-menu").style.zIndex = 0;
-        }
-      });
-    }
+
+		//상단 메뉴
+		if (document.querySelector(".main-navbar")) {
+			document.addEventListener("mouseover", (event) => {
+				if (event.target.closest(".main-list-item .nav-hover") ||
+						event.target.closest(".main-nav-list-menu")) {
+					document.querySelector(".main-nav-list-menu").classList.add("active");
+					document.querySelector(".main-nav-list-menu").style.zIndex = 1000;
+				} else if (!event.target.closest(".main-navbar")) {
+					document.querySelector(".main-nav-list-menu").classList.remove("active");
+					document.querySelector(".main-nav-list-menu").style.zIndex = 0;
+				}
+			});
+		}
 	</script>
 	
 </header>

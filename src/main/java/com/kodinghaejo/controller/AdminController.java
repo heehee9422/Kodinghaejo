@@ -1,30 +1,43 @@
 package com.kodinghaejo.controller;
 
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kodinghaejo.dto.BoardDTO;
-import com.kodinghaejo.dto.ChatDTO;
+import com.kodinghaejo.dto.CommonCodeDTO;
 import com.kodinghaejo.dto.MemberDTO;
 import com.kodinghaejo.dto.ReplyDTO;
 import com.kodinghaejo.dto.TestDTO;
-import com.kodinghaejo.dto.TestQuestionDTO;
-import com.kodinghaejo.entity.repository.BoardRepository;
-import com.kodinghaejo.entity.repository.MemberRepository;
-import com.kodinghaejo.entity.repository.TestRepository;
+import com.kodinghaejo.entity.BoardEntity;
+import com.kodinghaejo.entity.ChatEntity;
+import com.kodinghaejo.entity.CommonCodeEntity;
+import com.kodinghaejo.entity.MemberEntity;
+import com.kodinghaejo.entity.TestQuestionEntity;
 import com.kodinghaejo.service.AdminService;
+import com.kodinghaejo.service.MailService;
+import com.kodinghaejo.service.MemberService;
+import com.kodinghaejo.util.PageUtil;
+import com.kodinghaejo.util.PasswordMaker;
+import com.nimbusds.jose.shaded.gson.Gson;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -35,72 +48,133 @@ import lombok.extern.log4j.Log4j2;
 public class AdminController {
 	
 	private final AdminService service;
+	private final MemberService memberService;
+	private final BCryptPasswordEncoder pwEncoder;
+	private final MailService mailService;
 	
-	private TestRepository testRepository;
-	private BoardRepository boardRepository;
-	private MemberRepository memberRepository;
 	
 	//시스템 관리 메인화면
 	@GetMapping("/admin/systemMain")
-	public void getSystemMain() { }
+	public String getSystemMain(Model model, HttpServletRequest request) {
+		long todaySignups = service.getTodaySignups();
+		model.addAttribute("todaySignups", todaySignups);
+		
+		long todayVisitorCount = service.getTodayVisitorCount(request);
+		model.addAttribute("todayVisitorCount", todayVisitorCount);
+		
+		long todayFreeboardCount = service.getTodayFreeBoardCount();
+		model.addAttribute("todayFreeboardCount", todayFreeboardCount);
+		
+		long todayTestCount = service.getTodayTestCount();
+		model.addAttribute("todayTestCount", todayTestCount);
+		
+		Map<Integer, Long> monthlySignups = service.getMonthlySignups();
+		String monthlySignupsJson = new Gson().toJson(monthlySignups);
+		model.addAttribute("monthlySignupsJson", monthlySignupsJson);
+		
+		Map<String, Integer> lngCount = service.getLngSubmitCount();
+		try {
+			model.addAttribute("lngCount", new ObjectMapper().writeValueAsString(lngCount));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			model.addAttribute("lngCount", "{}");
+		}
+		
+		return "/admin/systemMain";
+	}
 	
 	//회원정보 관리
 	@GetMapping("/admin/systemMemberInfo")
-	public void getSystemMeberInfo(@RequestParam(value = "searchType", required = false) String searchType,
-			@RequestParam(value = "searchKeyword", required = false) String searchKeyword, Model model) {
-		List<MemberDTO> memberDTOs;
+	public void getSystemMeberInfo(@RequestParam(name = "searchType", defaultValue = "") String searchType,
+			@RequestParam(name = "searchKeyword", defaultValue = "") String searchKeyword, Model model,
+			@RequestParam(name = "page", defaultValue = "1") int pageNum) {
+		int postNum = 5;
+		int pageListCount = 5;
+		
+		Page<MemberEntity> members;
 
 		if (searchKeyword != null && !searchKeyword.trim().isEmpty()) {
-			memberDTOs = service.searchMembers(searchType, searchKeyword);
-
-			model.addAttribute("members", memberDTOs);
-			model.addAttribute("searchType", searchType);
-			model.addAttribute("searchKeyword", searchKeyword);
-			model.addAttribute("memberCount", memberDTOs.size());
+			members = service.searchMembers(pageNum, postNum, searchType, searchKeyword);
 		} else {
-			memberDTOs = service.memberAllList();
+			members = service.memberAllList(pageNum, postNum);
 		}
-
-		model.addAttribute("members", memberDTOs);
-
-		long memberCount = memberRepository.count();
-		model.addAttribute("memberCount", memberCount);
+	
+		PageUtil page = new PageUtil();
+		int totalCount = (int) members.getTotalElements();
+		
+		String params = "";
+		params += (searchType.equals("")) ? "" : ("&searchType=" + searchType);
+		params += (searchKeyword.equals("")) ? "" : ("&searchKeyword=" + searchKeyword);
+		
+		model.addAttribute("page", pageNum);
+		model.addAttribute("postNum", postNum);
+		model.addAttribute("totalCount", totalCount);
+		model.addAttribute("members", members);
+		model.addAttribute("searchType", searchType);
+		model.addAttribute("searchKeyword", searchKeyword);
+		model.addAttribute("pageList", page.getPageList("/admin/systemMemberInfo", "page", pageNum, postNum, pageListCount, totalCount, params));
 	}
 	
 	//문제 리스트
 	@GetMapping("/admin/systemTest")
-	public void getSystemTest(@RequestParam(required = false) String searchKeyword, Model model) {
-		List<TestDTO> testDTOs; // service.testAllList(); // 문제 리스트
+	public void getSystemTest(@RequestParam(name = "searchKeyword", defaultValue = "") String searchKeyword, Model model,
+			@RequestParam(name = "page", defaultValue = "1") int pageNum) {
+		int postNum = 5;
+		int pageListCount = 5;
+		
+		Page<TestDTO> tests;
 		
 		if (searchKeyword != null && !searchKeyword.trim().isEmpty()) {
-			testDTOs = service.searchtestListByTitle(searchKeyword);
+			tests = service.searchtestListByTitle(pageNum, postNum, searchKeyword);
 		} else {
-			testDTOs = service.testAllList();
+			tests = service.testAllList(pageNum, postNum);
 		}
 		
-		model.addAttribute("tests", testDTOs);
+		PageUtil page = new PageUtil();
+		int totalCount = (int) tests.getTotalElements();
 		
-		long testCount = testDTOs.size();
-		model.addAttribute("testCount", testCount);
+		String params = "";
+		params += (searchKeyword.equals("")) ? "" : ("&searchKeyword=" + searchKeyword);
+		
+		model.addAttribute("page", pageNum);
+		model.addAttribute("postNum", postNum);
+		model.addAttribute("totalCount", totalCount);
+		model.addAttribute("tests", tests);
+		model.addAttribute("searchKeyword", searchKeyword);
+		model.addAttribute("pageList", page.getPageList("/admin/systemTest", "page", pageNum, postNum, pageListCount, totalCount, params));
+		
 	}
 	
 	//채팅방 관리
 	@GetMapping("/admin/systemChat")
-	public void getSystemChat(@RequestParam(required = false) String searchKeyword, Model model) {
-		List<ChatDTO> chatDTOs;
+	public void getSystemChat(@RequestParam(name = "searchKeyword", defaultValue = "") String searchKeyword, Model model,
+			@RequestParam(name = "page", defaultValue = "1") int pageNum) {
+		int postNum = 5;
+		int pageListCount = 5;
+		
+		Page<ChatEntity> chats;
 		
 		if (searchKeyword != null && !searchKeyword.trim().isEmpty()) {
-			chatDTOs = service.searchChatListByTitle(searchKeyword);
+			chats = service.searchChatListByTitle(pageNum, postNum, searchKeyword);
 		} else {
-			chatDTOs = service.chatList();
+			chats = service.chatList(pageNum, postNum);
 		}
 		
-		model.addAttribute("chats",chatDTOs);
+		PageUtil page = new PageUtil();
+		int totalCount = (int) chats.getTotalElements();
 		
-		long chatCount = chatDTOs.size();
-		model.addAttribute("chatCount", chatCount);
+		String params = "";
+		params += (searchKeyword.equals("")) ? "" : ("&searchKeyword=" + searchKeyword);
+		
+		model.addAttribute("page", pageNum);
+		model.addAttribute("postNum", postNum);
+		model.addAttribute("totalCount", totalCount);
+		model.addAttribute("chats",chats);
+		model.addAttribute("searchKeyword", searchKeyword);
+		model.addAttribute("pageList", page.getPageList("/admin/systemChat", "page", pageNum, postNum, pageListCount, totalCount, params));
 	}
 	
+	//채팅인원 0인 채팅방 삭제 
 	@Transactional
 	@DeleteMapping("/admin/systemChatDelete")
 	public ResponseEntity<String> deleteEmptyChat() {
@@ -114,19 +188,28 @@ public class AdminController {
 	
 	//공지 관리
 	@GetMapping("/admin/systemNotice")
-	public void getSystemNotice(@RequestParam(required = false) String searchKeyword, Model model) {
-		List<BoardDTO> boardDTOs;
+	public void getSystemNotice(@RequestParam(name = "searchKeyword", defaultValue = "") String searchKeyword, Model model,
+			@RequestParam(name = "page", defaultValue = "1") int pageNum) {
+		int postNum = 5;
+		int pageListCount = 5;
+		
+		Page<BoardEntity> boards;
 		
 		if (searchKeyword != null && !searchKeyword.trim().isEmpty()) {
-			boardDTOs = service.searchNoticeListByTitle(searchKeyword);
+			boards = service.searchNoticeListByTitle(pageNum, postNum, searchKeyword);
 		} else {
-			boardDTOs = service.noticeboardList();
+			boards = service.noticeboardList(pageNum, postNum);
 		}
 		
-		model.addAttribute("boards",boardDTOs);
+		PageUtil page = new PageUtil();
+		int totalCount = (int) boards.getTotalElements();
 		
-		long boardCount = boardDTOs.size();
-		model.addAttribute("boardCount", boardCount);
+		model.addAttribute("page", pageNum);
+		model.addAttribute("postNum", postNum);
+		model.addAttribute("totalCount", totalCount);
+		model.addAttribute("boards",boards);
+		model.addAttribute("pageList", page.getPageList("/admin/systemNotice", "page", pageNum, postNum, pageListCount, totalCount, ((searchKeyword.equals("") ? "" : ("&searchKeyword=" + searchKeyword)))));
+
 	}
 	
 	//공지사항 수정화면
@@ -146,7 +229,7 @@ public class AdminController {
 	//공지사항 수정
 	@ResponseBody
 	@PostMapping("/admin/noticeboardModify")
-	public String noticeModify(@RequestBody BoardDTO boardDTO) {
+	public String noticeModify(@ModelAttribute BoardDTO boardDTO) {
 		try {
 			
 			service.savenoticeModify(boardDTO);
@@ -157,7 +240,8 @@ public class AdminController {
 		}
 	}
 	
-	//게시물 등록
+	
+	//공지사항 등록
 	@ResponseBody
 	@PostMapping("/admin/noticeWrite")
 	public String noticeWrite(BoardDTO board) throws Exception {
@@ -165,6 +249,7 @@ public class AdminController {
 		return "{\"message\":\"good\"}";
 	}	
 	
+	//게시물 삭제
 	@Transactional
 	@DeleteMapping("/admin/systemBoardDelete/{idx}") 
 	public ResponseEntity<String> getBoardDelete(@PathVariable("idx") Long idx) {
@@ -175,40 +260,63 @@ public class AdminController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("게시글 삭제에 실패했습니다.");
 		}
 	}
-	
+
 	//자유게시판 관리
 	@GetMapping("/admin/systemFreeBoard")
-	public void getSystemFreeBoard(@RequestParam(required = false) String searchKeyword, Model model) {
-		List<BoardDTO> boardDTOs;
+	public void getSystemFreeBoard(@RequestParam(name = "searchKeyword", defaultValue = "") String searchKeyword, Model model,
+			@RequestParam(name = "page", defaultValue = "1") int pageNum) {
+		int postNum = 5;
+		int pageListCount = 5;
+		
+		Page<BoardDTO> boards;
 		
 		if (searchKeyword != null && !searchKeyword.trim().isEmpty()) {
-				boardDTOs = service.searchFreeboardListByTitle(searchKeyword);
+				boards = service.searchFreeboardListByTitle(pageNum, postNum, searchKeyword);
 		} else {
-				boardDTOs = service.freeboardList();
+				boards = service.freeboardList(pageNum, postNum);
 		}
-		model.addAttribute("boards", boardDTOs);
+		PageUtil page = new PageUtil();
+		int totalCount = (int) boards.getTotalElements();
 		
-		long boardCount = boardDTOs.size();
-		model.addAttribute("boardCount", boardCount);
+		String params = "";
+		params += (searchKeyword.equals("")) ? "" : ("&searchKeyword=" + searchKeyword);
+		
+		model.addAttribute("page", pageNum);
+		model.addAttribute("postNum", postNum);
+		model.addAttribute("totalCount", totalCount);
+		model.addAttribute("boards", boards);
+		model.addAttribute("pageList", page.getPageList("/admin/systemFreeBoard", "page", pageNum, postNum, pageListCount, totalCount, params));
 	}
 	
 	//질문게시판 관리
 	@GetMapping("/admin/systemQBoard")
-	public void getSystemQBoard(@RequestParam(required = false) String searchKeyword, Model model) {
-		List<TestQuestionDTO> questionDTOs;
+	public void getSystemQBoard(@RequestParam(name = "searchKeyword", defaultValue = "") String searchKeyword, Model model,
+			@RequestParam(name = "page", defaultValue = "1") int pageNum) {
+		int postNum = 5;
+		int pageListCount = 5;
+		
+		Page<TestQuestionEntity> questions;
 		
 		if (searchKeyword != null && !searchKeyword.trim().isEmpty()) {
-			questionDTOs = service.searchQboardListByTitle(searchKeyword);
+			questions = service.searchQboardListByTitle(pageNum, postNum, searchKeyword);
 		} else {
-			questionDTOs = service.questionList();
+			questions = service.questionList(pageNum, postNum);
 		}
 		
-		model.addAttribute("questions", questionDTOs);
+		PageUtil page = new PageUtil();
+		int totalCount = (int) questions.getTotalElements();
 		
-		long questionCount = questionDTOs.size();
-		model.addAttribute("questionCount", questionCount);
+		String params = "";
+		params += (searchKeyword.equals("")) ? "" : ("&searchKeyword=" + searchKeyword);
+		
+		model.addAttribute("page", pageNum);
+		model.addAttribute("postNum", postNum);
+		model.addAttribute("totalCount", totalCount);
+		model.addAttribute("questions", questions);
+		model.addAttribute("pageList", page.getPageList("/admin/systemQBoard", "page", pageNum, postNum, pageListCount, totalCount, params));
 	}
 	
+	//질문게시판 글 삭제
 	@Transactional
 	@DeleteMapping("/admin/systemQBoardDelete/{idx}") 
 	public ResponseEntity<String> getQBoardDelete(@PathVariable("idx") Long idx) {
@@ -222,21 +330,39 @@ public class AdminController {
 	
 	//댓글 관리
 	@GetMapping("/admin/systemReply")
-	public void getSystemReply(@RequestParam(required = false) String searchKeyword, Model model) {
-		List<ReplyDTO> replyDTOs;
+	public void getSystemReply(@RequestParam(name = "searchKeyword", defaultValue = "") String searchKeyword, Model model, @RequestParam(name = "filter", required = false, defaultValue = "ALL") String filter,
+			@RequestParam(name = "page", defaultValue = "1") int pageNum) {
+		int postNum = 5;
+		int pageListCount = 5;
+		
+		Page<ReplyDTO> replys;
 		
 		if (searchKeyword != null && !searchKeyword.trim().isEmpty()) {
-			replyDTOs = service.searchReplyListByContent(searchKeyword);
+			replys = service.searchReplyListByContent(pageNum, postNum, searchKeyword);
+		} else if (!"ALL".equalsIgnoreCase(filter)) {
+			replys = service.getReplyListByType(pageNum, postNum, filter);
 		} else {
-			replyDTOs = service.replyList();
+			replys = service.replyList(pageNum, postNum);
 		}
 		
-		model.addAttribute("replys", replyDTOs);
+		PageUtil page = new PageUtil();
+		int totalCount = (int) replys.getTotalElements();
 		
-		long replyCount = replyDTOs.size();
-		model.addAttribute("replyCount", replyCount);
-	}
+		String params = "";
+		params += (searchKeyword.equals("")) ? "" : ("&searchKeyword=" + searchKeyword);
+		params += (filter.equals("")) ? "" : ("&filter=" + filter);
+		
+		model.addAttribute("page", pageNum);
+		model.addAttribute("postNum", postNum);
+		model.addAttribute("totalCount", totalCount);
+		model.addAttribute("replys", replys);
+		model.addAttribute("searchKeyword", searchKeyword);
+		model.addAttribute("filter", filter);
+		model.addAttribute("pageList", page.getPageList("/admin/systemReply", "page", pageNum, postNum, pageListCount, totalCount, params));
 
+	}
+	
+	//댓글 삭제
 	@DeleteMapping("/admin/systemReplyDelete/{idx}") 
 	public ResponseEntity<String> getReplyDelete(@PathVariable("idx") Long idx) {
 		try {
@@ -299,24 +425,103 @@ public class AdminController {
 			return "{\"message\": \"fail\"}";
 		}
 	}
+	
+	//회원 탈퇴
+	@ResponseBody
+	@PostMapping("/admin/systemMemberDelete/{email}")
+	public String deleteMember(@PathVariable("email") String email) {
 
-	/*
-	@GetMapping("/boardList")
-	public String getBoardList(@RequestParam(defaultValue = "1") int page, Model model) {
-		int pageSize = 10;	// 페이지 당 게시글 수
-		int offset = (page - 1) * pageSize; // 시작 인덱스 계산
-		int totalCount = boardRepository.countAllBoards(); // 총 게시글 수
-		List<BoardEntity> boards = boardRepository.findBoards(offset, pageSize); // 해당 페이지의 게시글 조회
-
-		//총 페이지 수 계산
-		int totalPages = (int) Math.ceil((double) totalCount / pageSize);
-
-		model.addAttribute("boards", boards);
-		model.addAttribute("totalPages", totalPages);
-		model.addAttribute("currentPage", page);
-
-		return "boardList";	// Thymeleaf HTML 템플릿
+		try {
+			service.deleteMember(email);
+			return "{ \"message\": \"good\" }";
+		} catch (Exception e) {
+			return "{\"message\": \"fail\"}";
+		}
 	}
-	*/
 
+	//공통코드 관리
+	@GetMapping("/admin/systemCommonCode")
+	public void getCommonCode(@RequestParam(name = "searchKeyword", defaultValue = "") String searchKeyword, @RequestParam(name = "filter", required = false, defaultValue = "ALL") String filter, Model model,
+			@RequestParam(name = "page", defaultValue = "1") int pageNum) {
+		int postNum = 5;
+		int pageListCount = 5;
+		
+		Page<CommonCodeEntity> codes;
+		
+		if (searchKeyword != null && !searchKeyword.trim().isEmpty()) {
+			codes = service.searchCodeListByCode(pageNum, postNum, searchKeyword);
+			filter = "";
+		} else if (!"ALL".equalsIgnoreCase(filter)) {
+			codes= service.getCodeListByType(pageNum, postNum,filter);
+		} else {
+			codes = service.codeList(pageNum, postNum);
+		}
+		
+		PageUtil page = new PageUtil();
+		int totalCount = (int) codes.getTotalElements();
+		
+		String params = "";
+		params += (searchKeyword.equals("")) ? "" : ("&searchKeyword=" + searchKeyword);
+		params += (filter.equals("")) ? "" : ("&filter=" + filter);
+		
+		model.addAttribute("page", pageNum);
+		model.addAttribute("postNum", postNum);
+		model.addAttribute("totalCount", totalCount);
+		model.addAttribute("codes", codes);
+		model.addAttribute("filter", filter);
+		model.addAttribute("pageList", page.getPageList("/admin/systemCommonCode", "page", pageNum, postNum, pageListCount, totalCount, params));
+
+	}
+	
+	//공통코드 작성 화면
+	@GetMapping("/admin/systemCommonCodeWrite")
+	public void getCommonCodeWrite() {
+		
+	}
+	
+	//공통코드 추가
+	@ResponseBody
+	@PostMapping("/admin/systemCommonCodeWrite")
+	public String CommonCodeWrite(CommonCodeDTO code) throws Exception {
+		service.codewrite(code);
+		return "{\"message\":\"good\"}";
+	}
+	
+	//공통코드 삭제
+	@ResponseBody
+	@PostMapping("/admin/systemCommonCodeDelete")
+	public void deleteCommonCode(@RequestParam("code") String code) {
+		service.deleteCommonCode(code);
+	}
+	
+	//회원관리 상세보기
+	@GetMapping("/admin/MemberDetail/{email}")
+	public ResponseEntity<MemberDTO> getMemberDetails(@PathVariable String email) {
+		MemberDTO memberDTO = service.getMemberDetailByEmail(email);
+		return ResponseEntity.ok(memberDTO);
+	}
+	
+	//관리자페이지 임시 비밀번호 발급
+	@ResponseBody
+	@PostMapping("/admin/tempPassword")
+	public String TempPassword(@RequestBody MemberDTO findData) {
+		log.info("===================",findData.getEmail());
+		if(memberService.checkEmail(findData.getEmail()) == 0)
+			return "{ \"message\": \"ID_NOT_FOUND\" }";
+		
+		String password = new PasswordMaker().tempPasswordMaker(8);		
+		findData.setPassword(pwEncoder.encode(password));
+		memberService.editPassword(findData);
+		memberService.lastdateUpdate(findData.getEmail(), "password");
+		
+		mailService.sendSimpleMailMessage(findData.getEmail(), password);
+		
+		return "{ \"message\": \"good\" }";
+	}
+	
+	//광고 배너 관리
+	@GetMapping("/admin/systemBanner")
+	public void getSystemBanner() {
+		
+	}
 }

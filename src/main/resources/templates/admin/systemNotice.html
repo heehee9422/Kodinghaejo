@@ -11,33 +11,54 @@
 <script src="/js/pub-ui-custom.js"></script>
 <script>
 const deleteNotice = (idx) => {
-    if (confirm("공지사항을 삭제하시겠습니까?")) {
-        fetch(`/admin/systemBoardDelete/${idx}`, {
-            method: 'DELETE'
-        })
-        .then(response => {
-            console.log("Response status:", response.status);
-            return response.text().then(message => ({ status: response.status, message }));
-        })
-        .then(({ status, message }) => {
-            if (status === 200) {
-                alert(message); // 서버에서 전달한 성공 메시지
-                location.reload(); // 페이지 새로고침하여 목록 갱신
-            } else {
-                alert(`삭제 실패: ${message}`);
-            }
-        })
-        .catch(error => {
-            console.error('삭제 중 오류 발생:', error);
-            alert("삭제 요청 중 오류가 발생했습니다.");
-        });
-    }
-}
+    Swal.fire({
+        title: "공지사항을 삭제하시겠습니까?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "삭제",
+        cancelButtonText: "취소",
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/admin/systemBoardDelete/${idx}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                console.log("Response status:", response.status);
+                return response.text().then(message => ({ status: response.status, message }));
+            })
+            .then(({ status, message }) => {
+                if (status === 200) {
+                    Swal.fire({
+                        title: message,
+                        icon: "success",
+                        confirmButtonText: "확인" 
+                    }).then((result) => {
+                        if(result.isConfirmed) {
+                            location.reload();
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        text: message,
+                    });
+                }
+            })
+            .catch(error => {
+                Swal.fire({
+                    icon: "error",
+                    text: "시스템 장애로 공지사항 삭제에 실패했습니다",
+                });
+                console.error('삭제 중 오류 발생:', error);
+            });
+        }
+    });
+};
 </script>
-
 </head>
-<div id="header" th:replace="include/header"></div>
 <body>
+<div id="header" th:replace="include/header"></div>
 	<div class="container column mt50">
 		<div class="column-row">
 			<div class="c-column-2">
@@ -53,7 +74,7 @@ const deleteNotice = (idx) => {
 					    </form>
 					</div>
 					<div class="sys-description-box  mb20">
-						<h3>공지글 수 : <span th:text="${boardCount}"></span></h3>
+						<h3>공지글 수 : <span th:text="${totalCount}"></span></h3>
 						<div class="box-itme">
 							<button class="noticewrite-button"><a href="/admin/noticeboardWrite">공지 작성</a></button>
 						</div>
@@ -76,7 +97,6 @@ const deleteNotice = (idx) => {
 								<th>작성자</th>
 								<th>작성일</th>
 								<th>조회수</th>
-								<th>추천수</th>
 								<th>삭제</th>
 							</tr>
 						</thead>
@@ -89,18 +109,18 @@ const deleteNotice = (idx) => {
 								<td th:text="${board.writer}">운영자</td>
 								<td th:text="${board.regdate}">2024-11-04</td>
 								<td th:text="${board.hitCnt}">4</td>
-								<td>3</td>
-								<td><a href="" class="btn_delete" th:onclick="'deleteNotice(' + ${board.idx} + ')'">삭제</a></td>
+								<td><a th:href="|javascript:deleteNotice(${board.idx})|" class="btn_delete">삭제</a></td>
 							</tr>
 						</tbody>
 					</table>
+					<div class="pagination">
+						[(${pageList})]
+					</div>
 				</div>
 			</div>
 		</div>
-
 	</div>
+<div id="footer" th:replace="include/footer"></div>
 </body>
-<footer>
-	<div id="footer" th:replace="include/footer"></div>
-</footer>
+
 </html>

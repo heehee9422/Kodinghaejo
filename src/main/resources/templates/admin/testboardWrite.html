@@ -220,8 +220,8 @@ ex)정수 num1과 num2가 주어질 때, num1에서 num2를 뺀 값을 return하
     
     const testWrite = async () => {
         let title = document.querySelector('#title');
-        let content = editor.getMarkdown();  // 에디터에서 markdown 내용을 가져옴
-        // 제목과 내용 검사
+        let content = editor.getMarkdown();
+        
         if (title.value === '') {
         	Swal.fire({
 	    		icon:"warning",
@@ -292,7 +292,7 @@ ex)정수 num1과 num2가 주어질 때, num1에서 num2를 뺀 값을 return하
             });
     };
   </script>
-	<style>
+<style>
 .toastui-editor-mode-switch {
 	display: none !important;
 }

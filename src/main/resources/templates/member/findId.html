@@ -10,13 +10,11 @@
 	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css" />
 	<!-- pub-js link -->
 	<script src="/js/pub-ui-custom.js"></script>
-	<!-- SweetAlert2 link -->
-	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <!-- 게시판 복사용 게시판 -->
 <body>
 	<!-- header 영역 -->
-	<div id="header" th:replace="include/header"></div>
+	<div id="header" th:replace="/include/header"></div>
 	<div class="container">
 		<div class="main-content">
 			<div class="content-join" style="text-align: center;">
@@ -38,7 +36,11 @@
 			</div>
 		</div>
 	</div>
+
+	<!-- footer영역 -->
+	<div id="footer" th:replace="/include/footer"></div>
 	
+	<!-- Custom CSS -->
 	<style type="text/css">
 		p.bad {
 			color: #f00;
@@ -54,6 +56,7 @@
 		}
 	</style>
 	
+	<!-- Custom Script -->
 	<script type="text/javascript">
 		var usernameOk = 'N'; //이름 검증여부
 		var telOk = 'N'; //전화번호 확인 검증여부
@@ -86,17 +89,17 @@
 			.then((data) => {
 				if (data.message == 'good') {
 					Swal.fire({
-								icon: 'success',
-								title: '아이디(이메일) 찾기 결과',
-								html: data.id,
-								confirmButtonText: '확인'
-							});
+						icon: 'success',
+						title: '아이디(이메일) 찾기 결과',
+						html: data.id,
+						confirmButtonText: '확인'
+					});
 				} else if (data.message == 'ID_NOT_FOUND') {
 					Swal.fire({
-								icon: 'error',
-								text: '해당 정보와 일치하는 아이디(이메일)가 존재하지 않습니다.',
-								confirmButtonText: '확인'
-							});
+						icon: 'error',
+						text: '해당 정보와 일치하는 아이디(이메일)가 존재하지 않습니다.',
+						confirmButtonText: '확인'
+					});
 				} else {
 					Swal.fire({
 						icon: 'error',
@@ -128,8 +131,8 @@
 		//전화번호 --> 하이픈 자동 추가 & 유효성 검증
 		const checkTel = () => {
 			const changeTel = tel.value
-								.replace(/[^0-9]/g, "") //숫자 제외한 문자 제거
-								.replace(/^(\d{2,3})(\d{3,4})(\d{4})$/, `$1-$2-$3`); // 숫자 $1(2, 3)-$2(3, 4)-$3(4) 자리로 치환
+														.replace(/[^0-9]/g, "") //숫자 제외한 문자 제거
+														.replace(/^(\d{2,3})(\d{3,4})(\d{4})$/, `$1-$2-$3`); // 숫자 $1(2, 3)-$2(3, 4)-$3(4) 자리로 치환
 			
 			tel.value = changeTel;
 
@@ -145,8 +148,5 @@
 			}
 		}
 	</script>
-
-	<!-- footer영역 -->
-	<div id="footer" th:replace="include/footer"></div>
 </body>
 </html>

@@ -14,7 +14,7 @@
 <!-- 게시판 복사용 게시판 -->
 <body>
 	<!-- header 영역 -->
-	<div id="header" th:replace="include/header"></div>
+	<div id="header" th:replace="/include/header"></div>
 	<div class="container">
 		<div class="main-content">
 			<div class="content-join" style="text-align: center;">
@@ -56,7 +56,11 @@
 			</div>
 		</div>
 	</div>
+
+	<!-- footer영역 -->
+	<div id="footer" th:replace="/include/footer"></div>
 	
+	<!-- Custom CSS -->
 	<style type="text/css">
 		p.bad {
 			color: #f00;
@@ -72,6 +76,7 @@
 		}
 	</style>
 	
+	<!-- Custom Script -->
 	<script type="text/javascript">
 		var emailOk = 'N'; //이메일 검증여부
 		var usernameOk = 'N'; //이름 검증여부
@@ -293,8 +298,5 @@
 			}
 		}
 	</script>
-
-	<!-- footer영역 -->
-	<div id="footer" th:replace="include/footer"></div>
 </body>
 </html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="kr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>게시판</title>
+	<!-- Standard css -->
+	<link rel="icon" href="/img/logo/favicon.png">
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+	<!-- pub-js link -->
+	<script src="/js/pub-ui-custom.js"></script>
+</head>
+
+<body>
+	<!-- header 영역 -->
+	<div class="container" style="min-height: auto;">
+		<div class="main-content">
+			<div class="chat-content">
+				<div class="chat-view-nav">
+					<div class="chat-view-nav-title">
+						<ul>
+							<li><a href="#" onclick="history.back();" role="button"><i class="xi-angle-left"></i><span class="hidden">뒤로가기</span></a></li>
+							<li class="profile">
+								<img src="/img/test-profile/moseyping.png" alt="" style="width: 50px;">
+								<p><b>김아무개님</b>과의 대화</p>
+							</li>
+							<li class="chat-nav-side-btn"><a href="#" onclick=""><i class="xi-hamburger-back" role="button"></i><span class="hidden">사이드 바</span></a></li>
+						</ul>
+					</div>
+				</div>
+
+				<div class="chat-nav-side slide-left">
+					<div class="chat-nav-side-item">
+						<b>대화상대</b>
+						<div class="user-box">
+							<p><span class="hidden">나 : </span>나</p>
+							<p><a href="#"><span class="hidden">대화상대 :</span>김아무개</a></p>
+							<p><a href="#"><span class="hidden">대화상대 :</span>김두식이 </a>
+								<span class="btn_group">
+									<a href="#" class="btn">1:1 대화신청</a>
+									<a href="#" class="btn">신고 하기</a>
+									<!-- 방장만 강퇴 가능 -->
+									<a href="#" class="btn">강퇴 하기</a>
+								</span>
+							</p>
+						</div>
+					</div>
+					<div class="chat-nav-side-item">
+						<b>사진/동영상</b>
+						<div class="attach-photo-box">
+							<!-- 테스트용 이미지 주소 지우셔도 됩니다 -->
+							<a href="#"><div class="attach-item"><img src="https://i.namu.wiki/i/onpHbm1gdU9BJIwYYWEixv0uOOlRxuDROw1zqrtVX0uTYY5TwnFskAsBVPyrENUjuMk-R-dPrveeZBO43zEw5qjvQoJYixiy4lyFVyBzRLthKmqYf02snNnvPP_KtF370D0Ets0qxIpGk1_oJBIB6Q.webp" alt=""></div></a>
+							<a href="#"><div class="attach-item"><img src="https://i.namu.wiki/i/ae49NGHW4EVSo9MAPRy8j4s7pCCTonuIBf2ll65g5aYKj50_0OhXFHMpzJ9YECscBN9rCvhNGFPJuBtpazbkrJTU4_nFUc5mWFL8690C4BrR-mrQo4QPq1y_H3fBknNQPykWgUiXZaiXSycFgIE_1w.webp" alt=""></div></a>
+							<a href="#"><div class="attach-item"><img src="https://i.namu.wiki/i/xZg1hN4s_lC5saw0vX5O0m372v8QkdPddJbp0jXIBjMdc3d3XYLb7o5vlWwWdmGi4YV6QHT9sgg3VlSnBV3cY-xUjnrqO-1DLKFzccUMrZ7XxXCzaxdFzv42n8cBwfgTmAJn-dqmi-za0TT3FHd6ZQ.webp" alt=""></div></a>
+						</div>
+					</div>
+					<div class="chat-nav-side-item">
+						<b>첨부파일</b>
+						<div class="attach-file-box">
+							<!-- 최근 히스토리 3개 까지 -->
+							<p><a href="#">D:\kodinghaejo_pub\img\aset03.png</a></p>
+							<p><a href="#">D:\kodinghaejo_pub\img\aset03.png</a></p>
+							<p><a href="#">D:\kodinghaejo_pub\img\aset03.png</a></p>
+						</div>
+					</div>
+					<div class="chat-nav-side-item">
+						<b>채팅방태그</b>
+						<div class="tag-box">
+							<span class="card-small-red-tag">자유주제</span>
+							<span class="card-small-yellow-tag">커리어고민</span>
+						</div>
+					</div>
+				</div> <!-- chat-nav-side end-->
+
+				<div class="chat-view-body">
+					<div class="chat-start-message fadeInDown">
+						<b>{user}</b> 님이 입장하였습니다
+					</div>
+					
+					<div class="chat-your fadeInDown">
+						<img src="/img/test-profile/moseyping.png" alt="">
+						<ul class="chat-message">
+							<li><span class="hidden">user : </span>김아무개씨</li>
+							<li><span class="hidden">message : </span>대화내용 발싸</li>
+						</ul>
+						<p class="date">{date}</p>
+					</div>
+					<div class="chat-me fadeInDown">
+						<p class="date">{date}</p>
+						<ul class="chat-message-user">
+							<li><span class="hidden">me :</span> 나나핑씨</li>
+							<li><span class="hidden">message :</span>전화 받았습니다</li>
+						</ul>
+						<img src="/img/test-profile/narrping.png" alt="">
+					</div>
+
+					<div class="chat-start-end fadeInDown">
+						<b>{user}</b> 님이 나가셨습니다
+					</div>
+				</div> <!-- chat-view-body end-->
+				
+				<div class="chat-send-message">
+					<input type="text" placeholder="하위">
+					<button class="" type="submit"><i class="xi-send"></i></button>
+					<button class="" ><i class="xi-plus-circle"></i></button>
+				</div>
+			</div>
+ 
+		</div>
+	</div>
+</body>
+<script>
+	chatViewSideBar();	
+</script>
+</html>

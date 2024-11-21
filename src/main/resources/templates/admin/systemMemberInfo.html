@@ -10,8 +10,146 @@
 	href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
 <script src="/js/pub-ui-custom.js"></script>
 </head>
-<div id="header" th:replace="include/header"></div>
+<style>
+
+.modal {
+    display: none;
+}
+
+</style>
 <body>
+<script>
+const DeleteMember = (email) => {
+    Swal.fire({
+        title: '회원 탈퇴를 진행하시겠습니까?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: '탈퇴',
+        cancelButtonText: '취소',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/admin/systemMemberDelete/${email}`, {
+                method: 'POST',
+                headers: {"content-type": "application/json"},
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.message === 'good') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '정상 탈퇴되었습니다.',
+                        confirmButtonText: '확인'
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '탈퇴 처리 도중 오류가 발생하였습니다.',
+                        confirmButtonText: '확인'
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('삭제 중 오류 발생:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: '삭제 요청 중 오류가 발생했습니다.',
+                    confirmButtonText: '확인'
+                });
+            });
+        }
+    });
+}
+
+const openMemberDetails = (email) => {
+    fetch(`/admin/MemberDetail/${email}`)
+        .then(response => response.json())
+        .then(data => {
+            // nickname이 null, undefined, 빈 문자열인 경우 빈칸 처리
+            const nickname = data.nickname || ' ';
+
+            const content = `
+                <div style="text-align: left; font-family: Arial, sans-serif; line-height: 1.6;">
+                    <strong>이메일:</strong> ${data.email}<br>
+                    <strong>닉네임:</strong> ${nickname}<br>
+                    <strong>이름:</strong> ${data.username}<br>
+                    <strong>전화번호:</strong> ${data.tel}<br>
+                    <strong>가입일자:</strong> ${data.regdate}<br>
+                    <strong>권한:</strong> ${data.lvl === 'LVL-0001' ? 'MASTER' : 'USER'}
+                </div>
+            `;
+            
+            Swal.fire({
+                title: '회원 정보',
+                html: content,
+                width: '20%',
+                confirmButtonText: '확인',
+                cancelButtonText: '임시 비밀번호 발급',
+                showCancelButton: true, // 취소 버튼(임시 비밀번호 발급 버튼) 표시
+                focusConfirm: false, // confirm 버튼에 포커스를 주지 않도록 설정
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                showCloseButton: true,
+                preConfirm: () => {
+                    // 확인 버튼 클릭 시 처리
+                    return true;
+                },
+            }).then(result => {
+                if (result.dismiss === Swal.DismissReason.cancel) {
+                    // 임시 비밀번호 발급 버튼 클릭 시 처리
+                    TempPassword(data.email);
+                }
+            });
+        })
+        .catch(error => {
+            console.error('회원 정보 로딩 중 오류 발생:', error);
+            Swal.fire({
+                icon: 'error',
+                title: '회원 정보를 불러오는 데 실패했습니다.',
+                confirmButtonText: '확인',
+            });
+        });
+};
+
+const TempPassword = async (email) => {
+	await fetch('/admin/tempPassword', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({ email: email }),
+	})
+	.then((response) => response.json())
+	.then((data) => {
+		if (data.message == 'good') {
+			Swal.fire({
+						icon: 'success',
+						title: '임시 비밀번호 발급 성공',
+						html: '회원님의 이메일로 임시 비밀번호가 발급되었습니다.',
+						confirmButtonText: '확인'
+					});
+		} else if (data.message == 'ID_NOT_FOUND') {
+			Swal.fire({
+						icon: 'error',
+						title: '임시 비밀번호 발급 실패',
+						text: '해당 이메일로 가입된 계정이 존재하지 않습니다.',
+						confirmButtonText: '확인'
+					});
+		} else {
+			Swal.fire({
+						icon: 'error',
+						text: '시스템 장애로 인해 임시 비밀번호 발급에 실패했습니다.',
+						confirmButtonText: '확인'
+					});
+		}
+	}).catch((error) => {
+		console.log('error: ' + error);
+	});
+}
+</script>
+<div id="header" th:replace="include/header"></div>
 	<div class="container column mt50">
 		<div class="column-row">
 			<div class="c-column-2">
@@ -32,7 +170,7 @@
 					    </form>
 					</div>
 					<div class="sys-description-box mb20">
-						<h3 class="mt20">회원 수 : <span th:text="${memberCount}"></span></h3>
+						<h3 class="mt20">회원 수 : <span th:text="${totalCount}"></span></h3>
 					</div>
 					<table>
 						<caption style="display: none;">관리자 게시판 입니다</caption>
@@ -57,30 +195,46 @@
 								<th>가입일자</th>
 								<th>상세보기</th>
 								<th>회원탈퇴</th>
+								<th>활동중</th>
 							</tr>
 						</thead>
 						<tbody>
-							<tr th:each="member : ${members}">
-								<td>1</td>
-								<td th:text="${member.lvl == 'LVL-0001' ? 'MASTER' : 'USER'}">MASTER</td>
-								<td th:text="${member.email}">example1@example.com</td>
-								<td th:text="${member.nickname}">user1</td>
-								<td th:text="${member.username}">홍길동</td>
-								<td th:text="${member.tel}">010-1234-5678</td>
-								<td th:text="${member.regdate}">2024-01-01</td>
-								<td><a href="" class="btn_view">상세보기</a></td>
-								<td><a href="" class="btn_delete">탈퇴</a></td>
-							</tr>
+								<tr th:each="member, stat : ${members}">
+									<td th:text="${(page - 1) * postNum + stat.index + 1}">1</td>
+									<td th:text="${member.lvl == 'LVL-0001' ? 'MASTER' : 'USER'}">MASTER</td>
+									<td th:text="${member.email}">example1@example.com</td>
+									<td th:text="${member.nickname}">user1</td>
+									<td th:text="${member.username}">홍길동</td>
+									<td th:text="${member.tel}">010-1234-5678</td>
+									<td th:text="${member.regdate}">2024-01-01</td>
+									<td><a href="javascript:void(0)" class="btn_view" th:data-name="${member.email}" onclick="openMemberDetails(this.dataset.name)">상세보기</a></td>
+									<td><a class="btn_delete" th:data-name="${member.email}" onclick="DeleteMember(this.dataset.name)">탈퇴</a></td>
+									<td th:text="${member.isUse}"></td>
+								</tr>
+
 						</tbody>
 					</table>
+					<div class="pagination">
+						[(${pageList})]
+					</div>
 				</div>
 			</div>
 		</div>
-
-
 	</div>
-</body>
-<footer>
+	<div id="memberModal" class="modal">
+	    <div class="modal-content">
+	        <span class="close" onclick="closeModal()">&times;</span>
+	        <h3>회원 정보</h3>
+	        <p><strong>이메일:</strong> <span id="memberEmail"></span></p>
+	        <p><strong>인증 여부:</strong> <span id="memberEmail_Auth"></span></p>
+	        <p><strong>닉네임:</strong> <span id="memberNickname"></span></p>
+	        <p><strong>이름:</strong> <span id="memberName"></span></p>
+	        <p><strong>전화번호:</strong> <span id="memberTel"></span></p>
+	        <p><strong>가입일자:</strong> <span id="memberRegdate"></span></p>
+	        <p><strong>권한:</strong> <span id="memberLvl"></span></p>
+	    </div>
+	</div>
 	<div id="footer" th:replace="include/footer"></div>
-</footer>
+</body>
+
 </html>

@@ -1,19 +1,106 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="kr">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>자유 게시판&nbsp;&#124;&nbsp;코딩해조</title>
-		<!-- Standard css -->
-		<link rel="icon" href="/img/logo/favicon.png" />
-		<link rel="stylesheet" href="/css/style.css" />
-		<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css"/>
-		<!-- pub-js link -->
-		<script src="/js/pub-ui-custom.js"></script>
-		<script src="/js/pub-script"></script>
-	</head>
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>자유 게시판&nbsp;&#124;&nbsp;코딩해조</title>
+	<!-- Standard css -->
+	<link rel="icon" href="/img/logo/favicon.png" />
+	<link rel="stylesheet" href="/css/style.css" />
+	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css"/>
+	<!-- pub-js link -->
+	<script src="/js/pub-ui-custom.js"></script>
+</head>
+
+<body>
+<!-- header 영역 -->
+<div id="header" th:replace="/include/header"></div>
+	<div class="container">
+		<div class="main-content">
+			<div class="content-board-free">
+				<div class="content-board-free-title">
+					<h3>자유롭게 이야기를 나누어 보세요</h3>
+					<button th:if="${ session.email != null }" class="board-free-btn" onclick="location.href='/board/m/freeboardWrite'" >작성하기</button>
+				</div>
+				<div class="content-board-free-content">
+					<div class="free-content-box">
+						<!-- content-box-item : 가로 3개 배열로 구성 -->
+
+						<!-- 게시물 반복 출력 -->
+						<div class="content-box-item" th:each="list : ${ list }">
+							<h4 th:class="${ list.cat }">카테고리</h4>
+							<a th:href="@{ '/board/freeboardView?idx=' + ${ list.idx} }">
+								<h5 th:text="${ list.title }">게시물 제목</h5>
+								<p class="content-title" th:text="${ list.content }">게시물 내용</p>
+							</a>
+							<div class="profile-title">
+								<p class="profile-name" th:text="${ list.writer }">작성자</p>
+								<p class="profile-date" th:text="${ #temporals.format(list.regdate, 'yyyy-MM-dd a hh:mm:ss') }">작성 시간</p>
+							</div>
+							<div class="profile-item">
+								<ol>
+									<li><i class="xi-eye-o"></i><span th:text="${ list.hitCnt }">{0}</span></li>
+									<li><i class="xi-comment-o"></i><span th:text="${ list.replyCnt }">{0}</span></li>
+								</ol>
+								<div class="like">
+									<a th:if="${ list.goodChk == 'Y' }" th:href="|javascript:recommend('${ list.idx }')|" th:id="@{ 'good-' + ${ list.idx } }" th:kind="${ list.goodChk }" class="xi-heart"></a>
+									<a th:if="${ list.goodChk == 'N' }" th:href="|javascript:recommend('${ list.idx }')|" th:id="@{ 'good-' + ${ list.idx } }" th:kind="${ list.goodChk }" class="xi-heart-o"></a>
+									<span th:id="@{ 'good-count-' + ${ list.idx } }" th:text="${ list.goodCnt }">0</span>
+									<!-- like 시 클릭 될 클래스 명<span><i class="xi-heart"></i>{0}</span> -->
+								</div>
+							</div>
+						</div>
+						<!-- 게시물 반복 출력 끝 -->
+						
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- footer영역 -->
+	<div id="footer" th:replace="/include/footer"></div>
 	
+	<!-- Custom Script -->
 	<script>
+		const recommend = async (idx) => {
+			if ('[[ ${ session.email } ]]' == '') return false;
+			
+			const goodBtn = document.querySelector('#good-' + idx);
+			const goodCnt = document.querySelector('#good-count-' + idx);
+			let goodCntNum = parseInt(goodCnt.innerText);
+			let kind = '';
+			
+			if (goodBtn.getAttribute("kind") == 'Y') {
+				goodBtn.classList.remove('xi-heart');
+				goodBtn.classList.add('xi-heart-o');
+				goodCntNum--;
+				kind = 'N';
+			} else if (goodBtn.getAttribute("kind") == 'N') {
+				goodBtn.classList.remove('xi-heart-o');
+				goodBtn.classList.add('xi-heart');
+				goodCntNum++;
+				kind = 'Y';
+			} else {
+				return false;
+			}
+			
+			goodBtn.setAttribute('kind', kind);
+			goodCnt.innerText = goodCntNum;
+			
+			await fetch('/board/m/recommend', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+				body: new URLSearchParams({
+					'board_idx': idx,
+					'email': '[[ ${ session.email } ]]',
+					'kind': kind
+				})
+			})
+			.then((response) => response.json())
+			.then((data) => {
+			})
+		}
+	
 		async function toggleLike(postIdx, action) {
 			try {
 				const response = await fetch('/board/m/toggleLike', {
@@ -44,53 +131,5 @@
 			}
 		}
 	</script>
-
-	<body>
-	<!-- header 영역 -->
-	<div id="header" th:replace="include/header"></div>
-		<div class="container">
-			<div class="main-content">
-				<div class="content-board-free">
-					<div class="content-board-free-title">
-						<h3>자유롭게 이야기를 나누어 보세요</h3>
-						<button th:if="${ session.email != null }" class="board-free-btn" onclick="location.href='/board/m/freeboardWrite'" >작성하기</button>
-					</div>
-					<div class="content-board-free-content">
-						<div class="free-content-box">
-							<!-- content-box-item : 가로 3개 배열로 구성 -->
-
-							<!-- 게시물 반복 출력 -->
-							<div class="content-box-item" th:each="post : ${posts}" th:if="${post.isUse == 'Y' && post.cat != '공지사항'}">
-								<h4 th:text="${post.cat}">카테고리</h4>
-								<a th:href="@{/board/freeboardView(idx=${post.idx})}">
-									<h5 th:text="${post.title}">게시물 제목</h5>
-									<p class="content-title" th:text="${post.content}">게시물 내용</p>
-								</a>
-								<div class="profile-title">
-									<p class="profile-name" th:text="${post.writer}">작성자</p>
-									<p class="profile-date" th:text="${post.regdate}">작성 시간</p>
-								</div>
-								<div class="profile-item">
-									<ol>
-										<li><i class="xi-eye-o"></i><span th:text="${post.hitCnt}">{0}</span></li>
-										<li><i class="xi-comment-o"></i><span th:text="${replyCounts[post.idx]}">{0}</span></li>
-									</ol>
-									<div class="like">
-										<a th:if="${likeStatusMap[post.idx] == 'no'}" th:href="|javascript:toggleLike('${post.idx}', 'up')|" th:id="@{'like-up-' + ${post.idx}}" class="xi-heart-o"></a>
-										<a th:if="${likeStatusMap[post.idx] == 'yes'}" th:href="|javascript:toggleLike('${post.idx}', 'down')|" th:id="@{'like-down-' + ${post.idx}}" class="xi-heart"></a>
-										<span id="like-count-${post.idx}" th:text="${likeCounts[post.idx]}">0</span>
-										<!-- like 시 클릭 될 클래스 명<span><i class="xi-heart"></i>{0}</span> -->
-									</div>
-								</div>
-							</div>
-							<!-- 게시물 반복 출력 끝 -->
-							
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	<!-- footer영역 -->
-	<div id="footer" th:replace="include/footer"></div>
-	</body>
+</body>
 </html>

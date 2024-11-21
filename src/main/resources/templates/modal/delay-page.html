@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="kr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>게시판</title>
+  <!-- Standard css -->
+  <link rel="icon" href="/img/logo/favicon.png">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+  <!-- pub-js link -->
+  <script src="/js/pub-ui-custom.js"></script>
+</head>
+<body>
+  <div id="load" class="delay-filed">
+    <div class="delay-icon"><i class="xi-spinner-5"></i></div>
+  </div>
+  <button onclick="clickButton()">클릭</button>
+</body>
+
+<script>
+  // 깔끔하게 만들어 두기
+  const loading_page = document.getElementById("load");
+  function showLoading() { loading_page.style.display = 'block'; }
+  function closeLoading() { loading_page.style.display = 'none'; }
+  function clickButton() {
+    // 로딩 열기
+    showLoading();
+    // 1초 로딩 후 로딩 닫기
+    setTimeout(function() {
+      closeLoading();
+      let loading_del = document.getElementById('load');
+    }, 1000); 
+  }
+  // 시작시 딜레이
+  window.onload = function() {
+    setTimeout(function() {
+      loading_page.style.display = 'none';
+    }, 500); 
+  }
+</script>
+
+
+</html>

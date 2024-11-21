@@ -24,7 +24,12 @@ public class TestDTO {
 	private String descr;
 	private LocalDateTime regdate;
 	private String isUse;
-	private List<TestLngDTO> testLngList;
+	
+	private List<TestLngDTO> testLngList; //문제 - 포함 언어 목록
+	private String submSts; //문제 - 상태
+	private long submitCount; //문제 - 제출 인원 수	
+	private long correctCount; //문제 - 완료 인원 수	
+	private double correctRate; //문제 - 정답률
 
 	//Entity --> DTO 이동
 	public TestDTO(TestEntity entity) {

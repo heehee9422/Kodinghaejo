@@ -10,13 +10,11 @@
 	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css" />
 	<!-- pub-js link -->
 	<script src="/js/pub-ui-custom.js"></script>
-	<!-- SweetAlert2 link -->
-	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <!-- 게시판 복사용 게시판 -->
 <body>
 	<!-- header 영역 -->
-	<div id="header" th:replace="include/header"></div>
+	<div id="header" th:replace="/include/header"></div>
 	<div class="container">
 		<div class="main-content">
 			<div class="content-join" style="text-align: center;">
@@ -48,6 +46,10 @@
 		</div>
 	</div>
 	
+	<!-- footer영역 -->
+	<div id="footer" th:replace="/include/footer"></div>
+	
+	<!-- Custom Script -->
 	<script type="text/javascript">
 		//스프링 시큐리티가 처리하는 로그인
 		const login = () => {
@@ -129,8 +131,5 @@
 			document.location = '/oauth2/authorization/' + type;
 		}
 	</script>
-	
-	<!-- footer영역 -->
-	<div id="footer" th:replace="include/footer"></div>
 </body>
 </html>

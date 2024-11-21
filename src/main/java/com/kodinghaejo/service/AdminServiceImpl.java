@@ -1,36 +1,53 @@
 package com.kodinghaejo.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.Year;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.kodinghaejo.dto.BoardDTO;
-import com.kodinghaejo.dto.ChatDTO;
-import com.kodinghaejo.dto.ChatMemberDTO;
+import com.kodinghaejo.dto.CommonCodeDTO;
 import com.kodinghaejo.dto.MemberDTO;
 import com.kodinghaejo.dto.ReplyDTO;
 import com.kodinghaejo.dto.TestDTO;
 import com.kodinghaejo.dto.TestLngDTO;
-import com.kodinghaejo.dto.TestQuestionDTO;
 import com.kodinghaejo.entity.BoardEntity;
 import com.kodinghaejo.entity.ChatEntity;
-import com.kodinghaejo.entity.ChatMemberEntity;
+import com.kodinghaejo.entity.CommonCodeEntity;
 import com.kodinghaejo.entity.MemberEntity;
 import com.kodinghaejo.entity.ReplyEntity;
 import com.kodinghaejo.entity.TestEntity;
 import com.kodinghaejo.entity.TestLngEntity;
+import com.kodinghaejo.entity.TestQuestionAnswerEntity;
 import com.kodinghaejo.entity.TestQuestionEntity;
+import com.kodinghaejo.entity.repository.BoardRecommendRepository;
 import com.kodinghaejo.entity.repository.BoardRepository;
-import com.kodinghaejo.entity.repository.ChatMemberRepository;
 import com.kodinghaejo.entity.repository.ChatRepository;
+import com.kodinghaejo.entity.repository.CommonCodeRepository;
 import com.kodinghaejo.entity.repository.MemberRepository;
 import com.kodinghaejo.entity.repository.ReplyRepository;
 import com.kodinghaejo.entity.repository.TestLngRepository;
+import com.kodinghaejo.entity.repository.TestQuestionAnswerRepository;
 import com.kodinghaejo.entity.repository.TestQuestionRepository;
 import com.kodinghaejo.entity.repository.TestRepository;
+import com.kodinghaejo.entity.repository.TestSubmitRepository;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -43,8 +60,11 @@ public class AdminServiceImpl implements AdminService {
 	private final TestQuestionRepository questionRepository;
 	private final ReplyRepository replyRepository;
 	private final ChatRepository chatRepository;
-	private final ChatMemberRepository chatMemberRepository;
 	private final MemberRepository memberRepository;
+	private final BoardRecommendRepository boardRecommendRepository;
+	private final TestQuestionAnswerRepository questionAnswerRepository;
+	private final TestSubmitRepository submitRepository;
+	private final CommonCodeRepository codeRepository;
 	
 	//문제 작성
 	@Override
@@ -64,28 +84,31 @@ public class AdminServiceImpl implements AdminService {
 	
 	//문제 보여주기
 	@Override
-	public List<TestDTO> testAllList() {
-		List<TestEntity> testEntities = testRepository.findAll(); // 문제 목록 조회
-		List<TestDTO> testDTOList = new ArrayList<>();
+	public Page<TestDTO> testAllList(int pageNum, int postNum) {
+		PageRequest pageRequest = PageRequest.of(pageNum - 1, postNum, Sort.by(Direction.DESC, "idx"));
+		Page<TestEntity> testEntities = testRepository.findAll(pageRequest);
+		List<TestDTO> testDTOs = new ArrayList<>();
 		
 		for (TestEntity test : testEntities) {
-			TestDTO testDTO = new TestDTO(test);  // 기존의 TestEntity 정보를 TestDTO로 변환
+			TestDTO testDTO = new TestDTO(test);
 			
-			// 해당 문제에 대한 언어 정보 조회
-			List<TestLngEntity> testLangs = testLngRepository.findByTestIdx(test); // testIdx로 언어 정보 조회
 			List<TestLngDTO> testLngDTOs = new ArrayList<>();
+			testLngRepository.findByTestIdx(test).stream().forEach((e) -> testLngDTOs.add(new TestLngDTO(e)));
 			
-			for (TestLngEntity lang : testLangs) {
-				TestLngDTO langDTO = new TestLngDTO();
-				langDTO.setLng(lang.getLng());  // 언어 코드만 추가
-				testLngDTOs.add(langDTO);  // 언어 DTO 목록에 추가
-			}
+			testDTO.setTestLngList(testLngDTOs);
 			
-			testDTO.setTestLngList(testLngDTOs);  // TestDTO에 언어 정보 세팅
-			testDTOList.add(testDTO);  // 최종 리스트에 추가
+			long submitCount = submitRepository.countByTestIdx(test.getIdx());
+			testDTO.setSubmitCount(submitCount);
+		
+			long correctCount = submitRepository.countByTestIdxAndSubmSts(test.getIdx(), "Y");
+			testDTO.setCorrectCount(correctCount);
+			
+			double correctRate = (submitCount > 0) ? (correctCount * 100.0) / submitCount : 0;
+			testDTO.setCorrectRate(correctRate);
+			testDTOs.add(testDTO);
 		}
 		
-		return testDTOList;
+		return new PageImpl<>(testDTOs, pageRequest, testEntities.getTotalElements());
 	}
 	
 	//문제 수정
@@ -136,45 +159,39 @@ public class AdminServiceImpl implements AdminService {
 	
 	//회원정보 관리 화면
 	@Override
-	public List<MemberDTO> memberAllList() {
-		List<MemberEntity> memberEntities = memberRepository.findAll();
-		List<MemberDTO> memberDTOs = new ArrayList<>();
+	public Page<MemberEntity> memberAllList(int pageNum, int postNum) {
+		PageRequest pageRequest = PageRequest.of(pageNum - 1, postNum, Sort.by(Direction.DESC, "regdate"));
 		
-		for (MemberEntity member : memberEntities) {
-			MemberDTO memberDTO = new MemberDTO(member);
-			memberDTOs.add(memberDTO);
-		}
-		return memberDTOs;
+		return memberRepository.findAll(pageRequest);
 	}
 	
 	
 	//자유게시판 관리 화면
 	@Override
-	public List<BoardDTO> freeboardList() {
-		List<BoardEntity> boardEntities = boardRepository.findByCatNot("공지사항");
+	public Page<BoardDTO> freeboardList(int pageNum, int postNum) {
+		PageRequest pageRequest = PageRequest.of(pageNum - 1, postNum, Sort.by(Direction.DESC, "idx"));
+		Page<BoardEntity> boardEntities = boardRepository.findByCatNot("공지사항", pageRequest);
 		List<BoardDTO> boardDTOs = new ArrayList<>();
 		
 		for (BoardEntity board : boardEntities) {
 			BoardDTO boardDTO = new BoardDTO(board);
+			
+			boardDTO.setGoodCnt(boardRecommendRepository.countByBoardIdxAndGoodChk(board, "Y"));
+			boardDTO.setBadCnt(boardRecommendRepository.countByBoardIdxAndBadChk(board, "Y"));
 			boardDTOs.add(boardDTO);
 		}
 		
-		return boardDTOs;
+		return new PageImpl<>(boardDTOs, pageRequest, boardEntities.getTotalElements());
 		
 	}
 	
 	//공지사항 관리 화면
 	@Override
-	public List<BoardDTO> noticeboardList() {
-		List<BoardEntity> boardEntities = boardRepository.findByCat("공지사항");
-		List<BoardDTO> boardDTOs = new ArrayList<>();
+	public Page<BoardEntity> noticeboardList(int pageNum, int postNum) {
+		PageRequest pageRequest = PageRequest.of(pageNum - 1, postNum, Sort.by(Direction.DESC, "idx"));
 		
-		for (BoardEntity board : boardEntities) {
-			BoardDTO boardDTO = new BoardDTO(board);
-			boardDTOs.add(boardDTO);
-		}
 		
-		return boardDTOs;
+		return boardRepository.findByCat("공지사항", pageRequest);
 		
 	}
 	
@@ -208,15 +225,11 @@ public class AdminServiceImpl implements AdminService {
 	
 	//질문게시판 관리 화면
 	@Override
-	public List<TestQuestionDTO> questionList() {
-		List<TestQuestionEntity> questionEntities = questionRepository.findAll();
-		List<TestQuestionDTO> questionDTOs = new ArrayList<>();
+	public Page<TestQuestionEntity> questionList(int pageNum, int postNum) {
+		PageRequest pageRequest = PageRequest.of(pageNum - 1, postNum, Sort.by(Direction.DESC, "idx"));
 		
-		for (TestQuestionEntity question : questionEntities) {
-			TestQuestionDTO questionDTO = new TestQuestionDTO(question);
-			questionDTOs.add(questionDTO);
-		}
-		return questionDTOs;
+		return questionRepository.findAll(pageRequest);
+		
 	}
 	//질문 삭제
 	@Override
@@ -224,32 +237,53 @@ public class AdminServiceImpl implements AdminService {
 		TestQuestionEntity questionEntity = questionRepository.findById(idx).get();
 		questionRepository.delete(questionEntity);
 	}
-	
-	
+
 	//댓글 관리 화면
 	@Override
-	public List<ReplyDTO> replyList() {
-		List<ReplyEntity> replyEntities = replyRepository.findAll();
+	public Page<ReplyDTO> replyList(int pageNum, int postNum) {
+		PageRequest pageRequest = PageRequest.of(pageNum - 1, postNum, Sort.by(Direction.DESC, "idx"));
+		Page<ReplyEntity> replyEntities = replyRepository.findAll(pageRequest);
 		List<ReplyDTO> replyDTOs = new ArrayList<>();
 		
 		for (ReplyEntity reply : replyEntities) {
 			ReplyDTO replyDTO = new ReplyDTO(reply);
+			switch (reply.getRePrnt()) {
+				case "FR":
+					BoardEntity board = boardRepository.findById(reply.getPrntIdx()).orElse(null);
+					if(board != null) {
+						replyDTO.setPrntTitle(boardRepository.findById(reply.getPrntIdx()).get().getTitle());
+					} else {
+						replyDTO.setPrntTitle("원글이 삭제됨");
+					}
+					break;
+				case "Q":
+					TestQuestionEntity question = questionRepository.findById(reply.getPrntIdx()).orElse(null);
+					if(question != null) {
+						replyDTO.setPrntTitle(questionRepository.findById(reply.getPrntIdx()).get().getTitle());
+					} else {
+						replyDTO.setPrntTitle("원글이 삭제됨");
+					}
+					break;
+				case "QA":
+					TestQuestionAnswerEntity answer = questionAnswerRepository.findById(reply.getPrntIdx()).orElse(null);
+					if(answer != null) {
+						replyDTO.setPrntTitle(questionAnswerRepository.findById(reply.getPrntIdx()).get().getContent());
+					} else {
+						replyDTO.setPrntTitle("원글이 삭제됨");
+					}
+					break;
+			}
 			replyDTOs.add(replyDTO);
 		}
-		return replyDTOs;
+		return new PageImpl<>(replyDTOs, pageRequest, replyEntities.getTotalElements());
 	}
 	
 	//채팅방 관리 화면
 	@Override
-	public List<ChatDTO> chatList() {
-		List<ChatEntity> chatEntities = chatRepository.findAll();
-		List<ChatDTO> chatDTOs = new ArrayList<>();
+	public Page<ChatEntity> chatList(int pageNum, int postNum) {
+		PageRequest pageRequest = PageRequest.of(pageNum - 1, postNum, Sort.by(Direction.DESC, "regdate"));
 		
-		for (ChatEntity chat : chatEntities) {
-			ChatDTO chatDTO = new ChatDTO(chat);
-			chatDTOs.add(chatDTO);
-		}
-		return chatDTOs;
+		return chatRepository.findAll(pageRequest);
 	}
 	
 	//참여인원 0인 채팅방 삭제
@@ -270,140 +304,53 @@ public class AdminServiceImpl implements AdminService {
 	}
 	
 	//문제 검색
-	public List<TestDTO> searchtestListByTitle(String searchKeyword) {
-		List<TestEntity> testEntities = testRepository.findByTitleContaining(searchKeyword);
+	@Override
+	public Page<TestDTO> searchtestListByTitle(int pageNum, int postNum,String searchKeyword) {
+		PageRequest pageRequest = PageRequest.of(pageNum - 1, postNum, Sort.by(Direction.DESC, "regdate"));
+		
+		Page<TestEntity> testEntities = testRepository.findByTitleContaining(searchKeyword, pageRequest);
 		List<TestDTO> testDTOs = new ArrayList<>();
 		
 		for (TestEntity test : testEntities) {
 			TestDTO testDTO = new TestDTO(test);
-			
-			List<TestLngEntity> testLangs = testLngRepository.findByTestIdx(test); // testIdx로 언어 정보 조회
 			List<TestLngDTO> testLngDTOs = new ArrayList<>();
-			
-			for (TestLngEntity lang : testLangs) {
-				TestLngDTO langDTO = new TestLngDTO();
-				langDTO.setLng(lang.getLng());
-				testLngDTOs.add(langDTO);
-			}
+			testLngRepository.findByTestIdx(test).stream().forEach((e) -> testLngDTOs.add(new TestLngDTO(e)));
 			
 			testDTO.setTestLngList(testLngDTOs);
+			long submitCount = submitRepository.countByTestIdx(test.getIdx());
+			testDTO.setSubmitCount(submitCount);
+		
+			long correctCount = submitRepository.countByTestIdxAndSubmSts(test.getIdx(), "Y");
+			
+			double correctRate = (submitCount > 0) ? (correctCount * 100.0) / submitCount : 0;
+			testDTO.setCorrectRate(correctRate);
 			testDTOs.add(testDTO);
 		}
 		
-		return testDTOs;
+		return new PageImpl<>(testDTOs, pageRequest, testEntities.getTotalElements());
 	}
 	
 	//회원정보 검색
-	public List<MemberDTO> searchMembers(String searchType, String searchKeyword) {
-		List<MemberEntity> memberEntities;
+	@Override
+	public Page<MemberEntity> searchMembers(int pageNum, int postNum, String searchType, String searchKeyword) {
+		PageRequest pageRequest = PageRequest.of(pageNum - 1, postNum, Sort.by(Direction.DESC, "regdate"));
 
 		// 검색어가 없을 경우 전체 회원 목록 조회
 		if (searchKeyword == null || searchKeyword.isEmpty()) {
-			memberEntities = memberRepository.findAll();
+			return memberRepository.findAll(pageRequest);
 		} else {
 			// 검색어가 있을 경우 조건에 따라 검색
 			switch (searchType) {
 				case "email":
-					memberEntities = memberRepository.findByEmailContaining(searchKeyword);
-					break;
+					return memberRepository.findByEmailContaining(searchKeyword, pageRequest);
 				case "nickname":
-					memberEntities = memberRepository.findByNicknameContaining(searchKeyword);
-					break;
+					return memberRepository.findByNicknameContaining(searchKeyword, pageRequest);
 				case "name":
-					memberEntities = memberRepository.findByUsernameContaining(searchKeyword);
-					break;
-				default:
-					memberEntities = new ArrayList<>(); // 검색 조건이 잘못된 경우 빈 리스트 반환
+					return memberRepository.findByUsernameContaining(searchKeyword, pageRequest);
 			}
 		}
-		List<MemberDTO> memberDTOs = new ArrayList<>();
-		for (MemberEntity member : memberEntities) {
-			MemberDTO memberDTO = new MemberDTO(member);
-			memberDTOs.add(memberDTO);
-		}
 		
-		return memberDTOs;
-	}
-	
-	
-	//자유게시판 검색
-	public List<BoardDTO> searchFreeboardListByTitle(String searchKeyword) {
-		List<BoardEntity> boardEntities = boardRepository.findByTitleContainingAndCatNot(searchKeyword, "공지사항");
-		List<BoardDTO> boardDTOs = new ArrayList<>();
-		
-		for (BoardEntity board : boardEntities) {
-			BoardDTO boardDTO = new BoardDTO(board);
-			boardDTOs.add(boardDTO);
-		}
-		
-		return boardDTOs;
-	}
-	
-	//공지 검색
-	public List<BoardDTO> searchNoticeListByTitle(String searchKeyword) {
-		List<BoardEntity> boardEntities = boardRepository.findByTitleContainingAndCat(searchKeyword, "공지사항");
-		List<BoardDTO> boardDTOs = new ArrayList<>();
-		
-		for (BoardEntity board : boardEntities) {
-			BoardDTO boardDTO = new BoardDTO(board);
-			boardDTOs.add(boardDTO);
-		}
-			
-		return boardDTOs;
-	}
-	
-	//질문게시판 검색
-	public List<TestQuestionDTO> searchQboardListByTitle(String searchKeyword) {
-		List<TestQuestionEntity> questionEntities = questionRepository.findByTitleContaining(searchKeyword);
-		List<TestQuestionDTO> questionDTOs = new ArrayList<>();
-		
-		for (TestQuestionEntity question : questionEntities) {
-			TestQuestionDTO questionDTO = new TestQuestionDTO(question);
-			questionDTOs.add(questionDTO);
-		}
-		
-		return questionDTOs;
-	}
-	
-	//댓글 검색
-	public List<ReplyDTO> searchReplyListByContent(String searchKeyword) {
-		List<ReplyEntity> replyEntities = replyRepository.findByContentContaining(searchKeyword);
-		List<ReplyDTO> replyDTOs = new ArrayList<>();
-		
-		for (ReplyEntity reply : replyEntities) {
-			ReplyDTO replyDTO = new ReplyDTO(reply);
-			replyDTOs.add(replyDTO);
-		}
-		
-		return replyDTOs;
-	}
-	
-	//채팅방 검색
-	public List<ChatDTO> searchChatListByTitle(String searchKeyword) {
-		List<ChatEntity> chatEntities = chatRepository.findByTitleContaining(searchKeyword);
-		List<ChatDTO> chatDTOs = new ArrayList<>();
-		
-		for (ChatEntity chat : chatEntities) {
-			ChatDTO chatDTO = new ChatDTO(chat);
-			chatDTOs.add(chatDTO);
-		}
-		
-		return chatDTOs;
-	}
-	
-	//채팅방 멤버
-	public List<ChatMemberDTO> getChatMembers() {
-		// 채팅 멤버 정보를 DB에서 가져옵니다.
-		List<ChatMemberEntity> chatMemberEntities = chatMemberRepository.findAll();
-
-		// Entity를 DTO로 변환
-		List<ChatMemberDTO> chatMemberDTOs = new ArrayList<>();
-		for (ChatMemberEntity entity : chatMemberEntities) {
-			ChatMemberDTO dto = new ChatMemberDTO(entity);
-			chatMemberDTOs.add(dto);
-		}
-
-		return chatMemberDTOs;
+		return null;
 	}
 	
 	//ID로 공지사항 데이터 조회
@@ -415,5 +362,282 @@ public class AdminServiceImpl implements AdminService {
 		
 		return boardDTO;
 	}
+	//자유게시판 검색
+	@Override
+	public Page<BoardDTO> searchFreeboardListByTitle(int pageNum, int postNum, String searchKeyword) {
+		PageRequest pageRequest = PageRequest.of(pageNum - 1, postNum, Sort.by(Direction.DESC, "regdate"));
+		Page<BoardEntity> boardEntities = boardRepository.findByTitleContainingAndCatNot(searchKeyword, "공지사항", pageRequest);
+		List<BoardDTO> boardDTOs = new ArrayList<>();
+		
+		for (BoardEntity board : boardEntities) {
+			BoardDTO boardDTO = new BoardDTO(board);
+			
+			boardDTOs.add(boardDTO);
+		}
+		
+		return new PageImpl<>(boardDTOs, pageRequest, boardEntities.getTotalElements());
+	}
+	
+	//공지 검색
+	@Override
+	public Page<BoardEntity> searchNoticeListByTitle(int pageNum, int postNum, String searchKeyword) {
+		PageRequest pageRequest = PageRequest.of(pageNum - 1, postNum, Sort.by(Direction.DESC, "regdate"));
+			
+		return boardRepository.findByTitleContainingAndCat(searchKeyword, "공지사항", pageRequest);
+	}
+	
+	//질문게시판 검색
+	@Override
+	public Page<TestQuestionEntity> searchQboardListByTitle(int pageNum, int postNum, String searchKeyword) {
+		PageRequest pageRequest = PageRequest.of(pageNum - 1, postNum, Sort.by(Direction.DESC, "idx"));
+		
+		return questionRepository.findByTitleContaining(searchKeyword, pageRequest);
+		
+	}
+	
+	//댓글 검색
+	@Override
+	public Page<ReplyDTO> searchReplyListByContent(int pageNum, int postNum, String searchKeyword) {
+		PageRequest pageRequest = PageRequest.of(pageNum - 1, postNum, Sort.by(Direction.DESC, "idx"));
+		
+		Page<ReplyEntity> replyEntities = replyRepository.findByContentContaining(searchKeyword, pageRequest);
+		List<ReplyDTO> replyDTOs = new ArrayList<>();
+		
+		for (ReplyEntity reply : replyEntities) {
+			ReplyDTO replyDTO = new ReplyDTO(reply);
+			switch (reply.getRePrnt()) {
+				case "FR":
+					BoardEntity board = boardRepository.findById(reply.getPrntIdx()).orElse(null);
+					if(board != null) {
+						replyDTO.setPrntTitle(boardRepository.findById(reply.getPrntIdx()).get().getTitle());
+					} else {
+						replyDTO.setPrntTitle("원글이 삭제됨");
+					}
+					break;
+				case "Q":
+					TestQuestionEntity question = questionRepository.findById(reply.getPrntIdx()).orElse(null);
+					if(question != null) {
+						replyDTO.setPrntTitle(questionRepository.findById(reply.getPrntIdx()).get().getTitle());
+					} else {
+						replyDTO.setPrntTitle("원글이 삭제됨");
+					}
+					break;
+				case "QA":
+					TestQuestionAnswerEntity answer = questionAnswerRepository.findById(reply.getPrntIdx()).orElse(null);
+					if(answer != null) {
+						replyDTO.setPrntTitle(questionAnswerRepository.findById(reply.getPrntIdx()).get().getContent());
+					} else {
+						replyDTO.setPrntTitle("원글이 삭제됨");
+					}
+					break;
+			}
+			replyDTOs.add(replyDTO);
+		}
+		
+		return new PageImpl<>(replyDTOs, pageRequest, replyEntities.getTotalElements());
+	}
+	
+	//채팅방 검색
+	@Override
+	public Page<ChatEntity> searchChatListByTitle(int pageNum, int postNum, String searchKeyword) {
+		PageRequest pageRequest = PageRequest.of(pageNum - 1, postNum, Sort.by(Direction.DESC, "regdate"));
+		
+		
+		return chatRepository.findByTitleContaining(searchKeyword, pageRequest);
+	}
+	
+	//일별 가입자수 체크
+	@Override
+	public long getTodaySignups() {
+		LocalDateTime startOfday = LocalDateTime.now().with(LocalTime.MIN);
+		LocalDateTime endOfday = LocalDateTime.now().with(LocalTime.MAX);
+		
+ 		return memberRepository.countByRegdateBetween(startOfday, endOfday);
+	}
+	
+	//일별 자유게시판 작성수
+	@Override
+	public long getTodayFreeBoardCount() {
+		LocalDateTime startOfDay = LocalDateTime.now().with(LocalTime.MIN);
+		LocalDateTime endOfDay = LocalDateTime.now().with(LocalTime.MAX);
 
-}
+		return boardRepository.countByCatAndRegdateBetween("자유게시판", startOfDay, endOfDay);
+	}
+	
+	private Set<String> userIps = new HashSet<>();
+
+	//일별 방문자 수 증가
+	@Override
+	public void upTodayVisitorCount(HttpServletRequest request) {
+		LocalDate today = LocalDate.now();
+		
+		String ip = getUserIp(request);
+		
+		if (!today.equals(LocalDate.now())) {
+			userIps.clear();
+			today = LocalDate.now();
+		}
+
+		if (!userIps.contains(ip)) {
+			userIps.add(ip);
+		}
+	}
+	
+	//일별 방문자 수 체크
+	@Override
+	public long getTodayVisitorCount(HttpServletRequest request) {
+		return userIps.size();
+	}
+	
+	//방문자 IP
+	@Override
+	public String getUserIp(HttpServletRequest request) {
+		String ipAddress = request.getHeader("X-Forwarded-For");
+		if(ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
+			ipAddress = request.getRemoteAddr();
+		}
+		return ipAddress;
+	}
+	
+	//일별 푼 문제 수
+	public long getTodayTestCount() {
+		LocalDateTime startOfday = LocalDateTime.now().with(LocalTime.MIN);
+		LocalDateTime endOfday = LocalDateTime.now().with(LocalTime.MAX);
+		
+		return submitRepository.countByRegdateBetween(startOfday, endOfday);
+	}
+	
+	//해당년도 월별가입자수
+	@Override
+	public Map<Integer, Long> getMonthlySignups() {
+		int currentYear = Year.now().getValue();
+		List<Object[]> results = memberRepository.findMonthlySignups(currentYear);
+		Map<Integer, Long> monthlySignups = new HashMap<>();
+		for (Object[] result : results) {
+			Integer month = (Integer) result[0];
+			Long count = (Long) result[1];
+			monthlySignups.put(month, count);
+			}
+		return monthlySignups;
+		}
+	
+	//문제풀이에 사용된 언어
+	public Map<String, Integer> getLngSubmitCount() {
+		List<Object[]> results = submitRepository.countSubmitByLng();
+		Map<String, Integer> lngCount = new HashMap<>();
+		
+		for (Object[] result : results) {
+			String language = "LNG-0001".equals(result[0]) ? "JAVA" : "JavaScript";
+			lngCount.put(language, ((Long) result[1]).intValue());
+		}
+		return lngCount;
+	}
+	
+	
+	//회원 탈퇴
+	@Transactional
+	@Override
+	public void deleteMember(String email) {
+		Optional<MemberEntity> memberOpt = memberRepository.findById(email);
+
+		memberOpt.ifPresent(member -> {
+			memberRepository.delete(member);
+		});
+	}
+	
+	//공통코드 관리화면
+	@Override
+	public Page<CommonCodeEntity> codeList(int pageNum, int postNum) {
+		PageRequest pageRequest = PageRequest.of(pageNum - 1, postNum, Sort.by(Direction.DESC, "code"));
+		
+		return codeRepository.findAll(pageRequest);
+	}
+	
+	//공통코드 검색
+	@Override
+	public Page<CommonCodeEntity> searchCodeListByCode(int pageNum, int postNum, String searchKeyword) {
+		PageRequest pageRequest = PageRequest.of(pageNum - 1, postNum, Sort.by(Direction.DESC, "code"));
+		
+		return codeRepository.findByCodeContaining(searchKeyword, pageRequest);
+	}
+	
+	//타입에 따른 공통코드 조회
+	public Page<CommonCodeEntity> getCodeListByType(int pageNum, int postNum, String type) {
+		PageRequest pageRequest = PageRequest.of(pageNum - 1, postNum, Sort.by(Direction.DESC, "code"));
+		
+		return codeRepository.findByType(type, pageRequest);
+				
+	}
+	
+	//공통코드 추가
+	@Override
+	public void codewrite(CommonCodeDTO code) {
+		codeRepository.save(code.dtoToEntity(code));	
+	}
+	
+	//공통코드 삭제
+	@Override
+	public boolean deleteCommonCode(String code) {
+		try {
+			int deletedRows = codeRepository.deleteByCode(code);
+			return deletedRows > 0;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	//타입에 따른 댓글 조회
+	@Override
+	public Page<ReplyDTO> getReplyListByType(int pageNum, int postNum, String rePrnt) {
+		PageRequest pageRequest = PageRequest.of(pageNum - 1, postNum, Sort.by(Direction.DESC, "rePrnt"));
+
+		Page<ReplyEntity> replyEntities = replyRepository.findByRePrnt(rePrnt, pageRequest);
+
+		List<ReplyDTO> replyDTOs = new ArrayList<>();
+		
+		for (ReplyEntity reply : replyEntities) {
+			ReplyDTO replyDTO = new ReplyDTO(reply);
+
+			switch (reply.getRePrnt()) {
+				case "FR":
+					BoardEntity board = boardRepository.findById(reply.getPrntIdx()).orElse(null);
+					if (board != null) {
+						replyDTO.setPrntTitle(board.getTitle());
+					} else {
+						replyDTO.setPrntTitle("원글이 삭제됨");
+					}
+					break;
+				case "Q":
+					TestQuestionEntity question = questionRepository.findById(reply.getPrntIdx()).orElse(null);
+					if (question != null) {
+						replyDTO.setPrntTitle(question.getTitle());
+					} else {
+						replyDTO.setPrntTitle("원글이 삭제됨");
+					}
+					break;
+				case "QA":
+					TestQuestionAnswerEntity answer = questionAnswerRepository.findById(reply.getPrntIdx()).orElse(null);
+					if (answer != null) {
+						replyDTO.setPrntTitle(answer.getContent());
+					} else {
+						replyDTO.setPrntTitle("원글이 삭제됨");
+					}
+					break;
+			}
+			replyDTOs.add(replyDTO);
+		}
+
+		return new PageImpl<>(replyDTOs, pageRequest, replyEntities.getTotalElements());
+	}
+	
+	//회원 상세보기
+	@Override
+	public MemberDTO getMemberDetailByEmail(String email) {
+		MemberEntity memberEntity = memberRepository.findByEmail(email)
+				.orElseThrow(() -> new RuntimeException("회원이 존재하지 않습니다."));
+
+		return new MemberDTO(memberEntity);
+	}
+	
+}	

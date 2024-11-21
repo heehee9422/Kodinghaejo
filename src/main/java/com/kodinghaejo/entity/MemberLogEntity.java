@@ -28,16 +28,16 @@ import lombok.Setter;
 @Table(name = "jpa_member_log")
 @IdClass(MemberLogEntityId.class)
 public class MemberLogEntity {
-	
+
 	@Id
 	@ManyToOne(fetch = FetchType.LAZY)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JoinColumn(name = "email")
 	private MemberEntity email;
-	
+
 	@Id
 	private LocalDateTime regdate;
-	
+
 	@Column(name = "status", length = 10, nullable = false)
 	private String status;
 

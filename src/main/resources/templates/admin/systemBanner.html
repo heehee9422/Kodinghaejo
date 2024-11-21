@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="kr" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>광고 배너 관리</title>
+<link rel="icon" href="/img/logo/favicon.png" />
+<link rel="stylesheet" href="/css/style.css" />
+<link rel="stylesheet"
+	href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css" />
+<script src="/js/pub-ui-custom.js"></script>
+</head>
+
+<body>
+<div id="header" th:replace="include/header"></div>
+  <div class="container column mt50">
+    <div class="column-row">
+      <!-- 메뉴 컬럼 -->
+      <div class="c-column-2">
+        <div id="system_menu" th:replace="include/system"></div>
+      </div>
+      <!-- content -->
+      <div class="c-column-8">
+        <div class="sys-system_menu">
+          <h2>배너 관리</h2>
+          <div class="sys-desc-guide">
+            배너 규격 사이즈는 <b>가로 200px</b> , <b>세로 600px</b> 입니다 <br>
+            사이즈 규격을 준수해 주세요
+          </div>
+          <div class="sys-description-box mb20">
+            <h3 class="mt20">배너 등록 수 : 10</h3>
+            <button>배너 등록하기</button>
+          </div>
+          <table>
+            <caption style="display: none;">관리자 게시판 입니다</caption>
+            <colgroup>
+              <col width="">
+              <col width="30%">
+              <col width="">
+              <col width="">
+              <col width="">
+              <!-- 참고하세요 -->
+              <!-- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/colgroup -->
+            </colgroup>
+            <thead>
+              <tr>
+                <th>번호</th>
+                <th>배너명</th>
+                <th>등록일</th>
+                <th>배너 숨기기</th>
+                <th>배너 삭제</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>이벤트 메인 배너</td>
+                <td>{data}</td>
+                <td style="text-align: center;"><a href="" class="btn_">숨김 처리</a></td>
+                <td style="text-align: center;"><a href="" class="btn_delete">삭제</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+	<div id="footer" th:replace="include/footer"></div>
+</body>
+<script>
+  pagenation();
+</script>
+</html>

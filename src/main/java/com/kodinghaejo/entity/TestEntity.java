@@ -23,7 +23,7 @@ import lombok.Setter;
 @Entity(name = "test")
 @Table(name = "jpa_test")
 public class TestEntity {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "TEST_SEQ")
 	@SequenceGenerator(name = "TEST_SEQ", sequenceName = "jpa_test_seq", initialValue = 1, allocationSize = 1)

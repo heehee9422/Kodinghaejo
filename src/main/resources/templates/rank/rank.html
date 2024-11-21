@@ -1,110 +1,110 @@
 <!DOCTYPE html>
 <html lang="kr" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>이용자 랭킹보기&nbsp;&#124;&nbsp;코딩해조</title>
-  <!-- Standard css -->
-  <link rel="icon" href="/img/logo/favicon.png">
-  <link rel="stylesheet" href="/css/style.css">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
-  <!-- pub-js link -->
-  <script src="/js/pub-ui-custom.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>이용자 랭킹보기&nbsp;&#124;&nbsp;코딩해조</title>
+<!-- Standard css -->
+<link rel="icon" href="/img/logo/favicon.png">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+<!-- pub-js link -->
+<script src="/js/pub-ui-custom.js"></script>
 </head>
 <body>
-  <!-- header 영역 -->
-  <div id="header" th:replace="include/header"></div>
-  <div class="banner-zone">
-    <!-- 첫번째 영역 : 나중에 보자-->
-    <div class="banner-content">
-      <div class="content-banner-title">
-        <h3>코딩해조와 함께하는<br>코딩 문제 풀기😎</h3>
-        <p>문제를 풀어보세요</p>
-        <p>다양한 문제를 풀고 랭킹 올리자</p>
-      </div>
-      <div class="content-banner-img" style="padding-top: 40px;">
-        <img src="/img/trophy.png" alt="" style="position: relative; width: 245px;">
-        <img src="/img/mask.png" alt="" style="position: relative; width: 100px; right: 110px; bottom: 160px;">
-      </div>
-    </div>
-  </div>
-  <div class="container">
-    <div class="main-content">
-      <div class="content-rank">
+	<!-- header 영역 -->
+	<div id="header" th:replace="/include/header"></div>
+	<div class="banner-zone">
+		<!-- 첫번째 영역 : 나중에 보자-->
+		<div class="banner-content">
+			<div class="content-banner-title">
+				<h3>코딩해조와 함께하는<br>코딩 문제 풀기😎</h3>
+				<p>문제를 풀어보세요</p>
+				<p>다양한 문제를 풀고 랭킹 올리자</p>
+			</div>
+			<div class="content-banner-img" style="padding-top: 40px;">
+				<img src="/img/trophy.png" alt="" style="position: relative; width: 245px;">
+				<img src="/img/mask.png" alt="" style="position: relative; width: 100px; right: 110px; bottom: 160px;">
+			</div>
+		</div>
+	</div>
+	<div class="container">
+		<div class="main-content">
+			<div class="content-rank">
 
-        <div class="content-rank-title">
-          <div class="content-rank-title-header">
-            <h3>이용자 랭킹 순위 보기</h3>
-              <ul class="rank_tab_group" id="rank_tab">
-                <li><a href="#tabMenu01" class="btn_tab_menu">레벨이 높은 회원</a></li>
-                <li><a href="#tabMenu02" class="btn_tab_menu">문제를 제일 많이 푼 회원</a></li>
-              </ul>
-          </div>
-        </div>
+				<div class="content-rank-title">
+					<div class="content-rank-title-header">
+						<h3>이용자 랭킹 순위 보기</h3>
+						<ul class="rank_tab_group" id="rank_tab">
+							<li><a href="#tabMenu01" class="btn_tab_menu">레벨이 높은 회원</a></li>
+							<li><a href="#tabMenu02" class="btn_tab_menu">문제를 제일 많이 푼 회원</a></li>
+						</ul>
+					</div>
+				</div>
 
-        <div class="content-rank-main">
-          <div class="content-rank-title"></div>
-          <!-- 토글 컨텐츠 -->
-          <div class="content-rank-toggle-menu-item" id="tabMenu01" style="display: block;">
-            <div class="content-rank-box">
-              <div class="content-rank-box-list">
-                <img src="/img/test-profile/handyping.png" alt="" style="width: 40%;">
-                <p>닉네임<b>수리핑</b></p>
-                <p>이메일<b>aaa@naver.com</b></p>
-                <p>레벨<b>LV999</b></p>
-                <p>문제푼수<b>5개</b> | 정답률 <b>99%</b></p>
-              </div>
-              <div class="content-rank-box-list">
-                <img src="/img/test-profile/handyping.png" alt="" style="width: 40%;">
-                <p>닉네임<b>수리핑</b></p>
-                <p>이메일<b>aaa@naver.com</b></p>
-                <p>레벨<b>LV999</b></p>
-                <p>문제푼수<b>5개</b> | 정답률 <b>99%</b></p>
-              </div>
-              <div class="content-rank-box-list">
-                <img src="/img/test-profile/handyping.png" alt="" style="width: 40%;">
-                <p>닉네임<b>수리핑</b></p>
-                <p>이메일<b>aaa@naver.com</b></p>
-                <p>레벨<b>LV999</b></p>
-                <p>문제푼수<b>5개</b> | 정답률 <b>99%</b></p>
-              </div>
-            </div>
-            <div class="content-rank-item-table">
-  
-              <div class="content-rank-item-title">
-                <ul>
-                  <li class="rank-count">순위</li>
-                  <li class="user">회원</li>
-                  <li class="level">레벨</li>
-                  <li class="problem-count">문제 푼 수</li>
-                </ul>
-              </div>
-  
-              <div class="content-rank-item-body">
-                <ul class="content-rank-item-list">
-                    <li class="rank-count">{count}</li>
-                    <li class="user"><a href="#">{member}</a></li>
-                    <li class="level">{level}</li>
-                    <li class="problem-count">{problemCount}</li>
-                </ul>
-              </div>
-              <div class="content-rank-item-pluse-view">
-                <a href="#"> 랭킹 더보기</a>
-              </div>
-            </div> <!-- // content-rank-item-table -->
-          </div>
-          
-          <div class="content-rank-toggle-menu-item" id="tabMenu02">내용 알아서 넣기</div>
-        </div>
-      </div>
-    </div>
-  </div>
+				<div class="content-rank-main">
+					<div class="content-rank-title"></div>
+					<!-- 토글 컨텐츠 -->
+					<div class="content-rank-toggle-menu-item" id="tabMenu01" style="display: block;">
+						<div class="content-rank-box">
+							<div class="content-rank-box-list">
+								<img src="/img/test-profile/handyping.png" alt="" style="width: 40%;">
+								<p>닉네임<b>수리핑</b></p>
+								<p>이메일<b>aaa@naver.com</b></p>
+								<p>레벨<b>LV999</b></p>
+								<p>문제푼수<b>5개</b> | 정답률 <b>99%</b></p>
+							</div>
+							<div class="content-rank-box-list">
+								<img src="/img/test-profile/handyping.png" alt="" style="width: 40%;">
+								<p>닉네임<b>수리핑</b></p>
+								<p>이메일<b>aaa@naver.com</b></p>
+								<p>레벨<b>LV999</b></p>
+								<p>문제푼수<b>5개</b> | 정답률 <b>99%</b></p>
+							</div>
+							<div class="content-rank-box-list">
+								<img src="/img/test-profile/handyping.png" alt="" style="width: 40%;">
+								<p>닉네임<b>수리핑</b></p>
+								<p>이메일<b>aaa@naver.com</b></p>
+								<p>레벨<b>LV999</b></p>
+								<p>문제푼수<b>5개</b> | 정답률 <b>99%</b></p>
+							</div>
+						</div>
+						
+						<div class="content-rank-item-table">
+							<div class="content-rank-item-title">
+								<ul>
+									<li class="rank-count">순위</li>
+									<li class="user">회원</li>
+									<li class="level">레벨</li>
+									<li class="problem-count">문제 푼 수</li>
+								</ul>
+							</div>
+							<div class="content-rank-item-body">
+								<ul class="content-rank-item-list">
+									<li class="rank-count">{count}</li>
+									<li class="user"><a href="#">{member}</a></li>
+									<li class="level">{level}</li>
+									<li class="problem-count">{problemCount}</li>
+								</ul>
+							</div>
+							<div class="content-rank-item-pluse-view">
+								<a href="#">랭킹 더보기</a>
+							</div>
+						</div>
+						<!-- // content-rank-item-table -->
+					</div>
 
-  <!-- footer영역 -->
-  <div id="footer" th:replace="include/footer"></div>
+					<div class="content-rank-toggle-menu-item" id="tabMenu02">내용 알아서 넣기</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- footer영역 -->
+	<div id="footer" th:replace="/include/footer"></div>
 </body>
 <script>
-  // pub-ui-custom : 탭 메뉴
-  toggleTab();
+	//pub-ui-custom : 탭 메뉴
+	toggleTab();
 </script>
 </html>

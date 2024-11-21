@@ -28,7 +28,7 @@
 					</div>
 					<div class="sys-description-box mb20">
 						<div class="box-itme">
-							<h3>문제 수 : <span th:text="${testCount}"></span></h3>
+							<h3>문제 수 : <span th:text="${totalCount}"></span></h3>
 						</div>
 						<div class="box-itme">
 							<button class="testwrite-button"><a href="/admin/testboardWrite">문제 출제</a></button>
@@ -71,20 +71,18 @@
 						            </ul>
 						        </td>
 								<td th:text="${test.regdate}">2024-11-04</td>
-								<td>999명</td>
-								<td>50%</td>
+								<td th:text="${test.submitCount}">999명</td>
+								<td th:text="${test.correctRate} + ' ' + '%' ">50%</td>
 							</tr>
-
-
 						</tbody>
 					</table>
+					<div class="pagination">
+						[(${pageList})]
+					</div>
 				</div>
 			</div>
 		</div>
-
 	</div>
-</body>
-<footer>
 	<div id="footer" th:replace="include/footer"></div>
-</footer>
+</body>
 </html>

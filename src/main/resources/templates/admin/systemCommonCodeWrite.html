@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="kr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>게시판</title>
+	<!-- Standard css -->
+	<link rel="icon" href="/img/logo/favicon.png">
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+	<!-- pub-js link -->
+	<script src="/js/pub-ui-custom.js"></script>
+</head>
+<script>
+const registerForm = async () => {
+
+    let code = document.querySelector('#code');
+    let type = document.querySelector('#type');
+    let val = document.querySelector('#value');
+    let writer = document.querySelector('#writer');
+    let email = document.querySelector('#email');
+    let isUse = document.querySelector('#isUse');
+    
+    let note = editor.getMarkdown();
+    
+    if (code.value === '') {
+        Swal.fire({
+            icon: 'warning',
+            title: '코드명을 입력하세요!!!',
+            confirmButtonText: '확인'
+        });
+        code.focus();
+        return false;
+    }
+    if (type.value === '') {
+        Swal.fire({
+            icon: 'warning',
+            title: '타입을 입력하세요!!!',
+            confirmButtonText: '확인'
+        });
+        type.focus();
+        return false;
+    }
+    if (val.value === '') {
+        Swal.fire({
+            icon: 'warning',
+            title: 'value값을 입력하세요!!!',
+            confirmButtonText: '확인'
+        });
+        val.focus();
+        return false;
+    }
+
+    let formData = new FormData(document.getElementById('WriteForm'));
+    formData.append("note", note);
+
+    await fetch('/admin/systemCommonCodeWrite', {
+        method: 'POST',
+        body: formData
+    }).then((response) => response.json())
+    .then((data) => {
+        if (data.message === 'good') {
+            Swal.fire({
+                icon: 'success',
+                title: '코드가 추가되었습니다.',
+                confirmButtonText: '확인'
+            }).then(() => {
+                document.location.href = '/admin/systemCommonCode';
+            });
+        }
+    }).catch((error) => {
+        Swal.fire({
+            icon: 'error',
+            title: '시스템 장애로 코드 추가에 실패했습니다.',
+            confirmButtonText: '확인'
+        });
+        console.log("error", error);
+    });
+}
+</script>
+<body>
+	<!-- header 영역 -->
+	<div id="header" th:replace="include/header"></div>
+	<div class="container">
+		<div class="main-content">
+			<div class="content-board-code-write">
+				<div class="content-board-code-write-wrap">
+				<form class="WriteForm" id="WriteForm" name="WriteForm" method="post" enctype="multipart/form-data">		 
+					<div class="mt30"></div>
+					<h2>공통코드 추가</h2>
+					<div class="mt30"></div>
+					<div class="category-code mb20">
+						<label for="code">코드명<span class="asterisk" ></span></label>
+						<input type="text" id="code" name="code" placeholder="XXX-0001" maxlength="20">
+					</div>
+					<div class="category-type mb20">
+						<label for="type">타입<span class="asterisk" ></span></label>
+						<input type="text" id="type" name="type" placeholder="XXX" maxlength="20">
+					</div>
+					<div class="categoty-value mb20">
+						<label for="value">Value<span class="asterisk" ></span></label>
+						<input type="text" id="value" name="val" maxlength="50">	
+						<input type="hidden" id="email" name="email" value="admin@kodinghaejo.com">
+						<input type="hidden" id="writer" name="writer" value="관리자">
+						<input type="hidden" id="isUse" name="isUse" value="Y">
+					</div>
+					<div class="category-note">
+						<label for="note">비고<span class="asterisk"></span></label>
+						<div id="content"></div>
+					</div>
+					</form> 
+					<div class="category-footer mt30">
+						<input type="button" value="추가" onclick="registerForm()">
+						<button onclick="history.back();">뒤로가기</button>
+					</div>
+				</div>	 
+			</div>
+		</div>
+	</div>
+ <!-- footer영역 -->
+	<div id="footer" th:replace="include/footer"></div>
+	<!-- toast API : 나중에 모듈로 작성해서 만들기-->
+	<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+	<link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+	<script>
+		const editor = new toastui.Editor({
+			el: document.querySelector('#content'),
+			height: '400px',
+			initialEditType: 'markdown',
+			initialValue: '',
+			initialEditType: 'wysiwyg',
+			placeholder: '50자 이내로 작성',
+			
+			 toolbarItems: [
+					['heading', 'bold', 'italic', 'strike'],
+					['hr', 'quote'],
+					['ul', 'ol', 'task'],
+					['table', 'link'],
+					['code', 'codeblock']
+			 ]
+	
+		});
+	</script>
+	<style>
+		.toastui-editor-mode-switch { display: none !important; }
+	</style>
+
+</body>
+</html>

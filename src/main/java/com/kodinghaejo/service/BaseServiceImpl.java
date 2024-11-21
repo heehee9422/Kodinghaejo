@@ -16,19 +16,19 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class BaseServiceImpl implements BaseService {
 	private final CommonCodeRepository commonCodeRepository;
-	
+
 	//공통코드 가져오기
 	@Override
 	public Map<String, Object> loadUsedCommonCode() {
 		List<CommonCodeEntity> entities = commonCodeRepository.findByIsUse("Y");
-		
+
 		Map<String, Object> data = new HashMap<>();
 		List<Map<String, Object>> lvlList = new ArrayList<>();
 		List<Map<String, Object>> tecList = new ArrayList<>();
 		List<Map<String, Object>> jobList = new ArrayList<>();
 		List<Map<String, Object>> lngList = new ArrayList<>();
 		List<Map<String, Object>> catList = new ArrayList<>();
-		
+
 		for (CommonCodeEntity code : entities) {
 			Map<String, Object> subdata = new HashMap<>();
 			subdata.put("code", code.getCode());
@@ -36,7 +36,7 @@ public class BaseServiceImpl implements BaseService {
 			subdata.put("val", code.getVal());
 			subdata.put("note", code.getNote());
 			subdata.put("isUse", code.getIsUse());
-			
+
 			switch (code.getType()) {
 				case "LVL":
 					lvlList.add(subdata);
@@ -55,13 +55,13 @@ public class BaseServiceImpl implements BaseService {
 					break;
 			}
 		}
-		
+
 		data.put("lvl", lvlList);
 		data.put("tec", tecList);
 		data.put("job", jobList);
 		data.put("lng", lngList);
 		data.put("cat", catList);
-		
+
 		return data;
 	}
 

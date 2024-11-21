@@ -275,8 +275,8 @@ let editors = [];
     
     const testModify = async () => {
         let title = document.querySelector('#title');
-        let content = editor.getMarkdown();  // 에디터에서 markdown 내용을 가져옴
-        // 제목과 내용 검사
+        let content = editor.getMarkdown();
+
         if (title.value === '') {
         	Swal.fire({
 	    		icon:"warning",

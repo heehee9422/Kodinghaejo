@@ -27,9 +27,12 @@ public class BoardDTO {
 	private int hitCnt;
 	private LocalDateTime regdate;
 	private String isUse;
-	
-	//해당 게시물의 추천 수
-	private Long goodCnt;
+
+	private Long replyCnt; //해당 게시물의 댓글 수
+	private Long goodCnt; //해당 게시물의 추천 수
+	private Long badCnt; //해당 게시물의 신고 수
+	private String goodChk; //해당 게시물의 추천여부
+	private String badChk; //해당 게시물의 신고여부
 
 	//Entity --> DTO 이동
 	public BoardDTO(BoardEntity entity) {

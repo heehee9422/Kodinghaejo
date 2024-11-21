@@ -26,7 +26,7 @@ public class ReplyDTO {
 	private String content;
 	private LocalDateTime regdate;
 	private String isUse;
-	
+
 	//원글 제목
 	private String prntTitle;
 

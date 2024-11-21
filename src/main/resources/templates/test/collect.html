@@ -1,146 +1,312 @@
 <!DOCTYPE html>
 <html lang="kr" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>문제 모아보기&nbsp;&#124;&nbsp;코딩해조</title>
-  <!-- Standard css -->
-  <link rel="icon" href="/img/logo/favicon.png">
-  <link rel="stylesheet" href="/css/style.css">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
-  <!-- pub-js link -->
-  <script src="/js/pub-ui-custom.js"></script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>게시판</title>
+	<!-- Standard css -->
+	<link rel="icon" href="/img/logo/favicon.png">
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+	<!-- pub-js link -->
+	<script src="/js/pub-ui-custom.js"></script>
+	<script type="text/javascript" th:inline="javascript">
+		var commonCode = /*[[ ${ commonCode } ]]*/'공통코드';
+	</script>
 </head>
 <!-- 게시판 복사용 게시판 : 테스트 용도입니다-->
 <body>
-  <!-- header 영역 -->
-  <div id="header" th:replace="include/header"></div>
-  <div class="banner-zone">
-    <!-- 첫번째 영역 : 나중에 보자-->
-    <div class="banner-content">
-      <div class="content-banner-title">
-        <h3>⭐출석 이벤트⭐<br>수료생 극찬! 실무 중심 부트캠프</h3>
-        <p>IT 취업을 위한 탁월한 선택,</p>
-        <p>라이브 코딩을 통한 과제테스트 풀이 전략 공개!</p>
-      </div>
-      <div class="content-banner-img" style="padding-top: 40px;">
-        <img src="/img/aset01.png" alt="" style="position: relative; top: 65px; width: 150px;">
-        <img src="/img/aset02.png" alt="" style="width: 150px;">
-      </div>
-    </div>
-  </div>
-  <div class="container">
-    <div class="content-problem-board mt50">
-      <div class="problem-board-title">
-        <!-- 검색창 : 커스텀 들어가야됨 -->
-        <div class="search-inp">
-          <input type="text" name="" id="" placeholder="풀고 싶은 문제 제목을 입력해 주세요">
-        </div>
-        <!--  -->
-        <div class="inp-group mt30">
-          <div class="select-inp problem">
-            <div class="list-box">
-              <div class="list-box-title"><span>상태</span></div>
-              <button type="button" class="toggle_btn" onclick="listDropdown()">상태를 선택해 주세요</button>
-              <div class="list-box-content" style="width: 30%">
-                <ul>
-                  <li><input type="checkbox" name="" id=""><a href="">안 푼 문제</a></li>
-                  <li><input type="checkbox" name="" id=""><a href="">풀고 있는 문제</a></li>
-                  <li><input type="checkbox" name="" id=""><a href="">푼 문제(스스로 해결)</a></li>
-                  <li><input type="checkbox" name="" id=""><a href="">푼 문제(다른 사람 풀이 확인)</a></li>
-                </ul>
-              </div>
-            </div>
-          </div>
-          <div class="select-inp problem">
-            <div class="list-box">
-              <div class="list-box-title"><span>언어</span></div>
-              <button type="button" class="toggle_btn"  onclick="listDropdown()">언어를 선택해 주세요</button>
-              <div class="list-box-content" style="width: 30%">
-                <ul>
-                  <li><input type="checkbox" name="" id=""><a href="">JAVA</a></li>
-                  <li><input type="checkbox" name="" id=""><a href="">JAVASCRIPT</a></li>
-                  <li><input type="checkbox" name="" id=""><a href="">SQL</a></li>
-                </ul>
-              </div>
-            </div>
-          </div>
-          <div class="select-inp problem">
-            <div class="list-box">
-              <div class="list-box-title"><span>난이도</span></div>
-              <button type="button" class="toggle_btn" onclick="listDropdown()">난이도를 선택해 주세요</button>
-              <div class="list-box-content" style="width: 30%">
-                <ul>
-                  <li><input type="checkbox" name="" id=""><a href="">LV. 0</a></li>
-                  <li><input type="checkbox" name="" id=""><a href="">LV. 1</a></li>
-                  <li><input type="checkbox" name="" id=""><a href="">LV. 2</a></li>
-                  <li><input type="checkbox" name="" id=""><a href="">LV. 3</a></li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-      </div>
-      <div class="problem-board-table mt40">
-        <table>
-          <caption style="display: none;">관리자 게시판 입니다</caption>
-          <colgroup>
-            <col width="10%">
-            <col width="">
-            <col width="10%">
-            <col width="15%">
-            <col width="10%">
-            <!-- 참고하세요 -->
-            <!-- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/colgroup -->
-          </colgroup>
-          <thead>
-            <tr>
-              <th>상태</th>
-              <th>제목</th>
-              <th>난이도</th>
-              <th>완료한 사람</th>
-              <th>정답률</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>푼 문제</td>
-              <td>첫번째 게시글입니다.</td>
-              <td>0단계</td>
-              <td>김아무개씨</td>
-              <td>100%</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="problem-board-table-paging">
-        <div class="paginate mt20" onclick="pagenation()">
-          <a href="" class="left-prev-arrow">
-            <svg width="12" height="12" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M11 1L1 11.1579L10.6891 21" stroke="black" stroke-linecap="round"/>
-              <path d="M21 1L11 11.1579L20.6891 21" stroke="black" stroke-linecap="round"/>
-            </svg>
-          </a>
-          <a href="" class="left-arrow"><i class="xi-angle-left-thin"></i></a>
-          <a href="#" class="on" role="button">1</a>
-          <a href="#">2</a>
-          <a href="#">3</a>
-          <a href="#">4</a>
-          <a href="#">100</a>
-          <a href="" class="right-arrow"><i class="xi-angle-right-thin"></i></a>
-          <a href="" class="right-next-arrow">
-            <svg width="12" height="12" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M11 1L21 11.1579L11.3109 21" stroke="black" stroke-linecap="round"/>
-              <path d="M1 1L11 11.1579L1.31088 21" stroke="black" stroke-linecap="round"/>
-            </svg>
-          </a>
-        </div>
-      </div>
+	<!-- header 영역 -->
+	<div id="header" th:replace="/include/header"></div>
+	<div class="banner-zone">
+		<!-- 첫번째 영역 : 나중에 보자-->
+		<div class="banner-content">
+			<div class="content-banner-title">
+				<h3>⭐출석 이벤트⭐<br>수료생 극찬! 실무 중심 부트캠프</h3>
+				<p>IT 취업을 위한 탁월한 선택,</p>
+				<p>라이브 코딩을 통한 과제테스트 풀이 전략 공개!</p>
+			</div>
+			<div class="content-banner-img" style="padding-top: 40px;">
+				<img src="/img/aset01.png" alt="" style="position: relative; top: 65px; width: 150px;">
+				<img src="/img/aset02.png" alt="" style="width: 150px;">
+			</div>
+		</div>
+	</div>
+	<div class="container">
+		<div class="content-problem-board mt50">
+			<div class="problem-board-title clearfix">
+				<form name="searchForm" id="searchForm" method="get" action="/test/collect">
+					<!-- 검색창 : 커스텀 들어가야됨 -->
+					<div class="search-inp">
+						<input type="text" name="keyword" id="keyword" placeholder="풀고 싶은 문제 제목을 입력해 주세요" onkeydown="press()" th:value="${ keyword }">
+						<input type="hidden" name="subm" value="">
+						<input type="hidden" name="lng" value="">
+						<input type="hidden" name="diff" value="">
+					</div>
+					<!--  -->
+					<div class="inp-group mt30">
+						<input th:if="${ session.email == null }" type="hidden" name="submChk" value="">
+						<div th:if="${ session.email != null }" class="select-inp problem">
+							<div class="list-box">
+								<div class="list-box-title"><span>상태</span></div>
+								<button type="button" class="toggle_btn" >상태를 선택해 주세요</button>
+								<div class="list-box-content">
+									<ul>
+										<li><input type="checkbox" name="submChk" id="subm-U" value="U" onchange="changeFilter('subm', 'U', '안 푼 문제')" th:checked="${ #strings.contains(subm, 'U') }"><label for="subm-U">안 푼 문제</label></li>
+										<li><input type="checkbox" name="submChk" id="subm-N" value="N" onchange="changeFilter('subm', 'N', '풀고 있는 문제')" th:checked="${ #strings.contains(subm, 'N') }"><label for="subm-N">풀고 있는 문제</label></li>
+										<li><input type="checkbox" name="submChk" id="subm-Y" value="Y" onchange="changeFilter('subm', 'Y', '푼 문제')" th:checked="${ #strings.contains(subm, 'Y') }"><label for="subm-Y">푼 문제</label></li>
+									</ul>
+								</div>
+							</div>
+						</div>
+						<div class="select-inp problem">
+							<div class="list-box">
+								<div class="list-box-title"><span>언어</span></div>
+								<button type="button" class="toggle_btn">언어를 선택해 주세요</button>
+								<div class="list-box-content" id="list-box-lng"></div>
+									<!--ul>
+										<li><input type="checkbox" name="" id=""><a href="">JAVA</a></li>
+										<li><input type="checkbox" name="" id=""><a href="">JAVASCRIPT</a></li>
+										<li><input type="checkbox" name="" id=""><a href="">SQL</a></li>
+									</ul>
+								</div-->
+							</div>
+						</div>
+						<div class="select-inp problem">
+							<div class="list-box">
+								<div class="list-box-title"><span>난이도</span></div>
+								<button type="button" class="toggle_btn" >난이도를 선택해 주세요</button>
+								<div class="list-box-content">
+									<ul>
+										<li><input type="checkbox" name="diffChk" id="diff-0" value="0" onchange="changeFilter('diff', '0', 'LV. 0')" th:checked="${ #strings.contains(diff, '0') }"><label for="diff-0">LV. 0</label></li>
+										<li><input type="checkbox" name="diffChk" id="diff-1" value="1" onchange="changeFilter('diff', '1', 'LV. 1')" th:checked="${ #strings.contains(diff, '1') }"><label for="diff-1">LV. 1</label></li>
+										<li><input type="checkbox" name="diffChk" id="diff-2" value="2" onchange="changeFilter('diff', '2', 'LV. 2')" th:checked="${ #strings.contains(diff, '2') }"><label for="diff-2">LV. 2</label></li>
+										<li><input type="checkbox" name="diffChk" id="diff-3" value="3" onchange="changeFilter('diff', '3', 'LV. 3')" th:checked="${ #strings.contains(diff, '3') }"><label for="diff-3">LV. 3</label></li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+				<hr class="dashed mt20 mb20">
+				<div class="problem-tag-item"></div>
+					<!-- 버튼 클릭시 추가 되고 -> 해당 버튼 클릭시 태그 삭제 됨 -->
+					<!--button>안푼문제</button>
+          <button>풀고 있는 문제</button>
+          <button>JAVA</button>
+          <button>JAVASCRIPT</button>
+          <button>LV.0</button>
+          <button>LV.1</button>
+				</div-->
+				<div class="filter-group">
+					<button class="filter" onclick="removeAllTags()">필터 초기화</button>
+					<button class="filter" onclick="search()">필터 검색</button>
+				</div>
+			</div>
+			<div class="problem-board-table mt40">
+				<table>
+					<caption style="display: none;">관리자 게시판 입니다</caption>
+					<colgroup>
+						<col width="10%">
+						<col width="">
+						<col width="10%">
+						<col width="15%">
+						<col width="10%">
+						<!-- 참고하세요 -->
+						<!-- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/colgroup -->
+					</colgroup>
+					<thead>
+						<tr>
+							<th>상태</th>
+							<th>제목</th>
+							<th>난이도</th>
+							<th>완료한 사람</th>
+							<th>정답률</th>
+						</tr>
+					</thead>
+					<tbody>
+						<th:block th:if="${ totalElement > 0 }">
+						<tr th:each="list : ${ list }">
+							<td th:text="${ list.submSts }"></td>
+							<td><a th:href="@{ '/test/challenge?idx=' + ${ list.idx } }" th:text="${ list.title }"></a></td>
+							<td th:text="@{ 'LV. ' + ${ list.diff } }"></td>
+							<td th:text="@{ ${ #numbers.formatInteger(list.correctCount, 1, 'COMMA') } + '명' }"></td>
+							<td th:text="@{ ${ #numbers.formatDecimal(list.correctRate, 1, 1) } + '%' }"></td>
+						</tr>
+						</th:block>
+						<tr th:if="${ totalElement == 0 }">
+							<td colspan="5">검색조건에 해당하는 문제가 없습니다.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="problem-board-table-paging">
+				[( ${ pageList } )]
+				<!--div class="paginate mt20" onclick="pagenation()">
+					<a href="" class="left-prev-arrow">
+						<svg width="12" height="12" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path d="M11 1L1 11.1579L10.6891 21" stroke="black" stroke-linecap="round"/>
+							<path d="M21 1L11 11.1579L20.6891 21" stroke="black" stroke-linecap="round"/>
+						</svg>
+					</a>
+					<a href="" class="left-arrow"><i class="xi-angle-left-thin"></i></a>
+					<a href="#" class="on" role="button">1</a>
+					<a href="#">2</a>
+					<a href="#">3</a>
+					<a href="#">4</a>
+					<a href="#">100</a>
+					<a href="" class="right-arrow"><i class="xi-angle-right-thin"></i></a>
+					<a href="" class="right-next-arrow">
+						<svg width="12" height="12" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path d="M11 1L21 11.1579L11.3109 21" stroke="black" stroke-linecap="round"/>
+							<path d="M1 1L11 11.1579L1.31088 21" stroke="black" stroke-linecap="round"/>
+						</svg>
+					</a>
+				</div-->
+			</div>
 
-    </div>
-  </div>
-  <!-- footer영역 -->
-  <div id="footer" th:replace="include/footer"></div>
+		</div>
+	</div>
+	<!-- footer영역 -->
+	<div id="footer" th:replace="/include/footer"></div>
+	
+	<!-- Custom Script -->
+	<script type="text/javascript">
+		//언어 필터 세팅
+		let lngUl = document.createElement('ul');
+		const submParams = '[[ ${ subm } ]]';
+		const lngParams = '[[ ${ lng } ]]';
+		const diffParams = '[[ ${ diff } ]]';
+
+		for (const i in commonCode.lng) {
+			lngUl.innerHTML += '<li>' + 
+													'<input type="checkbox"' +
+													' name="lngChk" id="lng-' + commonCode.lng[i].code + '" value="' + commonCode.lng[i].code + '"' +
+													' onchange="changeFilter(\'lng\', \'' + commonCode.lng[i].code + '\', \'' + commonCode.lng[i].val + '\')"' +
+													((lngParams.indexOf(commonCode.lng[i].code) != -1) ? ' checked' : '') + '>' +
+													'<label for="lng-' + commonCode.lng[i].code + '">' + commonCode.lng[i].val + '</label>'
+													'</li>';
+		}
+		
+		document.querySelector('#list-box-lng').appendChild(lngUl);
+
+		const tagDiv = document.querySelector('.problem-tag-item'); //태그가 표시될 영역
+		const submArr = [ [ 'U', 'N', 'Y' ], [ '안 푼 문제', '풀고 있는 문제', '푼 문제' ] ];
+		const diffArr = [ '0', '1', '2', '3' ];
+
+		//태그 최초 세팅
+		if (submParams != '') { //상태
+			for (let i = 0; i < submArr[0].length; i++) {
+				if (submParams.indexOf(submArr[0][i]) != -1) {
+					let tag = document.createElement('button');
+					tag.innerText = submArr[1][i];
+					tag.setAttribute('id', 'tag-subm-' + submArr[0][i]);
+					tag.onclick = () => { removeTag('subm', submArr[0][i]) };
+					
+					tagDiv.appendChild(tag);
+				}
+			}
+		}
+		
+		if (lngParams != '') { //언어
+			for (const i in commonCode.lng) {
+				if (lngParams.indexOf(commonCode.lng[i].code) != -1) {
+					let tag = document.createElement('button');
+					tag.innerText = commonCode.lng[i].val;
+					tag.setAttribute('id', 'tag-lng-' + commonCode.lng[i].code);
+					tag.onclick = () => { removeTag('lng', commonCode.lng[i].code) };
+					
+					tagDiv.appendChild(tag);
+				}
+			}
+		}
+		
+		if (diffParams != '') { //상태
+			for (let i = 0; i < diffArr.length; i++) {
+				if (diffParams.indexOf(diffArr[i]) != -1) {
+					let tag = document.createElement('button');
+					tag.innerText = 'LV. ' + diffArr[i];
+					tag.setAttribute('id', 'tag-diff-' + diffArr[i]);
+					tag.onclick = () => { removeTag('diff', diffArr[i]) };
+					
+					tagDiv.appendChild(tag);
+				}
+			}
+		}
+		
+		//필터 변경 (체크박스)
+		const changeFilter = (type, code, value) => {
+			const checkFilter = document.querySelector('#' + type + '-' + code); //선택한 체크박스
+			
+			if (checkFilter.checked) {
+				let tag = document.createElement('button');
+				tag.innerText = value;
+				tag.setAttribute('id', 'tag-' + type + '-' + code);
+				tag.onclick = () => { removeTag(type, code) };
+				
+				tagDiv.appendChild(tag);
+			} else {
+				tagDiv.removeChild(document.querySelector('#tag-' + type + '-' + code));
+			}
+		}
+		
+		//클릭한 태그 제거
+		const removeTag = (type, code) => {
+			document.querySelector('#' + type + '-' + code).checked = false;
+			tagDiv.removeChild(document.querySelector('#tag-' + type + '-' + code));
+		}
+		
+		//모든 태그 제거
+		const removeAllTags = () => {
+			const submArr = document.getElementsByName("submChk");
+			const lngArr = document.getElementsByName("lngChk");
+			const diffArr = document.getElementsByName("diffChk");
+			for (let i = 0; i < submArr.length; i++) submArr[i].checked = false;
+			for (let i = 0; i < lngArr.length; i++) lngArr[i].checked = false;
+			for (let i = 0; i < diffArr.length; i++) diffArr[i].checked = false;
+		}
+		
+		//엔터 시 검색 적용
+		const press = () => {
+			if (event.keyCode == 13) search();
+		}
+		
+		//문제 검색
+		const search = () => {
+			let submParams = '';
+			let lngParams = '';
+			let diffParams = '';
+			const submArr = document.getElementsByName("submChk");
+			const lngArr = document.getElementsByName("lngChk");
+			const diffArr = document.getElementsByName("diffChk");
+			for (let i = 0; i < submArr.length; i++) {
+				if (submArr[i].checked)
+					submParams += (((submParams == '') ? '' : ',') + submArr[i].value);
+				
+				submArr[i].checked = false;
+			}
+			for (let i = 0; i < lngArr.length; i++) {
+				if (lngArr[i].checked)
+					lngParams += (((lngParams == '') ? '' : ',') + lngArr[i].value);
+				
+				lngArr[i].checked = false;
+			}
+			for (let i = 0; i < diffArr.length; i++) {
+				if (diffArr[i].checked)
+					diffParams += (((diffParams == '') ? '' : ',') + diffArr[i].value);
+
+				diffArr[i].checked = false;
+			}
+			
+			searchForm.subm.value = submParams;
+			searchForm.lng.value = lngParams;
+			searchForm.diff.value = diffParams;
+			
+			searchForm.submit();
+		}
+	</script>
 </body>
+<script>
+	listDropdown();
+</script>
 </html>

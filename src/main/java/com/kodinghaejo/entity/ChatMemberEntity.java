@@ -34,20 +34,20 @@ public class ChatMemberEntity {
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JoinColumn(name = "chat_idx", nullable = false)
 	private ChatEntity chatIdx;
-	
+
 	@Id
 	@ManyToOne(fetch = FetchType.LAZY)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JoinColumn(name = "email", nullable = false)
 	private MemberEntity email;
-	
+
 	@Column(name = "nickname", length = 50, nullable = false)
 	private String nickname;
 
 	@Column(name = "manager", length = 2, nullable = false)
 	private String manager;
-	
+
 	@Column(name = "regdate", nullable = false)
 	private LocalDateTime regdate;
-	
+
 }
