@@ -36,13 +36,13 @@ public class ChatLogDTO {
 	//DTO --> Entity 이동
 	public ChatLogEntity dtoToEntity(ChatLogDTO dto) {
 		ChatLogEntity entity = ChatLogEntity
-								.builder()
-								.idx(dto.getIdx())
-								.chatIdx(dto.getChatIdx())
-								.content(dto.getContent())
-								.regdate(dto.getRegdate())
-								.isUse(dto.getIsUse())
-								.build();
+														.builder()
+														.idx(dto.getIdx())
+														.chatIdx(dto.getChatIdx())
+														.content(dto.getContent())
+														.regdate(dto.getRegdate())
+														.isUse(dto.getIsUse())
+														.build();
 
 		return entity;
 	}

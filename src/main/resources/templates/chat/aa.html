@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/css/aa.css">
+  	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+</head>
+<body>
+    <nav class="main-navbar">
+        <a href="/" class="navbar-logo"><img src="/img/logo/icon.png" alt="logo" style="height: 30px; margin-top: 5px;"></a>
+        <div class="main-navbar-list">
+          <ol class="main-list-item">
+            <li><a href="/">manu 1</a></li>
+            <li><a href="/">manu 2</a></li>
+            <li class="active">manu 3</li>
+          </ol>
+          <div class="member-group">
+            <ul class="main-list-item">
+              <li>1</li>
+              <li>1</li>
+              <li>1</li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+      <main id="chatroom">
+
+        <section class="chatlist">
+
+          <div class="search">
+          채팅방, 참여자 검색
+          </div>
+
+          <div class="chatroom">
+              
+              <ul class="CRul">
+                  <li class="CRli">
+                  채팅방
+                  </li>
+                  <li class="CRli">
+                  채팅방
+                  </li>
+                  <li class="CRli">
+                  채팅방
+                  </li>
+                  <li class="CRli">
+                  채팅방
+                  </li>
+                  <li class="CRli">
+                  채팅방
+                  </li>
+                  <li class="CRli">
+                  채팅방
+                  </li>
+                  <li class="CRli">
+                  채팅방
+                  </li>
+                  <li class="CRli">
+                  채팅방
+                  </li>
+                  <li class="CRli">
+                  채팅방
+                  </li>
+                  <li class="CRli">
+                  채팅방
+                  </li>
+              </ul>
+            </div> 
+
+        </section>
+
+        <section class="chatinfo">
+
+            <div class="cisearch">
+            대화 내용 검색
+            </div>
+
+            <div class="ciuser">
+            대화상대
+                <ul class="ciuserul">
+                    <li class="ciuserli">
+                    참가자
+                    </li>
+                </ul>
+            </div>
+
+            <div class="ciimg">
+                <img src="img/test-profile/coolping.png" width="180px" height="180px">
+                <img src="img/test-profile/handyping.png" width="180px" height="180px">
+                <p>이미지 더 보기</p>
+            </div>
+
+            <div class="cifile">
+                <img src="img/test-profile/moseyping.png" width="180px" height="180px">
+                <img src="img/test-profile/narrping.png" width="180px" height="180px">
+                <p>파일 더 보기</p>
+            </div>
+
+            <div class="ci">
+                채팅방 정보
+                <p>
+                    채팅방 정보 내용
+                </p>
+            </div>
+
+        </section>
+
+        <section class="msgbox">
+
+            <div class="msguser">
+            대화 상대
+            </div>
+
+            <div class="msgreceive">
+                <ul class="MSGul">
+                    <li class="MSGli">
+                    대화 내용
+                    </li>
+                    <li class="MSGli">
+                    대화 내용
+                    </li>
+                    <li class="MSGli">
+                    대화 내용
+                    </li>
+                    <li class="MSGli">
+                    대화 내용
+                    </li>
+                    <li class="MSGli">
+                    대화 내용
+                    </li>
+                    <li class="MSGli">
+                    대화 내용
+                    </li>
+                    <li class="MSGli">
+                    대화 내용
+                    </li>
+                    <li class="MSGli">
+                    대화 내용
+                    </li>
+                </ul>
+            </div>
+
+            <div class="msgsend">
+                <input type="text" id="messageInput" placeholder="메시지를 입력하세요">
+                <input type="button" id="btn_sendMessage" class="btn_sendMessage" value="메시지 전송">
+                <button>첨부 파일</button>
+            </div>
+
+        </section>
+      </main>
+    
+      <!-- <script>
+        let username = document.querySelector('#username');
+	let message = document.querySelector('#message');
+	let str = '';
+	
+	window.addEventListener('keydown', (e) => {
+           if (e.key === 'Enter') {
+               send();
+           }
+       })
+	
+   const send = () => {
+	    
+	    if(message.value === ''){
+	          alert("메세지를 입력하세요");
+	          message.focus();
+	          return false;
+	    }
+    	
+	    const text = {
+	    	status: "chatting",
+	    	user: username.value,
+	    	message: message.value
+	    }
+	    
+	    websocket.send(JSON.stringify(text));
+	    message.value = '';
+    	
+    }
+
+    const onclose = () => {
+ 	    const text = {
+		    	status: "close",
+		    	user: username.value,
+		    	message: username.value + '님이 방을 나가셨습니다.' 
+	    }
+        websocket.send(text);
+    }
+    
+    const onopen = () =>  {
+	    const text = {
+		    	status: "open",
+		    	user: username.value,
+		    	message: username.value + '님이 입장하셨습니다.' 
+	    }
+        websocket.send(JSON.stringify(text));
+    }
+
+    const onmessage = (msg) => {
+    	let data = JSON.parse(msg.data);
+    	let host_user = username.value;
+    	let guest_user = data.user;
+    	
+    	switch(data.status) {
+    	
+    	case 'open': 
+    			str = "<div><b><span class='open'>" + data.message + "</span></b></div>";
+    			break;
+    	case 'chatting':
+        		if(host_user === guest_user) 		
+        			str = "<div style='text-align:right'><b><span class='hostChatting'>" + data.user + ":" + data.message + "</span></b></div>";
+        		else 
+        			str = "<div style='text-align:left'><b><span class='guestChatting'>" + data.user + ":" + data.message + "</span></b></div>";	
+    			break;    	
+    	}
+    	
+        document.querySelector('.msgZone').innerHTML += str;
+    }
+   		
+	document.querySelector('#btn_sendMessage').addEventListener('click', send);
+	
+	var websocket = new WebSocket('ws://127.0.0.1:8080/ws/chat');	
+    websocket.onmessage = onmessage;
+    websocket.onopen = onopen;
+    websocket.onclose = onclose;
+    </script> -->
+
+</body>
+</html>

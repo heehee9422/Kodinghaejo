@@ -32,7 +32,7 @@ public class TestQuestionAnswerEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "TEST_QUESTION_ANSWER_SEQ")
-	@SequenceGenerator(name = "TEST_QUESTION_ANSWER_SEQ", sequenceName = "jpa_question_answer_seq", initialValue = 1, allocationSize = 1)
+	@SequenceGenerator(name = "TEST_QUESTION_ANSWER_SEQ", sequenceName = "jpa_test_question_answer_seq", initialValue = 1, allocationSize = 1)
 	@Column(name = "idx", nullable = false)
 	private Long idx;
 

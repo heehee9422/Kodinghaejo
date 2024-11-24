@@ -2,123 +2,262 @@
 <html lang="kr" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>게시판</title>
-	<!-- Standard css -->
-	<link rel="icon" href="/img/logo/favicon.png">
-	<link rel="stylesheet" href="/css/style.css">
-	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
-	<!-- pub-js link -->
-	<script src="/js/pub-ui-custom.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>게시판</title>
+  <!-- Standard css -->
+  <link rel="icon" href="/img/logo/favicon.png">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+  <!-- pub-js link -->
+  <script src="/js/pub-ui-custom.js"></script>
 </head>
 
 <body>
-	<!-- header 영역 -->
-	<div id="header" th:replace="~{ /include/header }"></div>
-	<div class="banner-zone">
-		<!-- 첫번째 영역 : 나중에 보자-->
-		<div class="banner-content">
-			<div class="content-banner-title">
-				<h3>누구나 🙌 자유롭게 채팅방에 참여해 보세요</h3>
-				<p>진로 상담 문제 질문</p>
-				<p>등 다양한 주제로 대화에 참여해 보세요</p>
-			</div>
-			<div class="content-banner-img" style="padding-top: 40px;">
-				<img src="/img/message.png" alt="" style="position: relative; top: 30px; width: 150px;">
-				<img src="/img/aset02.png" alt="" style="position: relative; width: 80px; right: 30px; bottom: 55px;">
-			</div>
-		</div>
-	</div>
-	<div class="container">
-		<div class="main-content mt50">
-			<div class="chat-title-nav">
-				<div class="chat-title clearfix">
-					<h4>채팅 검색</h4>
-					<div class="search-inp">
-						<input type="text" name="" id="" placeholder="채팅방 제목 또는 사용자를 검색해 주세요">
-					</div>
-					<hr class="dashed mt20 mb20">
-					<div class="chat-tag-wrap">
-						<h4>태그별 모아보기</h4>
-						<div class="chat-tag-title">
-							<button>자유주제</button>
-							<button>커리어고민</button>
-							<button>질문하기</button>
-							<button>문제질문</button>
-						</div>
-						<hr class="dashed mt20 mb20">
-						<div class="chat-tag-item">
-							<!-- 버튼 클릭시 추가 되고 -> 해당 버튼 클릭시 태그 삭제 됨 -->
-							<button>자유주제</button>
-							<!-- 
-								<button>커리어고민</button>
-								<button>질문하기</button>
-								<button>문제질문</button>
-							-->
-						</div>
-						<p></p>
-					</div>
-					<div class="filter-group">
-						<button class="filter">필터 초기화</button>
-						<button class="filter">필터 검색</button>
-					</div>
-				</div>
-			</div>
+  <!-- header 영역 -->
+  <div id="header" th:replace="~{ /include/header }"></div>
+  <div class="banner-zone">
+    <!-- 첫번째 영역 : 나중에 보자-->
+    <div class="banner-content">
+      <div class="content-banner-title">
+        <h3>누구나 🙌 자유롭게 채팅방에 참여해 보세요</h3>
+        <p>진로 상담 문제 질문</p>
+        <p>등 다양한 주제로 대화에 참여해 보세요</p>
+      </div>
+      <div class="content-banner-img" style="padding-top: 40px;">
+        <img src="/img/message.png" alt="" style="position: relative; top: 30px; width: 150px;">
+        <img src="/img/aset02.png" alt="" style="position: relative; width: 80px; right: 30px; bottom: 55px;">
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="main-content mt50">
+      <div class="chat-title-nav">
+        <div class="chat-title clearfix">
+          <h4>채팅 검색</h4>
+          <div class="search-inp">
+            <input type="text" name="" id="search-room" placeholder="채팅방 제목 또는 사용자를 검색해 주세요" onkeyup="filterChatRooms()">
+          </div>
+          <hr class="dashed mt20 mb20">
+          <div class="chat-tag-wrap">
+            <h4>태그별 모아보기</h4>
+            <div class="chat-tag-title">
+              <button>자유주제</button>
+              <button>커리어고민</button>
+              <button>질문하기</button>
+              <button>문제질문</button>
+            </div>
+            <hr class="dashed mt20 mb20">
+            <div class="chat-tag-item">
+              <!-- 버튼 클릭시 추가 되고 -> 해당 버튼 클릭시 태그 삭제 됨 -->
+              <button>자유주제</button>
+              <!-- 
+                <button>커리어고민</button>
+                <button>질문하기</button>
+                <button>문제질문</button>
+              -->
+            </div>
+            <p></p>
+          </div>
+          <div class="filter-group">
+            <button class="filter">필터 초기화</button>
+            <button class="filter">필터 검색</button>
+          </div>
+        </div>
+      </div>
+      
+	  <!-- 채팅방 영역 -->
+      <div class="content-chat-wrap">
+        <details open>
+          <summary><i class="xi-forum-o"></i>컨텐츠 영역</summary>
+          <div class="chat-list">
+            <div class="chat-list-head">
+              <button onclick="createRoomPopup()">채팅방 개설</button>
+            </div>
+            <div class="chat-list-item">
+              <img src="/img/test-profile/handyping.png" alt="이미지 등록 안했을 경우에 방장 이미지로" >
+              <ol>
+                <li class="title"><a href="/chat/chatview">자유로운 대화를 하는 방</a></li>
+                <li class="tag">
+                  <a href="#"><span class="card-small-red-tag">자유주제</span></a>
+                  <a href="#"><span class="card-small-yellow-tag">커리어고민</span></a>
+                  <a href="#"><span class="card-small-green-tag">질문하기</span></a>
+                  <a href="#"><span class="card-small-blue-tag">문제질문</span></a>
+                </li>
+                <li class="meet-user"><a href="#">참여자 수 </a><span>{count}</span></li>
+              </ol>
+            </div>
+            <!-- 채팅방 목록 -->
+            <div th:each="chatRoom : ${chatRooms}" class="chat-list-item" id="chatRoom-list-item">
+              <img src="/img/test-profile/handyping.png" alt="이미지 등록 안했을 경우에 방장 이미지로" >
+              
+                <ol>
+                  <li class="room">
+               	    <b><a href="#">[[${chatRoom.title}]]</a></b>
+               	    <p>참여자 수</p>
+               	    <p id="entry" th:if="${chatRoom.limit == 0}">[[${memberCounts[chatRoom.idx]}]]</p>
+            		<p id="entry" th:unless="${chatRoom.limit == 0}">[[${memberCounts[chatRoom.idx]}]] / [[${chatRoom.limit}]]</p>
+               	    <p hidden>[[${chatRoom.idx}]]</p>
+                  </li>
+                </ol>
+                
+            </div>
+            <!-- 채팅방 목록 E -->
+            
+          </div>
+        </details>
+      </div>
 
-			<div class="content-chat-wrap">
-				<details open>
-					<summary><i class="xi-forum-o"></i>컨텐츠 영역</summary>
-					<div class="chat-list">
-						<div class="chat-list-head">
-							<button>채팅방 개설</button>
-						</div>
-						<div class="chat-list-item">
-							<img src="/img/test-profile/handyping.png" alt="이미지 등록 안했을 경우에 방장 이미지로" >
-							<ol>
-								<li class="title"><a href="/page-chat/chatView.html">자유로운 대화를 하는 방</a></li>
-								<li class="tag">
-									<a href="#"><span class="card-small-red-tag">자유주제</span></a>
-									<a href="#"><span class="card-small-yellow-tag">커리어고민</span></a>
-									<a href="#"><span class="card-small-green-tag">질문하기</span></a>
-									<a href="#"><span class="card-small-blue-tag">문제질문</span></a>
-								</li>
-								<li class="meet-user"><a href="#">참여자 수 </a><span>{count}</span></li>
-							</ol>
-						</div>
-						
-					</div>
-				</details>
-			</div>
-
-			<div class="content-chat-wrap">
-				<details>
-					<summary><i class="xi-speech-o"></i>유저 리스트 <span>{count}</span></summary>
-					<div class="chat-list">
-						<div class="chat-list-head">
-							<button>유저 검색</button>
-						</div>
-						<div class="chat-list-item">
-							<img src="/img/test-profile/handyping.png" alt="이미지 등록 안했을 경우에 방장 이미지로" >
-							<ol>
-								<li class="user">
-									<b><a href="#">김아무개</a></b>
-									<p>레벨 999</p>
-								</li>
-							</ol>
-						</div>
-					</div>
-				</details>
-			</div>
-		</div>
-	</div>
-	<!-- 아코디언 영역 커스텀 -- 나중에 -->
-	<!-- https://apost.dev/1026/ -->
-	<!-- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/details -->
-	<!-- footer영역 -->
-	<div id="footer" th:replace="/include/footer"></div>
+	  <!-- 유저 영역 -->
+      <div class="content-chat-wrap">
+        <details>
+          <summary><i class="xi-speech-o"></i>유저 리스트 <span th:text="${members.size()}"></span>명</summary>
+          <div class="chat-list" id="user-list">
+            <div class="chat-list-head">
+              <button id="search-btn">유저 검색</button>
+              <input type="text" id="search-user" style="display:none;" placeholder="찾고 싶은 유저를 검색해주세요.">
+            </div>
+            <div class="chat-list-item">
+              <img src="/img/test-profile/handyping.png" alt="이미지 등록 안했을 경우에 방장 이미지로" >
+              <ol>
+                <li class="user">
+                  <b><a href="#">김아무개</a></b>
+                  <p>레벨 999</p>
+                </li>
+              </ol>
+            </div>
+            <!-- 유저 정보 -->
+            <div th:each="member : ${members}" class="chat-list-item" id="user-list-item">
+              <img src="/img/test-profile/handyping.png" alt="이미지 등록 안했을 경우에 방장 이미지로" >
+              <ol>
+                <li class="user" onkeyup="filterUsers()">
+                  <b><a href="#">[[${member.username}]]</a></b>
+                  <p hidden>[[${member.email}]]</p>
+                  <!-- strings.substring를 사용하여 ~의 ~번째 부터 출력 -->
+                  <p>레벨 <span th:text="${#numbers.formatInteger(#strings.substring(member.lvl, 4), 0)}"></span></p>
+                </li>
+              </ol>
+            </div>
+            <!-- 유저 정보 E -->
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+  <!-- 아코디언 영역 커스텀 -- 나중에 -->
+  <!-- https://apost.dev/1026/ -->
+  <!-- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/details -->
+  <!-- footer영역 -->
+  <div id="footer" th:replace="~{ /include/footer }"></div>
 </body>
 <script>
+	// 체팅방 개설 팝업창
+	function createRoomPopup () {
+	  const options = 'width=700, height=600, top=50, left=5'
+	  window.open('/chat/create','_blank',options)
+	}
+	
+	// 유저 정보 팝업창
+	function userInfoPopup () {
+		const options = 'width=700, height=600, top=50, left=5'
+		window.open('/chat/userinfo','_blank',options)
+	}
+	
+	// 채팅방 참여자 수
+	
+	
+	// 채팅 검색
+	function filterChatRooms() {
+	    var input, filter, chatList, chatItems, title, i, txtValue;
+	    input = document.getElementById('search-room');
+	    filter = input.value.toUpperCase();
+	    chatList = document.getElementsByClassName('chat-list')[0];
+	    chatItems = chatList.getElementsByClassName('chat-list-item');
+	
+	    for (i = 0; i < chatItems.length; i++) {
+	        title = chatItems[i].getElementsByTagName('b')[0];
+	        if (title) {
+	            txtValue = title.textContent || title.innerText;
+	            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+	                chatItems[i].style.display = "";
+	            } else {
+	                chatItems[i].style.display = "none";
+	            }
+	        }
+	    }
+	}
+	
+	// 유저 검색 버튼 누르면 검색칸 보이기/숨기기
+	document.getElementById('search-btn').addEventListener('click', function() {
+        var searchUser = document.getElementById('search-user');
+        if (searchUser.style.display === 'none') {
+            searchUser.style.display = 'inline';
+        } else {
+            searchUser.style.display = 'none';
+        }
+    });
+
+	// 유저 검색
+	function filterUsers() {
+		var input, filter, userList, userItems, username, i, txtValue;
+	    input = document.getElementById('search-user');
+	    filter = input.value.toUpperCase();
+	    userList = document.getElementById('user-list');
+	    userItems = userList.getElementsByClassName('chat-list-item');
+
+	    for (i = 0; i < userItems.length; i++) {
+	        username = userItems[i].getElementsByTagName('b')[0];
+	        if (username) {
+	            txtValue = username.textContent || username.innerText;
+	            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+	                userItems[i].style.display = "";
+	            } else {
+	                userItems[i].style.display = "none";
+	            }
+	        }
+	    }
+	}   
+	
+	// 레벨 데이터 가공
+	document.addEventListener('DOMContentLoaded', function() {
+		var levelElements = document.querySelectorAll('.user p span');
+		levelElements.forEach(function(element) {
+			var level = element.textContent;
+			element.textContent = parseInt(level, 10);
+		});
+	});
+	
+	// 채팅방 선택
+	document.querySelectorAll('#chatRoom-list-item').forEach(item => {
+		item.addEventListener('click', event => {
+			alert('Chat room 클릭 : \n' + event.target.innerText);
+		});
+	});
+	
+	// 유저 이름 선택
+	document.querySelectorAll('.user').forEach(item => {
+	    item.addEventListener('click', event => {
+	        const email = item.querySelector('p').textContent;
+	        userInfoPopup(email);
+	    });
+	});
+	
+	// 유저 채팅방 생성
+	document.querySelectorAll('#user-list-item').forEach(item => {
+	    item.addEventListener('click', event => {
+	        const email = item.querySelector('p').textContent;
+	        createRoomPopup();
+	    });
+	});
+	
+	// 유저 정보 팝업창
+	function userInfoPopup(email) {
+	    const options = 'width=700, height=600, top=50, left=5';
+	    window.open('/chat/userinfo?email=' + email, '_blank', options);
+	}
+	
+	// 채팅방 참여 여부
+	
 	
 </script>
 </html>

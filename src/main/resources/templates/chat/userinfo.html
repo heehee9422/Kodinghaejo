@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+</head>
+<body>
+    <h1>User Information</h1>
+    <div>
+        <p>Nickname: <span th:text="${member.nickname}"></span></p>
+        <p>Website: <span th:text="${member.website}"></span></p>
+        <p>Description: <span th:text="${member.descr}"></span></p>
+        <p>Level: <span th:text="${member.lvl}"></span></p>
+    </div>
+</body>
+</html>

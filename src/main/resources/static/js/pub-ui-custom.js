@@ -140,3 +140,39 @@ document.addEventListener('click', function(event) {
 		event.target.classList.toggle("xi-bell");
 	}
 });
+
+//메인페이지 공지알림
+document.addEventListener("DOMContentLoaded", function () {
+	const noticePop = document.querySelector(".notice-pop");
+	if (noticePop) {
+		noticePop.addEventListener("click", function () {
+			if (document.querySelector(".notice-pop-menu").style.display === "none" || document.querySelector(".notice-pop-menu").style.display === "") {
+				document.querySelector(".notice-pop-menu").style.display = "block";
+			} else if(document.querySelector(".notice-pop-menu").style.display === "block") {
+				document.querySelector(".notice-pop-menu").style.display = "none";
+			}
+		});
+	}
+});
+
+//메인페이지 분야별 문제 태그
+document.addEventListener("DOMContentLoaded", () => {
+	const tags = document.querySelectorAll(".card-small-red-tag");
+	const colors = ["#FF5733", "#33FF57", "#3357FF", "#F1C40F", "#8E44AD", "#1ABC9C"];
+	
+	tags.forEach(tag => {
+		const text = tag.textContent.trim();
+
+		if (text === "JAVA") {
+			tag.style.backgroundColor = "#90EE90";
+			tag.style.color = "#000000";
+		} else if (text === "javascript") {
+			tag.style.backgroundColor = "#F1C40F";
+			tag.style.color = "#000000";
+		} else {
+		const randomColor = colors[Math.floor(Math.random() * colors.length)];
+			tag.style.backgroundColor = randomColor;
+			tag.style.color = "#000000";
+		}
+	});
+});	

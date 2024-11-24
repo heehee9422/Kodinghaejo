@@ -42,14 +42,14 @@ public class TestSubmitDTO {
 	//DTO --> Entity 이동
 	public TestSubmitEntity dtoToEntity(TestSubmitDTO dto) {
 		TestSubmitEntity entity = TestSubmitEntity
-									.builder()
-									.idx(dto.getIdx())
-									.tlIdx(dto.getTlIdx())
-									.email(dto.getEmail())
-									.submSts(dto.getSubmSts())
-									.content(dto.getContent())
-									.regdate(dto.getRegdate())
-									.build();
+																.builder()
+																.idx(dto.getIdx())
+																.tlIdx(dto.getTlIdx())
+																.email(dto.getEmail())
+																.submSts(dto.getSubmSts())
+																.content(dto.getContent())
+																.regdate(dto.getRegdate())
+																.build();
 
 		return entity;
 	}

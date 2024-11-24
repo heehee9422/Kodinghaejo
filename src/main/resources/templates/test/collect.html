@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>게시판</title>
+	<title>문제 모아보기&nbsp;&#124;&nbsp;코딩해조</title>
 	<!-- Standard css -->
 	<link rel="icon" href="/img/logo/favicon.png">
 	<link rel="stylesheet" href="/css/style.css">
@@ -43,7 +43,6 @@
 						<input type="hidden" name="lng" value="">
 						<input type="hidden" name="diff" value="">
 					</div>
-					<!--  -->
 					<div class="inp-group mt30">
 						<input th:if="${ session.email == null }" type="hidden" name="submChk" value="">
 						<div th:if="${ session.email != null }" class="select-inp problem">
@@ -92,11 +91,11 @@
 				<div class="problem-tag-item"></div>
 					<!-- 버튼 클릭시 추가 되고 -> 해당 버튼 클릭시 태그 삭제 됨 -->
 					<!--button>안푼문제</button>
-          <button>풀고 있는 문제</button>
-          <button>JAVA</button>
-          <button>JAVASCRIPT</button>
-          <button>LV.0</button>
-          <button>LV.1</button>
+					<button>풀고 있는 문제</button>
+					<button>JAVA</button>
+					<button>JAVASCRIPT</button>
+					<button>LV.0</button>
+					<button>LV.1</button>
 				</div-->
 				<div class="filter-group">
 					<button class="filter" onclick="removeAllTags()">필터 초기화</button>
@@ -127,11 +126,11 @@
 					<tbody>
 						<th:block th:if="${ totalElement > 0 }">
 						<tr th:each="list : ${ list }">
-							<td th:text="${ list.submSts }"></td>
-							<td><a th:href="@{ '/test/challenge?idx=' + ${ list.idx } }" th:text="${ list.title }"></a></td>
-							<td th:text="@{ 'LV. ' + ${ list.diff } }"></td>
-							<td th:text="@{ ${ #numbers.formatInteger(list.correctCount, 1, 'COMMA') } + '명' }"></td>
-							<td th:text="@{ ${ #numbers.formatDecimal(list.correctRate, 1, 1) } + '%' }"></td>
+							<td align="center"><i th:if="${ list.submSts == 'N' }" class="xi-ellipsis-h"></i><i th:if="${ list.submSts == 'Y' }" class="xi-check"></i></td>
+							<td><a th:href="@{ '/test/challenge?test_idx=' + ${ list.idx } }" th:text="${ list.title }"></a></td>
+							<td align="center" th:text="@{ 'LV. ' + ${ list.diff } }"></td>
+							<td align="center" th:text="@{ ${ #numbers.formatInteger(list.correctCount, 1, 'COMMA') } + '명' }"></td>
+							<td align="center" th:text="@{ ${ #numbers.formatDecimal(list.correctRate, 1, 1) } + '%' }"></td>
 						</tr>
 						</th:block>
 						<tr th:if="${ totalElement == 0 }">

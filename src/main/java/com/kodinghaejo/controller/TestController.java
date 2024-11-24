@@ -36,8 +36,7 @@ public class TestController {
 
 	//코딩테스트 문제 모아보기
 	@GetMapping("/test/collect")
-	public void getCollect(Model model,
-			@SessionAttribute(name = "email", required = false) String email,
+	public void getCollect(Model model, @SessionAttribute(name = "email", required = false) String email,
 			@RequestParam(name = "page", defaultValue = "1") int pageNum,
 			@RequestParam(name = "keyword", defaultValue = "") String keyword,
 			@RequestParam(name = "subm", defaultValue = "") String submSts,
@@ -45,11 +44,11 @@ public class TestController {
 			@RequestParam(name = "diff", defaultValue = "") String diff) {
 		int postNum = 10;
 		int pageListCount = 5;
-		
+
 		PageUtil page = new PageUtil();
 		Page<TestDTO> list = service.getTestList(pageNum, postNum, email, keyword, submSts, lng, diff);
 		int totalCount = (int) list.getTotalElements();
-		
+
 		String params = "";
 		params += (keyword.equals("")) ? "" : ("&keyword=" + keyword);
 		params += (submSts.equals("")) ? "" : ("&subm=" + submSts);
@@ -57,7 +56,7 @@ public class TestController {
 		params += (diff.equals("")) ? "" : ("&diff=" + diff);
 
 		Map<String, Object> commonCode = baseService.loadUsedCommonCode();
-		
+
 		model.addAttribute("list", list);
 		model.addAttribute("totalElement", totalCount);
 		model.addAttribute("postNum", postNum);
@@ -72,7 +71,7 @@ public class TestController {
 
 	//코딩테스트 문제 상세 화면
 	@GetMapping("/test/challenge")
-	public void getChallenge(Model model, @RequestParam("idx") Long idx) throws Exception {
+	public void getChallenge(Model model, @RequestParam("test_idx") Long idx) throws Exception {
 		model.addAttribute("test", service.loadTest(idx));
 		model.addAttribute("java", service.lngAvlChk(idx, "LNG-0001"));
 		model.addAttribute("js", service.lngAvlChk(idx, "LNG-0002"));
@@ -82,11 +81,12 @@ public class TestController {
 	//코딩테스트 언어별 문제 가져오기
 	@ResponseBody
 	@PostMapping("/test/language")
-	public Map<String, Object> postLanguage(@RequestParam("test_idx") Long testIdx, @RequestParam("language") String language) throws Exception {
+	public Map<String, Object> postLanguage(@RequestParam("test_idx") Long testIdx,
+			@RequestParam("language") String language) throws Exception {
 		log.info("==================== test_idx: {} ====================", testIdx);
 		log.info("==================== language: {} ====================", language);
 
-		TestLngEntity result =  service.loadTestLng(testIdx, language);
+		TestLngEntity result = service.loadTestLng(testIdx, language);
 		log.info("==================== result.getIdx(): {} ====================", result.getIdx());
 		log.info("==================== result.getTestIdx(): {} ====================", result.getTestIdx().getIdx());
 		log.info("==================== result.getLng(): {} ====================", result.getLng());
@@ -131,7 +131,7 @@ public class TestController {
 		Files.write(path, code.getBytes()); //코드 파일로 저장
 		service.createVerifyFiles((type.equals("run") ? runSrc : type.equals("submit") ? submSrc : ""), correctSrc);
 
-		// 코드 실행 로직 호출
+		//코드 실행 로직 호출
 		String result = service.testCode(language, path.toString()); //실행 결과 반환
 
 		//제출결과 DB 저장

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="kr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>게시판</title>
+  <!-- Standard css -->
+  <link rel="icon" href="/img/logo/favicon.png">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+  <!-- pub-js link -->
+  <script src="/js/pub-ui-custom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<script>
+const modifyForm = async() => {
+	let idx = document.querySelector('#questionIdx').value;
+	let testIdx = document.querySelector('#testIdx').value;
+	let email = document.querySelector('#email');
+	let writer = document.querySelector('#writer');
+	let title = document.querySelector('#title');
+	let isUse = document.querySelector('#isUse');
+
+	
+	//Toast UI Editor의 content 내용 가져오기
+	let content = editor.getMarkdown(); // 마크다운 텍스트로 가져오기
+
+	//필수값 등록시 값 입력 여부 확인
+	if(title.value === ''){
+		Swal.fire({
+    		icon:"warning",
+    		text:"제목을 입력하세요"});
+		title.focus();
+		return false;
+	}
+	
+	if (content.trim() === '') {
+		Swal.fire({
+    		icon:"warning",
+    		text:"내용을 입력하세요"});
+		return false;
+	} 
+	
+	let formData = new FormData(document.getElementById('QuestionModifyForm'));
+	formData.set("content", content);
+	formData.set("idx",idx);
+	
+	//서버에 수정 요청
+	try {
+		const response = await fetch('/test/questionModify', {
+			method: 'POST',
+			body: formData
+		});
+		const data = await response.json();
+		
+		if (data.message === 'good') {
+			Swal.fire({
+	            title: "게시물이 수정되었습니다.",
+	            icon: "success",
+	            confirmButtonText: "확인" //확인 눌러야 로케이션 되는
+	        }).then((result) => {
+	            if (result.isConfirmed) {
+	                document.location.href = `/test/questionBoardView?questionIdx=${idx}`;
+	            }
+	        });
+		} else {
+			Swal.fire({
+				  icon: "error",
+				  text: "수정에 실패했습니다!",
+				});
+		}
+	} catch (error) {
+		Swal.fire({
+			  icon: "error",
+			  text: "시스템 장애로 수정에 실패했습니다!",
+			});
+		console.error("Error:", error);
+	}
+}
+	
+	
+	
+
+</script>
+
+<body>
+  <!-- header 영역 -->
+ <div id="header" th:replace="~{ /include/header} "></div>
+  <div class="container">
+    <div class="main-content">
+      <div class="content-board-notice-write">
+        <div class="content-board-notice-write-wrap">
+          <button onclick="history.back();">뒤로가기</button>
+          <a href=""><span style="float: right;">코딩 기초 트레이닝</span></a>
+           <h2 class="mt30"> [[ ${ testInfo.idx } ]]번 [[ ${ testInfo.title } ]]</h2>
+          <h2 class="mt30">문제 질문 수정하기</h2>
+          <div class="mt30"></div>
+          
+          <form id="QuestionModifyForm" name="QuestionModifyForm" method="post" enctype="multipart/form-data">
+          <div class="category-title">
+            <label for="title">제목<span class="asterisk"></span></label>
+            <input type="text" id="title" name="title" th:value="${questionview.title}" maxlength="100">
+         
+         	<input type="hidden" id="testIdx" name="testIdx" th:value="${testInfo.idx}">
+         	<input type="hidden" id="questionIdx" name="questionIdx" th:value="${questionview.idx}">
+         	<input type="hidden" id="email" name="email" th:value="${questionview.email}">
+            <input type="hidden" id="writer" name="writer" th:value="${questionview.writer}">
+            <input type="hidden" id="isUse" name="isUse" th:value="${questionview.isUse}">
+         
+          </div>
+           
+          <div class="category-content mt20" >
+            <label for="content">내용<span class="asterisk"></span></label>
+            <div id="content"></div>
+          </div>
+          </form>
+          
+          <div class="category-footer mt30">
+            <input type="button" value="수정하기" onclick="modifyForm()">
+            <button onclick="history.back();">뒤로가기</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+ <!-- footer영역 -->
+ <div id="footer" th:replace="~{ /include/footer }"></div>
+  <!-- toast API : 나중에 모듈로 작성해서 만들기-->
+  <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+  <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+  <script>
+  	
+ 	 const contentValue = `[[${questionview.content}]]`;
+  
+    const editor = new toastui.Editor({
+      el: document.querySelector('#content'), 
+      height: '400px',                        
+      initialEditType: 'markdown',            
+      initialValue: contentValue,    
+      initialEditType: 'wysiwyg',              
+    
+   	  toolbarItems: [
+  	    ['heading', 'bold', 'italic', 'strike'],
+  	    ['hr', 'quote'],
+  	    ['ul', 'ol', 'task'],
+  	    ['table', 'link'],
+  	    ['code', 'codeblock']
+  	 ]
+    
+    
+    });
+  </script>
+   
+</body>
+</html>

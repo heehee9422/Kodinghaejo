@@ -28,6 +28,7 @@ public class BoardDTO {
 	private LocalDateTime regdate;
 	private String isUse;
 
+	private String catName; //카테고리 이름
 	private Long replyCnt; //해당 게시물의 댓글 수
 	private Long goodCnt; //해당 게시물의 추천 수
 	private Long badCnt; //해당 게시물의 신고 수
@@ -50,17 +51,17 @@ public class BoardDTO {
 	//DTO --> Entity 이동
 	public BoardEntity dtoToEntity(BoardDTO dto) {
 		BoardEntity entity = BoardEntity
-								.builder()
-								.idx(dto.getIdx())
-								.cat(dto.getCat())
-								.email(dto.getEmail())
-								.writer(dto.getWriter())
-								.title(dto.getTitle())
-								.content(dto.getContent())
-								.hitCnt(dto.getHitCnt())
-								.regdate(dto.getRegdate())
-								.isUse(dto.getIsUse())
-								.build();
+													.builder()
+													.idx(dto.getIdx())
+													.cat(dto.getCat())
+													.email(dto.getEmail())
+													.writer(dto.getWriter())
+													.title(dto.getTitle())
+													.content(dto.getContent())
+													.hitCnt(dto.getHitCnt())
+													.regdate(dto.getRegdate())
+													.isUse(dto.getIsUse())
+													.build();
 
 		return entity;
 	}

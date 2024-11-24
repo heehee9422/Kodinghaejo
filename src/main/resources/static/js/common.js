@@ -1,4 +1,17 @@
-/* common-code-js */
+/* common-js */
+
+//==================== Toast UI 에디터 값 처리 ====================
+//탭 및 줄바꿈 처리 (에디터 -> DB 저장 시)
+const setEditorContent = (content) => {
+	return content.replaceAll('\t', '\\t').replaceAll('\n', '\\n');
+}
+
+//탭 및 줄바꿈 처리 (DB -> 에디터 및 뷰어 호출 시)
+const getEditorContent = (content) => {
+	return content.replaceAll('\\t', '\t').replaceAll('\\n', '\n');
+}
+
+//==================== 공통코드 관련 ====================
 
 //유형과 코드로 값 찾기
 const getCodeValue = (codeObj, type, code) => {
@@ -93,7 +106,9 @@ const setSelectOption = (codeObj, target, type, code) => {
 				opt.setAttribute('value', codeObj.cat[i].code);
 				opt.innerText = codeObj.cat[i].val;
 				if (codeObj.cat[i].code == code) opt.setAttribute('selected', '');
-				target.appendChild(opt);
+				
+				if (codeObj.cat[i].code != 'CAT-0001')
+					target.appendChild(opt);
 			}
 			break;
 	}

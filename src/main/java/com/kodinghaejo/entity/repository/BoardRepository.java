@@ -19,7 +19,7 @@ public interface BoardRepository extends JpaRepository<BoardEntity, Long> {
 
 	//사용가능(isUse -> Y) 상태인 게시물 전체
 	public List<BoardEntity> findByIsUseOrderByRegdateDesc(String isUse);
-	public Page<BoardEntity> findByCatNotAndIsUseOrderByRegdateDesc(String cat, String isUse, Pageable pageable);
+	public List<BoardEntity> findByCatNotAndIsUseOrderByIdxDesc(String cat, String isUse);
 
 	//게시물 조회수 증가 --> Native SQL
 	@Transactional
@@ -47,5 +47,9 @@ public interface BoardRepository extends JpaRepository<BoardEntity, Long> {
 	public Page<BoardEntity> findByEmailAndIsUse(MemberEntity email, String isUse, Pageable pageable);
 	//탈퇴 전 확인
 	public List<BoardEntity> findByEmailAndIsUse(MemberEntity email, String isUse);
+	
+	//등록일 기준으로 공지사항 출력
+	@Query("SELECT b FROM board b WHERE b.cat = 'CAT-0001' ORDER BY b.regdate DESC")
+	public List<BoardEntity> findByCatAndRegdate(Pageable pageable);
 
 }

@@ -43,16 +43,16 @@ public class TestQuestionDTO {
 	//DTO --> Entity 이동
 	public TestQuestionEntity dtoToEntity(TestQuestionDTO dto) {
 		TestQuestionEntity entity = TestQuestionEntity
-										.builder()
-										.idx(dto.getIdx())
-										.testIdx(dto.getTestIdx())
-										.email(dto.getEmail())
-										.writer(dto.getWriter())
-										.title(dto.getTitle())
-										.content(dto.getContent())
-										.regdate(dto.getRegdate())
-										.isUse(dto.getIsUse())
-										.build();
+																	.builder()
+																	.idx(dto.getIdx())
+																	.testIdx(dto.getTestIdx())
+																	.email(dto.getEmail())
+																	.writer(dto.getWriter())
+																	.title(dto.getTitle())
+																	.content(dto.getContent())
+																	.regdate(dto.getRegdate())
+																	.isUse(dto.getIsUse())
+																	.build();
 
 		return entity;
 	}

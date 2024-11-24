@@ -44,14 +44,14 @@ public class TestDTO {
 	//DTO --> Entity 이동
 	public TestEntity dtoToEntity(TestDTO dto) {
 		TestEntity entity = TestEntity
-								.builder()
-								.idx(dto.getIdx())
-								.title(dto.getTitle())
-								.diff(dto.getDiff())
-								.descr(dto.getDescr())
-								.regdate(dto.getRegdate())
-								.isUse(dto.getIsUse())
-								.build();
+													.builder()
+													.idx(dto.getIdx())
+													.title(dto.getTitle())
+													.diff(dto.getDiff())
+													.descr(dto.getDescr())
+													.regdate(dto.getRegdate())
+													.isUse(dto.getIsUse())
+													.build();
 
 		return entity;
 	}

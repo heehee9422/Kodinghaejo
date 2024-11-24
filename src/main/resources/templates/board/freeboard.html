@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="kr">
+<html lang="kr" xmlns:th="http://www.thymeleaf.org">
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -28,7 +28,7 @@
 
 						<!-- 게시물 반복 출력 -->
 						<div class="content-box-item" th:each="list : ${ list }">
-							<h4 th:class="${ list.cat }">카테고리</h4>
+							<h4 th:text="${ list.catName }">카테고리</h4>
 							<a th:href="@{ '/board/freeboardView?idx=' + ${ list.idx} }">
 								<h5 th:text="${ list.title }">게시물 제목</h5>
 								<p class="content-title" th:text="${ list.content }">게시물 내용</p>
@@ -58,13 +58,13 @@
 		</div>
 	</div>
 	<!-- footer영역 -->
-	<div id="footer" th:replace="/include/footer"></div>
+	<div id="footer" th:replace="~{ /include/footer }"></div>
 	
 	<!-- Custom Script -->
 	<script type="text/javascript">
 		//페이징 변수
-		var page = 1;
-		var totalPage = parseInt('[[ ${ totalPage } ]]');
+		let page = 1;
+		let totalPage = parseInt('[[ ${ totalPage } ]]');
 		
 		//게시물 페이징
 		const loadBoard = async () => {
@@ -100,7 +100,7 @@
 				elm.classList.add('content-box-item');
 				
 				let result = '';
-				result += '<h4>' + jsonInfo[i].cat + '</h4>\n' +
+				result += '<h4>' + jsonInfo[i].catName + '</h4>\n' +
 									'<a href="/board/freeboardView?idx=' + jsonInfo[i].idx + '">\n' +
 									'\t<h5>' + jsonInfo[i].title + '</h5>\n' +
 									'\t<p class="content-title">' + jsonInfo[i].content + '</p>\n' +

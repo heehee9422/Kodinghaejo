@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="kr">
+<html lang="kr" xmlns:th="http://www.thymeleaf.org">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,74 +10,12 @@
 	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
 	<!-- pub-js link -->
 	<script src="/js/pub-ui-custom.js"></script>
+	<!-- common-js link -->
+	<script src="/js/common.js"></script>
+	<script type="text/javascript" th:inline="javascript">
+		var commonCode = /*[[ ${ commonCode } ]]*/'공통코드';
+	</script>
 </head>
-<script>
-	const modifyForm = async() => {
-		let cat = document.querySelector('select[name=category-section]').value; // 선택된 카테고리 값 가져오기
-		let title = document.querySelector('#title');
-		let writer = document.querySelector('#writer');
-		let email = document.querySelector('#email');
-		let isUse = document.querySelector('#isUse');
-		const idx = document.getElementById('idx').value; 
-
-		//Toast UI Editor의 content 내용 가져오기
-		let content = editor.getMarkdown(); // 마크다운 텍스트로 가져오기
-		
-		//필수값 등록시 값 입력 여부 확인
-		if(title.value === ''){
-			Swal.fire({
-					icon:"warning",
-					text:"제목을 입력하세요"});
-			title.focus();
-			return false;
-		}
-		
-		if (content.trim() === '') {
-			Swal.fire({
-					icon:"warning",
-					text:"내용을 입력하세요"});
-			return false;
-		} 
-		
-		//FormData에 값 추가
-		let formData = new FormData(document.getElementById('ModifyForm'));
-		formData.append("cat", cat);
-		formData.set("content", content); // Editor 내용 추가
-		
-		//서버에 수정 요청
-		try {
-			const response = await fetch('/board/m/modify', {
-				method: 'POST',
-				body: formData
-			});
-			const data = await response.json();
-			
-			if (data.message === 'good') {
-				Swal.fire({
-								title: "게시물이 수정되었습니다.",
-								icon: "success",
-								confirmButtonText: "확인" //확인 눌러야 로케이션 되는
-						}).then((result) => {
-								if (result.isConfirmed) {
-										document.location.href = `/board/freeboardView?idx=${idx}`;
-								}
-						});
-			} else {
-				Swal.fire({
-						icon: "error",
-						text: "수정에 실패했습니다!",
-					});
-			}
-		} catch (error) {
-			Swal.fire({
-					icon: "error",
-					text: "시스템 장애로 수정에 실패했습니다!",
-				});
-			console.error("Error:", error);
-		}
-	}
-</script>
-
 <body>
 	<!-- header 영역 -->
 	<div id="header" th:replace="~{ /include/header }"></div>
@@ -85,17 +23,12 @@
 		<div class="main-content">
 			<div class="content-board-notice-write">
 				<div class="content-board-notice-write-wrap">
-				
-					<form class="ModifyForm" id="ModifyForm" name="ModifyForm" method="post" enctype="multipart/form-data">		 
+					<form class="modifyForm" id="modifyForm" name="modifyForm" method="post" enctype="multipart/form-data">		 
 						<h2>게시물 수정</h2>
 						<div class="mt30"></div>
 						<div class="category-menu">
 							<label for="category-section">카테고리<span class="asterisk"></span></label>
-							<select name="category-section">
-									<option value="자유게시판" th:selected="${view.cat == '자유게시판'}">자유게시판</option>
-									<option value="커리어고민" th:selected="${view.cat == '커리어고민'}">커리어고민</option>
-								<!-- <option value="카테고리메뉴" disabled>카테고리메뉴</option> -->
-							</select>
+							<select name="category-section" id="category-section"></select>
 						</div>
 						
 						<div class="category-title">
@@ -112,48 +45,116 @@
 							<label for="content">내용<span class="asterisk"></span></label>
 							<div id="content"></div>
 						</div>
-						
-						<div class="category-footer mt30">
-						
-						<input type="button" value="수정완료" onclick="modifyForm()">
-							<button onclick="history.back();">뒤로가기</button>
-						</div>
 					</form> 
 					
+					<div class="category-footer mt30">
+						<input type="button" value="수정완료" onclick="modify()">
+						<button th:onclick="|location.href='/board/freeboardView?idx=${ view.idx }'|">뒤로가기</button>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
- <!-- footer영역 -->
-	 <div id="footer" th:replace="/include/footer"></div>
+	<!-- footer영역 -->
+	<div id="footer" th:replace="/include/footer"></div>
 	<!-- toast API : 나중에 모듈로 작성해서 만들기-->
 	<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
 	<link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
-	<script>
+	<script type="text/javascript">
 		const contentValue = `[[${view.content}]]`;
-		
+
+		//Toast UI 에디터
 		const editor = new toastui.Editor({
-			el: document.querySelector('#content'), // 에디터를 적용할 요소 (컨테이너)
-			height: '400px',												// 에디터 영역의 높이 값 (OOOpx || auto)
-		
-			initialValue: contentValue,		// 내용의 초기 값으로, 반드시 마크다운 문자열 형태여야 함
-			initialEditType: 'wysiwyg',							// 마크다운 프리뷰 스타일 (tab || vertical)
-			
+			el: document.querySelector('#content'),										//에디터를 적용할 요소 (컨테이너)
+			height: '400px',																					//에디터 영역의 높이 값 (OOOpx || auto)
+			initialEditType: 'markdown',															//마크다운 프리뷰 스타일 (tab || vertical)
+			placeholder: '내용을 입력해주세요.',											// 플레이스홀더
+			initialValue: getEditorContent(`[[ ${ view.content} ]]`),	//내용의 초기 값으로, 반드시 마크다운 문자열 형태여야 함
+			previewStyle: 'vertical',																	//마크다운 프리뷰 스타일 (tab || vertical)
 			toolbarItems: [
-				// 기본 툴바 항목에서 'image' 항목을 제외하고 나열합니다.
-				['heading', 'bold', 'italic', 'strike'],
-				['hr', 'quote'],
-				['ul', 'ol', 'task'],
-				['table', 'link'],
-				// 'image' 항목을 제거했습니다.
-				['code', 'codeblock']
+				//기본 툴바 항목에서 'image' 항목을 제외하고 나열합니다.
+				[ 'heading', 'bold', 'italic', 'strike' ],
+				[ 'hr', 'quote' ],
+				[ 'ul', 'ol', 'task' ],
+				[ 'table', 'link' ],
+				//'image' 항목을 제거했습니다.
+				[ 'code', 'codeblock' ]
 			]
 		});
 	</script>
 	
-	<style>
-		.toastui-editor-mode-switch { display: none !important; }
-	</style>
+	<!-- Custom Script -->
+	<script type="text/javascript">
+		//카테고리 셀렉트박스 옵션추가
+		const categorySection = document.querySelector('#category-section');
+		setSelectOption(commonCode, categorySection, 'cat', '[[ ${ view.cat } ]]');
+		
+		//게시물 수정
+		const modify = async () => {
+			let cat = document.querySelector('select[name=category-section]').value; // 선택된 카테고리 값 가져오기
+			let title = document.querySelector('#title');
+			let writer = document.querySelector('#writer');
+			let email = document.querySelector('#email');
+			let isUse = document.querySelector('#isUse');
+			const idx = document.getElementById('idx').value; 
+	
+			//Toast UI Editor의 content 내용 가져오기
+			let content = editor.getMarkdown(); // 마크다운 텍스트로 가져오기
+			
+			//필수값 등록시 값 입력 여부 확인
+			if(title.value === ''){
+				Swal.fire({
+						icon:"warning",
+						text:"제목을 입력하세요"});
+				title.focus();
+				return false;
+			}
+			
+			if (content.trim() === '') {
+				Swal.fire({
+						icon:"warning",
+						text:"내용을 입력하세요"});
+				return false;
+			} 
+			
+			//FormData에 값 추가
+			let formData = new FormData(modifyForm);
+			formData.append("cat", cat);
+			formData.set("content", setEditorContent(content)); // Editor 내용 추가
+			
+			//서버에 수정 요청
+			try {
+				const response = await fetch('/board/m/modify', {
+					method: 'POST',
+					body: formData
+				});
+				const data = await response.json();
+				
+				if (data.message === 'good') {
+					Swal.fire({
+						title: "게시물이 수정되었습니다.",
+						icon: "success",
+						confirmButtonText: "확인" //확인 눌러야 로케이션 되는
+					}).then((result) => {
+						if (result.isConfirmed) {
+								document.location.href = `/board/freeboardView?idx=${idx}`;
+						}
+					});
+				} else {
+					Swal.fire({
+						icon: "error",
+						text: "수정에 실패했습니다!",
+					});
+				}
+			} catch (error) {
+				Swal.fire({
+					icon: "error",
+					text: "시스템 장애로 수정에 실패했습니다!",
+				});
+				console.error("Error:", error);
+			}
+		}
+	</script>
 	
 </body>
 </html>

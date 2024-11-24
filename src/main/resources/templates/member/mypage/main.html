@@ -10,8 +10,8 @@
 	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
 	<!-- pub-js link -->
 	<script src="/js/pub-ui-custom.js"></script>
-	<!-- common-code-js link -->
-	<script src="/js/common-code.js"></script>
+	<!-- common-js link -->
+	<script src="/js/common.js"></script>
 	<script type="text/javascript" th:inline="javascript">
 		var commonCode = /*[[ ${ commonCode } ]]*/'공통코드';
 	</script>
@@ -19,11 +19,11 @@
 
 <body>
 	<!-- header-->
-	<div id="header" th:replace="/include/header"></div>
+	<div id="header" th:replace="~{ /include/header }"></div>
 	<div class="container column bgcontain-mypage">
 		<div class="column-row myPage">
 			<div class="c-column-2">
-				<div id="mypage_manu" th:replace="/include/mypage"></div>
+				<div id="mypage_manu" th:replace="~{ /include/mypage }"></div>
 			</div>
 			<div class="c-column-8">
 				<div class="mypage_content">
@@ -68,9 +68,9 @@
 							<h6>자기소개</h6>
 							<p><th:block th:if="${ member.descr == null || member.descr == '' }">작성된 자기소개글이 없습니다.</th:block><th:block th:if="${ member.descr != null && member.descr != '' }">[[ ${ member.descr } ]]</th:block></p>
 							<div class="profile_btn_grup">
-								<input type="button" value="주요 기술 변경" onclick="edit('Tec')">
-								<input type="button" value="희망 직무 변경" onclick="edit('Job')">
-								<input type="button" value="내 정보 수정" onclick="edit('Info')">
+								<input type="button" value="주요 기술 변경" onclick="modify('Tec')">
+								<input type="button" value="희망 직무 변경" onclick="modify('Job')">
+								<input type="button" value="내 정보 수정" onclick="modify('Info')">
 							</div>
 						</div>
 					</div>
@@ -79,7 +79,7 @@
 					<div class="mypage_box">
 						<p>최근 업데이트 일 : <th:block th:if="${ member.regdate == member.pwdate }">없음</th:block><th:block th:if="${ member.regdate != member.pwdate }"><span th:text="${ #temporals.format(member.pwdate, 'yyyy-MM-dd a hh:mm:ss') }"></span></th:block></p>
 						<div class="profile_btn_grup">
-							<input type="button" value="비밀번호 변경" onclick="edit('Password')">
+							<input type="button" value="비밀번호 변경" onclick="modify('Password')">
 						</div>
 					</div>
 
@@ -97,7 +97,7 @@
 	</div>
 
 	<!-- footer -->
-	<div id="footer" th:replace="/include/footer"></div>
+	<div id="footer" th:replace="~{ /include/footer }"></div>
 	
 	<!-- Custom Script -->
 	<script type="text/javascript">
@@ -116,8 +116,8 @@
 		document.querySelector('#myJob').innerHTML = myJob;
 		
 		//자기소개 변경하기, 내 정보 수정, 비밀번호 수정
-		const edit = (type) => {
-			document.location = '/member/mypage/edit' + type;
+		const modify = (type) => {
+			document.location = '/member/mypage/modify' + type;
 		}
 	
 		//회원 탈퇴

@@ -32,11 +32,11 @@ public class MemberLogDTO {
 	//DTO --> Entity 이동
 	public MemberLogEntity dtoToEntity(MemberLogDTO dto) {
 		MemberLogEntity entity = MemberLogEntity
-									.builder()
-									.email(dto.getEmail())
-									.regdate(dto.getRegdate())
-									.status(dto.getStatus())
-									.build();
+															.builder()
+															.email(dto.getEmail())
+															.regdate(dto.getRegdate())
+															.status(dto.getStatus())
+															.build();
 
 		return entity;
 	}

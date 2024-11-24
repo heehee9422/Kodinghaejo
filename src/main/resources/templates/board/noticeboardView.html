@@ -1,57 +1,116 @@
 <!DOCTYPE html>
-<html lang="kr">
-
+<html lang="kr" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>게시판</title>
-  <!-- Standard css -->
-  <link rel="icon" href="/img/logo/favicon.png">
-  <link rel="stylesheet" href="/css/style.css">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
-  <!-- pub-js link -->
-  <script src="/js/pub-ui-custom.js"></script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>[[ ${ view.title } ]]&nbsp;&#124;&nbsp;코딩해조</title>
+	<!-- Standard css -->
+	<link rel="icon" href="/img/logo/favicon.png">
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+	<!-- pub-js link -->
+	<script src="/js/pub-ui-custom.js"></script>
+	<!-- common-js link -->
+	<script src="/js/common.js"></script>
 </head>
 <body>
-  <!-- header 영역 -->
-  <div id="header"></div>
-  <div class="container">
-    <div class="main-content">
-      <div class="content-board-notice">
-        <h2>코딩해조의 새로운 소식들!</h2>
-      </div>
-      <div class="board-notice-view">
-        <div class="notice-view-title">
-          <p class="notice-view-title-head">[업데이트 소식] 11월 1주차 - 앱 업데이트</p>
-          <div class="notice-view-title-list">
-            <div class="profile-title">
-              <img src="/img/test-profile/nonoping.png" alt="">
-              <div class="profile-title-content">
-                <p class="profile-name">맛스타 아무개씨</p>
-                <p class="profile-date">5시간전</p>
-              </div>
-            </div>
-            <div class="like">
-              <span><i class="xi-heart-o"></i>{0}</span>
-              <!-- like 시 클릭 될 클래스 명<span><i class="xi-heart"></i>{0}</span> -->
-            </div>
-          </div>
-        </div>
-        <div class="board-notice-view-content">
-          <p>글쓰기 영역입니다</p>
+	<!-- header 영역 -->
+	<div id="header" th:replace="~{ /include/header }"></div>
+	<div class="container">
+		<div class="main-content">
+			<div class="content-board-notice">
+				<h2>코딩해조의 새로운 소식들!</h2>
+			</div>
+			<div class="board-notice-view">
+				<div class="notice-view-title">
+					<p class="notice-view-title-head" th:text="${ view.title }"></p>
+					<div class="notice-view-title-list">
+						<div class="profile-title">
+							<img src="/img/test-profile/nonoping.png" alt="">
+							<div class="profile-title-content">
+								<p class="profile-name" th:text="${ view.writer }"></p>
+								<p class="profile-date" th:text="${ view.regdate }"></p>
+							</div>
+						</div>
+						<div class="like">
+							<i th:if="${ view.goodChk == 'Y' }" th:onclick="|recommend('${ view.idx }')|" th:id="@{ 'good-' + ${ view.idx } }" th:kind="${ view.goodChk }" class="xi-heart"><span th:id="@{ 'good-count-' + ${ view.idx } }" th:text="${ view.goodCnt }">{0}</span></i>
+							<i th:if="${ view.goodChk == 'N' }" th:onclick="|recommend('${ view.idx }')|" th:id="@{ 'good-' + ${ view.idx } }" th:kind="${ view.goodChk }" class="xi-heart-o"><span th:id="@{ 'good-count-' + ${ view.idx } }" th:text="${ view.goodCnt }">{0}</span></i>
+							<!-- like 시 클릭 될 클래스 명<span><i class="xi-heart"></i>{0}</span> -->
+						</div>
+					</div>
+				</div>
+				<div class="board-notice-view-content">
+					<div id="content"></div>
+					<hr class="dashed">
+					<div class="btn_group">
+						<a th:href="@{ '/board/noticeboard?page=' + ${ page } }" class="btn_menu">목록가기</a>
+						<a th:if="${ session.lvl == 'LVL-0001' }" th:href="@{ '/admin/noticeboardModify?id=' + ${ view.idx } }" class="_btn">수정하기</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- footer영역 -->
+	<div id="footer" th:replace="~{ /include/footer }"></div>
+	
+	<!-- toast API -->
+	<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+	<link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+	
+	<!-- Custom Script -->
+	<script type="text/javascript">
+		//토스트 UI - 뷰어
+		const viewer = new toastui.Editor.factory({
+			el: document.querySelector('#content'),
+			viewer: true,
+			initialValue: getEditorContent(`[[ ${ view.content } ]]`)
+		});
 
-          <hr class="dashed">
-          <div class="btn_group">
-            <a href="#" class="btn_menu" onclick="history.back();">목록가기</a>
-            <!-- 관리자만 수정 -->
-            <!-- <a href="" class="_btn">수정하기</a> -->
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- footer영역 -->
-  <div id="footer"></div>
+		//게시물 추천
+		const recommend = async () => {
+			if ('[[ ${ session.email } ]]' == '') return false;
+			
+			const goodBtn = document.querySelector('#good-[[ ${ view.idx } ]]');
+			const goodCnt = document.querySelector('#good-count-[[ ${ view.idx } ]]');
+			let goodCntNum = parseInt(goodCnt.innerText);
+			let kind = (goodBtn.getAttribute("kind") == 'Y') ? 'N' : 
+									(goodBtn.getAttribute("kind") == 'N') ? 'Y' : '';
+			
+			if (kind == '') return false;
+			
+			await fetch('/board/m/recommend', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+				body: new URLSearchParams({
+					'board_idx': '[[ ${ view.idx } ]]',
+					'email': '[[ ${ session.email } ]]',
+					'kind': kind
+				})
+			})
+			.then((response) => response.json())
+			.then((data) => {
+				if (data.message == 'good') {
+					if (kind == 'Y') {
+						goodBtn.classList.remove('xi-heart-o');
+						goodBtn.classList.add('xi-heart');
+						goodCntNum++;
+					} else if (kind == 'N') {
+						goodBtn.classList.remove('xi-heart');
+						goodBtn.classList.add('xi-heart-o');
+						goodCntNum--;
+					}
+				
+					goodBtn.setAttribute('kind', kind);
+					goodCnt.innerText = goodCntNum;
+				} else {
+					Swal.fire({
+						icon: 'error',
+						text: '시스템 장애로 인해 게시물 추천에 실패했습니다.',
+						confirmButtonText: '확인'
+					});
+				}
+			})
+		}
+	</script>
 </body>
-
 </html>

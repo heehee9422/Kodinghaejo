@@ -44,17 +44,17 @@ public class TestLngDTO {
 	//DTO --> Entity 이동
 	public TestLngEntity dtoToEntity(TestLngDTO dto) {
 		TestLngEntity entity = TestLngEntity
-									.builder()
-									.idx(dto.getIdx())
-									.testIdx(dto.getTestIdx())
-									.lng(dto.getLng())
-									.content(dto.getContent())
-									.correct(dto.getCorrect())
-									.runSrc(dto.getRunSrc())
-									.submSrc(dto.getSubmSrc())
-									.regdate(dto.getRegdate())
-									.isUse(dto.getIsUse())
-									.build();
+														.builder()
+														.idx(dto.getIdx())
+														.testIdx(dto.getTestIdx())
+														.lng(dto.getLng())
+														.content(dto.getContent())
+														.correct(dto.getCorrect())
+														.runSrc(dto.getRunSrc())
+														.submSrc(dto.getSubmSrc())
+														.regdate(dto.getRegdate())
+														.isUse(dto.getIsUse())
+														.build();
 
 		return entity;
 	}

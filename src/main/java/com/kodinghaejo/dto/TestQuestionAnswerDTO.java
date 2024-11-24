@@ -41,15 +41,15 @@ public class TestQuestionAnswerDTO {
 	//DTO --> Entity 이동
 	public TestQuestionAnswerEntity dtoToEntity(TestQuestionAnswerDTO dto) {
 		TestQuestionAnswerEntity entity = TestQuestionAnswerEntity
-											.builder()
-											.idx(dto.getIdx())
-											.tqIdx(dto.getTqIdx())
-											.email(dto.getEmail())
-											.writer(dto.getWriter())
-											.content(dto.getContent())
-											.regdate(dto.getRegdate())
-											.isUse(dto.getIsUse())
-											.build();
+																				.builder()
+																				.idx(dto.getIdx())
+																				.tqIdx(dto.getTqIdx())
+																				.email(dto.getEmail())
+																				.writer(dto.getWriter())
+																				.content(dto.getContent())
+																				.regdate(dto.getRegdate())
+																				.isUse(dto.getIsUse())
+																				.build();
 
 		return entity;
 	}

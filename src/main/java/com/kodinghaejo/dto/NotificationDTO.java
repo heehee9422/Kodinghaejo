@@ -56,23 +56,23 @@ public class NotificationDTO {
 	//DTO --> Entity 이동
 	public NotificationEntity dtoToEntity(NotificationDTO dto) {
 		NotificationEntity entity = NotificationEntity
-										.builder()
-										.idx(dto.getIdx())
-										.email(dto.getEmail())
-										.type(dto.getType())
-										.srcIdx(dto.getSrcIdx())
-										.srcTitle(dto.getSrcTitle())
-										.sender(dto.getSender())
-										.orgSender(dto.getOrgSender())
-										.storedSender(dto.getStoredSender())
-										.senderSize(dto.getSenderSize())
-										.orgSrc(dto.getOrgSrc())
-										.storedSrc(dto.getStoredSrc())
-										.srcSize(dto.getSrcSize())
-										.isChk(dto.getIsChk())
-										.regdate(dto.getRegdate())
-										.isUse(dto.getIsUse())
-										.build();
+																	.builder()
+																	.idx(dto.getIdx())
+																	.email(dto.getEmail())
+																	.type(dto.getType())
+																	.srcIdx(dto.getSrcIdx())
+																	.srcTitle(dto.getSrcTitle())
+																	.sender(dto.getSender())
+																	.orgSender(dto.getOrgSender())
+																	.storedSender(dto.getStoredSender())
+																	.senderSize(dto.getSenderSize())
+																	.orgSrc(dto.getOrgSrc())
+																	.storedSrc(dto.getStoredSrc())
+																	.srcSize(dto.getSrcSize())
+																	.isChk(dto.getIsChk())
+																	.regdate(dto.getRegdate())
+																	.isUse(dto.getIsUse())
+																	.build();
 
 		return entity;
 	}

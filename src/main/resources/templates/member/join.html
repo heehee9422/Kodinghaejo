@@ -14,11 +14,16 @@
 <!-- 게시판 복사용 게시판 -->
 <body>
 	<!-- header 영역 -->
-	<div id="header" th:replace="/include/header"></div>
-	<div class="container">
+	<div id="header" th:replace="~{ /include/header }"></div>
+	<div class="container login">
 		<div class="main-content">
-			<div class="content-join" style="text-align: center;">
-				<div class="mt100"></div>
+			<div class="intro-aset">
+				<h2>반가워요</h2>
+				<p>코딩해조에서 다양한 성장의 기회를 얻으세요</p>
+				<!-- /* 이미지 다른거 넣기 */ -->
+				<img src="/img/login_intro.png" alt="" >
+			</div>
+			<div class="content-login">
 				<h2>회원가입</h2>
 				<form id="joinForm" name="joinForm" method="post">
 					<div class="join-email-form">
@@ -50,7 +55,7 @@
 						<input type="text" id="tel" name="tel" maxlength="13" placeholder="010-1234-5678" oninput="checkTel()">
 						<p id="telMsg" class="bad"></p>
 					</div>
-					<input type="button" value="가입하기" onclick="join()">
+					<input type="button" class="login_btn" value="가입하기" onclick="join()">
 					<input type="hidden" name="kind" value="I">
 				</form>
 			</div>
@@ -58,7 +63,7 @@
 	</div>
 
 	<!-- footer영역 -->
-	<div id="footer" th:replace="/include/footer"></div>
+	<div id="footer" th:replace="~{ /include/footer }"></div>
 	
 	<!-- Custom CSS -->
 	<style type="text/css">

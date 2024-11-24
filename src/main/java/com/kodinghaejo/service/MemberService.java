@@ -15,17 +15,17 @@ public interface MemberService {
 	public void join(MemberDTO member);
 
 	//기본정보 수정
-	public void editMemberInfo(MemberDTO member);
+	public void modifyMemberInfo(MemberDTO member);
 
 	//주요 기술 변경(마이 페이지)
-	public void editTec(String email, String tec1, String tec2, String tec3);
+	public void modifyTec(String email, String tec1, String tec2, String tec3);
 
 	//희망 직무 변경(마이 페이지)
-	public void editJob(String email, String job1, String job2, String job3);
+	public void modifyJob(String email, String job1, String job2, String job3);
 
 	//비밀번호 변경
 	//비밀번호 찾기(임시비밀번호 발급)
-	public void editPassword(MemberDTO member);
+	public void modifyPassword(MemberDTO member);
 
 	//이메일 중복 확인
 	public int checkEmail(String email);
@@ -43,7 +43,7 @@ public interface MemberService {
 	public String findId(MemberDTO member);
 
 	//비밀번호 변경일 연기(30일)
-	public void editPasswordAfter30(String email);
+	public void modifyPasswordAfter30(String email);
 
 	//회원 첨부파일 목록
 	public List<FileEntity> getMemberFileList(String email);

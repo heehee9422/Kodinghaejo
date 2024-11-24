@@ -34,7 +34,7 @@ public class WebSecurityConfig {
 	WebSecurityCustomizer webSecurityCustoimzer() {
 		return (web) -> web.ignoring().requestMatchers("/img/**", "/css/**", "/js/**");
 	}
-
+	
 	//스프링 시큐리티 로그인 화면 사용 비활성화, CSRF/CORS 공격 방어용 보안 설정 비활성화
 	@Bean
 	SecurityFilterChain filter(HttpSecurity http) throws Exception {

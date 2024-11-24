@@ -45,18 +45,18 @@ public class FileDTO {
 	//DTO --> Entity 이동
 	public FileEntity dtoToEntity(FileDTO dto) {
 		FileEntity entity = FileEntity
-								.builder()
-								.idx(dto.getIdx())
-								.filePrnt(dto.getFilePrnt())
-								.prntIdx(dto.getPrntIdx())
-								.email(dto.getEmail())
-								.type(dto.getType())
-								.orgFile(dto.getOrgFile())
-								.storedFile(dto.getStoredFile())
-								.fileSize(dto.getFileSize())
-								.regdate(dto.getRegdate())
-								.isUse(dto.getIsUse())
-								.build();
+													.builder()
+													.idx(dto.getIdx())
+													.filePrnt(dto.getFilePrnt())
+													.prntIdx(dto.getPrntIdx())
+													.email(dto.getEmail())
+													.type(dto.getType())
+													.orgFile(dto.getOrgFile())
+													.storedFile(dto.getStoredFile())
+													.fileSize(dto.getFileSize())
+													.regdate(dto.getRegdate())
+													.isUse(dto.getIsUse())
+													.build();
 
 		return entity;
 	}

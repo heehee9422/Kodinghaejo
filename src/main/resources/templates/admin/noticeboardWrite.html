@@ -16,7 +16,6 @@
 
 const registerForm = async() => {
 	
-	let cat = document.querySelector('select[name=category-section]').value;
 		let title = document.querySelector('#title');
 		let writer = document.querySelector('#writer');
 		let email = document.querySelector('#email');
@@ -41,7 +40,7 @@ const registerForm = async() => {
 		
 		
 		let formData = new FormData(document.getElementById('WriteForm'));
-		formData.append("cat", cat); // 선택된 카테고리 값을 FormData에 추가
+		formData.append("cat", 'CAT-0001'); // 선택된 카테고리 값을 FormData에 추가
 		formData.append("content", content); // Toast UI Editor의 내용을 FormData에 추가
 		
 		await fetch('/admin/noticeWrite', {
@@ -79,12 +78,6 @@ const registerForm = async() => {
 				<form class="WriteForm" id="WriteForm" name="WriteForm" method="post" enctype="multipart/form-data">		 
 					<h2>공지사항 작성</h2>
 					<div class="mt30"></div>
-					<div class="category-menu">
-						<label for="category-section">카테고리<span class="asterisk"></span></label>
-						<select name="category-section">
-							<option value="공지사항" selected>공지사항</option>
-						</select>
-					</div>
 					<div class="category-title">
 						<label for="title">제목<span class="asterisk"></span></label>
 						<input type="text" id="title" name="title" placeholder="제목을 입력해 주세요" maxlength="100">

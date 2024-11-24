@@ -1,122 +1,306 @@
 <!DOCTYPE html>
-<html lang="kr">
+<html xmlns:th="http://www.thymeleaf.org" lang="kr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>게시판</title>
-  <!-- Standard css -->
-  <link rel="icon" href="/img/logo/favicon.png">
-  <link rel="stylesheet" href="/css/style.css">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
-  <!-- pub-js link -->
-  <script src="/js/pub-ui-custom.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>게시판</title>
+<!-- Standard css -->
+<link rel="icon" href="/img/logo/favicon.png">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet"
+	href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+<!-- pub-js link -->
+<script src="/js/pub-ui-custom.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
+<script>
+//게시물 삭제
+async function deactive(questionIdx) {
+	try {
+		const result = await Swal.fire({
+			title: "게시글을 삭제하시겠습니까?",
+			icon: "warning",
+			showCancelButton: true,
+			confirmButtonText: "네, 삭제합니다",
+			cancelButtonText: "취소"
+		});
+
+		if (result.isConfirmed) {
+			const response = await fetch(`/test/questiondeactive?questionIdx=${questionIdx}`, {
+				method: 'GET'
+			});
+
+			if (response.ok) {
+				Swal.fire("게시글이 삭제되었습니다.", "", "success").then(() => {
+					location.href = "/test/questionBoard?testIdx=all";
+				});
+			} else {
+				Swal.fire("게시글 삭제에 실패했습니다.", "", "error");
+			}
+		}
+	} catch (error) {
+		console.error("게시글 비활성화 중 오류 발생:", error);
+		Swal.fire("게시글 비활성화 중 오류가 발생했습니다.", "", "error");
+	}
+}
+
+//답글등록
+const answerWriteForm = async() => {
+		let tqIdx = document.querySelector('#tqIdx');
+		let writer = document.querySelector('#writer');
+		let email = document.querySelector('#email');
+		let isUse = document.querySelector('#isUse');
+		let content = editor.getMarkdown(); // 마크다운 텍스트로 가져오기
+
+		if (content.trim() === '') {
+			Swal.fire({
+				  icon: "warning",
+				  text: "내용을 입력해 주세요.",
+				});
+			return false;[]
+		}
+		
+		let formData = new FormData(document.getElementById('AnswerWriteForm'));
+		formData.append("content", content); 
+			
+		await fetch('/test/answerWrite', {
+			method: 'POST',
+			body: formData
+		})
+		.then((response)=> response.json())
+		.then((data)=> {
+			if(data.message === 'good'){
+				Swal.fire({
+					title: "댓글이 등록되었습니다.",
+					icon: "success",
+					confirmButtonText: "확인"
+				}).then((result) => {
+					if (result.isConfirmed) {
+						location.reload(true);
+					}
+				});
+			}
+		})
+		.catch((error)=> {
+			Swal.fire({
+				  icon: "error",
+				  text: "시스템 장애로 댓글등록에 실패했습니다!",
+				});
+			console.log("error" + error);
+		})
+		
+		
+	}
+
+//답글 비활성화
+async function answerDeactive(answerIdx,tqIdx) {	
+	
+	try {
+		const result = await 
+		Swal.fire({
+			title: "답변을 삭제하시겠습니까?",
+			icon: "warning",
+			showCancelButton: true,
+			confirmButtonText: "네, 삭제합니다",
+			cancelButtonText: "취소"
+		});
+
+		if (result.isConfirmed) {
+			const response = await fetch(`/test/answerDeactive?answerIdx=${answerIdx}&tqIdx=${tqIdx}`, {
+				method: 'GET'
+			});
+
+		if (response.ok) {
+			 Swal.fire("답변이 삭제되었습니다.", "", "success").then(() => {
+					location.reload(true);
+				});
+ 	 } else {
+			  Swal.fire("답변 삭제에 실패했습니다.", "", "error");
+			}
+		}
+	 } catch (error) {
+			console.error("답변 비활성화 중 오류 발생:", error);
+			Swal.fire("답변 비활성화 중 오류가 발생했습니다.", "", "error");
+		}
+	}
+
+
+//댓글 수정
+function answerModify(answerIdx) {
+	const contentP = document.getElementById('answer-text-' + answerIdx);
+	const editTextarea = document.getElementById('answer-edit-' + answerIdx);
+	const editButton = document.getElementById('edit-btn-'+ answerIdx);
+	const saveButton = document.getElementById('save-btn-'+ answerIdx);
+
+	// 기존 댓글 내용을 textarea에 복사하고 보여줌
+	editTextarea.value = contentP.innerText;
+	contentP.style.display = 'none';	// 기존 텍스트 숨기기
+	editTextarea.style.display = 'block';	// textarea 표시
+	editButton.style.display = 'none';	// "수정하기" 버튼 숨기기
+	saveButton.style.display = 'inline';	// "저장하기" 버튼 표시
+}
+
+
+
+
+
+</script>
+
+
+
 
 <body>
-  <!-- header 영역 -->
-  <div id="header"></div>
-  
-  <!-- 글 내용 -->
-  <div class="container" style="min-height: auto;">
-    <div class="content-question-board-view">
-      <div class="content-question-board-view-wrap">
-        <div class="question-head">
-          <a href="#" class="btn_menu" onclick="history.back();" >목록가기</a>
-          <h4 onclick="location.href='/page-test/challenge.html'">{Lv.1 없는 숫자 더하기퀴즈 문제 이름} 풀어보기</h4>
-        </div>
+	<!-- header 영역 -->
+	<div id="header" th:replace="~{ /include/header }"></div>
 
-        <div class="profile-title">
-          <img src="/img/test-profile/beoleoji.png" alt="">
-          <div class="profile-title-content">
-            <p class="profile-name">아무개씨</p>
-            <p class="profile-date">5시간전</p>
-          </div>
-        </div>
-        <div class="question-body">
-          <h4 class="title">js 9-20 실패</h4>
-          <p>
-            ["ayayeaya"], ["maye"] 같은 9번부터 20번사이에 있는 반례를 다 넣었을때는 성공하는데 채점만 누르면 9번부터 20번까지 다 실패라고 나옵니다. 이유가 뭘까요?
-          </p>
-        </div>
-        <div class="question-reple">
-          <!-- 댓글 -->
-          <div class="reple-itme">
-            <p class="profile-name">김아무개</p>
-            <p class="reple-content">저도 궁금했던것인데 알면알려줄래요?</p>
-            <!-- 본인일 경우에 -->
-            <div class="reple-itme-btn-group">
-              <a href="#">수정</a>
-              <a href="#">삭제</a>
-            </div>
-          </div>
-          <div class="inp-write">
-            <i class="xi-speech"></i>
-            <input type="text" placeholder="댓글을 작성해 주세요">
-            <input type="button" value="작성" class="btn_write">
-          </div>
-        </div>
-        <hr class="non-line">
-      </div>
-    </div>
-  </div>
+	<!-- 글 내용 -->
+	<div class="container" style="min-height: auto;">
+		<div class="content-question-board-view">
+			<div class="content-question-board-view-wrap">
+				<div class="question-head">
+					<a href="#" class="btn_menu" onclick="history.back();">목록가기</a>
+					<h4
+						th:onclick="'window.location.href=\'/test/challenge?testIdx=' + ${testInfo.idx} + '\''">[[${testInfo.idx}]]번
+						Lv[[${testInfo.diff}]] [[${testInfo.title}]] 풀어보기</h4>
+				</div>
 
-  <div class="container pb50" style="background: #F9FAFB; min-height: 300px;">
-    <!-- 댓글 내용 -->
-    <div class="content-question-review">
-      <!-- 댓글 -->
-      <div class="question-box">
-        <h5>문제 답변</h5>
-        <div class="question-list">
-          <div class="question-list-title">
-            <div class="profile-title">
-              <img src="/img/test-profile/nonoping.png" alt="">
-              <p class="profile-name">회원 아무개씨</p>
-              <p class="profile-date">5시간전</p>
-            </div>
-            <!-- 해당 고객일때 -->
-            <div class="user-tab">
-              <a href="#" class="btn_eidt">수정하기</a>
-              <!-- <a href="#" class="btn_eidt">확인</a> -->
-              <a href="#" class="btn_cancel">취소</a>
-            </div>
-          </div>
-          <div class="question-list-content">
-            <p>
-              저도 프론트엔드 개발자이지만 질문자님과 비슷한 상황입니다. 약 3년 정도 경력은 있지만 실질적인 실력은 그에 못 미칠 것이라 생각되는..
-              3년 간 회사에서 아예 아무것도 안하신 건 아니실테니 지금 실력을 기반으로 위 강의나 책이나 글들을 참고하면서 현재 실력보다 높은 실력이 요구되는 토이 프로젝트를 진행해보면 어떨까 싶습니다.
-              그렇게 프로젝트 하나 준비하신 다음에 그 프로젝트를 이력서 삼아 렛플같은 곳에서 다른 사람들과 협업 프로젝트 하시면서 최종적으로 포트폴리오 2개를 준비하고 이직을 계획하시는 게 현실적으로 보입니다. 비전공자이시니 기초적인 컴퓨터 과학, 자료구조 같은 것들도 시간나면 짬짬히 해야하구요.
-              결국에 실력을 쌓는 것은 저런 강의보단 개인적으로 하는 토이 프로젝트 훨씬 도움이 된다고 생각합니다.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-  </div>
+				<div class="profile-title">
+					<img src="/img/test-profile/beoleoji.png" alt="">
+					<div class="profile-title-content">
+						<p class="profile-name">[[${questionview.writer}]]</p>
+						<p class="profile-date">[[${questionview.regdate}]]</p>
+					</div>
+				</div>
+				<div class="question-body">
+					<h4 class="title">[[${questionview.title}]]</h4>
+					<p>[[${questionview.content}]]</p>
+					<div class="profile-item">
+						<th:block th:if="${session.email == questionview.email.email}">
+							<a
+								th:href="@{/test/questionModify(questionIdx=${questionview.idx})}">수정하기</a>
+							<a th:href="|javascript:deactive('${questionview.idx}')|">삭제하기</a>
+						</th:block>
+					</div>
 
-  <div class="container" style="min-height: 500px;">
-    <!-- 댓글 쓰기 내역 -->
-  <div class="content-question-write mt50">
-    <h5 class="mb20">문제 답변작성</h5>
-    <div id="content" style="width: 100%; height: 500px;"></div>
-    <button class="view-write-btn mt20" style="float: right;">댓글 등록</button>
-  </div>
-  </div>
-  
-  <!-- footer영역 -->
-  <div id="footer" style="margin-top: 0;"></div>
-  <!-- toast API -->
-  <!-- 현재 그냥 사용 하시고 나중에 모듈 한꺼번에 묶어 주세요 -->
-  <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
-  <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
-  <script>
-    const editor = new toastui.Editor({
-      el: document.querySelector('#content'), // 에디터를 적용할 요소 (컨테이너)
-      height: '400px',                        // 에디터 영역의 높이 값 (OOOpx || auto)
-      initialEditType: 'markdown',            // 최초로 보여줄 에디터 타입 (markdown || wysiwyg)
-      placeholder: '내용을 입력해 주세요.',    // 내용의 초기 값으로, 반드시 마크다운 문자열 형태여야 함
-      initialEditType: 'wysiwyg'              // 마크다운 프리뷰 스타일 (tab || vertical)
-    });
+				</div>
+
+				<div class="question-reple">
+					<!-- 댓글 -->
+					<div class="reple-itme">
+						<p class="profile-name">김아무개</p>
+						<p class="reple-content">저도 궁금했던것인데 알면알려줄래요?</p>
+						<!-- 본인일 경우에 -->
+						<div class="reple-itme-btn-group">
+							<a href="#">수정</a> <a href="#">삭제</a>
+						</div>
+					</div>
+					<div class="inp-write">
+						<i class="xi-speech"></i> <input type="text"
+							placeholder="댓글을 작성해 주세요"> <input type="button"
+							value="작성" class="btn_write">
+					</div>
+				</div>
+				<hr class="non-line">
+			</div>
+		</div>
+	</div>
+
+
+	<div class="container pb50"
+		style="background: #F9FAFB; min-height: 300px;">
+		<!-- 답글 내용 -->
+		<div class="content-question-review">
+			<!-- 답글 -->
+			<div class="question-box">
+				<h5>문제 답변 [[${answerCount}]]개</h5>
+
+
+
+				<div class="question-list" th:each="answer : ${answerList}"
+					th:if=" ${answer.isUse} == 'Y'">
+					<div class="question-list-title">
+						<div class="profile-title">
+							<img src="/img/test-profile/nonoping.png" alt="">
+							<p class="profile-name" th:text="${answer.writer}"></p>
+							<p class="profile-date" th:text="${answer.regdate}"></p>
+						</div>
+						<!-- 해당 고객일때 -->
+						<th:block th:if="${session.email == answer.email.email}">
+							<div class="user-tab">
+								<a th:href="|javascript:answerModify('${answer.idx}')|"
+									th:id="@{'edit-btn-' + ${answer.idx}}" class="btn_edit"
+									style="display: inline;">수정하기</a> <a
+									th:href="|javascript:answerSave('${answer.idx}')|"
+									th:id="@{'save-btn-' + ${answer.idx}}" class="btn_edit"
+									style="display: none;">저장하기</a> <a
+									th:href="|javascript:answerDeactive('${answer.idx}','${answer.tqIdx.idx}')|"
+									th:id="@{'deactive-btn-' + ${answer.idx}}" class="btn_cancel">
+									삭제하기</a>
+							</div>
+						</th:block>
+					</div>
+					<div class="question-list-content">
+						<!-- 댓글 내용 -->
+						<p th:id="@{'answer-text-' + ${answer.idx}}"
+							th:text="${answer.content}"></p>
+						<!-- 수정용 textarea (초기에는 숨김) -->
+						<textarea th:id="@{'answer-edit-' + ${answer.idx}}"
+							style="display: none; width: 100%; height: 80px;"></textarea>
+
+
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+	<div class="container" style="min-height: 500px;">
+		<!-- 답글 쓰기 내역 -->
+		<th:block th:if="${ session.email != null}">
+
+			<div class="content-question-write mt50">
+				<form class="AnswerWriteForm" id="AnswerWriteForm"
+					name="AnswerWriteForm" method="post">
+					<h5 class="mb20">문제 답변작성</h5>
+					<div id="content" style="width: 100%; height: 500px;"></div>
+					<input type="hidden" id="tqIdx" name="tqIdx"
+						th:value="${questionview.idx}"> <input type="hidden"
+						id="email" name="email" th:value="${session.email}"> <input
+						type="hidden" id="writer" name="writer"
+						th:value="${session.username}"> <input type="hidden"
+						id="isUse" name="isUse" value="Y">
+
+				</form>
+				<button class="view-write-btn mt20" onclick="answerWriteForm()"
+					style="float: right;">답글 등록</button>
+			</div>
+		</th:block>
+	</div>
+
+	<!-- footer영역 -->
+	<div id="footer" th:replace="~{ /include/footer }"></div>
+	<!-- toast API -->
+	<!-- 현재 그냥 사용 하시고 나중에 모듈 한꺼번에 묶어 주세요 -->
+	<script
+		src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+	<link rel="stylesheet"
+		href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+	<script>
+	const editor = new toastui.Editor({
+	  el: document.querySelector('#content'), // 에디터를 적용할 요소 (컨테이너)
+	  height: '400px',						// 에디터 영역의 높이 값 (OOOpx || auto)
+	  initialEditType: 'markdown',			// 최초로 보여줄 에디터 타입 (markdown || wysiwyg)
+	  placeholder: '내용을 입력해 주세요.',	// 내용의 초기 값으로, 반드시 마크다운 문자열 형태여야 함
+	  initialEditType: 'wysiwyg',			  // 마크다운 프리뷰 스타일 (tab || vertical)
+	  toolbarItems: [
+		['heading', 'bold', 'italic', 'strike'],
+		['hr', 'quote'],
+		['ul', 'ol', 'task'],
+		['table', 'link'],
+		['code', 'codeblock']
+		]
+	});
   </script>
 </body>
 </html>

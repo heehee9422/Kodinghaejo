@@ -337,7 +337,93 @@ details summary::marker{font-size:0;}
   place-items: center;  /* 세로 및 가로 중앙 정렬 */
   height: inherit;
 }
-/********** 모달 : modal **********/
+/********** 로그인 회원가입 : login join **********/
+.container.login {
+  background: linear-gradient(180deg, rgba(95,127,255,1) 0%, rgba(46,76,200,1) 100%);
+  /* background: #2D4689; */
+}
+.container.login .intro-aset {
+  color: #fff;
+}
+.container.login .intro-aset img {
+  width : 500px;
+  margin-top: 120px;
+}
+.container.login .main-content {
+  display: flex;
+  justify-content: space-around;
+  padding-top: 100px;
+}
+.container.login .content-login {
+  background: #fff;
+  padding: 50px;
+  border-radius: 10px;
+  box-shadow: rgb(73, 73, 134) 0px 7px 29px 0px;
+}
+.container.login .content-login h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.container.login .content-login label {
+  font-weight: 400;
+}
+.login-email-form 
+, .login-password-form
+{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.content-login .login_btn {
+  width: 100%;
+  font-weight: 400;
+  padding: 12px 0;
+  font-size: 16px;
+  margin-top: 12px;
+}
+.content-login .login_btn:hover {
+  background: #fafcff;
+}
+.content-login .info-login {
+  margin: 20px 0;
+}
+.content-login .info-login a:hover {
+  text-decoration: underline;
+}
+.content-login .info-login a::after {
+  content: ' | ';
+}
+.content-login .info-login a:last-child::after {
+  content: none;
+}
+.content-login .sns-login h4 {
+  border-top: 1px dashed #AAC5F9;
+  padding: 15px 0;
+  text-align: center;
+}
+.content-login .sns-login .sns-btn-group {
+  /* border: 1px solid tomato; */
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+.content-login .sns-login .sns-btn-group button {
+  font-size: 18px;
+  min-width: 55px;
+}
+.content-login .sns-login .sns-btn-group .sns-btn-google {
+  font-size: 25px;
+}
+.content-login .sns-login .sns-btn-group button:hover {
+  filter: brightness(0.99);
+}
+.content-login .sns-login .sns-btn-group .sns-btn-google:hover {
+  color: #4285F4;
+}
+.content-login .sns-login .sns-btn-group .sns-btn-naver:hover {
+  color: #03C75A;
+}
+/********** 모달 : modal  -- 현재 사용 x **********/
 /* 모달 부분 분석 */
 .modal-background {
   display: none;
@@ -461,7 +547,7 @@ details summary::marker{font-size:0;}
   color: #fff;
 }
 .toastui-editor-main-container {
-	background: #fff;
+  background: #fff;
 }
 /* ********* problemCollect : 코딩테스트 부분 **********/
 
@@ -1120,34 +1206,50 @@ header {
   display: flex;
 }
 .main-navbar .main-navbar-list .main-list-item .notice-pop {
-  color: tomato;
+  color: #333e46;
   font-size: 20px;
 }
 .notice-pop-menu {
-  /* display: none; */
+  display: none;
   /* transition: all 0.2s; */
   position: absolute;
   right: calc((100% - 1175px) / 2);
   z-index: 2;
-  top: 54px;
+  top: 65px;
   width: 400px;
   max-height: 450px;
-  border: 1px solid #000;
   background: #fff;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
   border-radius: 10px;
 }
 .notice-pop-menu h4 {
   padding: 20px 20px 0;
 }
+.notice-pop-menu p {
+  margin: 20px;
+  text-align: center;
+}
 .notice-pop-menu ol {
-  padding: 20px 0 20px 35px;
-  margin: 0;
+  padding: 0 0 15px 20px;
+  margin: 20px;
+  border-bottom: 1px dashed #999;
 }
 .notice-pop-menu ol li {
   padding: 5px 0;
 }
 .notice-pop-menu ol li span {
   margin-left: 10px;
+}
+.notice-pop-menu .pop-menu-btn {
+  display: block;
+  text-align: center;
+  padding: 0 20px 20px;
+  font-weight: 400;
+  color: #555;
+}
+.notice-pop-menu .pop-menu-btn:hover {
+  color: tomato;
+  transition: all .5s;
 }
 /* 기본 default 값이 숨김 처리 */
 .main-nav-list-menu {
@@ -2116,6 +2218,7 @@ div[class*="-form"] {
   margin-right: 20px;
   border: 1px solid #ced4da;
   border-radius: 10px;
+  background: #fff;
 }
 .system-menu h4 {
   padding-bottom: 15px;
@@ -2171,6 +2274,57 @@ div[class*="-form"] {
   display: flex;
   width: 100%;
   gap: 10px;
+}
+.info-chart-container {
+  display: flex;
+  flex-direction: column;
+}
+.info-box-container {
+  display: flex;
+  justify-content: center;
+  padding: 0px 0 50px;
+  gap: 20px;
+}
+.info-box-container .info-box {
+  /* border: 1px solid tomato; */
+  border-radius: 8px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  min-width: 175px;
+  min-height: 175px;
+  background: #fff;
+}
+.info-box-container .info-box:hover {
+  transform: translateY(-5px);
+  transition: transform 0.3s ease;
+}
+.info-box-container .info-box .sub-info-box {
+  padding: 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 35px;
+}
+.info-box-container .info-box .sub-info-box .daily-count {
+  display: block;
+  font-weight: 500;
+  font-size: 20px;
+}
+/* TOAST UI Chart CSS */
+.chart-container {
+  display: flex;
+  width: 100%;
+  gap: 20px;
+  flex-direction: column;
+}
+.bar-chart
+, .pie-chart 
+{
+  display: inline-block;
+  text-align: center;
+}
+.toastui-chart-wrapper canvas {
+  border-radius: 8px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 .btn_search
 , a.btn_view 
@@ -2309,4 +2463,9 @@ a.btn_delete:hover {
     -webkit-transform: rotateY(360deg);
             transform: rotateY(360deg);
   }
+}
+button.active {
+    background-color: #007bff;
+    color: #fff;
+    font-weight: bold;
 }

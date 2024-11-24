@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="kr">
+<html lang="kr" xmlns:th="http://www.thymeleaf.org">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,25 +24,28 @@
 				</h2>
 				<ul class="board-notice-list">
 					<!-- list-item -->
-					<li>
-						<a href="/page-board/noticeboardView.html">
+					<li th:each="list : ${ notices }">
+						<a th:href="@{ '/board/noticeboardView?idx=' + ${ list.idx } + '&page=' + ${ page } }">
 							<h3>
 								<!-- new 일때 : 2일 까지만? -->
 								<i class="xi-new"></i>
-								[업데이트 소식] 10월 1주차 - 홈페이지 등록
+								[[ ${ list.title } ]]
 							</h3>
 							<p>
-								<span><b>날짜</b>20241003</span>
-								<span><b>대상</b>자바를 공부하는 친구들</span>
+								<span><b>날짜</b>[[ ${ list.regdate } ]]</span>
+								<span><b>작성자</b>[[ ${ list.writer } ]]</span>
 							</p>
 						</a>
 					</li>
 				</ul>
+				<div>
+					[( ${ pageList } )]
+				</div>
 			</div>
 		</div>
 	</div>
 	<!-- footer영역 -->
-	<div id="footer" th:replace="/include/footer"></div>
+	<div id="footer" th:replace="~{ /include/footer }"></div>
 </body>
 
 </html>

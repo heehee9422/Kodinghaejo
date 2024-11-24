@@ -1,12 +1,15 @@
 package com.kodinghaejo.service;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 
 import com.kodinghaejo.dto.TestDTO;
+import com.kodinghaejo.entity.TestEntity;
 import com.kodinghaejo.entity.TestLngEntity;
 
 public interface TestService {
-	
+
 	//코딩테스트 문제 목록
 	public Page<TestDTO> getTestList(int pageNum, int postNum, String email, String keyword, String submSts, String lng, String diff);
 
@@ -27,5 +30,26 @@ public interface TestService {
 
 	//코드 제출 처리
 	public void submitTest(Long tlIdx, String email, String submSts, String code);
+
+	//가장 많이 풀어본 문제 가져오기
+	public Long getMostPopularTest();
+
+	//등록일 기준 신규 문제 가져오기(등록일 기준 최신 랜덤)
+	public Long getNewTest(int count);
+
+	//난이도가 0인 문제 가져오기(난이도0 기준 랜덤)
+	public Long getRandomTest();
+
+	//난이도별 문제 보기
+	public List<TestDTO> getDiffTest();
+
+	//문제 리스트 중 랜덤으로 하나 선택
+	public TestEntity getRandomList(List<TestEntity> problem);
+
+	//문제 리스트 보여주기
+	public List<TestDTO> testAllList();
+
+	//문제 검색
+	public List<TestDTO> searchtestListByTitle(String searchKeyword);
 
 }

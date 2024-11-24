@@ -84,15 +84,15 @@ public class MemberServiceImpl implements MemberService {
 
 	//기본정보 수정
 	@Override
-	public void editMemberInfo(MemberDTO member) {
+	public void modifyMemberInfo(MemberDTO member) {
 		MemberEntity memberEntity = memberRepository.findById(member.getEmail()).get();
-		memberEntity.editInfo(member);
+		memberEntity.modifyInfo(member);
 		memberRepository.save(memberEntity);
 	}
 
 	//주요 기술 변경(마이 페이지)
 	@Override
-	public void editTec(String email, String tec1, String tec2, String tec3) {
+	public void modifyTec(String email, String tec1, String tec2, String tec3) {
 		MemberEntity memberEntity = memberRepository.findById(email).get();
 		memberEntity.setTec1(tec1);
 		memberEntity.setTec2(tec2);
@@ -102,7 +102,7 @@ public class MemberServiceImpl implements MemberService {
 
 	//희망 직무 변경(마이 페이지)
 	@Override
-	public void editJob(String email, String job1, String job2, String job3) {
+	public void modifyJob(String email, String job1, String job2, String job3) {
 		MemberEntity memberEntity = memberRepository.findById(email).get();
 		memberEntity.setJob1(job1);
 		memberEntity.setJob2(job2);
@@ -113,7 +113,7 @@ public class MemberServiceImpl implements MemberService {
 	//비밀번호 변경
 	//비밀번호 찾기(임시비밀번호 발급)
 	@Override
-	public void editPassword(MemberDTO member) {
+	public void modifyPassword(MemberDTO member) {
 		MemberEntity memberEntity = memberRepository.findById(member.getEmail()).get();
 		memberEntity.setPassword(member.getPassword());
 		memberRepository.save(memberEntity);
@@ -181,7 +181,7 @@ public class MemberServiceImpl implements MemberService {
 
 	//비밀번호 변경 알림 연기(30일)
 	@Override
-	public void editPasswordAfter30(String email) {
+	public void modifyPasswordAfter30(String email) {
 		MemberEntity memberEntity = memberRepository.findById(email).get();
 		memberEntity.setNotifdate(LocalDateTime.now().plusDays(30));
 		memberRepository.save(memberEntity);

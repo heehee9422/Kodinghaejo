@@ -37,13 +37,13 @@ public class TestBookmarkDTO {
 	//DTO --> Entity 이동
 	public TestBookmarkEntity dtoToEntity(TestBookmarkDTO dto) {
 		TestBookmarkEntity entity = TestBookmarkEntity
-										.builder()
-										.email(dto.getEmail())
-										.testIdx(dto.getTestIdx())
-										.addChk(dto.getAddChk())
-										.addDate(dto.getAddDate())
-										.isUse(dto.getIsUse())
-										.build();
+																	.builder()
+																	.email(dto.getEmail())
+																	.testIdx(dto.getTestIdx())
+																	.addChk(dto.getAddChk())
+																	.addDate(dto.getAddDate())
+																	.isUse(dto.getIsUse())
+																	.build();
 
 		return entity;
 	}

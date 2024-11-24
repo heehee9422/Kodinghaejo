@@ -1,128 +1,321 @@
 <!DOCTYPE html>
-<html lang="kr">
+<html xmlns:th="http://www.thymeleaf.org" lang="kr">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>게시판</title>
-  <!-- Standard css -->
-  <link rel="icon" href="/img/logo/favicon.png">
-  <link rel="stylesheet" href="/css/style.css">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
-  <!-- pub-js link -->
-  <script src="/js/pub-ui-custom.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>게시판</title>
+<!-- Standard css -->
+<link rel="icon" href="/img/logo/favicon.png">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet"
+	href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+<!-- pub-js link -->
+<script src="/js/pub-ui-custom.js"></script>
 </head>
 <!-- 게시판 복사용 게시판 : 테스트 용도입니다-->
 
 <body>
-  <!-- header 영역 -->
-  <div id="header"></div>
-  <div class="banner-zone">
-    <!-- 첫번째 영역 : 나중에 보자-->
-    <div class="banner-content">
-      <div class="content-banner-title">
-        <h3>코딩테스트 질문🥳</h3>
-        <p>코딩테스트 연습 문제와 관련된 질문과 답변을 제공합니다. </p>
-        <p>문제를 풀며 알게된 경험을 모두와 함께 나눠보세요.</p>
-      </div>
-      <div class="content-banner-img" style="padding-top: 40px;">
-        <img src="/img/aset01.png" alt="" style="position: relative; top: 65px; width: 150px;">
-        <img src="/img/aset02.png" alt="" style="width: 150px;">
-      </div>
-    </div>
-  </div>
-  <div class="container">
-    <div class="main-content">
-      <div class="content-board-question">
-        <!-- <div class="question-head">
-          <h2 class="title">코딩테스트 질문</h2>
-          <p class="description">코딩테스트 연습 문제와 관련된 질문과 답변을 제공합니다. 문제를 풀며 알게된 경험을 모두와 함께 나눠보세요.</p>
-        </div> -->
-        <div class="question-title mt20">
-          <div class="question-box">
-            <div class="question-item">
-              <div class="item-tab">
-                <button>모든 질문</button>
-                <button>답변 필요</button>
-                <button>내 질문</button>
-              </div>
-            </div>
-            <div class="question-item">
-              <div class="search-inp" style="width: 400px;">
-                <input type="text" name="" id="" placeholder="질문 및 내용을 검색해보세요">
-              </div>
-            </div>
-          </div>
-          <div class="question-box">
-            <div class="question-item">
-              <div class="total"><b>{count}</b>개의 질문</div>
-            </div>
-          </div>
-        </div>
+	<!-- header 영역 -->
+	<div id="header" th:replace="~{ /include/header }"></div>
+	<div class="banner-zone">
+		<!-- 첫번째 영역 : 나중에 보자-->
+		<div class="banner-content">
+			<div class="content-banner-title">
+				<h3>코딩테스트 질문🥳</h3>
+				<p>코딩테스트 연습 문제와 관련된 질문과 답변을 제공합니다.</p>
+				<p>문제를 풀며 알게된 경험을 모두와 함께 나눠보세요.</p>
+			</div>
+			<div class="content-banner-img" style="padding-top: 40px;">
+				<img src="/img/aset01.png" alt="" style="position: relative; top: 65px; width: 150px;">
+				<img src="/img/aset02.png" alt="" style="width: 150px;">
+			</div>
+		</div>
+	</div>
+	<div class="container">
+		<div class="main-content">
+			<div class="content-board-question">
+				<!-- <div class="question-head">
+					<h2 class="title">코딩테스트 질문</h2>
+					<p class="description">코딩테스트 연습 문제와 관련된 질문과 답변을 제공합니다. 문제를 풀며 알게된 경험을 모두와 함께 나눠보세요.</p>
+				</div> -->
+				<div class="question-title mt20">
+					<div class="question-box">
+						<div class="question-item">
+							<div class="item-tab">
+								<button onclick="window.location.href='/test/questionBoard?test_idx=all'">모든 질문</button>
+								<button>답변 필요</button>
+								<button onclick="window.location.href='/test/questionBoard?test_idx=myquestion'">내 질문</button>
+							</div>
+						</div>
+						<div class="question-item">
+							<div class="search-inp" style="width: 400px;">
+								<input type="text" name="" id="" placeholder="질문 및 내용을 검색해보세요">
+							</div>
+						</div>
+					</div>
+				</div>
 
-        <div class="question-body">
-          <div class="question-table">
-            <div class="question-list">
-              <div class="answer">
-                <p class="number">0</p>
-                <p class="label">답변</p>
-              </div>
-              <div class="content">
-                <small class="challenge">
-                  <a href="/page-test/challenge.html" target="_blank">Lv.1 없는 숫자 더하기{퀴즈 문제 이름}</a>
-                  <span>4시간전{date}</span>
-                </small>
-                <a href="/page-test/questionBoardView.html"><h3 class="title">코드 이렇게 작성해봤는데 별론가요??{질문 제목}<i class="xi-new"></i></h3></a>
-                <p class="detail">좀 더 단축시켜보고 싶은데 쉽지않네요...{질문 내용 한줄}</p>
+				<!-- 모든 문제 보기 -->
+				<div class="question-all" id="question-all"
+					th:if="${viewType == 'all'}">
+					<div class="question-body">
+						<h1>질문 전체보기</h1>
+						<div class="question-box">
+							<div class="question-item">
+								<div class="total">
+									<b th:text="${totalQuestionCount}"></b>개의 질문
+								</div>
+							</div>
+						</div>
 
-                <div class="info">
-                  <div class="info-item">
-                    <div class="tag-group">
-                      <span class="card-small-default-tag">sql</span>
-                      <span class="card-small-default-tag">java</span>
-                      <span class="card-small-default-tag">javascript</span>
-                    </div>
-                    <div class="user-profile">
-                      <img src="/img/test-profile/dogi.jpg" alt="" >
-                      <sapn class="user-nickname"><a href="#">{user}</a></sapn>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+						<div th:if="${allQuestions != null and !allQuestions.isEmpty()}">
+							<div class="question-table" th:each="question : ${allQuestions}">
+								<div class="question-list">
+									<div class="answer">
+										<p class="number">0</p>
+										<p class="label">답변</p>
+									</div>
+									<div class="content">
+										<small class="challenge"> <a
+											th:href="@{/test/questionBoard(test_idx=${question.testIdx.idx})}"
+											th:text="${question.testIdx.idx} +'번 Lv.' + ${question.testIdx.diff} + ' ' + ${question.testIdx.title}"></a>
+											<span th:text="${question.regdate}"></span>
+										</small> <a
+											th:href="@{/test/questionBoardView(question_idx=${question.idx})}"><h3
+												class="title" th:text="${question.title}">
+												<i class="xi-new"></i>
+											</h3></a>
+										<p class="detail" th:text="${question.content}"></p>
 
-          <!-- 페이지 커스텀 할부분 -->
-          <div class="qusetion-pageing">
-            <div class="paginate mt20" onclick="pagenation()">
-              <a href="" class="left-prev-arrow">
-                <svg width="12" height="12" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M11 1L1 11.1579L10.6891 21" stroke="black" stroke-linecap="round"></path>
-                  <path d="M21 1L11 11.1579L20.6891 21" stroke="black" stroke-linecap="round"></path>
+										<div class="info">
+											<div class="info-item">
+												<div class="tag-group">
+													<span class="card-small-default-tag">sql</span> <span
+														class="card-small-default-tag">java</span> <span
+														class="card-small-default-tag">javascript</span>
+												</div>
+												<div class="user-profile">
+													<img src="/img/test-profile/dogi.jpg" alt="">
+													<sapn class="user-nickname"> <a href="#"
+														th:text="${question.writer}"></a></sapn>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- 페이지 커스텀 할부분 -->
+							<div class="qusetion-pageing">
+								<div class="paginate mt20" onclick="pagenation()">
+									<a href="" class="left-prev-arrow"> <svg width="12"
+											height="12" viewBox="0 0 22 22" fill="none"
+											xmlns="http://www.w3.org/2000/svg">
+                  <path d="M11 1L1 11.1579L10.6891 21" stroke="black"
+												stroke-linecap="round"></path>
+                  <path d="M21 1L11 11.1579L20.6891 21" stroke="black"
+												stroke-linecap="round"></path>
                 </svg>
-              </a>
-              <a href="" class="left-arrow"><i class="xi-angle-left-thin"></i></a>
-              <a href="#" class="on" role="button">1</a>
-              <a href="#">2</a>
-              <a href="#">3</a>
-              <a href="#">4</a>
-              <a href="#">100</a>
-              <a href="" class="right-arrow"><i class="xi-angle-right-thin"></i></a>
-              <a href="" class="right-next-arrow">
-                <svg width="12" height="12" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M11 1L21 11.1579L11.3109 21" stroke="black" stroke-linecap="round"></path>
-                  <path d="M1 1L11 11.1579L1.31088 21" stroke="black" stroke-linecap="round"></path>
+									</a> <a href="" class="left-arrow"><i
+										class="xi-angle-left-thin"></i></a> <a href="#" class="on"
+										role="button">1</a> <a href="#">2</a> <a href="#">3</a> <a
+										href="#">4</a> <a href="#">100</a> <a href=""
+										class="right-arrow"><i class="xi-angle-right-thin"></i></a> <a
+										href="" class="right-next-arrow"> <svg width="12"
+											height="12" viewBox="0 0 22 22" fill="none"
+											xmlns="http://www.w3.org/2000/svg">
+                  <path d="M11 1L21 11.1579L11.3109 21" stroke="black"
+												stroke-linecap="round"></path>
+                  <path d="M1 1L11 11.1579L1.31088 21" stroke="black"
+												stroke-linecap="round"></path>
                 </svg>
-              </a>
-            </div>
+									</a>
+								</div>
 
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- footer영역 -->
-  <div id="footer"></div>
+							</div>
+						</div>
+					</div>
+					<div th:if="${allQuestions == null or allQuestions.isEmpty()}">
+						<p>질문이 없습니다.</p>
+					</div>
+
+				</div>
+				<!-- 모든문제 부분 끝 -->
+
+
+				<!-- 개별문제 보기 -->
+				<div class="question-each" id="question-each"
+					th:if="${viewType == 'single'}">
+					<div class="question-body">
+						<h1>[[${testInfo.idx}]]번 [[${testInfo.diff}]]Lv
+							[[${testInfo.title}]]</h1>
+						<div class="question-box">
+							<div class="question-item">
+								<div class="total">
+									<b th:text="${specificQuestionCount}"></b>개의 질문
+								</div>
+							</div>
+						</div>
+						<div
+							th:if="${specificQuestions != null and !specificQuestions.isEmpty()}">
+							<div class="question-table"
+								th:each="question : ${specificQuestions}">
+								<div class="question-list">
+									<div class="answer">
+										<p class="number">0</p>
+										<p class="label">답변</p>
+									</div>
+									<div class="content">
+										<small class="challenge"> <a
+											th:href="@{/test/challenge(test_idx=${question.testIdx.idx})}"
+											th:text="${testInfo.idx} +'번 Lv.' + ${testInfo.diff} + ' ' + ${testInfo.title}"></a>
+											<span th:text="${question.regdate}"></span>
+										</small> <a
+											th:href="@{/test/questionBoardView(question_idx=${question.idx})}"><h3
+												class="title" th:text="${question.title}"></h3></a>
+										<p class="detail" th:text="${question.content}"></p>
+
+										<div class="info">
+											<div class="info-item">
+												<div class="tag-group">
+													<span class="card-small-default-tag">sql</span> <span
+														class="card-small-default-tag">java</span> <span
+														class="card-small-default-tag">javascript</span>
+												</div>
+												<div class="user-profile">
+													<img src="/img/test-profile/dogi.jpg" alt="">
+													<sapn class="user-nickname" th:text="${question.writer}">
+													<a href="#"></a></sapn>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- 페이지 커스텀 할부분 -->
+							<div class="qusetion-pageing">
+								<div class="paginate mt20" onclick="pagenation()">
+									<a href="" class="left-prev-arrow"> <svg width="12"
+											height="12" viewBox="0 0 22 22" fill="none"
+											xmlns="http://www.w3.org/2000/svg">
+                  <path d="M11 1L1 11.1579L10.6891 21" stroke="black"
+												stroke-linecap="round"></path>
+                  <path d="M21 1L11 11.1579L20.6891 21" stroke="black"
+												stroke-linecap="round"></path>
+                </svg>
+									</a> <a href="" class="left-arrow"><i
+										class="xi-angle-left-thin"></i></a> <a href="#" class="on"
+										role="button">1</a> <a href="#">2</a> <a href="#">3</a> <a
+										href="#">4</a> <a href="#">100</a> <a href=""
+										class="right-arrow"><i class="xi-angle-right-thin"></i></a> <a
+										href="" class="right-next-arrow"> <svg width="12"
+											height="12" viewBox="0 0 22 22" fill="none"
+											xmlns="http://www.w3.org/2000/svg">
+                  <path d="M11 1L21 11.1579L11.3109 21" stroke="black"
+												stroke-linecap="round"></path>
+                  <path d="M1 1L11 11.1579L1.31088 21" stroke="black"
+												stroke-linecap="round"></path>
+                </svg>
+									</a>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div
+						th:if="${specificQuestions == null or specificQuestions.isEmpty()}">
+						<p>이 문제에 대한 질문이 없습니다.</p>
+						<button onclick="history.back();">뒤로가기</button>
+
+					</div>
+				</div>
+				<!-- 개별문제 부분 끝 -->
+
+
+				<!-- 내가 쓴 질문 보기 -->
+				<div class="question-myquestion" id="question-myquestion"
+					th:if="${viewType == 'myquestion'}">
+					<div class="question-body">
+						<h1>내가 쓴 질문 보기</h1>
+						<div class="question-box">
+							<div class="question-item">
+								<div class="total">
+									<b th:text="${myQuestionCount}"></b>개의 질문
+								</div>
+							</div>
+						</div>
+						<div th:if="${myQuestions != null and !myQuestions.isEmpty()}">
+							<div class="question-table" th:each="question : ${myQuestions}">
+								<div class="question-list">
+									<div class="answer">
+										<p class="number">0</p>
+										<p class="label">답변</p>
+									</div>
+									<div class="content">
+										<small class="challenge"> <a
+											th:href="@{/test/questionBoard(test_idx=${question.testIdx.idx})}"
+											th:text="${question.testIdx.idx} + '번 Lv.' + ${question.testIdx.diff} + ' ' + ${question.testIdx.title}">
+										</a> <span th:text="${question.regdate}"></span>
+										</small> <a
+											th:href="@{/test/questionBoardView(question_idx=${question.idx})}"><h3
+												class="title" th:text="${question.title}"></h3></a>
+										<p class="detail" th:text="${question.content}"></p>
+
+										<div class="info">
+											<div class="info-item">
+												<div class="tag-group">
+													<span class="card-small-default-tag">sql</span> <span
+														class="card-small-default-tag">java</span> <span
+														class="card-small-default-tag">javascript</span>
+												</div>
+												<div class="user-profile">
+													<img src="/img/test-profile/dogi.jpg" alt="">
+													<sapn class="user-nickname" th:text="${question.writer}">
+													<a href="#"></a></sapn>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- 페이지 커스텀 할부분 -->
+							<div class="qusetion-pageing">
+								<div class="paginate mt20" onclick="pagenation()">
+									<a href="" class="left-prev-arrow"> <svg width="12"
+											height="12" viewBox="0 0 22 22" fill="none"
+											xmlns="http://www.w3.org/2000/svg">
+                  <path d="M11 1L1 11.1579L10.6891 21" stroke="black"
+												stroke-linecap="round"></path>
+                  <path d="M21 1L11 11.1579L20.6891 21" stroke="black"
+												stroke-linecap="round"></path>
+                </svg>
+									</a> <a href="" class="left-arrow"><i
+										class="xi-angle-left-thin"></i></a> <a href="#" class="on"
+										role="button">1</a> <a href="#">2</a> <a href="#">3</a> <a
+										href="#">4</a> <a href="#">100</a> <a href=""
+										class="right-arrow"><i class="xi-angle-right-thin"></i></a> <a
+										href="" class="right-next-arrow"> <svg width="12"
+											height="12" viewBox="0 0 22 22" fill="none"
+											xmlns="http://www.w3.org/2000/svg">
+                  <path d="M11 1L21 11.1579L11.3109 21" stroke="black"
+												stroke-linecap="round"></path>
+                  <path d="M1 1L11 11.1579L1.31088 21" stroke="black"
+												stroke-linecap="round"></path>
+                </svg>
+									</a>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div th:if="${myQuestions == null or myQuestions.isEmpty()}">
+						<p>내가 쓴 질문이 없습니다.</p>
+						<button onclick="history.back();">뒤로가기</button>
+					</div>
+				</div>
+				<!-- 내가 쓴 질문부분 끝 -->
+			</div>
+		</div>
+	</div>
+	<!-- footer영역 -->
+	<div id="footer" th:replace="~{ /include/footer }"></div>
 </body>
-
 </html>

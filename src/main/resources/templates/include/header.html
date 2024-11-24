@@ -24,7 +24,8 @@
 					<span class="login_profile">
 						<img th:if="${ session.storedImg != null }" th:src="@{ '/member/img/' + ${ session.email } }" alt="" style="width: 30px; height: 30px;">
 						<img th:if="${ session.storedImg == null }" src="/img/test-profile/coolping.png" alt="" style="width: 30px; height: 30px;">
-						<b>&#91;[[ ${ session.nickname } ]]&#93;</b>님이 로그인 하셨습니다
+						<b>[[ ${ session.nickname } ]]</b>님이 로그인 하셨습니다
+						<li><a href="javascript:void(0);" class="notice-pop on" id="noticeBellLink"><i class="xi-bell-o"></i></a></li>
 					</span>
 				</li>
 				<li><a href="/member/mypage/main" class="btn_sign">My Page</a></li>
@@ -40,7 +41,7 @@
 				<ul>
 					<li><b>코딩테스트</b></li>
 					<li><a href="/test/collect">문제 모아보기</a></li>
-					<li><a href="/">질문 모아보기</a></li>
+					<li><a href="/test/questionBoard?test_idx=all">질문 모아보기</a></li>
 				</ul>
 			</div>
 			<div class="menu-item">
@@ -65,15 +66,13 @@
 		</div>
 	</div>
 	
-	<!-- notice-pop menu 
+	<!-- notice-pop menu (js 처리) --> 
 	<div class="notice-pop-menu">
 		<h4>알림</h4>
 		<ol>
-			<li><a href="#">공지 제목 부분</a><span>{data}</span></li>
 		</ol>
-		<a href="" class="pop-menu-btn">공지 더보기</a>
+		<a href="/board/noticeboard" class="pop-menu-btn">공지 더보기</a>
 	</div>
-	-->
 
 	<!-- SweetAlert2 link -->
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -83,16 +82,16 @@
 		//로그아웃 전처리
 		const beforeLogout = () => {
 			Swal.fire({
-						icon: 'warning',
-						text: '로그아웃 하시겠습니까?',
-						showCancelButton: true,
-						confirmButtonText: '네, 로그아웃 합니다.',
-						cancelButtonText: '취소'
-					})
-					.then((result) => {
-						if (result.isConfirmed)
-							document.location = '/member/beforeLogout';
-					});
+				icon: 'warning',
+				text: '로그아웃 하시겠습니까?',
+				showCancelButton: true,
+				confirmButtonText: '네, 로그아웃 합니다.',
+				cancelButtonText: '취소'
+			})
+			.then((result) => {
+				if (result.isConfirmed)
+					document.location = '/member/beforeLogout';
+			});
 		}
 
 		//상단 메뉴
@@ -108,6 +107,32 @@
 				}
 			});
 		}
+		
+		//공지 알림
+		document.getElementById("noticeBellLink").addEventListener("click", function() {
+			fetch('/noticeBell')
+				.then(response => response.json())
+				.then(notices => {
+					const noticeMenu = document.querySelector(".notice-pop-menu");
+					const noticeList = noticeMenu.querySelector("ol");
+					noticeList.innerHTML = '';
+					if (notices.length > 0) {
+						notices.forEach(notice => {
+							const li = document.createElement("li");
+							const a = document.createElement("a");
+							a.href = '/board/noticeboardview?idx=' + notice.idx;
+							a.textContent = notice.title;
+							li.appendChild(a);
+							noticeList.appendChild(li);
+						});
+					} else {
+						const p = document.createElement("p");
+						p.textContent = '공지 사항이 없습니다';
+						noticeList.appendChild(p);
+					}
+				})
+				.catch(error => console.error('Error loading notices:', error));
+		});
 	</script>
 	
 </header>

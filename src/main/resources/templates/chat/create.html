@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/css/aa.css">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+</head>
+<body>
+    <form>
+        <input type="radio" name="type" value="PUB" id="PUB" onclick="togglePassword(false)"><label for="PUB">공개</label>
+        <input type="radio" name="type" value="PVT" id="PVT" onclick="togglePassword(true)"><label for="PVT">비공개</label><br>
+        채팅방 비밀번호<br>
+        <input type="text" name="password" id="password" placeholder="비밀번호" disabled><br>
+        채팅방 제목<br>
+        <input type="text" name="title"  placeholder="채팅방 제목"><br>
+        채팅방 소개<br>
+        <input type="text" name="descr"  placeholder="채팅방 소개"><br>
+        채팅방 정원<br>
+        <input type="text" name="limit" placeholder="정원"><br><br>
+    </form>
+    <input type="button" id="btn_room" class="btn_home" value="대화방 만들기" style="width:140px" onclick="createRoom()"><br>
+</body>
+<script>
+	// raido 버튼 공개를 누르면 비밀번호칸 비활성화 비공개로 누르면 비밀번호칸 활성화
+	function togglePassword(enable) {
+	    document.getElementById('password').disabled = !enable;
+	    //radio 버튼을 비공개 공개로 바꿀시 비밀번호 칸 초기화
+	    var passwordField = document.getElementById('password')
+	    passwordField.disabled = !enable;
+	    if (!enable) {
+			passwordField.value = '';
+		}
+	}
+
+	var websocket = new WebSocket('ws://127.0.0.1:8081/ws/chat')
+	var roomId = '';
+	
+	/*
+		0: 대화방 미생성
+		1: 대화방 생성
+		2. 대화방 종료 대기
+		3. 대화방 종료
+	*/
+	var roomStatus = '0';
+
+	//대화방 만들기
+	const createRoom = async () => {		
+		let title = document.querySelector('input[name="title"]');
+		let password = document.querySelector('input[name="password"]');
+		let type = document.querySelector('input[name="type"]:checked');
+		let descr = document.querySelector('input[name="descr"]');
+		let limit = document.querySelector('input[name="limit"]');
+	
+	    if (title.value == '') {
+	        alert('만들 대화방 이름을 입력하세요.');
+	        return;
+	    }
+	    
+	    if (type.value == 'PVT' && password.value == '') {
+		alert('비밀번호를 입력 해 주세요.');
+		return;
+		}
+		
+		// limit의 값이 숫자인지 확인
+		if (isNaN(limit.value)) {
+			alert("정원은 숫자로 작성해주세요");
+			return;
+		}
+		
+		let formData = new FormData();
+		formData.append("title", title.value);
+		formData.append("password", password.value);
+		formData.append("type", type.value);
+		formData.append("descr", descr.value);
+		formData.append("limit", limit.value);
+		
+		await fetch('/chat/create', {
+			method: 'POST',
+			body: formData
+		}).then((response)=> response.json())
+			.then((data)=> {
+				if(data.message === 'good'){
+					document.location = '/chat/create';
+				}
+		}).catch((error)=> {
+			alert("시스템 장애로 대화방 등록이 실패했습니다.");
+			console.log(error);
+		})
+		window.close();
+	}
+</script>
+</html>

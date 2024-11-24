@@ -10,8 +10,8 @@
 	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css" />
 	<!-- pub-js link -->
 	<script src="/js/pub-ui-custom.js"></script>
-	<!-- common-code-js link -->
-	<script src="/js/common-code.js"></script>
+	<!-- common-js link -->
+	<script src="/js/common.js"></script>
 	<script type="text/javascript" th:inline="javascript">
 		var commonCode = /*[[ ${ commonCode } ]]*/'공통코드';
 	</script>
@@ -19,18 +19,18 @@
 <!-- 게시판 복사용 게시판 -->
 <body>
 	<!-- header 영역 -->
-	<div id="header" th:replace="/include/header"></div>
+	<div id="header" th:replace="~{ /include/header }"></div>
 	<div class="container column bgcontain-mypage">
 		<div class="column-row myPage">
 			<div class="c-column-2">
-				<div id="mypage_manu" th:replace="/include/mypage"></div>
+				<div id="mypage_manu" th:replace="~{ /include/mypage }"></div>
 			</div>
 			<div class="c-column-8">
 				<div class="mypage_content">
 
 					<h5>주요 기술 변경</h5>
 					<div class="mypage_box">
-						<form id="editForm" name="editForm" method="post">
+						<form id="modifyForm" name="modifyForm" method="post">
 							<h5>자신 있는 기술을 최대 3개 선택하세요.</h5>
 							<div id="selectedArea">
 								<p th:if="${ member.tec1 != null && member.tec1 != '' }" th:id="${ member.tec1 }" onclick="removeTec(this.id)" style="display:inline-block; color: #fff; background-color: #44576c; margin: 5px; padding: 0 5px; cursor: pointer; "></p>
@@ -62,7 +62,7 @@
 	</div>
 
 	<!-- footer영역 -->
-	<div id="footer" th:replace="/include/footer"></div>
+	<div id="footer" th:replace="~{ /include/footer }"></div>
 
 	<!-- Custom Script -->
 	<script type="text/javascript">
@@ -186,7 +186,7 @@
 		const saveTec = () => {
 			let hiddens = document.getElementsByName('tec');
 			
-			fetch('/member/mypage/editTec', {
+			fetch('/member/mypage/modifyTec', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 				body: new URLSearchParams({

@@ -33,13 +33,13 @@ public class CommonCodeDTO {
 	//DTO --> Entity 이동
 	public CommonCodeEntity dtoToEntity(CommonCodeDTO dto) {
 		CommonCodeEntity entity = CommonCodeEntity
-									.builder()
-									.code(dto.getCode())
-									.type(dto.getType())
-									.val(dto.getVal())
-									.note(dto.getNote())
-									.isUse(dto.getIsUse())
-									.build();
+																.builder()
+																.code(dto.getCode())
+																.type(dto.getType())
+																.val(dto.getVal())
+																.note(dto.getNote())
+																.isUse(dto.getIsUse())
+																.build();
 
 		return entity;
 	}

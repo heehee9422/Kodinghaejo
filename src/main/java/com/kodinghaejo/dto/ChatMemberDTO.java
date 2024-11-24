@@ -38,13 +38,13 @@ public class ChatMemberDTO {
 	//DTO --> Entity 이동
 	public ChatMemberEntity dtoToEntity(ChatMemberDTO dto) {
 		ChatMemberEntity entity = ChatMemberEntity
-									.builder()
-									.chatIdx(dto.getChatIdx())
-									.email(dto.getEmail())
-									.nickname(dto.getNickname())
-									.manager(dto.getManager())
-									.regdate(dto.getRegdate())
-									.build();
+																.builder()
+																.chatIdx(dto.getChatIdx())
+																.email(dto.getEmail())
+																.nickname(dto.getNickname())
+																.manager(dto.getManager())
+																.regdate(dto.getRegdate())
+																.build();
 
 		return entity;
 	}

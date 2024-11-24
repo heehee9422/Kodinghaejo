@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>채팅방</title>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+<style>
+.header {
+    width:70%; 
+    height:50px; 
+    margin:auto; 
+    text-align:center; 
+    font-weight: bold; 
+    font-size: 300%;
+}
+
+.msg {
+    width: 100%;
+    height: 30px; 
+    border: solid 1px gray;
+}
+
+.open, .close {
+	display:inline-block;
+	width: auto;
+	height: 30px;
+	padding: 5px 5px 5px 5px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	background-color: #32F1FF;
+	border: solid 1px #FFBE0A;
+	border-radius: 20px;
+	text-align: left;
+}
+
+.hostChatting {
+	display:inline-block;
+	width: auto;
+	height: 30px;
+	padding: 5px 5px 5px 5px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	background-color: yellow;
+	border: solid 1px #FFBE0A;
+	border-radius: 20px;
+}
+
+.guestChatting {
+	display:inline-block;
+	width: auto;
+	height: 30px;
+	padding: 5px 5px 5px 5px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	background-color: white;
+	border: solid 1px #FFBE0A;
+	border-radius: 20px;
+}
+
+.selectDesign{
+    width: 75%;
+    border: 1px solid #C4C4C4;
+    box-sizing: border-box;
+    border-radius: 10px;
+    padding: 12px 13px;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 16px;
+}
+
+.selectDesign:focus{
+    border: 1px solid #9B51E0;
+    box-sizing: border-box;
+    border-radius: 10px;
+    outline: 3px solid #F8E4FF;
+    border-radius: 10px;
+}
+
+
+.msgZone {
+	position: relative;
+    width:50%; 
+    height: 400px;
+    margin:auto;
+    border: solid 2px gray; 
+    overflow: auto;
+    background-color: #dcdcdc;
+}
+
+.btn_sendMessage {
+    width: 200px;
+    height: 30px;
+    margin-top: 10px;
+    background-color: red;
+    border: solid 1px red;
+    color: white;
+    font-weight: bold;
+    cursor: pointer; 
+}
+
+.btn_home {
+    width: 200px;
+    height: 30px;
+    margin-top: 10px;
+    background-color: #156;
+    border: solid 1px #156;
+    color: white;
+    font-weight: bold;
+    cursor: pointer; 
+}
+
+</style>
+
+</head>
+<body>
+
+<div class="main">
+    <div class="header">
+        <label>채팅방</label>
+    </div>
+    <br><br>
+    <div style="width:50%; margin:auto;">
+        <input type="text" class="input_field" th:value="${'대화 참여자 : ' + session.username}" disabled><br>
+        <input type="hidden" id="username" th:value="${session.username}">
+        <input type="hidden" id="userid" th:value="${session.email}">
+        <input type="text" id="room" class="input_field" placeholder="만들 대화방 이름을 입력하세요." style="width:70%">
+        <input type="button" id="btn_room" class="btn_home" value="대화방 만들기" style="width:140px" onclick="createRoom()"><br>
+        <select id="roomList" class="selectDesign">
+        	<option value="00" disabled selected>------ 아래의 대화방을 선택하세요 ------</option>
+        	<option th:each="list:${list}" th:value="${list.idx}">[[${list.title}]]</option>
+        </select>
+        <input type="button" id="btn_room" class="btn_home" value="대화방 입장" style="width:140px" onclick="findByRoomId()"><br>
+        <input type="text" id="message" class="input_field" placeholder="메세지를 입력하세요"><br>
+        <input type="button" id="btn_sendMessage" class="btn_sendMessage" value="메세지 전송">
+        <input type="button" value="대화방 나가기" class="btn_home" onclick="exitRoom()">
+        <input type="button" value="홈으로" class="btn_home" onclick="history.back()">
+    </div>
+    <br><br>
+    <div class="msgZone"></div>
+</div>
+
+<script>
+	
+	var websocket = new WebSocket('ws://127.0.0.1:8081/ws/chat')
+	var roomId = '';
+	
+	/*
+		0: 대화방 미생성
+		1: 대화방 생성
+		2. 대화방 종료 대기
+		3. 대화방 종료
+	*/
+	var roomStatus = '0';
+	
+	let username = document.querySelector('#username');
+	let userid = document.querySelector('#userid');
+	let message = document.querySelector('#message');
+	let str = '';
+	
+	window.addEventListener('keydown', (e) => {
+		if(e.key === 'Enter') send();
+	});
+
+	//대화방 만들기
+	const createRoom = async () => {		
+		let room = document.querySelector('#room');
+		
+		if(room.value == ''){
+			alert('만들 대화방 이름을 입력하세요.');
+			room.focus();
+			return false;
+		}		
+		
+		let formData = new FormData();
+		formData.append("title", room.value);
+		
+		await fetch('/chat', {
+			method: 'POST',
+			body: formData
+		}).then((response)=> response.json())
+			.then((data)=> {
+				if(data.message === 'good'){
+					document.location = '/chat';
+				}
+		}).catch((error)=> {
+			alert("시스템 장애로 대화방 등록이 실패했습니다.");
+			console.log(error);
+		})
+		
+	}
+	
+	//대화방 선택하기
+	const findByRoomId = async() => {
+		let roomList = document.querySelector('roomList');
+		if(roomList.value == '00'){
+			alert('참여할 대화방을 선택하세요.');
+			return false;
+		}
+		if(roomStatus == '1') {
+			alert('이미 대화방이 생성되었습니다.');
+			return false;
+		}	
+		
+		//선택한 룸의 아이디를 roomId 변수에 할당 
+		roomId = roomList.value;
+		
+		//룸의 상태를 생성으로 변환
+		roomStatus = '1';
+		const text = {
+				type: "ENTER",
+				roomId: roomId,
+				sender: username.value,
+				//message: username.value + '님이 입장하셨습니다.',
+		}
+		
+		websocket.send(JSON.stringify(text));
+			
+	}
+	
+	//대화방 나가기
+	const exitRoom = () => {
+		//대화방 상태 설정 시작
+		if(roomStatus == '0'){
+			alert('아직 대화방이 생성되지 않았습니다.');
+			return false;
+		}
+		if(roomStatus == '2'){
+			alert('이미 대화방이 종료되었습니다.');
+			return false;
+		}
+		roomStatus = '2';
+		//대화방 상태 설정 종료
+		
+		const text = {
+			type: "CLOSE",
+			roomId: roomId,
+			sender: username.value,
+			message: username.value + '님이 방을 나가셨습니다.',
+
+		}
+		websocket.send(JSON.stringify(text));
+	}
+	
+	const send = () => {
+		
+		if(message.value === ''){
+			alert('메세지를 입력하세요');
+			message.focus();
+			return false;
+		}
+		
+		//대화방 상태 설정 시작
+		if(roomStatus == '0') {
+			alert('대화방을 새로 생성하거나 운영 중인 대화방을 선택하세요');
+			message.value='';
+			return false;
+		}		
+		if(roomStatus == '2') {
+			alert('대화방이 종료되었습니다');
+			return false;
+		}
+		//대화방 상태 설정 종료
+		
+		const text = {				
+			type: "TALK",
+			roomId: roomId,
+			sender: username.value,
+			message: message.value			
+		}
+		
+		websocket.send(JSON.stringify(text));
+		message.value='';		
+	}
+	
+	document.querySelector('#btn_sendMessage').addEventListener('click',send);
+	
+	/*
+		웹소켓 이벤트
+		1. open 
+		2. message
+		3. error
+		4. close	
+	*/
+	websocket.onopen = () => {}	
+	websocket.onmessage = (msg) => {
+		let data = JSON.parse(msg.data);
+		let host_user = username.value;
+		let guest_user = data.sender;
+		var roomIdFromMessage = data.title;
+		
+		//if(roomId == roomIdFromMessage && roomStatus != '3'){
+		
+		if(roomStatus != '3'){	
+			switch(data.type) {
+			
+			case "ENTER": 
+					str = "<div style='text-align:left'><b><span class='open'>" + data.message + "</span></b></div>";
+					break;
+			case "TALK":
+					if(host_user === guest_user)
+						str = "<div style='text-align:right'><b><span class='hostChatting'>" + data.sender + ":" + data.message + "</span></b></div>";
+					else 
+						str = "<div style='text-align:left'><b><span class='guestChatting'>" + data.sender + ":" + data.message + "</span></b></div>";
+					break;
+			case "CLOSE": 
+					str = "<div style='text-align:left'><b><span class='close'>" + data.message + "</span></b></div>";
+					break;				
+			}
+			document.querySelector('.msgZone').innerHTML += str;
+			if(roomStatus == '2') roomStatus = '3';
+		}
+	}	
+	websocket.onclose = () => {	}
+	
+</script>
+
+</body>
+</html>

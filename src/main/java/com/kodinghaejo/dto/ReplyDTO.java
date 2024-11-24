@@ -44,16 +44,16 @@ public class ReplyDTO {
 	//DTO --> Entity 이동
 	public ReplyEntity dtoToEntity(ReplyDTO dto) {
 		ReplyEntity entity = ReplyEntity
-								.builder()
-								.idx(dto.getIdx())
-								.rePrnt(dto.getRePrnt())
-								.prntIdx(dto.getPrntIdx())
-								.email(dto.getEmail())
-								.writer(dto.getWriter())
-								.content(dto.getContent())
-								.regdate(dto.getRegdate())
-								.isUse(dto.getIsUse())
-								.build();
+													.builder()
+													.idx(dto.getIdx())
+													.rePrnt(dto.getRePrnt())
+													.prntIdx(dto.getPrntIdx())
+													.email(dto.getEmail())
+													.writer(dto.getWriter())
+													.content(dto.getContent())
+													.regdate(dto.getRegdate())
+													.isUse(dto.getIsUse())
+													.build();
 
 		return entity;
 	}

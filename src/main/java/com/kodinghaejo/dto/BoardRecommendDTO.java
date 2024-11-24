@@ -41,15 +41,15 @@ public class BoardRecommendDTO {
 	//DTO --> Entity 이동
 	public BoardRecommendEntity dtoToEntity(BoardRecommendDTO dto) {
 		BoardRecommendEntity entity = BoardRecommendEntity
-										.builder()
-										.email(dto.getEmail())
-										.boardIdx(dto.getBoardIdx())
-										.goodChk(dto.getGoodChk())
-										.badChk(dto.getBadChk())
-										.goodDate(dto.getGoodDate())
-										.badDate(dto.getBadDate())
-										.isUse(dto.getIsUse())
-										.build();
+																		.builder()
+																		.email(dto.getEmail())
+																		.boardIdx(dto.getBoardIdx())
+																		.goodChk(dto.getGoodChk())
+																		.badChk(dto.getBadChk())
+																		.goodDate(dto.getGoodDate())
+																		.badDate(dto.getBadDate())
+																		.isUse(dto.getIsUse())
+																		.build();
 
 		return entity;
 	}

@@ -1,14 +1,17 @@
 package com.kodinghaejo.service;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.data.domain.Page;
 
+import com.kodinghaejo.dto.BannerDTO;
 import com.kodinghaejo.dto.BoardDTO;
 import com.kodinghaejo.dto.CommonCodeDTO;
 import com.kodinghaejo.dto.MemberDTO;
 import com.kodinghaejo.dto.ReplyDTO;
 import com.kodinghaejo.dto.TestDTO;
+import com.kodinghaejo.entity.BannerEntity;
 import com.kodinghaejo.entity.BoardEntity;
 import com.kodinghaejo.entity.ChatEntity;
 import com.kodinghaejo.entity.CommonCodeEntity;
@@ -91,7 +94,6 @@ public interface AdminService {
 	//채팅방 검색
 	public Page<ChatEntity> searchChatListByTitle(int pageNum, int postNum, String searchKeyword);
 
-	
 	//일별가입자수 체크
 	public long getTodaySignups();
 	
@@ -139,5 +141,29 @@ public interface AdminService {
 	
 	//댓글관리 필터 타입
 	public Page<ReplyDTO> getReplyListByType(int pageNum, int postNum, String rePrnt);
+	
+	//배너 저장
+	public void saveBanner(BannerEntity banner);
+	
+	//배너 목록 조회
+	public Page<BannerEntity> getAllBanners(int pageNum, int postNum);
+	
+	//메인페이지 배너
+	public List<BannerEntity> getBanner();
+	
+	//배너 isUse 상태 변경
+	public void updateBannerIsUse(Long idx, String isUse);
+	
+	//배너 삭제
+	public void deleteBanner(Long idx);
+	
+	//배너 종료일자에 따른 isUse 업데이트
+	public void updateBannerEndDate();
+	
+	//배너 수정
+	public void saveBannerModify(BannerDTO bannerDTO);
+	
+	//ID로 배너 데이터 조회
+	public BannerEntity getBannerById(Long id);
+	
 }
-

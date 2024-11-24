@@ -44,11 +44,13 @@ public class MemberController {
 
 	//로그인
 	@GetMapping("/member/login")
-	public void getLogin() { }
+	public void getLogin() {
+	}
 
 	//로그인 --> 스프링 시큐리티에 의해 인터셉트
 	@PostMapping("/member/login")
-	public void postLogin() { }
+	public void postLogin() {
+	}
 
 	//로그인 처리
 	@ResponseBody
@@ -86,14 +88,14 @@ public class MemberController {
 
 	//회원가입 화면
 	@GetMapping("/member/join")
-	public void getJoin() { }
+	public void getJoin() {
+	}
 
 	//회원가입 및 기본정보 수정
 	@ResponseBody
 	@PostMapping("/member/join")
 	public String postJoin(MemberDTO member, @RequestParam("kind") String kind,
-			@RequestParam(name = "fileUpload", required = false) MultipartFile mpf,
-			HttpSession session) throws Exception {
+			@RequestParam(name = "fileUpload", required = false) MultipartFile mpf, HttpSession session) throws Exception {
 		//========== 운영체제에 따라 이미지가 저장될 디렉토리 구조 설정 시작 ==========
 		String os = System.getProperty("os.name").toLowerCase();
 		String path;
@@ -104,7 +106,8 @@ public class MemberController {
 
 		//디렉토리 존재여부 확인 --> 없을 경우 생성 처리
 		File p = new File(path);
-		if (!p.exists()) p.mkdirs();
+		if (!p.exists())
+			p.mkdirs();
 		//========== 운영체제에 따라 이미지가 저장될 디렉토리 구조 설정 종료 ==========
 
 		//프로필 이미지 저장 경로 설정
@@ -141,10 +144,11 @@ public class MemberController {
 
 		//기본정보 수정
 		if (kind.equals("U")) {
-			if (member.getNickname().equals("")) member.setNickname(member.getUsername());
+			if (member.getNickname().equals(""))
+				member.setNickname(member.getUsername());
 
 			//프로필 이미지 변경 시 기존 이미지 파일 삭제
-			if (mpf != null && !mpf.isEmpty() ) {
+			if (mpf != null && !mpf.isEmpty()) {
 				MemberDTO before = service.memberInfo(member.getEmail());
 				File file = new File(path + before.getStoredImg());
 				file.delete();
@@ -153,7 +157,7 @@ public class MemberController {
 			session.setAttribute("nickname", member.getNickname());
 
 			//수정 내용 반영
-			service.editMemberInfo(member);
+			service.modifyMemberInfo(member);
 		}
 
 		log.info("==================== 회원가입 JSON: { \"message\": \"good\", \"username\": \"{}\" }", member.getUsername());
@@ -169,7 +173,8 @@ public class MemberController {
 
 	//아이디(이메일) 찾기 화면
 	@GetMapping("/member/findId")
-	public void getFindId() { }
+	public void getFindId() {
+	}
 
 	//아이디(이메일) 찾기
 	@ResponseBody
@@ -180,14 +185,16 @@ public class MemberController {
 		if (email == "") {
 			return "{ \"message\": \"ID_NOT_FOUND\" }";
 		} else {
-			log.info("==================== 아이디(이메일) 찾기 JSON: { \"message\": \"good\", \"id\": \"{}\" } ====================", email);
+			log.info("==================== 아이디(이메일) 찾기 JSON: { \"message\": \"good\", \"id\": \"{}\" } ====================",
+					email);
 			return "{ \"message\": \"good\", \"id\": \"" + email + "\" }";
 		}
 	}
 
 	//비밀번호 찾기 화면
 	@GetMapping("/member/findPassword")
-	public void getFindPassword() { }
+	public void getFindPassword() {
+	}
 
 	//임시 비밀번호 발급받기
 	@ResponseBody
@@ -206,7 +213,7 @@ public class MemberController {
 		} else { //전화번호가 일치할 경우
 			String password = new PasswordMaker().tempPasswordMaker(8);
 			findData.setPassword(pwEncoder.encode(password));
-			service.editPassword(findData);
+			service.modifyPassword(findData);
 			service.lastdateUpdate(findData.getEmail(), "password");
 
 			mailService.sendSimpleMailMessage(findData.getEmail(), password);
@@ -228,7 +235,8 @@ public class MemberController {
 
 		//디렉토리가 존재하는지 체크해서 없다면 생성
 		File p = new File(path);
-		if (!p.exists()) p.mkdirs();
+		if (!p.exists())
+			p.mkdirs();
 		//운영체제에 따라 이미지가 저장될 디렉토리 구조 설정 종료
 
 		MemberDTO member = service.memberInfo(email);
@@ -236,8 +244,9 @@ public class MemberController {
 		//다운로드할 파일의 경로와 파일명을 매개변수로 입력받아 byte 데이터타입의 1차원 배열로 저장
 		byte[] fileByte = FileUtils.readFileToByteArray(new File(path + member.getStoredImg()));
 
-		//예) HTTP Response Header는 Content-Disposition: attachment; filename="hello.jpg";
-		//    HTTP Response Body에는 1차원 바이트 타입으로 변환된 배열
+		//예) HTTP Response Header는 Content-Disposition: attachment;
+		//filename="hello.jpg";
+		//HTTP Response Body에는 1차원 바이트 타입으로 변환된 배열
 		rs.setContentType("application/octet-stream");
 		rs.setContentLength(fileByte.length);
 		rs.setHeader("Content-Disposition", "attachment; filename=\"" + URLEncoder.encode(member.getOrgImg(), "UTF-8") + "\";");
@@ -258,7 +267,7 @@ public class MemberController {
 	}
 
 	//주요 기술 변경
-	@GetMapping("/member/mypage/editTec")
+	@GetMapping("/member/mypage/modifyTec")
 	public void getMypageEditTec(Model model, HttpSession session) {
 		MemberDTO member = service.memberInfo((String) session.getAttribute("email"));
 		Map<String, Object> commonCode = baseService.loadUsedCommonCode();
@@ -268,21 +277,20 @@ public class MemberController {
 
 	//주요 기술 변경 저장
 	@ResponseBody
-	@PostMapping("/member/mypage/editTec")
+	@PostMapping("/member/mypage/modifyTec")
 	public String postMypageEditTec(@RequestParam(name = "tec1", defaultValue = "") String tec1,
 			@RequestParam(name = "tec2", defaultValue = "") String tec2,
-			@RequestParam(name = "tec3", defaultValue = "") String tec3,
-			HttpSession session) {
+			@RequestParam(name = "tec3", defaultValue = "") String tec3, HttpSession session) {
 		log.info("===== tec1: {}, tec2: {}, tec3: {} =====", tec1, tec2, tec3);
 
 		String email = (String) session.getAttribute("email");
-		service.editTec(email, tec1, tec2, tec3);
+		service.modifyTec(email, tec1, tec2, tec3);
 
 		return "{ \"message\": \"good\" }";
 	}
 
 	//희망 직무 변경
-	@GetMapping("/member/mypage/editJob")
+	@GetMapping("/member/mypage/modifyJob")
 	public void getMypageEditJob(Model model, HttpSession session) {
 		MemberDTO member = service.memberInfo((String) session.getAttribute("email"));
 		Map<String, Object> commonCode = baseService.loadUsedCommonCode();
@@ -292,28 +300,27 @@ public class MemberController {
 
 	//희망직무 변경 저장
 	@ResponseBody
-	@PostMapping("/member/mypage/editJob")
+	@PostMapping("/member/mypage/modifyJob")
 	public String postMypageEditJob(@RequestParam(name = "job1", defaultValue = "") String job1,
 			@RequestParam(name = "job2", defaultValue = "") String job2,
-			@RequestParam(name = "job3", defaultValue = "") String job3,
-			HttpSession session) {
+			@RequestParam(name = "job3", defaultValue = "") String job3, HttpSession session) {
 		log.info("===== job1: {}, job2: {}, job3: {} =====", job1, job2, job3);
 
 		String email = (String) session.getAttribute("email");
-		service.editJob(email, job1, job2, job3);
+		service.modifyJob(email, job1, job2, job3);
 
 		return "{ \"message\": \"good\" }";
 	}
 
 	//내 정보 수정
-	@GetMapping("/member/mypage/editInfo")
+	@GetMapping("/member/mypage/modifyInfo")
 	public void getMypageEditInfo(Model model, HttpSession session) {
 		MemberDTO member = service.memberInfo((String) session.getAttribute("email"));
 		model.addAttribute("member", member);
 	}
 
 	//비밀번호 변경(화면)
-	@GetMapping("/member/mypage/editPassword")
+	@GetMapping("/member/mypage/modifyPassword")
 	public void getMypageEditPassword(Model model, HttpSession session) {
 		MemberDTO member = service.memberInfo((String) session.getAttribute("email"));
 		model.addAttribute("member", member);
@@ -321,7 +328,7 @@ public class MemberController {
 
 	//비밀번호 변경(처리)
 	@ResponseBody
-	@PostMapping("/member/mypage/editPassword")
+	@PostMapping("/member/mypage/modifyPassword")
 	public String postMypageEditPassword(@RequestParam("oldPassword") String oldPassword,
 			@RequestParam("password") String password, HttpSession session) throws Exception {
 		String email = (String) session.getAttribute("email");
@@ -338,7 +345,7 @@ public class MemberController {
 		MemberDTO member = new MemberDTO();
 		member.setEmail(email);
 		member.setPassword(pwEncoder.encode(password));
-		service.editPassword(member);
+		service.modifyPassword(member);
 		service.lastdateUpdate(email, "password");
 
 		return "{ \"message\": \"good\" }";

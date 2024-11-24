@@ -18,12 +18,18 @@ import lombok.Setter;
 @Builder
 public class ChatMsgDTO {
 
+	public enum MessageType {
+		ENTER, TALK, CLOSE
+	}
+
 	private Long idx;
 	private ChatEntity chatIdx;
 	private String email;
 	private String content;
 	private LocalDateTime regdate;
 	private String isUse;
+	
+	private MessageType type; //메시지 타입
 
 	//Entity --> DTO 이동
 	public ChatMsgDTO(ChatMsgEntity entity) {
@@ -38,14 +44,14 @@ public class ChatMsgDTO {
 	//DTO --> Entity 이동
 	public ChatMsgEntity dtoToEntity(ChatMsgDTO dto) {
 		ChatMsgEntity entity = ChatMsgEntity
-								.builder()
-								.idx(dto.getIdx())
-								.chatIdx(dto.getChatIdx())
-								.email(dto.getEmail())
-								.content(dto.getContent())
-								.regdate(dto.getRegdate())
-								.isUse(dto.getIsUse())
-								.build();
+														.builder()
+														.idx(dto.getIdx())
+														.chatIdx(dto.getChatIdx())
+														.email(dto.getEmail())
+														.content(dto.getContent())
+														.regdate(dto.getRegdate())
+														.isUse(dto.getIsUse())
+														.build();
 
 		return entity;
 	}

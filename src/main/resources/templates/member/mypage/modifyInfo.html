@@ -14,18 +14,18 @@
 <!-- 게시판 복사용 게시판 -->
 <body>
 	<!-- header 영역 -->
-	<div id="header" th:replace="/include/header"></div>
+	<div id="header" th:replace="~{ /include/header }"></div>
 	<div class="container column bgcontain-mypage">
 		<div class="column-row myPage">
 			<div class="c-column-2">
-				<div id="mypage_manu" th:replace="/include/mypage"></div>
+				<div id="mypage_manu" th:replace="~{ /include/mypage }"></div>
 			</div>
 			<div class="c-column-8">
 				<div class="mypage_content">
 
 					<h5>내 정보 수정</h5>
 					<div class="mypage_box">
-						<form id="editForm" name="editForm" method="post">
+						<form id="modifyForm" name="modifyForm" method="post">
 							<input type="file" name="fileUpload" id="imageFile" style="display: none;">
 							<input type="hidden" name="orgImg" th:value="${ member.orgImg }">
 							<input type="hidden" name="storedImg" th:value="${ member.storedImg }">
@@ -40,15 +40,13 @@
 									</th:block>
 								</div>
 								<div class="join-email-form">
-									<span style="color: red;">*</span>
-									<label for="email">이메일</label>
+									<label for="email">이메일<span class="asterisk"></span></label>
 									<input type="text" id="email" placeholder="example@kodinghaejo.com" th:value="${ member.email }" disabled>
 									<input type="hidden" name="email" th:value="${ member.email }">
 									<p id="emailMsg"></p>
 								</div>
 								<div class="join-username-form">
-									<span style="color: red;">*</span>
-									<label for="username">이름</label>
+									<label for="username">이름<span class="asterisk"></span></label>
 									<input type="text" id="username" placeholder="홍길동" th:value="${ member.username }" disabled>
 									<input type="hidden" name="username" th:value="${ member.username }">
 								</div>
@@ -57,8 +55,7 @@
 									<input type="text" id="nickname" name="nickname" placeholder="홍길동" th:value="${ member.nickname }">
 								</div>
 								<div class="join-tel-form">
-									<span style="color: red;">*</span>
-									<label for="tel">전화번호</label>
+									<label for="tel">전화번호<span class="asterisk"></span></label>
 									<input type="text" id="tel" name="tel" maxlength="13" placeholder="010-1234-5678" th:value="${ member.tel }" oninput="checkTel()">
 									<p id="telMsg" class="bad"></p>
 								</div>
@@ -73,7 +70,7 @@
 								</div>
 							</div>
 							<div class="profile_btn_grup">
-								<input type="button" value="수정하기" onclick="editInfo()">
+								<input type="button" value="수정하기" onclick="modifyInfo()">
 								<input type="button" value="취소" onclick="javascript:history.back()">
 							</div>
 							<input type="hidden" name="kind" value="U">
@@ -86,7 +83,7 @@
 	</div>
 
 	<!-- footer영역 -->
-	<div id="footer" th:replace="/include/footer"></div>
+	<div id="footer" th:replace="~{ /include/footer }"></div>
 	
 	<!-- Custom CSS -->
 	<style type="text/css">
@@ -135,7 +132,7 @@
 		});
 
 		//내 정보 수정
-		const editInfo = async () => {
+		const modifyInfo = async () => {
 			//========== 입력값 유효성 검증 시작 ==========
 			//전화번호
 			if (telOk == 'N') {
@@ -152,7 +149,7 @@
 			}
 			//========== 입력값 유효성 검증 종료 ==========
 			
-			let formData = new FormData(editForm);
+			let formData = new FormData(modifyForm);
 
 			await fetch('/member/join', {
 				method: 'POST',

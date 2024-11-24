@@ -102,7 +102,7 @@ public class MemberEntity {
 	@Column(name = "is_use", length = 2, nullable = false)
 	private String isUse;
 
-	public void editInfo(MemberDTO member) {
+	public void modifyInfo(MemberDTO member) {
 		this.nickname = member.getNickname();
 		this.tel = member.getTel();
 		this.website = member.getWebsite();
