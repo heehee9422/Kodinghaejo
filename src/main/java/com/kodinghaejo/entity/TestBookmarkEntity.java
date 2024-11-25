@@ -26,7 +26,7 @@ import lombok.Setter;
 @Builder
 @Entity(name = "testBookmark")
 @Table(name = "jpa_test_bookmark")
-@IdClass(TestBookmarkEntityId.class)
+@IdClass(TestBookmarkEntityID.class)
 public class TestBookmarkEntity {
 
 	@Id

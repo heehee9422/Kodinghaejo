@@ -26,7 +26,7 @@ import lombok.Setter;
 @Builder
 @Entity(name = "memberLog")
 @Table(name = "jpa_member_log")
-@IdClass(MemberLogEntityId.class)
+@IdClass(MemberLogEntityID.class)
 public class MemberLogEntity {
 
 	@Id

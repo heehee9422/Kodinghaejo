@@ -59,7 +59,7 @@ public class WebSecurityConfig {
 		//스프링 시큐리티의 접근권한 설정(Access Control)
 		http
 			.authorizeHttpRequests((authz) -> authz
-				.requestMatchers("/", "/member/**", "/test/**", "/rank/**", "/board/**", "/chat/**").permitAll()
+				.requestMatchers("/**", "/member/**", "/test/**", "/rank/**", "/board/**", "/chat/**").permitAll()
 				.requestMatchers("/member/mypage/**", "/board/m/**").hasAnyAuthority("LVL-0001", "LVL-0002")
 				.requestMatchers("/admin/**").hasAnyAuthority("LVL-0001")
 				.anyRequest().authenticated());

@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class MemberLogEntityId implements Serializable {
+public class MemberLogEntityID implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private String email;

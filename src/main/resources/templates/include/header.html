@@ -25,7 +25,7 @@
 						<img th:if="${ session.storedImg != null }" th:src="@{ '/member/img/' + ${ session.email } }" alt="" style="width: 30px; height: 30px;">
 						<img th:if="${ session.storedImg == null }" src="/img/test-profile/coolping.png" alt="" style="width: 30px; height: 30px;">
 						<b>[[ ${ session.nickname } ]]</b>님이 로그인 하셨습니다
-						<li><a href="javascript:void(0);" class="notice-pop on" id="noticeBellLink"><i class="xi-bell-o"></i></a></li>
+						<li><a href="javascript:noticeBell();" class="notice-pop on" id="noticeBellLink"><i class="xi-bell-o"></i></a></li>
 					</span>
 				</li>
 				<li><a href="/member/mypage/main" class="btn_sign">My Page</a></li>
@@ -109,7 +109,7 @@
 		}
 		
 		//공지 알림
-		document.getElementById("noticeBellLink").addEventListener("click", function() {
+		const noticeBell = () => {
 			fetch('/noticeBell')
 				.then(response => response.json())
 				.then(notices => {
@@ -132,7 +132,7 @@
 					}
 				})
 				.catch(error => console.error('Error loading notices:', error));
-		});
+		}
 	</script>
 	
 </header>

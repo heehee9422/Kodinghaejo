@@ -19,7 +19,7 @@ import com.kodinghaejo.dto.TestQuestionAnswerDTO;
 import com.kodinghaejo.dto.TestQuestionDTO;
 import com.kodinghaejo.entity.BoardEntity;
 import com.kodinghaejo.entity.BoardRecommendEntity;
-import com.kodinghaejo.entity.BoardRecommendEntityId;
+import com.kodinghaejo.entity.BoardRecommendEntityID;
 import com.kodinghaejo.entity.MemberEntity;
 import com.kodinghaejo.entity.ReplyEntity;
 import com.kodinghaejo.entity.TestEntity;
@@ -184,7 +184,7 @@ public class BoardServiceImpl implements BoardService {
 	public void recommend(Long boardIdx, String email, String kind) {
 		BoardRecommendEntity boardRecommendEntity;
 
-		if (boardRecommendRepository.findById(new BoardRecommendEntityId(email, boardIdx)).isEmpty()) {
+		if (boardRecommendRepository.findById(new BoardRecommendEntityID(email, boardIdx)).isEmpty()) {
 			boardRecommendEntity = BoardRecommendEntity
 															.builder()
 															.email(memberRepository.findById(email).get())
@@ -194,7 +194,7 @@ public class BoardServiceImpl implements BoardService {
 															.isUse("Y")
 															.build();
 		} else {
-			boardRecommendEntity = boardRecommendRepository.findById(new BoardRecommendEntityId(email, boardIdx)).get();
+			boardRecommendEntity = boardRecommendRepository.findById(new BoardRecommendEntityID(email, boardIdx)).get();
 			boardRecommendEntity.setGoodChk(kind);
 			boardRecommendEntity.setGoodDate(LocalDateTime.now());
 		}
@@ -206,7 +206,7 @@ public class BoardServiceImpl implements BoardService {
 	@Transactional
 	@Override
 	public String reportPost(String email, Long boardIdx) {
-		BoardRecommendEntity boardRecommendEntity = boardRecommendRepository.findById(new BoardRecommendEntityId(email, boardIdx)).orElse(null);
+		BoardRecommendEntity boardRecommendEntity = boardRecommendRepository.findById(new BoardRecommendEntityID(email, boardIdx)).orElse(null);
 
 		if (boardRecommendEntity == null) {
 			//새로운 신고 등록

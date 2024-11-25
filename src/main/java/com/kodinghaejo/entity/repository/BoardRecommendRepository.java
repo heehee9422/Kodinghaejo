@@ -6,10 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.kodinghaejo.entity.BoardEntity;
 import com.kodinghaejo.entity.BoardRecommendEntity;
-import com.kodinghaejo.entity.BoardRecommendEntityId;
+import com.kodinghaejo.entity.BoardRecommendEntityID;
 import com.kodinghaejo.entity.MemberEntity;
 
-public interface BoardRecommendRepository extends JpaRepository<BoardRecommendEntity, BoardRecommendEntityId> {
+public interface BoardRecommendRepository extends JpaRepository<BoardRecommendEntity, BoardRecommendEntityID> {
 
 	//게시글의 추천 수
 	public Long countByBoardIdxAndGoodChk(BoardEntity boardEntity, String goodChk);

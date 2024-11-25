@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class BoardRecommendEntityId implements Serializable {
+public class BoardRecommendEntityID implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private String email;

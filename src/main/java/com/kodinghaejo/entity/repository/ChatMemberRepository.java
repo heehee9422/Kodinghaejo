@@ -6,10 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.kodinghaejo.entity.ChatEntity;
 import com.kodinghaejo.entity.ChatMemberEntity;
-import com.kodinghaejo.entity.ChatMemberEntityId;
+import com.kodinghaejo.entity.ChatMemberEntityID;
 import com.kodinghaejo.entity.MemberEntity;
 
-public interface ChatMemberRepository extends JpaRepository<ChatMemberEntity, ChatMemberEntityId> {
+public interface ChatMemberRepository extends JpaRepository<ChatMemberEntity, ChatMemberEntityID> {
 
 	//채팅방 멤버 삭제
 	void deleteByChatIdxAndEmail(ChatEntity chatRoom, MemberEntity email);

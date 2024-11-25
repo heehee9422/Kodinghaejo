@@ -55,7 +55,7 @@ public class BaseController {
 	public String getPopularTest() {
 		Long idx = testService.getMostPopularTest();
 
-		return "redirect:/test/challenge?idx=" + idx;
+		return "redirect:/test/challenge?test_idx=" + idx;
 	}
 
 	//등록일 기준 신규 문제
@@ -63,7 +63,7 @@ public class BaseController {
 	public String getNewTest() {
 		Long randomIdx = testService.getNewTest(5);
 
-		return "redirect:/test/challenge?idx=" + randomIdx;
+		return "redirect:/test/challenge?test_idx=" + randomIdx;
 	}
 
 	//난이도 0 기준 랜덤 문제
@@ -71,7 +71,7 @@ public class BaseController {
 	public String getRandomTest() {
 		Long randomIdx = testService.getRandomTest();
 
-		return "redirect:/test/challenge?idx=" + randomIdx;
+		return "redirect:/test/challenge?test_idx=" + randomIdx;
 	}
 
 	//등록일 기준 신규 공지

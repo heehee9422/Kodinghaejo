@@ -26,7 +26,7 @@ import lombok.Setter;
 @Builder
 @Entity(name = "boardRecommend")
 @Table(name = "jpa_board_recommend")
-@IdClass(BoardRecommendEntityId.class)
+@IdClass(BoardRecommendEntityID.class)
 public class BoardRecommendEntity {
 
 	@Id

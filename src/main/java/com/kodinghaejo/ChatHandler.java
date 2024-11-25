@@ -15,17 +15,15 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kodinghaejo.service.ChatService;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 @Component
+@AllArgsConstructor
 @Log4j2
 public class ChatHandler extends TextWebSocketHandler {
 
 	private final ChatService chatService;
-
-	public ChatHandler(ChatService chatService) {
-		this.chatService = chatService;
-	}
 
 	//채팅방 ID(chatIdx)별로 세션을 관리하는 Map
 	private static final Map<Long, List<WebSocketSession>> chatRooms = new ConcurrentHashMap<>();
