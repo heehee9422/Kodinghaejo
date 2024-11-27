@@ -60,7 +60,7 @@
 			<div class="content-box">
 				<div class="box-item">
 					<div class="item-card">
-						<h3>난이도별 문제 보기</h3>
+						<h3>난이도별 문제 <a href="/test/collect" class="more-link">더 보기</a></h3>
 						<div class="card-ui-box">
 							<div th:each="diffProblem : ${diffProblems}" class="card-ui-list" th:onclick="'location.href=\'/test/challenge?idx=' + ${diffProblem.idx} + '\''">
 								<img src="/img/card-test.jpg" alt="">
@@ -82,18 +82,23 @@
 			<div class="content-box pb60">
 				<div class="box-item">
 					<div class="item-middle-card">
-						<h3>이용자 랭킹 순위 보기</h3>
+						<h3>이용자 랭킹 순위 <a href="/rank/rank" class="more-link">더 보기</a></h3>
 						<div class="item-middle-ui-card-box">
-							<div class="card-middle-ui-list"	onclick="location.href='/'">
-								<img src="/img/test-profile/coolping.png" alt="profile">
+							<div class="card-middle-ui-list" th:each="member, stat : ${members}" th:if="${stat.index < 3}">
+								<!-- 241126-프로필 이미지 프레임 추가 : .rank-silver, .rank-gold, .rank-bronse -->
+								<div th:class="${ (stat.index == 0) ? 'rank-gold' : (stat.index == 1) ? 'rank-silver' : 'rank-bronze' }">
+									<div class="profile-img">
+										<img th:src="${#strings.isEmpty(member.orgImg) ? '/img/test-profile/nonoping.png' : '/member/img/' + member.email}" alt="profile" style="position: relative; left: 25px; top: 24px; z-index: -1;">
+									</div>
+								</div>
 								<div class="card-item">
 									<div class="card-profile">
-										<p class="profile-name">회원 아무개씨</p>
-										<p class="profile-rank">플래티넘</p>
+										<p class="profile-name" th:text="${member.nickname}">회원 아무개씨</p>
+										<p class="profile-rank" th:text="${member.grade}">플래티넘</p>
 									</div>
 									<div class="card-rank-area">
-										<span>많이 푼 언어<b>{java}</b></span>
-										<span>정답율 <b>{0%}</b></span>
+										<!-- <span>많이 푼 언어<b>{java}</b></span> -->
+										<span>정답율 <b th:text="${#numbers.formatDecimal(member.correctRate,1,1)} + ' ' + '%' ">{0%}</b></span>
 									</div>
 								</div>
 							</div>

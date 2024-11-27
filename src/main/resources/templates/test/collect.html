@@ -127,7 +127,7 @@
 						<th:block th:if="${ totalElement > 0 }">
 						<tr th:each="list : ${ list }">
 							<td align="center"><i th:if="${ list.submSts == 'N' }" class="xi-ellipsis-h"></i><i th:if="${ list.submSts == 'Y' }" class="xi-check"></i></td>
-							<td><a th:href="@{ '/test/challenge?test_idx=' + ${ list.idx } }" th:text="${ list.title }"></a></td>
+							<td><a th:href="@{ '/test/challenge?idx=' + ${ list.idx } }" th:text="${ list.title }"></a></td>
 							<td align="center" th:text="@{ 'LV. ' + ${ list.diff } }"></td>
 							<td align="center" th:text="@{ ${ #numbers.formatInteger(list.correctCount, 1, 'COMMA') } + '명' }"></td>
 							<td align="center" th:text="@{ ${ #numbers.formatDecimal(list.correctRate, 1, 1) } + '%' }"></td>

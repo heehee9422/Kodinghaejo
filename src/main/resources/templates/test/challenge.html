@@ -11,6 +11,8 @@
 	href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
 <!-- pub-js link -->
 <script src="/js/pub-ui-custom.js"></script>
+	<!-- common-js link -->
+	<script src="/js/common.js"></script>
 </head>
 <body>
 	<div id="load" class="delay-filed" style="display: none;">
@@ -30,22 +32,21 @@
 			<!-- 제목 & 북마커 -->
 			<div class="challenge-nav">
 				<div class="nav-item">
-					<i class="xi-bookmark-o"></i> <span class="challenge-title">[[ ${ test.title } ]]</span>
+					<i th:if="${isbookmarked == 'no'}" th:onclick="|bookmark('${test.idx}', 'add')|" th:id="@{'bookmark-add-' + ${test.idx}}" class="xi-bookmark-o"></i>
+					<i th:if="${isbookmarked == 'yes'}" th:onclick="|bookmark('${test.idx}', 'remove')|" th:id="@{'bookmark-remove-' + ${test.idx}}" class="xi-bookmark"></i>
+					<span class="challenge-title">[[ ${ test.title } ]]</span>
 				</div>
 				<div class="nav-item">
 					<div class="dropdown-language">
 						<div class="dropdown-menu" id="language">
 							<th:block th:if="${ java == 'Y' }">
-								<button type="button" class="dropdown-item btn-language"
-									data-language="java">Java</button>
+								<button type="button" class="dropdown-item btn-language" data-language="java">Java</button>
 							</th:block>
 							<th:block th:if="${ js == 'Y' }">
-								<button type="button" class="dropdown-item btn-language"
-									data-language="js">JavaScript</button>
+								<button type="button" class="dropdown-item btn-language" data-language="js">JavaScript</button>
 							</th:block>
 							<th:block th:if="${ oracle == 'Y' }">
-								<button type="button" class="dropdown-item btn-language"
-									data-language="sql">SQL</button>
+								<button type="button" class="dropdown-item btn-language" data-language="sql">Oracle</button>
 							</th:block>
 						</div>
 					</div>
@@ -56,7 +57,7 @@
 			<div class="challenge-content-list">
 				<div class="challenge-content-question">
 					<h6 class="guide-section-title">문제 설명</h6>
-					<div class="challenge-content-question-section">[( ${ test.descr } )]</div>
+					<div class="challenge-content-question-section" th:utext="${ descHtml }"></div>
 				</div>
 				<div class="challenge-content-run">
 					<h6 class="guide-section-title">코드 에디터</h6>
@@ -71,8 +72,8 @@
 			<!-- 하단 보내기 값 -->
 			<div class="bottom-list">
 				<div class="testcase-button">
-					<a th:if="${ session.email != null }" th:href="@{ /test/questionWrite(test_idx=${ test.idx }) }" class="btn-show-question">질문하기</a>
-					<a th:href="@{ /test/questionBoard(test_idx=${ test.idx }) }" class="btn-show-question">질문게시판</a>
+					<a th:if="${ session.email != null }" href="javascript:toQuestion('write')" class="btn-show-question">질문하기</a>
+					<a href="javascript:toQuestion('board')" class="btn-show-question">질문게시판</a>
 				</div>
 				<div class="func-buttons">
 					<th:block th:if="${ session.email != null }">
@@ -84,6 +85,10 @@
 			</div>
 		</div>
 	</div>
+	
+	<!-- toast API -->
+	<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+	<link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
 
 	<!-- CodeMirror Kit -->
 	<script src="/js/codemirror/codemirror-5.65.18/lib/codemirror.js"></script>
@@ -319,7 +324,47 @@
 			});
 		}
 		
-		loadTestLng();
+		//질문하기 및 질문게시판
+		const toQuestion = (kind) => {
+			switch (kind) {
+				case 'write':
+					location.href = '/test/m/questionWrite?tl_idx=' + tlIdx;
+					break;
+					
+				case 'board':
+					location.href = '/test/questionBoard?kind=' + tlIdx;
+					break;
+			}
+		}
+		
+		async function bookmark(testIdx, action) {
+			try {
+				const response = await fetch('/test/bookmark', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({ testIdx, action })
+				});
+				const data = await response.json();
+				const bookmarkaddBtn = document.getElementById(`bookmark-add-${testIdx}`);
+				const bookremoveBtn = document.getElementById(`bookmark-remove-${testtIdx}`);
+				if (data.isbookmarked) {
+					bookmarkaddBtn.style.display = 'none';
+					bookremoveBtn.style.display = 'inline';
+				} else {
+					bookmarkaddBtn.style.display = 'inline';
+					bookremoveBtn.style.display = 'none';
+				}
+			} catch (error) {
+				console.error("좋아요 상태를 변경할 수 없습니다:", error);
+			} finally {
+				location.reload(true);
+			}
+		}
 	</script>
 </body>
+<script>
+	loadTestLng();
+</script>
 </html>

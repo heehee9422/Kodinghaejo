@@ -61,7 +61,7 @@
 							<ul>
 								<li><b>블로그/웹사이트</b> : <a th:if="${ member.website != null && member.website != '' }" th:href="${ member.website }">[[ ${ member.website } ]]</a><span th:if="${ member.website == null || member.website == '' }">미입력</span></li>
 								<li><b>전화번호</b> : [[ ${ member.tel } ]]</li>
-								<li><b>가입일자</b> : <span th:text="${ #temporals.format(member.regdate, 'yyyy-MM-dd a hh:mm:ss') }"></span></li>
+								<li><b>가입일자</b> : <span th:text="${ #temporals.format(member.regdate, 'yyyy-MM-dd HH:mm:ss') }"></span></li>
 								<li><b>주요기술</b> : <span id="myTec"></span></li>
 								<li><b>희망직무</b> : <span id="myJob"></span></li>
 							</ul>
@@ -77,7 +77,7 @@
 							
 					<h5>비밀번호</h5>
 					<div class="mypage_box">
-						<p>최근 업데이트 일 : <th:block th:if="${ member.regdate == member.pwdate }">없음</th:block><th:block th:if="${ member.regdate != member.pwdate }"><span th:text="${ #temporals.format(member.pwdate, 'yyyy-MM-dd a hh:mm:ss') }"></span></th:block></p>
+						<p>최근 업데이트 일 : <th:block th:if="${ member.regdate == member.pwdate }">없음</th:block><th:block th:if="${ member.regdate != member.pwdate }"><span th:text="${ #temporals.format(member.pwdate, 'yyyy-MM-dd HH:mm:ss') }"></span></th:block></p>
 						<div class="profile_btn_grup">
 							<input type="button" value="비밀번호 변경" onclick="modify('Password')">
 						</div>

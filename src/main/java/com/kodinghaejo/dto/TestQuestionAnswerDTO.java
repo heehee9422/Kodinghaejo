@@ -1,8 +1,10 @@
 package com.kodinghaejo.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.kodinghaejo.entity.MemberEntity;
+import com.kodinghaejo.entity.ReplyEntity;
 import com.kodinghaejo.entity.TestQuestionAnswerEntity;
 import com.kodinghaejo.entity.TestQuestionEntity;
 
@@ -26,6 +28,8 @@ public class TestQuestionAnswerDTO {
 	private String content;
 	private LocalDateTime regdate;
 	private String isUse;
+	
+	private List<ReplyEntity> reply;
 
 	//Entity --> DTO 이동
 	public TestQuestionAnswerDTO(TestQuestionAnswerEntity entity) {

@@ -1,14 +1,31 @@
 /* common-js */
 
-//==================== Toast UI 에디터 값 처리 ====================
+//==================== 에디터 값 처리 ====================
+
 //탭 및 줄바꿈 처리 (에디터 -> DB 저장 시)
 const setEditorContent = (content) => {
-	return content.replaceAll('\t', '\\t').replaceAll('\n', '\\n');
+	const replaceContent = content.replaceAll('\t', '\\t')
+																.replaceAll('\n', '\\n')
+																.replaceAll('&', '&amp;')
+																//.replaceAll(' ', '&nbsp;')
+																.replaceAll('<', '&lt;')
+																.replaceAll('>', '&gt;')
+																.replaceAll('"', '&quot;')
+																.replaceAll("'", '&apos;');
+	return replaceContent;
 }
 
 //탭 및 줄바꿈 처리 (DB -> 에디터 및 뷰어 호출 시)
 const getEditorContent = (content) => {
-	return content.replaceAll('\\t', '\t').replaceAll('\\n', '\n');
+	const replaceContent = content.replaceAll('\\t', '\t')
+																.replaceAll('\\n', '\n')
+																//.replaceAll('&nbsp;', ' ')
+																.replaceAll('&lt;', '<')
+																.replaceAll('&gt;', '>')
+																.replaceAll('&quot;', '"')
+																.replaceAll('&apos;', "'")
+																.replaceAll('&amp;', '&');
+	return replaceContent;
 }
 
 //==================== 공통코드 관련 ====================

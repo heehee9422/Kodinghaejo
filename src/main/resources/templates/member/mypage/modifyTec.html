@@ -30,30 +30,28 @@
 
 					<h5>주요 기술 변경</h5>
 					<div class="mypage_box">
-						<form id="modifyForm" name="modifyForm" method="post">
-							<h5>자신 있는 기술을 최대 3개 선택하세요.</h5>
-							<div id="selectedArea">
-								<p th:if="${ member.tec1 != null && member.tec1 != '' }" th:id="${ member.tec1 }" onclick="removeTec(this.id)" style="display:inline-block; color: #fff; background-color: #44576c; margin: 5px; padding: 0 5px; cursor: pointer; "></p>
-								<p th:if="${ member.tec2 != null && member.tec2 != '' }" th:id="${ member.tec2 }" onclick="removeTec(this.id)" style="display:inline-block; color: #fff; background-color: #44576c; margin: 5px; padding: 0 5px;  cursor: pointer;"></p>
-								<p th:if="${ member.tec3 != null && member.tec3 != '' }" th:id="${ member.tec3 }" onclick="removeTec(this.id)" style="display:inline-block; color: #fff; background-color: #44576c; margin: 5px; padding: 0 5px; cursor: pointer;"></p>
-							</div>
-							<div class="mt20" id="selectedNone" style="display: none;">선택한 기술이 없습니다.</div>
-							<div class="mt20">
-								<h5>그 밖의 기술 등록</h5>
-								<input id="inputTec" placeholder="기술 이름으로 검색" oninput="searchTec()">
-								<div id="tecList" style="display: none; background-color: #fff; max-height: 300px; overflow-y: scroll;"></div>
-								<div id="searchFailed" style="display: none;">해당하는 기술이 없습니다. 영어로만 검색해주세요.</div>
-							</div>
-							<div id="hiddenArea">
-								<input type="hidden" name="tec" th:value="${ member.tec1 }">
-								<input type="hidden" name="tec" th:value="${ member.tec2 }">
-								<input type="hidden" name="tec" th:value="${ member.tec3 }">
-							</div>
-							<div class="profile_btn_grup">
-								<input type="button" value="취소" onclick="history.back()">
-								<input type="button" value="저장" onclick="saveTec()">
-							</div>
-						</form>
+						<h5>자신 있는 기술을 최대 3개 선택하세요.</h5>
+						<div id="selectedArea">
+							<p th:if="${ member.tec1 != null && member.tec1 != '' }" th:id="${ member.tec1 }" onclick="removeTec(this.id)" style="display:inline-block; color: #fff; background-color: #44576c; margin: 5px; padding: 0 5px; cursor: pointer; "></p>
+							<p th:if="${ member.tec2 != null && member.tec2 != '' }" th:id="${ member.tec2 }" onclick="removeTec(this.id)" style="display:inline-block; color: #fff; background-color: #44576c; margin: 5px; padding: 0 5px;  cursor: pointer;"></p>
+							<p th:if="${ member.tec3 != null && member.tec3 != '' }" th:id="${ member.tec3 }" onclick="removeTec(this.id)" style="display:inline-block; color: #fff; background-color: #44576c; margin: 5px; padding: 0 5px; cursor: pointer;"></p>
+						</div>
+						<div class="mt20" id="selectedNone" style="display: none;">선택한 기술이 없습니다.</div>
+						<div class="mt20">
+							<h5>그 밖의 기술 등록</h5>
+							<input id="inputTec" placeholder="기술 이름으로 검색" oninput="searchTec()">
+							<div id="tecList" style="display: none; background-color: #fff; max-height: 300px; overflow-y: scroll;"></div>
+							<div id="searchFailed" style="display: none;">해당하는 기술이 없습니다. 영어로만 검색해주세요.</div>
+						</div>
+						<div id="hiddenArea">
+							<input type="hidden" name="tec" th:value="${ member.tec1 }">
+							<input type="hidden" name="tec" th:value="${ member.tec2 }">
+							<input type="hidden" name="tec" th:value="${ member.tec3 }">
+						</div>
+						<div class="profile_btn_grup">
+							<input type="button" value="취소" onclick="history.back()">
+							<input type="button" value="저장" onclick="saveTec()">
+						</div>
 					</div>
 				</div>
 			</div>

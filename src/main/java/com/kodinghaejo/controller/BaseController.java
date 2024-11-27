@@ -6,8 +6,10 @@ import java.util.Random;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.kodinghaejo.dto.MemberDTO;
 import com.kodinghaejo.dto.TestDTO;
 import com.kodinghaejo.entity.BannerEntity;
 import com.kodinghaejo.entity.BoardEntity;
@@ -28,7 +30,7 @@ public class BaseController {
 	private final TestService testService;
 	private final BaseService baseService;
 
-	@GetMapping("/index")
+	@GetMapping({ "/", "/index" })
 	public String getIndex(Model model, HttpServletRequest request) {
 		adminservice.upTodayVisitorCount(request);
 
@@ -44,18 +46,28 @@ public class BaseController {
 		List<TestDTO> diffProblem = testService.getDiffTest();
 		model.addAttribute("diffProblems", diffProblem);
 
+		//랭킹
+		List<MemberDTO> members = baseService.memberRank("");
+		for (MemberDTO member : members) {
+			String grade = baseService.calGrade(member.getScore());
+			member.setGrade(grade);
+		}
+		model.addAttribute("members", members);
+
 		return "index";
 	}
 
+	//랭킹
 	@GetMapping("/rank/rank")
-	public void getRank() { }
-
-	//가장 많이 풀어본 문제
-	@GetMapping("/popularTest")
-	public String getPopularTest() {
-		Long idx = testService.getMostPopularTest();
-
-		return "redirect:/test/challenge?test_idx=" + idx;
+	public void getRank(Model model, @RequestParam(name = "kind", defaultValue = "") String kind) { 
+		List<MemberDTO> members = baseService.memberRank(kind);
+		
+		for (MemberDTO member : members) {
+			String grade = baseService.calGrade(member.getScore());
+			member.setGrade(grade);
+		}
+		
+		model.addAttribute("members", members);
 	}
 
 	//등록일 기준 신규 문제
@@ -63,7 +75,7 @@ public class BaseController {
 	public String getNewTest() {
 		Long randomIdx = testService.getNewTest(5);
 
-		return "redirect:/test/challenge?test_idx=" + randomIdx;
+		return "redirect:/test/challenge?idx=" + randomIdx;
 	}
 
 	//난이도 0 기준 랜덤 문제
@@ -71,7 +83,7 @@ public class BaseController {
 	public String getRandomTest() {
 		Long randomIdx = testService.getRandomTest();
 
-		return "redirect:/test/challenge?test_idx=" + randomIdx;
+		return "redirect:/test/challenge?idx=" + randomIdx;
 	}
 
 	//등록일 기준 신규 공지

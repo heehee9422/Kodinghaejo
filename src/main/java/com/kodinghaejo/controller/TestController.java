@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
@@ -71,11 +72,17 @@ public class TestController {
 
 	//코딩테스트 문제 상세 화면
 	@GetMapping("/test/challenge")
-	public void getChallenge(Model model, @RequestParam("test_idx") Long idx) throws Exception {
-		model.addAttribute("test", service.loadTest(idx));
+	public void getChallenge(Model model, @RequestParam("idx") Long idx,
+			@SessionAttribute(name = "email", required = false) String email) throws Exception {
+		TestDTO test = service.loadTest(idx);
+		String descHtml = service.convertCode(test.getDescr());
+		model.addAttribute("descHtml", descHtml);
+		
+		model.addAttribute("test", test);
 		model.addAttribute("java", service.lngAvlChk(idx, "LNG-0001"));
 		model.addAttribute("js", service.lngAvlChk(idx, "LNG-0002"));
 		model.addAttribute("oracle", service.lngAvlChk(idx, "LNG-0003"));
+		model.addAttribute("isbookmarked", service.isBookmarked(email, idx));
 	}
 
 	//코딩테스트 언어별 문제 가져오기
@@ -148,5 +155,19 @@ public class TestController {
 
 		return result;
 	}
+	
+	//북마크 
+	@ResponseBody
+	@PostMapping("/test/bookmark")
+	public Map<String, Object> toggleLike(@RequestBody Map<String, Object> requestData, HttpSession session) {
+		String email = (String) session.getAttribute("email");
+		Long testIdx = Long.valueOf(requestData.get("testIdx").toString());
+		String action = (String) requestData.get("action");
+		boolean isbookmarked = "add".equals(action) ? service.addBookmark(email, testIdx) : service.removeBookemark(email, testIdx);
+		System.out.println(isbookmarked);
+		Map<String, Object> response = new HashMap<>();
+		response.put("isbookmarked", isbookmarked);
+		return response;
+	}	
 
 }

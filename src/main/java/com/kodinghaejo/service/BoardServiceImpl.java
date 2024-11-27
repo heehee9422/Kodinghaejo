@@ -1,6 +1,7 @@
 package com.kodinghaejo.service;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -23,6 +24,7 @@ import com.kodinghaejo.entity.BoardRecommendEntityID;
 import com.kodinghaejo.entity.MemberEntity;
 import com.kodinghaejo.entity.ReplyEntity;
 import com.kodinghaejo.entity.TestEntity;
+import com.kodinghaejo.entity.TestLngEntity;
 import com.kodinghaejo.entity.TestQuestionAnswerEntity;
 import com.kodinghaejo.entity.TestQuestionEntity;
 import com.kodinghaejo.entity.repository.BoardRecommendRepository;
@@ -30,15 +32,18 @@ import com.kodinghaejo.entity.repository.BoardRepository;
 import com.kodinghaejo.entity.repository.CommonCodeRepository;
 import com.kodinghaejo.entity.repository.MemberRepository;
 import com.kodinghaejo.entity.repository.ReplyRepository;
+import com.kodinghaejo.entity.repository.TestLngRepository;
 import com.kodinghaejo.entity.repository.TestQuestionAnswerRepository;
 import com.kodinghaejo.entity.repository.TestQuestionRepository;
 import com.kodinghaejo.entity.repository.TestRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 @Service
 @AllArgsConstructor
+@Log4j2
 public class BoardServiceImpl implements BoardService {
 
 	private final BoardRepository boardRepository;
@@ -46,16 +51,30 @@ public class BoardServiceImpl implements BoardService {
 	private final MemberRepository memberRepository;
 	private final ReplyRepository replyRepository;
 	private final CommonCodeRepository commonCodeRepository;
-	private final TestQuestionRepository testQuestionRepository;
 	private final TestRepository testRepository;
-	private final TestQuestionAnswerRepository answerRepository;
+	private final TestLngRepository testLngRepository;
+	private final TestQuestionRepository testQuestionRepository;
+	private final TestQuestionAnswerRepository testQuestionAnswerRepository;
 
 	//게시물 등록하기
 	@Override
-	public void write(BoardDTO board) throws Exception {
-		board.setRegdate(LocalDateTime.now());
-		board.setHitCnt(0);
-		boardRepository.save(board.dtoToEntity(board));
+	public Long write(String cat, String email, String writer, String title, String content) throws Exception {
+		MemberEntity memberEntity = memberRepository.findById(email).get();
+		
+		BoardEntity boardEntity = BoardEntity
+																.builder()
+																.cat(cat)
+																.email(memberEntity)
+																.writer(writer)
+																.title(title)
+																.content(content)
+																.hitCnt(0)
+																.regdate(LocalDateTime.now())
+																.isUse("Y")
+																.build();
+		boardRepository.save(boardEntity);
+		
+		return boardEntity.getIdx();
 	}
 
 	//게시물 리스트 보기
@@ -236,24 +255,105 @@ public class BoardServiceImpl implements BoardService {
 
 	//공지사항 화면
 	@Override
-	public Page<BoardEntity> getAllNotices(int pageNum, int postNum) {
+	public Page<BoardDTO> getAllNotices(int pageNum, int postNum) {
 		PageRequest pageRequest = PageRequest.of(pageNum - 1, postNum, Sort.by(Direction.DESC, "idx"));
-
-		return boardRepository.findByCat("CAT-0001", pageRequest);
+		Page<BoardEntity> boardEntities = boardRepository.findByCat("CAT-0001", pageRequest);
+		List<BoardDTO> boardDTOs = new ArrayList<>();
+		for (BoardEntity boardEntity : boardEntities) {
+			BoardDTO boardDTO = new BoardDTO(boardEntity);
+			boardDTO.setIsNew((LocalDateTime.now().truncatedTo(ChronoUnit.DAYS).compareTo(boardEntity.getRegdate().truncatedTo(ChronoUnit.DAYS)) <= 2) ? "Y" : "N");
+			boardDTOs.add(boardDTO);
+		}
+		return new PageImpl<>(boardDTOs, pageRequest, boardEntities.getTotalElements());
 	}
 
 	//==========질문게시판===============
 	//질문쓰기
 	@Override
-	public void questionWrite(TestQuestionDTO question) throws Exception {
-		question.setRegdate(LocalDateTime.now());
-		testQuestionRepository.save(question.dtoToEntity(question));
+	public Long questionWrite(Long tlIdx, String email, String writer, String title, String content) throws Exception {
+		TestLngEntity testLngEntity = testLngRepository.findById(tlIdx).get();
+		MemberEntity memberEntity = memberRepository.findById(email).get();
+		
+		TestQuestionEntity testQuestionEntity = TestQuestionEntity
+																							.builder()
+																							.tlIdx(testLngEntity)
+																							.email(memberEntity)
+																							.writer(writer)
+																							.title(title)
+																							.content(content)
+																							.regdate(LocalDateTime.now())
+																							.isUse("Y")
+																							.build();
+		testQuestionRepository.save(testQuestionEntity);
+		
+		return testQuestionEntity.getIdx();
 	}
+	
+	//질문 가져오기(NEW)
+	@Override
+	public Page<TestQuestionDTO> getQuestionList(int pageNum, int postNum, String kind, String keyword, String email) {
+		MemberEntity memberEntity = (email == null || email.equals("")) ? null : memberRepository.findById(email).get();
+		
+		PageRequest pageRequest = PageRequest.of(pageNum - 1, postNum, Sort.by(Direction.DESC, "idx"));
+		List<TestQuestionEntity> testQuestionEntities;
+		
+		if (kind.equals("A")) { //모든 질문
+			testQuestionEntities = testQuestionRepository.findByIsUseOrderByIdxDesc("Y")
+																										.stream().filter((e) -> (e.getTlIdx().getTestIdx().getTitle().contains(keyword) || e.getTitle().contains(keyword) || e.getContent().contains(keyword))).toList();
+		} else if (kind.equals("N")) { //답변 필요
+			testQuestionEntities = testQuestionRepository.findByIsUseOrderByIdxDesc("Y")
+																										.stream().filter((e) -> (testQuestionAnswerRepository.countByTqIdxAndIsUse(e, "Y") == 0) && ((e.getTlIdx().getTestIdx().getTitle().contains(keyword) || e.getTitle().contains(keyword) || e.getContent().contains(keyword)))).toList();
+		} else if (kind.equals("M")) { //내 질문
+			testQuestionEntities = testQuestionRepository.findByEmailAndTitleContainingAndIsUseOrderByIdxDesc(memberEntity, keyword, "Y");
+		} else if (kind.chars().allMatch(Character :: isDigit)) { //언어별 문제 인덱스
+			Long tlIdx = Long.valueOf(kind);
+			TestLngEntity testLngEntity = testLngRepository.findById(tlIdx).get();
+			testQuestionEntities = testQuestionRepository.findByTlIdxAndTitleContainingAndIsUseOrderByIdxDesc(testLngEntity, keyword, "Y");
+		} else {
+			return null;
+		}
+		
+		List<TestQuestionDTO> testQuestionDTOs = new ArrayList<>();
+		
+		for (TestQuestionEntity testQuestionEntity : testQuestionEntities) {
+			TestQuestionDTO testQuestionDTO = new TestQuestionDTO(testQuestionEntity);
+			testQuestionDTO.setAnswerCount(testQuestionAnswerRepository.countByTqIdxAndIsUse(testQuestionEntity, "Y"));
+			testQuestionDTO.setLngName(commonCodeRepository.findById(testQuestionEntity.getTlIdx().getLng()).get().getVal());
+			testQuestionDTO.setIsNew((LocalDateTime.now().truncatedTo(ChronoUnit.DAYS).compareTo(testQuestionEntity.getRegdate().truncatedTo(ChronoUnit.DAYS)) <= 2) ? "Y" : "N");
+			testQuestionDTOs.add(testQuestionDTO);
+		}
 
+		int startPoint = (int) pageRequest.getOffset();
+		int endPoint = (startPoint + pageRequest.getPageSize()) > testQuestionDTOs.size() ? testQuestionDTOs.size() : (startPoint + pageRequest.getPageSize());
+
+		return new PageImpl<>(testQuestionDTOs.subList(startPoint, endPoint), pageRequest, testQuestionDTOs.size());
+	}
+	
+	//질문 상세보기
+	@Override
+	public TestQuestionDTO getQuestionInfo(Long idx) {
+		TestQuestionEntity testQuestionEntity = testQuestionRepository.findByIdxAndIsUse(idx, "Y").get();
+		
+		TestQuestionDTO testQuestionDTO = new TestQuestionDTO(testQuestionEntity);
+		testQuestionDTO.setReply(replyRepository.findByRePrntAndPrntIdxAndIsUse("Q", testQuestionEntity.getIdx(), "Y"));
+		
+		List<TestQuestionAnswerEntity> testQuestionAnswerEntities = testQuestionAnswerRepository.findByTqIdxAndIsUse(testQuestionEntity, "Y");
+		List<TestQuestionAnswerDTO> testQuestionAnswerDTOs = new ArrayList<>();
+		for (TestQuestionAnswerEntity testQuestionAnswerEntity : testQuestionAnswerEntities) {
+			TestQuestionAnswerDTO testQuestionAnswerDTO = new TestQuestionAnswerDTO(testQuestionAnswerEntity);
+			testQuestionAnswerDTO.setReply(replyRepository.findByRePrntAndPrntIdxAndIsUse("QA", testQuestionAnswerEntity.getIdx(), "Y"));
+			
+			testQuestionAnswerDTOs.add(testQuestionAnswerDTO);
+		}
+		testQuestionDTO.setAnswer(testQuestionAnswerDTOs);
+		
+		return testQuestionDTO;
+	}
+	
 	//모든 질문 가져오기
 	@Override
 	public List<TestQuestionEntity> getAllQuestionWithTestInfo() {
-		return testQuestionRepository.findAllWithTestInfo();
+		return null;//testQuestionRepository.findAllWithTestInfo();
 	}
 
 	//특정문제 정보 가져오기
@@ -305,12 +405,13 @@ public class BoardServiceImpl implements BoardService {
 	//questionIdx를 통해 문제 정보 조회
 	@Override
 	public TestEntity getTestByQuestionIdx(Long questionIdx) {
-		return testQuestionRepository.findTestByQuestionIdx(questionIdx).orElseThrow(() -> new NoSuchElementException("해당 질문과 연관된 문제를 찾을 수 없습니다. ID: " + questionIdx));
+		return testQuestionRepository.findTestByQuestionIdx(questionIdx)
+				.orElseThrow(() -> new NoSuchElementException("해당 질문과 연관된 문제를 찾을 수 없습니다. ID: " + questionIdx));
 	}
 
 	//질문 수정
 	@Override
-	public void questionmodify(TestQuestionDTO question) throws Exception {
+	public void questionModify(TestQuestionDTO question) throws Exception {
 		TestQuestionEntity questionEntity = testQuestionRepository.findById(question.getIdx()).get();
 		questionEntity.setTitle(question.getTitle());
 		questionEntity.setContent(question.getContent());
@@ -319,34 +420,73 @@ public class BoardServiceImpl implements BoardService {
 
 	//질문 비활성화
 	@Override
-	public void deactiveQuestion(Long questionIdx) throws Exception {
-		TestQuestionEntity questionEntity = testQuestionRepository.findById(questionIdx).orElseThrow(() -> new IllegalArgumentException("질문글을 찾을 수 없습니다: " + questionIdx));
+	public void questionDelete(Long idx) throws Exception {
+		TestQuestionEntity questionEntity = testQuestionRepository.findById(idx).get();
 		questionEntity.setIsUse("N");
 		testQuestionRepository.save(questionEntity);
 	}
 
 	//답변쓰기
 	@Override
-	public void answerWrite(TestQuestionAnswerDTO answer) throws Exception {
-		answer.setRegdate(LocalDateTime.now());
-		answerRepository.save(answer.dtoToEntity(answer));
+	public TestQuestionAnswerEntity answerWrite(Long tqIdx, String email, String writer, String content) throws Exception {
+		TestQuestionEntity testQuestionEntity = testQuestionRepository.findById(tqIdx).get();
+		MemberEntity memberEntity = memberRepository.findById(email).get();
+		
+		TestQuestionAnswerEntity testQuestionAnswerEntity = TestQuestionAnswerEntity
+																													.builder()
+																													.tqIdx(testQuestionEntity)
+																													.email(memberEntity)
+																													.writer(writer)
+																													.content(content)
+																													.regdate(LocalDateTime.now())
+																													.isUse("Y")
+																													.build();
+		testQuestionAnswerRepository.save(testQuestionAnswerEntity);
+		
+		return testQuestionAnswerEntity;
 	}
 
 	//답변목록보기
 	public List<TestQuestionAnswerDTO> answerlist(Long questionIdx) {
-		return answerRepository.findByTqIdx(questionIdx).stream().map(TestQuestionAnswerDTO :: new).collect(Collectors.toList());
+		return testQuestionAnswerRepository.findByTqIdx(questionIdx).stream().map(TestQuestionAnswerDTO::new)
+				.collect(Collectors.toList());
 	}
 
 	//답변 개수보기
 	public int getAnswerCountByQuestionId(Long questionIdx) {
-		return answerRepository.countAnswerByTqIdx(questionIdx);
+		return testQuestionAnswerRepository.countAnswerByTqIdx(questionIdx);
 	}
 
-	//답변 비활성화(isUse를 "N"으로 설정)
-	public void answerDeactive(Long answerIdx) {
-		TestQuestionAnswerEntity answerEntity = answerRepository.findById(answerIdx).orElseThrow(() -> new IllegalArgumentException("댓글을 찾을 수 없습니다: " + answerIdx));
+	//답변 수정
+	@Override
+	public void answerModify(Long idx, String content) {
+		TestQuestionAnswerEntity answerEntity = testQuestionAnswerRepository.findById(idx).get();
+		answerEntity.setContent(content);
+		testQuestionAnswerRepository.save(answerEntity);
+	}
+
+	//답변 삭제(isUse를 "N"으로 설정)
+	public void answerDelete(Long idx) {
+		TestQuestionAnswerEntity answerEntity = testQuestionAnswerRepository.findById(idx).get();
 		answerEntity.setIsUse("N");
-		answerRepository.save(answerEntity);
+		testQuestionAnswerRepository.save(answerEntity);
 	}
 
+	//답변없는 질문 가져오기
+	@Override
+	public List<TestQuestionEntity> getQuestionsWithNoAnswers() {
+		return testQuestionRepository.findQuestionsWithNoAnswers();
+	}
+
+	//답변없는 질문 갯수 가져오기
+	@Override
+	public long getQuestionWithNoAnswersCount() {
+		return testQuestionRepository.countQuestionsWithNoAnswers();
+	}
+
+	//문제 제목 또는 질문 제목으로 검색
+	@Override
+	public List<TestQuestionEntity> searchQuestions(String keyword) {
+		return testQuestionRepository.searchQuestionsByKeyword(keyword);
+	}
 }

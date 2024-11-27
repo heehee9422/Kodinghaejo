@@ -1,6 +1,5 @@
 package com.kodinghaejo.controller;
 
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.data.domain.Page;
@@ -14,12 +13,9 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 
 import com.kodinghaejo.dto.BoardDTO;
 import com.kodinghaejo.dto.ReplyInterface;
-import com.kodinghaejo.dto.TestQuestionAnswerDTO;
 import com.kodinghaejo.dto.TestQuestionDTO;
-import com.kodinghaejo.entity.BoardEntity;
 import com.kodinghaejo.entity.ReplyEntity;
-import com.kodinghaejo.entity.TestEntity;
-import com.kodinghaejo.entity.TestQuestionEntity;
+import com.kodinghaejo.entity.TestQuestionAnswerEntity;
 import com.kodinghaejo.service.BaseService;
 import com.kodinghaejo.service.BoardService;
 import com.kodinghaejo.service.TestService;
@@ -67,16 +63,22 @@ public class BoardController {
 	//게시물 등록
 	@ResponseBody
 	@PostMapping("/board/m/write")
-	public String postUpload(BoardDTO board) throws Exception {
-		service.write(board);
-		return "{\"message\":\"good\"}";
+	public String postFreeboardWrite(@RequestParam("cat") String cat, @RequestParam("title") String title,
+			@RequestParam("content") String content, HttpSession session) throws Exception {
+		String email = (String) session.getAttribute("email");
+		String writer = (String) session.getAttribute("nickname");
+		
+		Long idx = service.write(cat, email, writer, title, content);
+		return "{ \"message\": \"good\", \"idx\": \"" + idx + "\" }";
 	}
 
 	//게시물 수정화면 보기
 	@GetMapping("/board/m/freeboardModify")
 	public void getModify(Model model, @RequestParam("idx") Long idx, HttpSession session) throws Exception {
+		String email = (String) session.getAttribute("email");
 		Map<String, Object> commonCode = baseService.loadUsedCommonCode();
-		model.addAttribute("view", service.view(idx, (String) session.getAttribute("email")));
+		
+		model.addAttribute("view", service.view(idx, email));
 		model.addAttribute("commonCode", commonCode);
 	}
 
@@ -85,7 +87,7 @@ public class BoardController {
 	@PostMapping("/board/m/modify")
 	public String postModify(BoardDTO board) throws Exception {
 		service.modify(board);
-		return "{\"message\":\"good\"}";
+		return "{ \"message\": \"good\" }";
 	}
 
 	//게시물 상세화면 보기
@@ -101,7 +103,7 @@ public class BoardController {
 			service.hitno(idx);
 	}
 
-	//게시물 비활성화
+	//게시물 삭제
 	@ResponseBody
 	@PostMapping("/board/m/delete")
 	public String deleteBoard(@RequestParam("idx") Long idx) throws Exception {
@@ -128,8 +130,8 @@ public class BoardController {
 
 	//댓글 수정
 	@ResponseBody
-	@PostMapping("/board/m/replyEdit")
-	public String replyEdit(ReplyInterface reply) throws Exception {
+	@PostMapping("/board/m/replyModify")
+	public String replyModify(ReplyInterface reply) throws Exception {
 		log.info("===== reply.getIdx(): {} =====", reply.getIdx());
 		log.info("===== reply.getContent(): {} =====", reply.getContent());
 		service.modifyReply(reply);
@@ -170,7 +172,7 @@ public class BoardController {
 		int postNum = 10;
 		int pageListCount = 5;
 
-		Page<BoardEntity> boards = service.getAllNotices(pageNum, postNum);
+		Page<BoardDTO> boards = service.getAllNotices(pageNum, postNum);
 
 		PageUtil page = new PageUtil();
 		int totalCount = (int) boards.getTotalElements();
@@ -192,130 +194,129 @@ public class BoardController {
 		model.addAttribute("page", page);
 	}
 	
-	//=============== 질문보드 ==================
+//=============== 질문보드 ==================
 	
 	//질문 쓰기화면 보기
-	@GetMapping("/test/questionWrite")
-	public void getQuestionWrite(Model model, @RequestParam("test_idx") Long testidx) throws Exception {
-		model.addAttribute("test", testService.loadTest(testidx));
+	@GetMapping("/test/m/questionWrite")
+	public void getQuestionWrite(Model model, @RequestParam("tl_idx") Long tlIdx) throws Exception {
+		model.addAttribute("lng", testService.loadTestLngByIdx(tlIdx));
 	}
 
 	//질문 등록
 	@ResponseBody
-	@PostMapping("/test/questionWrite")
-	public String questionUpload(TestQuestionDTO question) throws Exception {
-		service.questionWrite(question);
-		return "{\"message\":\"good\"}";
+	@PostMapping("/test/m/questionWrite")
+	public String postQuestionWrite(@RequestParam("tl_idx") Long tlIdx, @RequestParam("title") String title,
+			@RequestParam("content") String content, HttpSession session) throws Exception {
+		String email = (String) session.getAttribute("email");
+		String writer = (String) session.getAttribute("nickname");
+		Long idx = service.questionWrite(tlIdx, email, writer, title, content);
+		return "{ \"message\": \"good\", \"idx\": \"" + idx + "\" }";
 	}
 
 	//질문 리스트 보기
-	//파라미터 test_idx=all 일경우 모든 질문 보기
-	//파라미터 test_idx=숫자 일경우 해당 질문만 보기
+	//kind : A(모든 질문), N(답변 필요), M(내 질문)
+	//상기 이외의 값(숫자) : 해당 언어별 문제에 대한 질문
 	@GetMapping("/test/questionBoard")
-	public String getQuestionList(@RequestParam("test_idx") String testIdx, Model model, HttpSession session) {
-
-		String email = (String) session.getAttribute("email");
-
-		if ("all".equals(testIdx)) {
-			long totalQuestionCount = service.getQuestionCount(); //모든 질문 개수
-			List<TestQuestionEntity> allQuestions = service.getAllQuestionWithTestInfo();
-			model.addAttribute("allQuestions", allQuestions);
-			model.addAttribute("viewType", "all");
-			model.addAttribute("totalQuestionCount", totalQuestionCount);
-		} else if ("myquestion".equals(testIdx)) {
-			if (email == null) {
-				model.addAttribute("errorMessage", "로그인이 필요합니다.");
-			}
-
-			List<TestQuestionEntity> myQuestions = service.getMyQuestions(email);
-			long myQuestionCount = service.getMyQuestionCount(email);
-			List<TestEntity> myQuestionTests = service.getTestsByMyQuestions(email);
-
-			model.addAttribute("myQuestions", myQuestions);
-			model.addAttribute("myQuestionCount", myQuestionCount);
-			model.addAttribute("myQuestionTests", myQuestionTests);
-			model.addAttribute("viewType", "myquestion");
-		} else {
-
-			try {
-				Long testIdxNum = Long.parseLong(testIdx);
-
-				//특정 문제의 질문 가져오기
-				List<TestQuestionEntity> specificQuestions = service.getQuestionsByTestIdx(testIdxNum);
-				//특정 문제의 정보 가져오기
-				TestEntity testInfo = service.getTestByIdx(testIdxNum);
-				long specificQuestionCount = service.getQuestionCountByTestIdx(testIdxNum);
-
-				model.addAttribute("specificQuestionCount", specificQuestionCount);
-				model.addAttribute("viewType", "single");
-				model.addAttribute("specificQuestions", specificQuestions);
-				model.addAttribute("testInfo", testInfo);
-
-			} catch (NumberFormatException e) {
-				model.addAttribute("errorMessage", "올바르지 않은 요청입니다.");
-			} catch (RuntimeException e) {
-				model.addAttribute("errorMessage", e.getMessage());
-			}
-		}
-		return "/test/questionBoard";
+	public void getQuestionList(Model model, @RequestParam(name = "page", defaultValue = "1") int pageNum,
+			@RequestParam(name = "kind", defaultValue = "A") String kind,
+			@RequestParam(name = "keyword", defaultValue = "") String keyword,
+			@SessionAttribute(name = "email", required = false) String email) throws Exception {
+		int postNum = 10;
+		int pageListCount = 5;
+		
+		Page<TestQuestionDTO> list = service.getQuestionList(pageNum, postNum, kind, keyword, email);
+		int totalCount = (int) list.getTotalElements();
+		PageUtil page = new PageUtil();
+		
+		String params = "";
+		params += (kind.equals("")) ? "" : "&kind=" + kind;
+		params += (keyword.equals("")) ? "" : "&keyword=" + keyword;
+		
+		model.addAttribute("list", list);
+		model.addAttribute("page", pageNum);
+		model.addAttribute("totalElements", totalCount);
+		model.addAttribute("kind", kind);
+		model.addAttribute("keyword", keyword);		
+		model.addAttribute("pageList", page.getPageList("/test/questionBoard", "page", pageNum, postNum, pageListCount, totalCount, params));
 	}
 
 	//질문 상세화면 보기
 	@GetMapping("/test/questionBoardView")
-	public void getquestionboardView(@RequestParam("question_idx") Long questionIdx, Model model, HttpSession session)
-			throws Exception {
-		TestEntity testInfo = service.getTestByQuestionIdx(questionIdx);
-
-		//댓글 수
-		int answerCount = service.getAnswerCountByQuestionId(questionIdx);
-		model.addAttribute("answerCount", answerCount);
-
-		model.addAttribute("questionview", service.questionview(questionIdx));
-		model.addAttribute("testInfo", testInfo);
-		model.addAttribute("answerList", service.answerlist(questionIdx));
-
+	public void getQuestionBoardView(Model model, @RequestParam("idx") Long idx) throws Exception {
+		model.addAttribute("view", service.getQuestionInfo(idx));
 	}
 
-	//질문 수정화면보기
-	@GetMapping("/test/questionModify")
-	public void getquestionModify(@RequestParam("question_idx") Long questionIdx, Model model, HttpSession session)
-			throws Exception {
-
-		TestEntity testInfo = service.getTestByQuestionIdx(questionIdx);
-
-		model.addAttribute("questionview", service.questionview(questionIdx));
-		model.addAttribute("testInfo", testInfo);
+	//질문 수정화면 보기
+	@GetMapping("/test/m/questionModify")
+	public void getQuestionModify(Model model, @RequestParam("idx") Long idx, HttpSession session) throws Exception {
+		model.addAttribute("view", service.getQuestionInfo(idx));
 	}
 
 	//질문 수정
 	@ResponseBody
-	@PostMapping("/test/questionModify")
-	public String questionModify(TestQuestionDTO question) throws Exception {
-		service.questionmodify(question);
-		return "{\"message\":\"good\"}";
+	@PostMapping("/test/m/questionModify")
+	public String postQuestionModify(TestQuestionDTO question) throws Exception {
+		service.questionModify(question);
+		return "{ \"message\": \"good\" }";
 	}
 
-	//질문글 비활성화
-	@GetMapping("/test/questiondeactive")
-	public String deactiveQuestion(@RequestParam("question_idx") Long questionIdx) throws Exception {
-		service.deactiveQuestion(questionIdx);
-		return "redirect:/test/questionBoard?test_idx=all";
+	//질문 삭제
+	@GetMapping("/test/m/questionDelete")
+	public String questionDelete(@RequestParam("idx") Long idx) throws Exception {
+		service.questionDelete(idx);
+		return "{ \"message\": \"good\" }";
 	}
 
-	//답글 등록
+	//답변 등록
 	@ResponseBody
-	@PostMapping("/test/answerWrite")
-	public String answerWrite(TestQuestionAnswerDTO answer) throws Exception {
-		service.answerWrite(answer);
+	@PostMapping("/test/m/answerWrite")
+	public TestQuestionAnswerEntity answerWrite(@RequestParam("tq_idx") Long tqIdx,
+			@RequestParam("content") String content, HttpSession session) throws Exception {
+		String email = (String) session.getAttribute("email");
+		String writer = (String) session.getAttribute("nickname");
+		
+		return service.answerWrite(tqIdx, email, writer, content);
+	}
+
+	//답변 수정
+	@ResponseBody
+	@PostMapping("/test/m/answerModify")
+	public String answerModify(@RequestParam("idx") Long idx, @RequestParam("content") String content) throws Exception {
+		service.answerModify(idx, content);
 		return "{ \"message\": \"good\" }";
 	}
 
 	//답글 비활성화
 	@GetMapping("/test/answerDeactive")
-	public String answerDeactive(@RequestParam("answerIdx") Long answerIdx, @RequestParam("tqIdx") Long tqIdx)
-			throws Exception {
-		service.answerDeactive(answerIdx);
-		return "redirect:/test/questionBoardView?question_idx=" + tqIdx;
+	public String answerDeactive(@RequestParam("idx") Long idx) throws Exception {
+		service.answerDelete(idx);
+		return "{ \"message\": \"good\" }";
+	}
+
+	//질문게시판 댓글 등록
+	@ResponseBody
+	@PostMapping("/test/m/replyWrite")
+	public ReplyEntity testReplyWrite(ReplyInterface reply) throws Exception {
+		return service.writeReply(reply);
+	}
+
+	//질문게시판 댓글 수정
+	@ResponseBody
+	@PostMapping("/test/m/replyModify")
+	public String testReplyModify(ReplyInterface reply) throws Exception {
+		log.info("===== reply.getIdx(): {} =====", reply.getIdx());
+		log.info("===== reply.getContent(): {} =====", reply.getContent());
+		service.modifyReply(reply);
+		return "{ \"message\": \"good\" }";
+	}
+
+	//질문게시판 댓글 삭제
+	@ResponseBody
+	@PostMapping("/test/m/replyDelete")
+	public String testReplyDelete(ReplyInterface reply) throws Exception {
+		log.info("===== reply.getIdx(): {} =====", reply.getIdx());
+		service.deleteReply(reply);
+		return "{ \"message\": \"good\" }";
 	}
 
 }

@@ -1,9 +1,11 @@
 package com.kodinghaejo.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.kodinghaejo.entity.MemberEntity;
-import com.kodinghaejo.entity.TestEntity;
+import com.kodinghaejo.entity.ReplyEntity;
+import com.kodinghaejo.entity.TestLngEntity;
 import com.kodinghaejo.entity.TestQuestionEntity;
 
 import lombok.AllArgsConstructor;
@@ -20,18 +22,25 @@ import lombok.Setter;
 public class TestQuestionDTO {
 
 	private Long idx;
-	private TestEntity testIdx;
+	private TestLngEntity tlIdx;
 	private MemberEntity email;
 	private String writer;
 	private String title;
 	private String content;
 	private LocalDateTime regdate;
 	private String isUse;
+	
+	private Long answerCount;
+	private String lngName;
+	private String isNew;
+	
+	private List<ReplyEntity> reply;
+	private List<TestQuestionAnswerDTO> answer;
 
 	//Entity --> DTO 이동
 	public TestQuestionDTO(TestQuestionEntity entity) {
 		this.idx = entity.getIdx();
-		this.testIdx = entity.getTestIdx();
+		this.tlIdx = entity.getTlIdx();
 		this.email = entity.getEmail();
 		this.writer = entity.getWriter();
 		this.title = entity.getTitle();
@@ -45,7 +54,7 @@ public class TestQuestionDTO {
 		TestQuestionEntity entity = TestQuestionEntity
 																	.builder()
 																	.idx(dto.getIdx())
-																	.testIdx(dto.getTestIdx())
+																	.tlIdx(dto.getTlIdx())
 																	.email(dto.getEmail())
 																	.writer(dto.getWriter())
 																	.title(dto.getTitle())

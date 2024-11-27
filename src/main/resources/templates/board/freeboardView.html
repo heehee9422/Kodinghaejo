@@ -25,10 +25,11 @@
 				<h4 th:text="${ view.catName }"></h4>
 				<h5 th:text="${ view.title }"></h5>
 				<div class="profile-title">
-					<img src="/img/test-profile/nonoping.png" alt="">
+					<img th:if="${ view.email.storedImg == null || view.email.storedImg == '' }" src="/img/test-profile/nonoping.png" alt="">
+					<img th:if="${ view.email.storedImg != null && view.email.storedImg != '' }" th:src="@{ '/member/img/' + ${ view.email.email } }" alt="">
 					<div class="profile-title-content">
 						<p class="profile-name" th:text="${ view.writer }"></p>
-						<p class="profile-date" th:text="${ view.regdate }"></p>
+						<p class="profile-date" th:text="${ #temporals.format(view.regdate, 'yyyy-MM-dd HH:mm:ss') }"></p>
 					</div>
 				</div>
 				<div id="content"></div>
@@ -43,7 +44,7 @@
 							<i th:if="${ view.goodChk == 'Y' }" th:onclick="|recommend('${ view.idx }')|" th:id="@{ 'good-' + ${ view.idx } }" th:kind="${ view.goodChk }" class="xi-heart"><span th:id="@{ 'good-count-' + ${ view.idx } }" th:text="${ view.goodCnt }">{0}</span></i>
 							<i th:if="${ view.goodChk == 'N' }" th:onclick="|recommend('${ view.idx }')|" th:id="@{ 'good-' + ${ view.idx } }" th:kind="${ view.goodChk }" class="xi-heart-o"><span th:id="@{ 'good-count-' + ${ view.idx } }" th:text="${ view.goodCnt }">{0}</span></i>
 						</li>
-						<li><i class="xi-cut" th:onclick="|reportBoard('${view.Idx}')|"><span>신고하기</span></i></li>
+						<li><i class="xi-cut" th:onclick="|reportBoard('${ view.Idx }')|"><span>신고하기</span></i></li>
 						<th:block th:if="${ session.email == view.email.email }">
 						<li><a th:href="@{ /board/m/freeboardModify(idx=${ view.idx }) }">수정하기</a></li>
 						<li><a th:href="|javascript:deleteBoard('${ view.idx }')|"> 삭제하기</a></li>
@@ -51,7 +52,6 @@
 					</ol>
 				</div>
 				<a href="/board/freeboard" class="btn_menu" style="float: right; margin-top: 20px;">목록가기</a>
-				<a href="javascript:replyLoad()" class="btn_menu" style="float: right; margin-top: 20px;">댓글보기</a>
 			</div>
 		</div>
 	</div>
@@ -88,6 +88,7 @@
 	
 	<!-- Custom Script -->
 	<script type="text/javascript">
+		//========== 게시물 관련 처리 ==========
 		//토스트 UI - 뷰어
 		const viewer = new toastui.Editor.factory({
 			el: document.querySelector('#content'),
@@ -256,7 +257,6 @@
 		}
 		
 		//========== 댓글 관련 처리 ==========
-		
 		//토스트 UI - 에디터
 		const editor = new toastui.Editor({
 			el: document.querySelector('#reply-write-area'),	//에디터를 적용할 요소 (컨테이너)
@@ -306,6 +306,8 @@
 		
 		//댓글 목록 보기
 		const replyList = (data) => {
+			const replyCnt = document.querySelector('#replyCnt');
+			
 			const jsonInfo = data.content;
 			
 			totalPage = data.totalPages;
@@ -316,6 +318,21 @@
 			for (const i in jsonInfo) {
 				
 				let profileImg = (jsonInfo[i].email.storedImg == null || jsonInfo[i].email.storedImg == '') ? '/img/test-profile/nonoping.png' : ('/member/img/' + jsonInfo[i].email.email);
+
+				//날짜 데이터 변환 시작
+				let now = new Date(jsonInfo[i].regdate);
+				let year = now.getFullYear(); //연도
+				let month = now.getMonth() + 1; //월. 0~11로 표현
+				let date = now.getDate(); //일 * day: 요일 --> 0 ~ 6: 일 ~ 토
+				let hours = now.getHours();
+				let minutes = now.getMinutes();
+				
+				let mm = (month >= 10) ? month : '0' + month;
+				let dd = (date >= 10) ? date : '0' + date;
+				let hh = (hours >= 10) ? hours : '0' + hours;
+				let mi = (minutes >= 10) ? minutes : '0' + minutes;
+				let regdate = year + '-' + mm + '-' + dd + ' ' + hh + ':' + mi;
+				//날짜 데이터 변환 종료
 				
 				const elm = document.createElement('div');
 				elm.setAttribute('id', 'reply-' + jsonInfo[i].idx);
@@ -328,7 +345,7 @@
 									'\t\t<div class="profile-title-content">\n' +
 									'\t\t\t<img src="' + profileImg + '" alt="">\n' +
 									'\t\t\t<p class="profile-name">' + jsonInfo[i].writer + '</p>\n' +
-									'\t\t\t<p class="profile-date">' + jsonInfo[i].regdate + '</p>\n' +
+									'\t\t\t<p class="profile-date">' + regdate + '</p>\n' +
 									'\t\t</div>\n' +
 									'\t</div>\n' +
 									'</div>\n' +
@@ -337,7 +354,7 @@
 
 				if ('[[ ${ session.email } ]]' == jsonInfo[i].email.email) {
 					result += '\t<div class="user-free-board-tab" id="free-board-tab-' + jsonInfo[i].idx + '">\n' +
-										'\t\t<a class="btn_edit" href="javascript:replyEdit(' + jsonInfo[i].idx + ')">수정하기</a>\n' +
+										'\t\t<a class="btn_edit" href="javascript:replyModify(' + jsonInfo[i].idx + ')">수정하기</a>\n' +
 										'\t\t<a class="btn_delete" href="javascript:replyDelete(' + jsonInfo[i].idx + ')">삭제하기</a>\n' +
 										'\t</div>\n';
 				}
@@ -392,11 +409,27 @@
 			.then((response) => response.json())
 			.then((data) => {
 				const jsonInfo = data;
-				
+
+				const replyCnt = document.querySelector('#replyCnt');
 				replyCnt.innerText = (parseInt(replyCnt.innerText) + 1);
 				
 				const replyList = document.querySelector('#replyList');
 				let profileImg = (jsonInfo.email.storedImg == null || jsonInfo.email.storedImg == '') ? '/img/test-profile/nonoping.png' : ('/member/img/' + jsonInfo.email.email);
+
+				//날짜 데이터 변환 시작
+				let now = new Date(jsonInfo.regdate);
+				let year = now.getFullYear(); //연도
+				let month = now.getMonth() + 1; //월. 0~11로 표현
+				let date = now.getDate(); //일 * day: 요일 --> 0 ~ 6: 일 ~ 토
+				let hours = now.getHours();
+				let minutes = now.getMinutes();
+				
+				let mm = (month >= 10) ? month : '0' + month;
+				let dd = (date >= 10) ? date : '0' + date;
+				let hh = (hours >= 10) ? hours : '0' + hours;
+				let mi = (minutes >= 10) ? minutes : '0' + minutes;
+				let regdate = year + '-' + mm + '-' + dd + ' ' + hh + ':' + mi;
+				//날짜 데이터 변환 종료
 					
 				const elm = document.createElement('div');
 				elm.setAttribute('id', 'reply-' + jsonInfo.idx);
@@ -409,14 +442,14 @@
 									'\t\t<div class="profile-title-content">\n' +
 									'\t\t\t<img src="' + profileImg + '" alt="">\n' +
 									'\t\t\t<p class="profile-name">' + jsonInfo.writer + '</p>\n' +
-									'\t\t\t<p class="profile-date">' + jsonInfo.regdate + '</p>\n' +
+									'\t\t\t<p class="profile-date">' + regdate + '</p>\n' +
 									'\t\t</div>\n' +
 									'\t</div>\n' +
 									'</div>\n' +
 									'<div class="free-review-list-content">\n' +
 									'\t<div id="reply-content-' + jsonInfo.idx + '"></div>\n' +
 									'\t<div class="user-free-board-tab" id="free-board-tab-' + jsonInfo.idx + '">\n' +
-									'\t\t<a class="btn_edit" href="javascript:replyEdit(' + jsonInfo.idx + ')">수정하기</a>\n' +
+									'\t\t<a class="btn_edit" href="javascript:replyModify(' + jsonInfo.idx + ')">수정하기</a>\n' +
 									'\t\t<a class="btn_delete" href="javascript:replyDelete(' + jsonInfo.idx + ')">삭제하기</a>\n' +
 									'\t</div>\n' +
 									'</div>';
@@ -439,13 +472,13 @@
 					confirmButtonText: '확인'
 				});
 				console.log('error: ' + error);
-			})
+			});
 		}
 		
 		//댓글 수정
-		const replyEdit = (idx) => {
+		const replyModify = (idx) => {
 			if (modifyReplyIdx != 0) {
-				const viewBtns = '<a class="btn_edit" href="javascript:replyEdit(' + modifyReplyIdx + ')">수정하기</a>\n' +
+				const viewBtns = '<a class="btn_edit" href="javascript:replyModify(' + modifyReplyIdx + ')">수정하기</a>\n' +
 													'<a class="btn_delete" href="javascript:replyDelete(' + modifyReplyIdx + ')">삭제하기</a>';
 				document.querySelector('#free-board-tab-' + modifyReplyIdx).innerHTML = viewBtns;
 
@@ -457,9 +490,9 @@
 				});
 			}
 			
-			const editBtns = '\<a class="btn_delete" id="btn-reply-edit-cancel-' + idx + '">취소하기</a>' +
-												'<a class="btn_edit" id="btn-reply-edit-' + idx + '">등록하기</a>';
-			document.querySelector('#free-board-tab-' + idx).innerHTML = editBtns;
+			const modifyBtns = '<a class="btn_delete" id="btn-reply-modify-cancel-' + idx + '">취소하기</a>\n' +
+												'<a class="btn_modify" id="btn-reply-modify-' + idx + '">등록하기</a>';
+			document.querySelector('#free-board-tab-' + idx).innerHTML = modifyBtns;
 
 			document.querySelector('#reply-content-' + idx).removeAttribute('style');
 			const replyEditor = new toastui.Editor({
@@ -481,11 +514,11 @@
 			
 			replyEditors[idx] = replyEditor;
 			
-			const btnReplyEdit = document.querySelector('#btn-reply-edit-' + idx);
-			const btnReplyEditCancel = document.querySelector('#btn-reply-edit-cancel-' + idx);
+			const btnReplyModifyCancel = document.querySelector('#btn-reply-modify-cancel-' + idx);
+			const btnReplyModify = document.querySelector('#btn-reply-modify-' + idx);
 			
-			btnReplyEditCancel.addEventListener('click', () => {
-				const viewBtns = '<a class="btn_edit" href="javascript:replyEdit(' + modifyReplyIdx + ')">수정하기</a>\n' +
+			btnReplyModifyCancel.addEventListener('click', () => {
+				const viewBtns = '<a class="btn_edit" href="javascript:replyModify(' + modifyReplyIdx + ')">수정하기</a>\n' +
 													'<a class="btn_delete" href="javascript:replyDelete(' + modifyReplyIdx + ')">삭제하기</a>';
 				
 				document.querySelector('#free-board-tab-' + modifyReplyIdx).innerHTML = viewBtns;
@@ -493,16 +526,14 @@
 				const replyViewer = new toastui.Editor.factory({
 					el: document.querySelector('#reply-content-' + modifyReplyIdx),
 					viewer: true,
-					initialValue: replyEditors[modifyReplyIdx].getMarkdown()
+					initialValue: getEditorContent(replyViewerContents[modifyReplyIdx])
 				});
 				document.querySelector('#reply-content-' + modifyReplyIdx).removeAttribute('style');
 				
-				replyViewerContents[modifyReplyIdx] = setEditorContent(replyEditors[modifyReplyIdx].getMarkdown());
-				
 				modifyReplyIdx = 0;
-			})
+			});
 			
-			btnReplyEdit.addEventListener('click', async () => {
+			btnReplyModify.addEventListener('click', async () => {
 				let content = replyEditors[modifyReplyIdx].getMarkdown();
 				
 				if (content.trim() == '') {
@@ -518,14 +549,14 @@
 				formData.append('idx', modifyReplyIdx);
 				formData.append('content', setEditorContent(content));
 				
-				await fetch('/board/m/replyEdit', {
+				await fetch('/board/m/replyModify', {
 					method: 'POST',
 					body: formData
 				})
 				.then((response) => response.json())
 				.then((data) => {
 					if (data.message == 'good') {
-						const viewBtns = '<a class="btn_edit" href="javascript:replyEdit(' + modifyReplyIdx + ')">수정하기</a>\n' +
+						const viewBtns = '<a class="btn_edit" href="javascript:replyModify(' + modifyReplyIdx + ')">수정하기</a>\n' +
 															'<a class="btn_delete" href="javascript:replyDelete(' + modifyReplyIdx + ')">삭제하기</a>';
 						document.querySelector('#free-board-tab-' + modifyReplyIdx).innerHTML = viewBtns;
 
@@ -592,6 +623,9 @@
 							const deleteReply = document.querySelector('#reply-' + idx);
 							
 							replyList.removeChild(deleteReply);
+							
+							const replyCnt = document.querySelector('#replyCnt');
+							replyCnt.innerText = (parseInt(replyCnt.innerText) - 1);
 						} else {
 							Swal.fire({
 								icon: 'error',
@@ -611,8 +645,6 @@
 				}
 			});
 		}
-		
-		//========== 댓글 관련 처리 종료 ==========
 	</script>
 </body>
 <script>

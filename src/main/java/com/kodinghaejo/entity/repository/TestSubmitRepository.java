@@ -49,5 +49,17 @@ public interface TestSubmitRepository extends JpaRepository<TestSubmitEntity, Lo
 									"FETCH FIRST 1 ROWS ONLY",
 			nativeQuery = true)
 	public Long findMostPopularTlIdx();
+	
+	//이메일별 푼 문제 수(submSts가 'Y')
+	@Query("SELECT COUNT(ts) " +
+					"FROM testSubmit ts " +
+					"WHERE ts.email.email = :email AND ts.submSts = 'Y'")
+	public Long countSubmitByEmail(@Param("email") String email);
+
+	// 문제 제출 수
+	@Query("SELECT COUNT(ts) " +
+					"FROM testSubmit ts " +
+					"WHERE ts.email.email = :email")
+	public Long countByEmail(@Param("email") String email);
 
 }

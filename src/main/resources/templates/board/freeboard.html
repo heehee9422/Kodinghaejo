@@ -35,7 +35,7 @@
 							</a>
 							<div class="profile-title">
 								<p class="profile-name" th:text="${ list.writer }">작성자</p>
-								<p class="profile-date" th:text="${ #temporals.format(list.regdate, 'yyyy-MM-dd a hh:mm:ss') }">작성 시간</p>
+								<p class="profile-date" th:text="${ #temporals.format(list.regdate, 'yyyy-MM-dd HH:mm:ss') }">작성 시간</p>
 							</div>
 							<div class="profile-item">
 								<ol>

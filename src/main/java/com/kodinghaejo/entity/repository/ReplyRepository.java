@@ -14,7 +14,10 @@ import com.kodinghaejo.entity.ReplyEntity;
 
 public interface ReplyRepository extends JpaRepository<ReplyEntity, Long> {
 
+	public List<ReplyEntity> findByRePrntAndPrntIdxAndIsUse(String rePrnt, Long prntIdx, String isUse);
 	public Page<ReplyEntity> findByRePrntAndPrntIdxAndIsUse(String rePrnt, Long prntIdx, String isUse, PageRequest pageRequest);
+
+	public List<ReplyEntity> findByRePrntAndPrntIdx(String rePrnt, Long prntIdx);
 
 	public List<ReplyEntity> findByPrntIdx(Long prntIdx);
 

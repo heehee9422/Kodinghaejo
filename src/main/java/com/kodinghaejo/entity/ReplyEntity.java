@@ -50,7 +50,7 @@ public class ReplyEntity {
 	@Column(name = "writer", length = 50, nullable = false)
 	private String writer;
 
-	@Column(name = "content", length = 200, nullable = false)
+	@Column(name = "content", length = 2000, nullable = false)
 	private String content;
 
 	@Column(name = "regdate", nullable = false)

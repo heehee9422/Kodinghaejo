@@ -41,7 +41,7 @@
 				<ul>
 					<li><b>코딩테스트</b></li>
 					<li><a href="/test/collect">문제 모아보기</a></li>
-					<li><a href="/test/questionBoard?test_idx=all">질문 모아보기</a></li>
+					<li><a href="/test/questionBoard?kind=A">질문 모아보기</a></li>
 				</ul>
 			</div>
 			<div class="menu-item">
@@ -120,7 +120,7 @@
 						notices.forEach(notice => {
 							const li = document.createElement("li");
 							const a = document.createElement("a");
-							a.href = '/board/noticeboardview?idx=' + notice.idx;
+							a.href = '/board/noticeboardView?idx=' + notice.idx;
 							a.textContent = notice.title;
 							li.appendChild(a);
 							noticeList.appendChild(li);

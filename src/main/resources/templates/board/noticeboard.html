@@ -28,7 +28,7 @@
 						<a th:href="@{ '/board/noticeboardView?idx=' + ${ list.idx } + '&page=' + ${ page } }">
 							<h3>
 								<!-- new 일때 : 2일 까지만? -->
-								<i class="xi-new"></i>
+								<i th:if="${ list.isNew == 'Y' }" class="xi-new"></i>
 								[[ ${ list.title } ]]
 							</h3>
 							<p>

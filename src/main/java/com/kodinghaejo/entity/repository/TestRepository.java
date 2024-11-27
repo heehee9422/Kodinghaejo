@@ -26,7 +26,7 @@ public interface TestRepository extends JpaRepository<TestEntity, Long> {
 	List<TestEntity> findNewTest(Pageable pageable);
 
 	//특정 이메일이 쓴 질문의 문제 정보 가져오기
-	@Query("SELECT DISTINCT t FROM test t JOIN testQuestion q ON t.idx = q.testIdx.idx WHERE q.email.email = :email")
+	@Query("SELECT DISTINCT t FROM test t JOIN testQuestion q ON t.idx = q.tlIdx.testIdx.idx WHERE q.email.email = :email")
 	List<TestEntity> findTestsByEmail(@Param("email") String email);
 
 }

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="kr" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>북마크한 문제&nbsp;&#124;&nbsp;코딩해조</title>
+	<!-- Standard css -->
+	<link rel="icon" href="/img/logo/favicon.png">
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+	<!-- pub-js link -->
+	<script src="/js/pub-ui-custom.js"></script>
+</head>
+
+<body>
+	<!-- header-->
+	<div id="header" th:replace="~{ /include/header }"></div>
+
+	<div class="container column bgcontain-mypage">
+		<div class="column-row myPage">
+			<div class="c-column-2">
+				<div id="mypage_manu" th:replace="~{ /include/mypage }"></div>
+			</div>
+			<div class="c-column-8">
+				<div class="mypage_content">
+					<h5>북마크한 문제</h5>
+					<div class="mypage_box">
+						<div class="mybookmark">
+							<div th:if="${bookmarkCount == 0}">
+								<p>북마크한 문제가 없습니다.<a class="more-link" href="/test/collect">문제 북마크하러 가기</a></p>
+							</div>
+							<div class="bookmark-info" th:each="myBookmark, stat : ${myBookmarks}">
+								<hr th:if="${stat.index > 0}" class="dashed">
+								<p class="test-number" >문제 번호 : <span th:text="${myBookmark.testIdx.idx + '번'}"></span></p>
+								<a th:href="@{'/test/challenge?idx=' + ${myBookmark.testIdx.idx}}"><p class="test-description" th:text="${myBookmark.testIdx.title}">A+B를 구하여 출력하는 코드를 작성하시오</p></a>
+								<p class="submission-date">북마크한 날짜 : <span th:text="${myBookmark.addDate}">2024-10-25</span></p>
+							</div>
+						</div>
+					</div>
+					<button id="moreBookmarkBtn" style="width: 100%; border-radius: 0 0 5px 5px;"><i class="xi-plus-min"></i> 문제 더보기</button>
+
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- footer -->
+	<div id="footer" th:replace="~{ /include/footer }"></div>
+	<script>
+		let page = 1;
+		let totalbookPage = parseInt('[[${ totalbookPage }]]');
+		
+		window.onload = () => {
+			// 문제가 하나일 경우 "문제 더보기" 버튼 숨기기
+			if ('[[ ${ bookmarkCount }]]' <= 2) {
+				document.getElementById('moreBookmarkBtn').style.display = 'none';
+			}
+		};
+		
+		const loadBookmark = async () => {
+			let formData = new FormData();
+			formData.append('page', page);
+			formData.append('email', '[[ ${ session.email } ]]');
+			
+			await fetch('/member/mypage/mytestBookmark', {
+				method: 'POST',
+				body: formData
+			})
+			.then((response) => response.json())
+			.then((data) => {
+				console.log('Fetched data:', data.content);
+				addBookmark(data);
+				
+			})
+			.catch((error) => {
+				console.log('error: ' + error);
+				Swal.fire({
+					icon: 'error',
+					text: '시스템 장애로 인해 문제 가져오기에 실패했습니다.',
+					confirmButtonText: '확인'
+				});
+			})
+		}
+		// 문제 목록 추가 함수
+		const addBookmark = (data) => {
+			const jsonInfo = data.content;
+			
+			let testList = document.querySelector('.mybookmark');
+			
+			for (const i in jsonInfo) {
+				
+				let elm = document.createElement('div');
+				elm.classList.add('bookmark-info');
+				
+				let result ='';
+				result += '<hr class="dashed">' +
+						  '<p class="test-number">' + '문제 번호 : ' + '<span>' + jsonInfo[i].testIdx.idx + '번' + '</span>' + '</p>\n' +
+						  '<p class="test-description">' + '<a href="/test/challenge?idx=' + jsonInfo[i].testIdx.idx + '">\n' + jsonInfo[i].testIdx.title + '</p></a>\n' +
+						  '<p class="submission-date">' + '북마크한 날짜 : ' + '<span>' + jsonInfo[i].addDate + '</span>' + '</p>\n';
+
+				elm.innerHTML = result;
+				testList.appendChild(elm);
+			}
+		}
+		
+		document.getElementById('moreBookmarkBtn').addEventListener('click', () => {
+			if (page >= totalbookPage) {
+				return;
+			}
+			page++; 
+			if (page >= totalbookPage) document.getElementById('moreBookmarkBtn').style.display = 'none';
+			
+			loadBookmark();
+		})
+	</script>
+</body>
+
+</html>

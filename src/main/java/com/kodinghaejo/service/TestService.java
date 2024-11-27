@@ -31,6 +31,9 @@ public interface TestService {
 	//코드 제출 처리
 	public void submitTest(Long tlIdx, String email, String submSts, String code);
 
+	//언어별 문제 인덱스로 가져오기
+	public TestLngEntity loadTestLngByIdx(Long idx) throws Exception;
+
 	//가장 많이 풀어본 문제 가져오기
 	public Long getMostPopularTest();
 
@@ -51,5 +54,17 @@ public interface TestService {
 
 	//문제 검색
 	public List<TestDTO> searchtestListByTitle(String searchKeyword);
+
+	//마크다운 -> html 변환
+	public String convertCode(String markdown);
+	
+	//북마크 추가
+	public boolean addBookmark(String email, Long testIdx);
+	
+	//북마크 제거
+	public boolean removeBookemark(String email, Long testIdx);
+	
+	//북마크 상태 확인
+	public String isBookmarked(String email, Long testIdx);
 
 }

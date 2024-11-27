@@ -44,7 +44,7 @@
 					<hr class="dashed">
 					<div class="btn_group">
 						<a th:href="@{ '/board/noticeboard?page=' + ${ page } }" class="btn_menu">목록가기</a>
-						<a th:if="${ session.lvl == 'LVL-0001' }" th:href="@{ '/admin/noticeboardModify?id=' + ${ view.idx } }" class="_btn">수정하기</a>
+						<a th:if="${ session.lvl == 'LVL-0001' }" th:href="@{ '/admin/noticeboardModify?id=' + ${ view.idx } }" class="btn_menu">수정하기</a>
 					</div>
 				</div>
 			</div>

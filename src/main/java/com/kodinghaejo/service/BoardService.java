@@ -8,15 +8,15 @@ import com.kodinghaejo.dto.BoardDTO;
 import com.kodinghaejo.dto.ReplyInterface;
 import com.kodinghaejo.dto.TestQuestionAnswerDTO;
 import com.kodinghaejo.dto.TestQuestionDTO;
-import com.kodinghaejo.entity.BoardEntity;
 import com.kodinghaejo.entity.ReplyEntity;
 import com.kodinghaejo.entity.TestEntity;
+import com.kodinghaejo.entity.TestQuestionAnswerEntity;
 import com.kodinghaejo.entity.TestQuestionEntity;
 
 public interface BoardService {
 
 	//게시물 등록 하기
-	public void write(BoardDTO board) throws Exception;
+	public Long write(String cat, String email, String writer, String title, String content) throws Exception;
 
 	//게시물 목록 보기
 	public Page<BoardDTO> getBoardList(int pageNum, int postNum, String email);
@@ -54,11 +54,17 @@ public interface BoardService {
 	public String reportPost(String email, Long boardIdx);
 
 	//공지사항 화면
-	public Page<BoardEntity> getAllNotices(int pageNum, int postNum);
+	public Page<BoardDTO> getAllNotices(int pageNum, int postNum);
 
 	//=========질문게시판==========
 	//질문 등록
-	public void questionWrite(TestQuestionDTO question) throws Exception;
+	public Long questionWrite(Long tlIdx, String email, String writer, String title, String content) throws Exception;
+	
+	//질문 가져오기(NEW)
+	public Page<TestQuestionDTO> getQuestionList(int pageNum, int postNum, String kind, String keyword, String email);
+	
+	//질문 상세보기
+	public TestQuestionDTO getQuestionInfo(Long idx);
 
 	//모든 질문 가져오기
 	public List<TestQuestionEntity> getAllQuestionWithTestInfo();
@@ -91,13 +97,13 @@ public interface BoardService {
 	public TestEntity getTestByQuestionIdx(Long questionIdx);
 
 	//질문 수정
-	public void questionmodify(TestQuestionDTO question) throws Exception;
+	public void questionModify(TestQuestionDTO question) throws Exception;
 
 	//질문 비활성화 (isUse Y->N)
-	public void deactiveQuestion(Long questionIdx) throws Exception;
+	public void questionDelete(Long idx) throws Exception;
 
 	//답변쓰기
-	public void answerWrite(TestQuestionAnswerDTO answer) throws Exception;
+	public TestQuestionAnswerEntity answerWrite(Long tqIdx, String email, String writer, String content) throws Exception;
 
 	//답변 리스트 보기
 	public List<TestQuestionAnswerDTO> answerlist(Long questionIdx);
@@ -105,7 +111,19 @@ public interface BoardService {
 	//답변 개수보기
 	public int getAnswerCountByQuestionId(Long questionIdx);
 
-	//답변삭제
-	public void answerDeactive(Long answerIdx);
+	//답변 삭제
+	public void answerDelete(Long idx);
+
+	//답변 수정
+	public void answerModify(Long idx, String content);
+
+	//답변없는 질문 가져오기
+	public List<TestQuestionEntity> getQuestionsWithNoAnswers();
+	
+	//답변없는 질문 갯수 가져오기
+	public long getQuestionWithNoAnswersCount();
+	
+	// 문제 제목 또는 질문 제목으로 검색
+	public List<TestQuestionEntity> searchQuestions(String keyword);
 
 }

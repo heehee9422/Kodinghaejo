@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import com.kodinghaejo.dto.BoardDTO;
 import com.kodinghaejo.dto.MemberDTO;
 import com.kodinghaejo.dto.ReplyDTO;
+import com.kodinghaejo.dto.TestBookmarkDTO;
+import com.kodinghaejo.dto.TestSubmitDTO;
 import com.kodinghaejo.entity.BoardEntity;
 import com.kodinghaejo.entity.BoardRecommendEntity;
 import com.kodinghaejo.entity.ChatMemberEntity;
@@ -30,6 +32,7 @@ import com.kodinghaejo.entity.TestSubmitEntity;
 import com.kodinghaejo.entity.repository.BoardRecommendRepository;
 import com.kodinghaejo.entity.repository.BoardRepository;
 import com.kodinghaejo.entity.repository.ChatMemberRepository;
+import com.kodinghaejo.entity.repository.CommonCodeRepository;
 import com.kodinghaejo.entity.repository.FileRepository;
 import com.kodinghaejo.entity.repository.MemberLogRepository;
 import com.kodinghaejo.entity.repository.MemberRepository;
@@ -58,26 +61,29 @@ public class MemberServiceImpl implements MemberService {
 	private final TestQuestionAnswerRepository testQuestionAnswerRepository;
 	private final TestQuestionRepository testQuestionRepository;
 	private final TestSubmitRepository testSubmitRepository;
+	private final CommonCodeRepository commonCodeRepository;
 
 	//회원가입
 	@Override
 	public void join(MemberDTO member) {
 		MemberEntity memberEntity = MemberEntity
-										.builder()
-										.email(member.getEmail())
-										.emailAuth("N")
-										.username(member.getUsername())
-										.nickname(member.getUsername())
-										.password(member.getPassword())
-										.tel(member.getTel())
-										.lvl("LVL-0002")
-										.imgSize(0L)
-										.regdate(LocalDateTime.now())
-										.pwdate(LocalDateTime.now())
-										.notifdate(LocalDateTime.now().plusDays(30))
-										.joinRoute("email")
-										.isUse("Y")
-										.build();
+																.builder()
+																.email(member.getEmail())
+																.emailAuth("N")
+																.username(member.getUsername())
+																.nickname(member.getUsername())
+																.password(member.getPassword())
+																.tel(member.getTel())
+																.lvl("LVL-0002")
+																.score(0L)
+																.imgSize(0L)
+																.regdate(LocalDateTime.now())
+																.pwdate(LocalDateTime.now())
+																.notifdate(LocalDateTime.now().plusDays(30))
+																.scoredate(LocalDateTime.now())
+																.joinRoute("email")
+																.isUse("Y")
+																.build();
 
 		memberRepository.save(memberEntity);
 	}
@@ -132,7 +138,7 @@ public class MemberServiceImpl implements MemberService {
 	//회원 기본정보
 	@Override
 	public MemberDTO memberInfo(String email) {
-		return memberRepository.findById(email).map((member) -> new MemberDTO(member)).get();
+		return memberRepository.findByEmailAndIsUse(email, "Y").map((member) -> new MemberDTO(member)).get();
 	}
 
 	//회원 로그인, 로그아웃, 패스워드변경 일자 등록(Update)
@@ -290,6 +296,7 @@ public class MemberServiceImpl implements MemberService {
 		for (BoardEntity boardEntity : boardEntities) {
 			BoardDTO board = new BoardDTO(boardEntity);
 			board.setGoodCnt(boardRecommendRepository.countByBoardIdxAndGoodChk(boardEntity, "Y"));
+			board.setCatName(commonCodeRepository.findById(boardEntity.getCat()).get().getVal());
 			boardDTOs.add(board);
 		}
 
@@ -306,6 +313,7 @@ public class MemberServiceImpl implements MemberService {
 		List<ReplyDTO> replyDTOs = new ArrayList<>();
 
 		for (ReplyEntity replyEntity : replyEntities) {
+			System.out.println("rePrnt: " + replyEntity.getRePrnt() + " / prntIdx: " + replyEntity.getPrntIdx());
 			ReplyDTO reply = new ReplyDTO(replyEntity);
 			String prntTitle = (replyEntity.getRePrnt().equals("QA")) ? testQuestionAnswerRepository.findById(replyEntity.getPrntIdx()).get().getContent() :
 													(replyEntity.getRePrnt().equals("Q")) ? testQuestionRepository.findById(replyEntity.getPrntIdx()).get().getTitle() :
@@ -315,6 +323,82 @@ public class MemberServiceImpl implements MemberService {
 		}
 
 		return new PageImpl<>(replyDTOs, pageRequest, replyEntities.getTotalElements());
+	}
+	
+	//마이페이지 나의 랭킹
+	public MemberDTO memberTest(String email) {
+		MemberEntity memberEntity = memberRepository.findByEmail(email)
+				.orElseThrow(() -> new RuntimeException("email not found"));
+		
+		MemberDTO memberDTO = new MemberDTO(memberEntity);
+		
+		Long correctCount = testSubmitRepository.countSubmitByEmail(email);
+		memberDTO.setCorrectCount(correctCount != null ? correctCount : 0);
+		Long submitCount = testSubmitRepository.countByEmail(email);
+		memberDTO.setSubmitCount(submitCount);
+		double correctRate = (submitCount > 0) ? (correctCount * 100.0) / submitCount : 0;
+		memberDTO.setCorrectRate(correctRate);
+		
+		return memberDTO;
+		
+	}
+	
+	//모든회원
+	public List<MemberDTO> getAllMember() {
+		List<MemberEntity> memberEntities = memberRepository.findAll();
+		
+		List<MemberDTO> memberDTOs = new ArrayList<>();
+		
+		for (MemberEntity member : memberEntities) {
+			MemberDTO memberDTO = memberTest(member.getEmail());
+			memberDTOs.add(memberDTO);
+		}
+		
+		return memberDTOs;
+	}
+	
+//회원의 풀어본 문제
+	public Page<TestSubmitDTO> myTest(int pageNum, int postNum, String email) {
+		MemberEntity memberEntity = memberRepository.findByEmail(email)
+				.orElseThrow(() -> new RuntimeException("email not found"));
+		
+		PageRequest pageRequest = PageRequest.of(pageNum - 1, postNum, Sort.by(Direction.DESC, "idx"));
+		
+		List<TestSubmitEntity> submitEntities = testSubmitRepository.findByEmail(memberEntity);
+		 
+		List<TestSubmitDTO> testSubmitDTOs = new ArrayList<>();
+		
+		for (TestSubmitEntity submit : submitEntities) {
+			TestSubmitDTO testSubmitDTO = new TestSubmitDTO(submit);
+			testSubmitDTOs.add(testSubmitDTO);
+		}
+		
+		int startPoint = (int) pageRequest.getOffset();
+		int endPoint = (startPoint + pageRequest.getPageSize()) > testSubmitDTOs.size() ? testSubmitDTOs.size() : (startPoint + pageRequest.getPageSize());
+		
+		return new PageImpl<>(testSubmitDTOs.subList(startPoint, endPoint), pageRequest, testSubmitDTOs.size());
+	}
+	
+	//회원의 북마크 문제
+	public Page<TestBookmarkDTO> myBookmark(int pageNum, int postNum, String email) {
+		MemberEntity memberEntity = memberRepository.findByEmail(email)
+				.orElseThrow(() -> new RuntimeException("email not found"));
+		
+		PageRequest pageRequest = PageRequest.of(pageNum - 1, postNum, Sort.by(Direction.DESC, "idx"));
+		
+		List<TestBookmarkEntity> bookmarkEntities = testBookmarkRepository.findByEmailAndIsUse(memberEntity, "Y");
+		
+		List<TestBookmarkDTO> testBookmarkDTOs = new ArrayList<>();
+		
+		for (TestBookmarkEntity bookmarkEntity : bookmarkEntities) {
+			TestBookmarkDTO testBookmarkDTO = new TestBookmarkDTO(bookmarkEntity);
+			testBookmarkDTOs.add(testBookmarkDTO);
+		}
+		
+		int startPoint = (int) pageRequest.getOffset();
+		int endPoint = (startPoint + pageRequest.getPageSize()) > testBookmarkDTOs.size() ? testBookmarkDTOs.size() : (startPoint + pageRequest.getPageSize());
+		
+		return new PageImpl<>(testBookmarkDTOs.subList(startPoint, endPoint), pageRequest, testBookmarkDTOs.size());
 	}
 
 }

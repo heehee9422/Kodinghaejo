@@ -38,8 +38,8 @@ public class TestQuestionEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@OnDelete(action = OnDeleteAction.CASCADE)
-	@JoinColumn(name = "test_idx", nullable = false)
-	private TestEntity testIdx;
+	@JoinColumn(name = "tl_idx", nullable = false)
+	private TestLngEntity tlIdx;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@OnDelete(action = OnDeleteAction.CASCADE)

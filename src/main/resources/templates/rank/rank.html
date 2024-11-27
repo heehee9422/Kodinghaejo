@@ -10,6 +10,34 @@
 <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
 <!-- pub-js link -->
 <script src="/js/pub-ui-custom.js"></script>
+<script>
+let currentIndex = 0;
+const itemsPerPage = 10;
+
+function showMoreRank() {
+	const rankList = document.getElementById("rankList");
+	const allItems = rankList.querySelectorAll(".content-rank-item-list");
+
+	for (let i = currentIndex; i < currentIndex + itemsPerPage && i < allItems.length; i++) {
+		allItems[i].classList.remove("hidden");
+	}
+
+	currentIndex += itemsPerPage;
+
+	if (currentIndex >= allItems.length) {
+		document.querySelector(".content-rank-item-pluse-view").style.display = "none";
+	}
+}
+
+window.onload = function () {
+	const rankList = document.getElementById("rankList");
+	const allItems = rankList.querySelectorAll(".content-rank-item-list");
+
+	allItems.forEach(item => item.classList.add("hidden"));
+
+	showMoreRank();
+};
+</script>
 </head>
 <body>
 	<!-- header 영역 -->
@@ -36,8 +64,8 @@
 					<div class="content-rank-title-header">
 						<h3>이용자 랭킹 순위 보기</h3>
 						<ul class="rank_tab_group" id="rank_tab">
-							<li><a href="#tabMenu01" class="btn_tab_menu">레벨이 높은 회원</a></li>
-							<li><a href="#tabMenu02" class="btn_tab_menu">문제를 제일 많이 푼 회원</a></li>
+							<li><a href="/rank/rank" class="btn_tab_menu">레벨이 높은 회원</a></li>
+							<li><a href="/rank/rank?kind=Q" class="btn_tab_menu">맞은 문제가 높은 회원</a></li>
 						</ul>
 					</div>
 				</div>
@@ -47,26 +75,11 @@
 					<!-- 토글 컨텐츠 -->
 					<div class="content-rank-toggle-menu-item" id="tabMenu01" style="display: block;">
 						<div class="content-rank-box">
-							<div class="content-rank-box-list">
-								<img src="/img/test-profile/handyping.png" alt="" style="width: 40%;">
-								<p>닉네임<b>수리핑</b></p>
-								<p>이메일<b>aaa@naver.com</b></p>
-								<p>레벨<b>LV999</b></p>
-								<p>문제푼수<b>5개</b> | 정답률 <b>99%</b></p>
-							</div>
-							<div class="content-rank-box-list">
-								<img src="/img/test-profile/handyping.png" alt="" style="width: 40%;">
-								<p>닉네임<b>수리핑</b></p>
-								<p>이메일<b>aaa@naver.com</b></p>
-								<p>레벨<b>LV999</b></p>
-								<p>문제푼수<b>5개</b> | 정답률 <b>99%</b></p>
-							</div>
-							<div class="content-rank-box-list">
-								<img src="/img/test-profile/handyping.png" alt="" style="width: 40%;">
-								<p>닉네임<b>수리핑</b></p>
-								<p>이메일<b>aaa@naver.com</b></p>
-								<p>레벨<b>LV999</b></p>
-								<p>문제푼수<b>5개</b> | 정답률 <b>99%</b></p>
+							<div class="content-rank-box-list" th:each="member, stat : ${members}" th:if="${stat.index < 3}">
+								<img th:src="${#strings.isEmpty(member.orgImg) ? '/img/test-profile/coolping.png' : '/member/img/' + member.email}" alt="" style="width: 40%;">
+								<p>닉네임<b th:text="${member.nickname != null ? member.nickname : 'unknown'}">수리핑</b></p>
+								<p>레벨<b th:text="${member.grade}">LV999</b></p>
+								<p>맞은 문제<b th:text="${member.correctCount}">5개</b> | 정답률 <b th:text="${#numbers.formatDecimal(member.correctRate,1,1)} + ' ' + '%' ">99%</b></p>
 							</div>
 						</div>
 						
@@ -74,37 +87,71 @@
 							<div class="content-rank-item-title">
 								<ul>
 									<li class="rank-count">순위</li>
-									<li class="user">회원</li>
+									<li class="user">닉네임</li>
 									<li class="level">레벨</li>
-									<li class="problem-count">문제 푼 수</li>
+									<li class="problem-correctCount">맞은 문제</li>
+									<li class="problem-submitCount">제출 수</li>
+									<li class="porblem-rate">정답률</li>
 								</ul>
 							</div>
-							<div class="content-rank-item-body">
-								<ul class="content-rank-item-list">
-									<li class="rank-count">{count}</li>
-									<li class="user"><a href="#">{member}</a></li>
-									<li class="level">{level}</li>
-									<li class="problem-count">{problemCount}</li>
+							<div class="content-rank-item-body" id="rankList">
+								<ul class="content-rank-item-list" th:each="member, stat : ${members}">
+									<li class="rank-count" th:text="${stat.index + 1}">{count}</li>
+									<li class="user" th:text="${member.nickname != null ? member.nickname : 'unknown'}">{member}</li>
+									<li class="level" th:text="${member.grade}">{level}</li>
+									<li class="problem-correctCount" th:text="${member.correctCount}">{problemCount}</li>
+									<li class="problem-submitCount" th:text="${member.submitCount}">{problemCount}</li>
+									<li class="porblem-rate" th:text="${#numbers.formatDecimal(member.correctRate,1,1)} + ' ' + '%' ">{problemCount}</li>
 								</ul>
 							</div>
-							<div class="content-rank-item-pluse-view">
-								<a href="#">랭킹 더보기</a>
+							<div class="content-rank-item-pluse-view" id="loadMoreRank">
+								<a href="javascript:void(0);" onclick="showMoreRank()">랭킹 더보기</a>
 							</div>
 						</div>
 						<!-- // content-rank-item-table -->
 					</div>
 
-					<div class="content-rank-toggle-menu-item" id="tabMenu02">내용 알아서 넣기</div>
+					<div class="content-rank-toggle-menu-item" id="tabMenu02">
+						<div class="content-rank-box">
+							<div class="content-rank-box-list" th:each="member, stat : ${members}" th:if="${stat.index < 3}">
+								<img th:src="${#strings.isEmpty(member.orgImg) ? '/img/test-profile/coolping.png' : '/member/img/' + member.email}" alt="" style="width: 40%;">
+								<p>닉네임<b th:text="${member.nickname != null ? member.nickname : 'unknown'}">수리핑</b></p>
+								<p>레벨<b th:text="${member.grade}">LV999</b></p>
+								<p>맞은 문제<b th:text="${member.correctCount}">5개</b> | 정답률 <b th:text="${#numbers.formatDecimal(member.correctRate,1,1)} + ' ' + '%' ">99%</b></p>
+							</div>
+						</div>
+						
+						<div class="content-rank-item-table">
+							<div class="content-rank-item-title">
+								<ul>
+									<li class="rank-count">순위</li>
+									<li class="user">닉네임</li>
+									<li class="level">레벨</li>
+									<li class="problem-correctCount">맞은 문제</li>
+									<li class="problem-submitCount">제출 수</li>
+									<li class="porblem-rate">정답률</li>									
+								</ul>
+							</div>
+							<div class="content-rank-item-body" id="rankList" th:each="member, stat : ${members}" th:if="${stat.index < limit}">
+								<ul class="content-rank-item-list">
+									<li class="rank-count" th:text="${stat.index + 1}">{count}</li>
+									<li class="user" th:text="${member.nickname != null ? member.nickname : 'unknown'}">{member}</li>
+									<li class="level" th:text="${member.grade}">{level}</li>
+									<li class="problem-correctCount" th:text="${member.correctCount}">{problemCount}</li>
+																		<li class="problem-submitCount" th:text="${member.submitCount}">{problemCount}</li>
+									<li class="porblem-rate" th:text="${#numbers.formatDecimal(member.correctRate,1,1)} + ' ' + '%' ">{problemCount}</li>
+								</ul>
+							</div>
+							<div class="content-rank-item-pluse-view" id="loadMoreRank">
+								<a href="javascript:void(0);" onclick="showMoreRank()">랭킹 더보기</a>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-
 	<!-- footer영역 -->
 	<div id="footer" th:replace="/include/footer"></div>
 </body>
-<script>
-	//pub-ui-custom : 탭 메뉴
-	toggleTab();
-</script>
 </html>

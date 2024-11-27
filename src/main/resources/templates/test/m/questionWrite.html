@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="kr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>질문하기&nbsp;&#124;&nbsp;코딩해조</title>
+	<!-- Standard css -->
+	<link rel="icon" href="/img/logo/favicon.png">
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+	<!-- pub-js link -->
+	<script src="/js/pub-ui-custom.js"></script>
+	<!-- common-js link -->
+	<script src="/js/common.js"></script>
+</head>
+<body>
+	<!-- header 영역 -->
+	<div id="header" th:replace="~{ /include/header }"></div>
+	<div class="container">
+		<div class="main-content">
+			<div class="content-board-notice-write">
+				<div class="content-board-notice-write-wrap">
+					<button th:onclick="|location.href='/test/challenge?idx=${ lng.testIdx.idx }'|">뒤로가기</button>
+					<!-- <a href=""><span style="float: right;">코딩 기초 트레이닝</span></a> -->
+					<h2 class="mt30">문제 질문</h2>
+					<h4 class="mt20" th:text="@{ 'LV. ' + ${ lng.testIdx.diff } + ' ' + ${ lng.testIdx.title } }"></h4>
+					<div class="mt30"></div>
+					<div class="category-title">
+						<label for="title">제목<span class="asterisk"></span></label>
+						<input type="text" id="title" name="title" placeholder="제목을 입력해 주세요" maxlength="100">
+					</div>
+					<div class="category-content mt20" >
+						<label for="content">내용<span class="asterisk"></span></label>
+						<div id="content"></div>
+					</div>
+					
+					<div class="category-footer mt30">
+						<input type="button" value="글쓰기" onclick="writeQuestion()">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- footer 영역 -->
+	<div id="footer" th:replace="~{ /include/footer }"></div>
+	
+	<!-- toast API : 나중에 모듈로 작성해서 만들기-->
+	<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+	<link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+	
+	<!-- Custom Script -->
+	<script type="text/javascript">
+		//Toast UI 에디터
+		const editor = new toastui.Editor({
+			el: document.querySelector('#content'), // 에디터를 적용할 요소 (컨테이너)
+			height: '400px',												// 에디터 영역의 높이 값 (OOOpx || auto)
+			initialEditType: 'markdown',						// 최초로 보여줄 에디터 타입 (markdown || wysiwyg)
+			placeholder: '내용을 입력해주세요.',		// 플레이스홀더
+			previewStyle: 'vertical',								//마크다운 프리뷰 스타일 (tab || vertical)
+			toolbarItems: [
+				// 기본 툴바 항목에서 'image' 항목을 제외하고 나열합니다.
+				[ 'heading', 'bold', 'italic', 'strike' ],
+				[ 'hr', 'quote' ],
+				[ 'ul', 'ol', 'task' ],
+				[ 'table', 'link' ],
+				// 'image' 항목을 제거했습니다.
+				[ 'code', 'codeblock' ]
+			]
+		});
+	
+		//질문 작성
+		const writeQuestion = async() => {
+			let title = document.querySelector('#title');
+
+			// Toast UI Editor의 content 내용 가져오기
+			let content = editor.getMarkdown(); // 마크다운 텍스트로 가져오기
+			
+			//필수값 등록시 값 입력 여부 확인
+			if (title.value == ''){
+				Swal.fire({
+					icon: 'warning',
+					text: '제목을 입력해주세요.',
+					confirmButtonText: '확인'
+				});
+				title.focus();
+				return false;
+			}
+			
+			if (content.trim() == '') {
+				Swal.fire({
+					icon: 'warning',
+					text: '내용을 입력해주세요',
+					confirmButtonText: '확인'
+				});
+				return false;
+			}
+			
+			let formData = new FormData();
+			formData.append('tl_idx', parseInt('[[ ${ lng.idx } ]]'));
+			formData.append('title', title.value);
+			formData.append('content', setEditorContent(content));
+			
+			await fetch('/test/m/questionWrite', {
+				method: 'POST',
+				body: formData
+			})
+			.then((response) => response.json())
+			.then((data) => {
+				if (data.message == 'good') {
+					Swal.fire({
+						icon: 'success',
+						text: '질문이 작성되었습니다.',
+						confirmButtonText: '확인'
+					})
+					.then((result) => {
+						if (result.isConfirmed) {
+							document.location.href = '/test/questionBoardView?idx=' + data.idx;
+						}
+					});
+				} else {
+					Swal.fire({
+						icon: 'error',
+						text: '시스템 장애로 인해 질문 등록에 실패했습니다.',
+						confirmButtonText: '확인'
+					});
+				}
+			})
+			.catch((error) => {
+				Swal.fire({
+					icon: 'error',
+					text: '시스템 장애로 인해 질문 등록에 실패했습니다.',
+					confirmButtonText: '확인'
+				});
+				console.log('error: ' + error);
+			});
+		}
+	</script>
+	 
+</body>
+</html>

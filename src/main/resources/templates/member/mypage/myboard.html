@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>내 정보</title>
+	<title>내 게시판&nbsp;&#124;&nbsp;코딩해조</title>
 	<!-- Standard css -->
 	<link rel="icon" href="/img/logo/favicon.png">
 	<link rel="stylesheet" href="/css/style.css">
@@ -51,9 +51,9 @@
 									<th:block th:if="${ boardTotalElement > 0 }">
 									<tr th:each="board, index : ${ boardList }">
 										<td th:text="${ boardTotalElement - (boardPage - 1) * postNum - index.count + 1 }"></td>
-										<td>[[ ${ board.cat } ]]</td>
+										<td>[[ ${ board.catName } ]]</td>
 										<td><a th:href="@{ '/board/freeboardView?idx=' + ${ board.idx } }">[[ ${ board.title } ]]</a></td>
-										<td th:text="${ #temporals.format(board.regdate, 'yyyy-MM-dd a hh:mm:ss') }"></td>
+										<td th:text="${ #temporals.format(board.regdate, 'yyyy-MM-dd HH:mm:ss') }"></td>
 										<td>[[ ${ board.hitCnt } ]]</td>
 										<td>[[ ${ board.goodCnt } ]]</td>
 										<td><button class="btn_delete" th:onclick="|deleteBoard(${ board.idx })|">삭제</button></td>
@@ -97,7 +97,7 @@
 											<td th:text="${ replyTotalElement - (replyPage - 1) * postNum - index.count + 1 }"></td>
 											<td><a href="#">[[ ${ reply.prntTitle } ]]</a></td>
 											<td th:text="${ reply.content }"></td>
-											<td th:text="${ #temporals.format(reply.regdate, 'yyyy-MM-dd a hh:mm:ss') }"></td>
+											<td th:text="${ #temporals.format(reply.regdate, 'yyyy-MM-dd HH:mm:ss') }"></td>
 											<td><button class="btn_delete" th:onclick="|deleteReply(${ reply.idx })|">삭제</button></td>
 										</tr>
 										</th:block>

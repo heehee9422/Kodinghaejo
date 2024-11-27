@@ -23,29 +23,26 @@
 		<div class="main-content">
 			<div class="content-board-notice-write">
 				<div class="content-board-notice-write-wrap">
-					<form class="writeForm" id="writeForm" name="writeForm" method="post" enctype="multipart/form-data">		 
-						<h2>자유롭게 글을 작성해 보세요</h2>
-						<div class="mt30"></div>
-						<div class="category-menu">
-							<label for="category-section">카테고리<span class="asterisk"></span></label>
-							<select name="category-section" id="category-section"></select>
-						</div>
-						<div class="category-title">
-							<label for="title">제목<span class="asterisk"></span></label>
-							<input type="text" id="title" name="title" placeholder="제목을 입력해 주세요" maxlength="100">
-							<input type="hidden" id="email" name="email" th:value="${session.email}">
-							<input type="hidden" id="writer" name="writer" th:value="${session.nickname}">
-							<input type="hidden" id="isUse" name="isUse" value="Y">
-						</div>
-						<div class="category-content">
-							<label for="content">내용<span class="asterisk"></span></label>
-							<div id="content"></div>
-						</div>
-					</form> 
+					<h2>자유롭게 글을 작성해 보세요</h2>
+					<div class="mt30"></div>
+					<div class="category-menu">
+						<label for="cat">카테고리<span class="asterisk"></span></label>
+						<select name="cat" id="cat">
+							<option value="" selected disabled>카테고리를 선택해주세요</option>
+						</select>
+					</div>
+					<div class="category-title">
+						<label for="title">제목<span class="asterisk"></span></label>
+						<input type="text" id="title" name="title" placeholder="제목을 입력해주세요" maxlength="100">
+					</div>
+					<div class="category-content">
+						<label for="content">내용<span class="asterisk"></span></label>
+						<div id="content"></div>
+					</div>
 					
 					<div class="category-footer mt30">
-						<input type="button" value="전송" onclick="registerForm()">
-						<button onclick="history.back();">뒤로가기</button>
+						<input type="button" value="전송" onclick="writeBoard()">
+						<button onclick="location.href='/board/freeboard'">뒤로가기</button>
 					</div>
 				</div>
 			</div>
@@ -57,7 +54,13 @@
 	<!-- toast API : 나중에 모듈로 작성해서 만들기-->
 	<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
 	<link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
-	<script>
+
+	<!-- Custom Script -->
+	<script type="text/javascript">
+		//카테고리 셀렉트박스 옵션추가
+		const cat = document.querySelector('#cat');
+		setSelectOption(commonCode, cat, 'cat', '');
+		
 		//Toast UI 에디터
 		const editor = new toastui.Editor({
 			el: document.querySelector('#content'), // 에디터를 적용할 요소 (컨테이너)
@@ -75,26 +78,15 @@
 				[ 'code', 'codeblock' ]
 			]
 		});
-	</script>
-
-	<!-- Custom Script -->
-	<script type="text/javascript">
-		//카테고리 셀렉트박스 옵션추가
-		const categorySection = document.querySelector('#category-section');
-		setSelectOption(commonCode, categorySection, 'cat', '');
 		
-		const registerForm = async() => {
-			let cat = document.querySelector('select[name=category-section]').value; // 선택된 카테고리 값 가져오기
+		const writeBoard = async() => {
 			let title = document.querySelector('#title');
-			let writer = document.querySelector('#writer');
-			let email = document.querySelector('#email');
-			let isUse = document.querySelector('#isUse');
 		
 			// Toast UI Editor의 content 내용 가져오기
 			let content = editor.getMarkdown(); // 마크다운 텍스트로 가져오기
 				
 			//필수값 등록시 값 입력 여부 확인
-			if (title.value === '') {
+			if (title.value == ''){
 				Swal.fire({
 					icon: 'warning',
 					text: '제목을 입력해주세요.',
@@ -103,19 +95,30 @@
 				title.focus();
 				return false;
 			}
-				
-			if (content.trim() === '') {
+
+			if (cat.value == ''){
 				Swal.fire({
 					icon: 'warning',
-					text: '내용을 입력해주세요.',
-					confirmButtonText: "확인"
+					text: '카테고리를 선택해주세요.',
+					confirmButtonText: '확인'
+				});
+				cat.focus();
+				return false;
+			}
+			
+			if (content.trim() == '') {
+				Swal.fire({
+					icon: 'warning',
+					text: '내용을 입력해주세요',
+					confirmButtonText: '확인'
 				});
 				return false;
-			} 
+			}
 				
-			let formData = new FormData(writeForm);
-			formData.append("cat", cat); // 선택된 카테고리 값을 FormData에 추가
-			formData.append("content", setEditorContent(content)); // Toast UI Editor의 내용을 FormData에 추가
+			let formData = new FormData();
+			formData.append('cat', cat.value); // 선택된 카테고리 값을 FormData에 추가
+			formData.append('title', title.value);
+			formData.append('content', setEditorContent(content)); // Toast UI Editor의 내용을 FormData에 추가
 				
 			await fetch('/board/m/write', {
 				method: 'POST',
@@ -123,7 +126,7 @@
 			})
 			.then((response) => response.json())
 			.then((data) => {
-				if(data.message === 'good'){
+				if (data.message === 'good') {
 					Swal.fire({
 						title: "게시물이 작성되었습니다.",
 						icon:"success",
@@ -131,16 +134,23 @@
 					})
 					.then((result) => {
 						if (result.isConfirmed)
-							document.location.href = '/board/freeboard';
+							document.location.href = '/board/freeboardView?idx=' + data.idx;
 					})
+				} else {
+					Swal.fire({
+						icon: 'error',
+						text: '시스템 장애로 인해 게시물 등록에 실패했습니다.',
+						confirmButtonText: '확인'
+					});
 				}
 			})
 			.catch((error) => {
 				Swal.fire({
-							icon: 'error',
-							text: '시스템 장애로 게시물 등록이 실패했습니다.'
-						});
-				console.log("error: " + error);
+					icon: 'error',
+					text: '시스템 장애로 인해 게시물 등록에 실패했습니다.',
+					confirmButtonText: '확인'
+				});
+				console.log('error: ' + error);
 			})
 		}
 	</script>

@@ -26,6 +26,7 @@ public class MemberDTO {
 	private String website;
 	private String descr;
 	private String lvl;
+	private Long score;
 	private String tec1;
 	private String tec2;
 	private String tec3;
@@ -40,9 +41,16 @@ public class MemberDTO {
 	private LocalDateTime logoutdate;
 	private LocalDateTime pwdate;
 	private LocalDateTime notifdate;
+	private LocalDateTime scoredate;
 	private String joinRoute;
 	private String accToken;
 	private String isUse;
+	
+	private Long correctCount;
+	private Long submitCount;
+	private double correctRate;
+	private String grade;
+	private int rank;
 
 	//Entity --> DTO 이동
 	public MemberDTO(MemberEntity entity) {
@@ -55,6 +63,7 @@ public class MemberDTO {
 		this.website = entity.getWebsite();
 		this.descr = entity.getDescr();
 		this.lvl = entity.getLvl();
+		this.score = entity.getScore();
 		this.tec1 = entity.getTec1();
 		this.tec2 = entity.getTec2();
 		this.tec3 = entity.getTec3();
@@ -69,6 +78,7 @@ public class MemberDTO {
 		this.logoutdate = entity.getLogoutdate();
 		this.pwdate = entity.getPwdate();
 		this.notifdate = entity.getNotifdate();
+		this.scoredate = entity.getScoredate();
 		this.joinRoute = entity.getJoinRoute();
 		this.accToken = entity.getAccToken();
 		this.isUse = entity.getIsUse();
@@ -86,6 +96,7 @@ public class MemberDTO {
 														.website(dto.getWebsite())
 														.descr(dto.getDescr())
 														.lvl(dto.getLvl())
+														.score(dto.getScore())
 														.tec1(dto.getTec1())
 														.tec2(dto.getTec2())
 														.tec3(dto.getTec3())
@@ -100,6 +111,7 @@ public class MemberDTO {
 														.logoutdate(dto.getLogoutdate())
 														.pwdate(dto.getPwdate())
 														.notifdate(dto.getNotifdate())
+														.scoredate(dto.getScoredate())
 														.joinRoute(dto.getJoinRoute())
 														.accToken(dto.getAccToken())
 														.accToken(dto.getAccToken())

@@ -2,6 +2,8 @@ package com.kodinghaejo.controller;
 
 import java.io.File;
 import java.net.URLEncoder;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -21,6 +23,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.kodinghaejo.dto.BoardDTO;
 import com.kodinghaejo.dto.MemberDTO;
 import com.kodinghaejo.dto.ReplyDTO;
+import com.kodinghaejo.dto.TestBookmarkDTO;
+import com.kodinghaejo.dto.TestSubmitDTO;
 import com.kodinghaejo.service.BaseService;
 import com.kodinghaejo.service.MailService;
 import com.kodinghaejo.service.MemberService;
@@ -100,9 +104,9 @@ public class MemberController {
 		String os = System.getProperty("os.name").toLowerCase();
 		String path;
 		if (os.contains("win"))
-			path = "C:\\Repository\\Kodinghaejo\\profile\\";
+			path = "Z:\\임시저장소\\프로젝트관리\\1회차\\2조\\Repository\\profile\\";//"C:\\Repository\\Kodinghaejo\\profile\\";
 		else
-			path = "/home/user/Repository/Kodinghaejo/profile/";
+			path = "/home/user/Repository/profile/";
 
 		//디렉토리 존재여부 확인 --> 없을 경우 생성 처리
 		File p = new File(path);
@@ -131,6 +135,7 @@ public class MemberController {
 			member.setOrgImg(orgImg);
 			member.setStoredImg(storedImg);
 			member.setImgSize(imgSize);
+			session.setAttribute("storedImg", storedImg);
 		}
 
 		//회원가입
@@ -229,7 +234,7 @@ public class MemberController {
 		String os = System.getProperty("os.name").toLowerCase();
 		String path;
 		if (os.contains("win"))
-			path = "C:\\Repository\\Kodinghaejo\\profile\\";
+			path = "Z:\\임시저장소\\프로젝트관리\\1회차\\2조\\Repository\\profile\\";//"C:\\Repository\\Kodinghaejo\\profile\\";
 		else
 			path = "/home/mklee/Repository/Kodinghaejo/profile/";
 
@@ -378,8 +383,61 @@ public class MemberController {
 
 	//내 문제집
 	@GetMapping("/member/mypage/mytest")
-	public void getMypageMytest() {
+	public void getMypageMytest(Model model, HttpSession session) {
+		int postNum = 2;
+		
+		String email = (String) session.getAttribute("email");
+		
+		MemberDTO member = service.memberTest(email);
 
+		String grade = baseService.calGrade(member.getScore());
+		member.setGrade(grade);
+
+		List<MemberDTO> allMembers = service.getAllMember();
+		allMembers.sort(Comparator.comparingLong(MemberDTO::getScore).reversed()
+							.thenComparing(Comparator.comparing(MemberDTO::getScoredate).reversed()));
+
+		for (int i = 0; i < allMembers.size(); i++) {
+			allMembers.get(i).setRank(i + 1);
+		}
+		// 현재 사용자의 rank 찾기
+		int userRank = 0;
+		for (int i = 0; i < allMembers.size(); i++) {
+			if (allMembers.get(i).getEmail().equals(member.getEmail())) {
+				userRank = allMembers.get(i).getRank();
+				break;
+			}
+		}
+		
+		//풀어본 문제
+		Page<TestSubmitDTO> myTest = service.myTest(1, postNum, email);
+		
+		long testCount = (myTest != null) ? myTest.getTotalElements() : 0;
+		
+		
+		//북마크
+		Page<TestBookmarkDTO> myBookmarks = service.myBookmark(1, postNum, email);
+	
+		long bookmarkCount = (myBookmarks != null) ? myBookmarks.getTotalElements() : 0;
+		
+		model.addAttribute("bookmarkCount", bookmarkCount);
+		model.addAttribute("myBookmarks",myBookmarks);
+		model.addAttribute("totalbookPage", myBookmarks.getTotalPages());
+		
+		model.addAttribute("testCount", testCount);
+		model.addAttribute("myTest", myTest);
+		model.addAttribute("userRank", userRank);
+		model.addAttribute("member", member);
+		model.addAttribute("totalPage", myTest.getTotalPages());
+	}
+
+	@ResponseBody
+	@PostMapping("/member/mypage/mytest")
+	public Page<TestSubmitDTO> postmytest(@RequestParam("page") int page, HttpSession session) {
+		int postNum = 2;
+		String email = (String) session.getAttribute("email");
+		
+		return service.myTest(page, postNum, email);
 	}
 
 	//내 게시판
@@ -404,6 +462,56 @@ public class MemberController {
 		model.addAttribute("replyPage", replyPageNum); //댓글 페이지
 		model.addAttribute("boardPageList", page.getPageList("/member/mypage/myboard", "boardPage", boardPageNum, postNum, pageListCount, boardTotalCount, ("&replyPage=" + replyPageNum)));
 		model.addAttribute("replyPageList", page.getPageList("/member/mypage/myboard", "replyPage", replyPageNum, postNum, pageListCount, replyTotalCount, ("&boardPage=" + boardPageNum)));
+	}
+	
+//마이페이지 풀어본 문제 화면
+	@GetMapping("/member/mypage/mytestlist")
+	public void getMypageMytestList(Model model, HttpSession session) {
+		int postNum = 2;
+		
+		String email = (String) session.getAttribute("email");
+		
+		Page<TestSubmitDTO> myTest = service.myTest(1, postNum, email);
+		
+		long testCount = (myTest != null) ? myTest.getTotalElements() : 0;
+		
+		model.addAttribute("testCount", testCount);
+		model.addAttribute("myTest", myTest);
+		model.addAttribute("totalPage", myTest.getTotalPages());
+	}
+	
+	@ResponseBody
+	@PostMapping("/member/mypage/mytestlist")
+	public Page<TestSubmitDTO> postmytestList(@RequestParam("page") int page, HttpSession session) {
+		int postNum = 2;
+		String email = (String) session.getAttribute("email");
+		
+		return service.myTest(page, postNum, email);
+	}
+	
+	//마이페이지 문제 북마크 페이지
+	@GetMapping("/member/mypage/mytestBookmark")
+	public void getMypageMytestBookmark(Model model, HttpSession session) {
+		int postNum = 2;
+		
+		String email = (String) session.getAttribute("email");
+		
+		Page<TestBookmarkDTO> myBookmarks = service.myBookmark(1, postNum, email);
+		
+		long bookmarkCount = (myBookmarks != null) ? myBookmarks.getTotalElements() : 0;
+		
+		model.addAttribute("bookmarkCount", bookmarkCount);
+		model.addAttribute("myBookmarks",myBookmarks);
+		model.addAttribute("totalbookPage", myBookmarks.getTotalPages());
+	}
+	
+	@ResponseBody
+	@PostMapping("/member/mypage/mytestBookmark")
+	public Page<TestBookmarkDTO> postmytestBookmark(@RequestParam("page") int page, HttpSession session) {
+		int postNum = 2;
+		String email = (String) session.getAttribute("email");
+		
+		return service.myBookmark(page, postNum, email);
 	}
 
 }

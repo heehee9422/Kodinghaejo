@@ -23,32 +23,27 @@
 		<div class="main-content">
 			<div class="content-board-notice-write">
 				<div class="content-board-notice-write-wrap">
-					<form class="modifyForm" id="modifyForm" name="modifyForm" method="post" enctype="multipart/form-data">		 
-						<h2>게시물 수정</h2>
-						<div class="mt30"></div>
-						<div class="category-menu">
-							<label for="category-section">카테고리<span class="asterisk"></span></label>
-							<select name="category-section" id="category-section"></select>
-						</div>
-						
-						<div class="category-title">
-							<label for="title">제목<span class="asterisk"></span></label>
-							<input type="text" id="title" name="title" th:value="${view.title}" maxlength="100">
-							
-							<input type="hidden" id="idx" name="idx" th:value="${view.idx}">
-							<input type="hidden" id="email" name="email" value="{view.email}">
-							<input type="hidden" id="writer" name="writer" value="{view.writer}">
-							<input type="hidden" id="isUse" name="isUse" value="{view.isUse}">
-						</div>
+					<h2>게시물 수정</h2>
+					<div class="mt30"></div>
+					<div class="category-menu">
+						<label for="cat">카테고리<span class="asterisk"></span></label>
+						<select name="cat" id="cat">
+							<option value="" disabled>카테고리를 선택해주세요</option>
+						</select>
+					</div>
+					
+					<div class="category-title">
+						<label for="title">제목<span class="asterisk"></span></label>
+						<input type="text" id="title" name="title" th:value="${ view.title }" maxlength="100">
+					</div>
 
-						<div class="category-content ">
-							<label for="content">내용<span class="asterisk"></span></label>
-							<div id="content"></div>
-						</div>
-					</form> 
+					<div class="category-content ">
+						<label for="content">내용<span class="asterisk"></span></label>
+						<div id="content"></div>
+					</div>
 					
 					<div class="category-footer mt30">
-						<input type="button" value="수정완료" onclick="modify()">
+						<input type="button" value="수정완료" onclick="modifyBoard()">
 						<button th:onclick="|location.href='/board/freeboardView?idx=${ view.idx }'|">뒤로가기</button>
 					</div>
 				</div>
@@ -60,17 +55,24 @@
 	<!-- toast API : 나중에 모듈로 작성해서 만들기-->
 	<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
 	<link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+
+	<!-- Custom Script -->
 	<script type="text/javascript">
-		const contentValue = `[[${view.content}]]`;
+		//카테고리 셀렉트박스 옵션추가
+		const cat = document.querySelector('#cat');
+		setSelectOption(commonCode, cat, 'cat', '[[ ${ view.cat } ]]');
+		
+		//게시물 내용
+		const contentValue = `[[${ view.content }]]`;
 
 		//Toast UI 에디터
 		const editor = new toastui.Editor({
-			el: document.querySelector('#content'),										//에디터를 적용할 요소 (컨테이너)
-			height: '400px',																					//에디터 영역의 높이 값 (OOOpx || auto)
-			initialEditType: 'markdown',															//마크다운 프리뷰 스타일 (tab || vertical)
-			placeholder: '내용을 입력해주세요.',											// 플레이스홀더
-			initialValue: getEditorContent(`[[ ${ view.content} ]]`),	//내용의 초기 값으로, 반드시 마크다운 문자열 형태여야 함
-			previewStyle: 'vertical',																	//마크다운 프리뷰 스타일 (tab || vertical)
+			el: document.querySelector('#content'),	//에디터를 적용할 요소 (컨테이너)
+			height: '400px',												//에디터 영역의 높이 값 (OOOpx || auto)
+			initialEditType: 'markdown',						//마크다운 프리뷰 스타일 (tab || vertical)
+			placeholder: '내용을 입력해주세요.',		// 플레이스홀더
+			initialValue: getEditorContent(contentValue),
+			previewStyle: 'vertical',								//마크다운 프리뷰 스타일 (tab || vertical)
 			toolbarItems: [
 				//기본 툴바 항목에서 'image' 항목을 제외하고 나열합니다.
 				[ 'heading', 'bold', 'italic', 'strike' ],
@@ -81,78 +83,85 @@
 				[ 'code', 'codeblock' ]
 			]
 		});
-	</script>
-	
-	<!-- Custom Script -->
-	<script type="text/javascript">
-		//카테고리 셀렉트박스 옵션추가
-		const categorySection = document.querySelector('#category-section');
-		setSelectOption(commonCode, categorySection, 'cat', '[[ ${ view.cat } ]]');
 		
 		//게시물 수정
-		const modify = async () => {
-			let cat = document.querySelector('select[name=category-section]').value; // 선택된 카테고리 값 가져오기
+		const modifyBoard = async () => {
 			let title = document.querySelector('#title');
-			let writer = document.querySelector('#writer');
-			let email = document.querySelector('#email');
-			let isUse = document.querySelector('#isUse');
-			const idx = document.getElementById('idx').value; 
 	
 			//Toast UI Editor의 content 내용 가져오기
 			let content = editor.getMarkdown(); // 마크다운 텍스트로 가져오기
 			
 			//필수값 등록시 값 입력 여부 확인
-			if(title.value === ''){
+			if (title.value == ''){
 				Swal.fire({
-						icon:"warning",
-						text:"제목을 입력하세요"});
+					icon: 'warning',
+					text: '제목을 입력해주세요.',
+					confirmButtonText: '확인'
+				});
 				title.focus();
 				return false;
 			}
-			
-			if (content.trim() === '') {
+
+			if (cat.value == ''){
 				Swal.fire({
-						icon:"warning",
-						text:"내용을 입력하세요"});
+					icon: 'warning',
+					text: '카테고리를 선택해주세요.',
+					confirmButtonText: '확인'
+				});
+				cat.focus();
 				return false;
-			} 
+			}
+			
+			if (content.trim() == '') {
+				Swal.fire({
+					icon: 'warning',
+					text: '내용을 입력해주세요',
+					confirmButtonText: '확인'
+				});
+				return false;
+			}
 			
 			//FormData에 값 추가
-			let formData = new FormData(modifyForm);
-			formData.append("cat", cat);
-			formData.set("content", setEditorContent(content)); // Editor 내용 추가
+			let formData = new FormData();
+			formData.append("idx", parseInt('[[ ${ view.idx } ]]'));
+			formData.append("cat", cat.value);
+			formData.append('title', title.value);
+			formData.append("content", setEditorContent(content)); // Editor 내용 추가
 			
 			//서버에 수정 요청
-			try {
-				const response = await fetch('/board/m/modify', {
-					method: 'POST',
-					body: formData
-				});
-				const data = await response.json();
-				
-				if (data.message === 'good') {
+			await fetch('/board/m/modify', {
+				method: 'POST',
+				body: formData
+			})
+			.then((response) => response.json())
+			.then((data) => {
+				if (data.message == 'good') {
 					Swal.fire({
 						title: "게시물이 수정되었습니다.",
 						icon: "success",
 						confirmButtonText: "확인" //확인 눌러야 로케이션 되는
-					}).then((result) => {
-						if (result.isConfirmed) {
-								document.location.href = `/board/freeboardView?idx=${idx}`;
-						}
-					});
+					})
+					.then((result) => {
+						if (result.isConfirmed)
+							document.location.href = '/board/freeboardView?idx=[[ ${ view.idx } ]]';
+					})
 				} else {
 					Swal.fire({
-						icon: "error",
-						text: "수정에 실패했습니다!",
+						icon: 'error',
+						text: '시스템 장애로 인해 게시물 수정에 실패했습니다.',
+						confirmButtonText: '확인'
 					});
+					console.log('data: ' + JSON.stringify(data));
 				}
-			} catch (error) {
+			})
+			.catch((error) => {
 				Swal.fire({
-					icon: "error",
-					text: "시스템 장애로 수정에 실패했습니다!",
+					icon: 'error',
+					text: '시스템 장애로 인해 게시물 수정에 실패했습니다.',
+					confirmButtonText: '확인'
 				});
-				console.error("Error:", error);
-			}
+				console.log('error: ' + error);
+			})
 		}
 	</script>
 	

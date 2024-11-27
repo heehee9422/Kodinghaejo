@@ -2,93 +2,202 @@
 <html lang="kr" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>내 정보</title>
-    <!-- Standard css -->
-    <link rel="icon" href="/img/logo/favicon.png">
-    <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
-    <!-- pub-js link -->
-    <script src="/js/pub-ui-custom.js"></script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>내 문제집&nbsp;&#124;&nbsp;코딩해조</title>
+	<!-- Standard css -->
+	<link rel="icon" href="/img/logo/favicon.png">
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+	<!-- pub-js link -->
+	<script src="/js/pub-ui-custom.js"></script>
 </head>
 
 <body>
-    <!-- header-->
-    <div id="header" th:replace="~{ /include/header }"></div>
+	<!-- header-->
+	<div id="header" th:replace="~{ /include/header }"></div>
 
-    <div class="container column bgcontain-mypage">
-        <div class="column-row myPage">
-            <div class="c-column-2">
-                <div id="mypage_manu" th:replace="~{ /include/mypage }"></div>
-            </div>
-            <div class="c-column-8">
-                <div class="mypage_content">
+	<div class="container column bgcontain-mypage">
+		<div class="column-row myPage">
+			<div class="c-column-2">
+				<div id="mypage_manu" th:replace="~{ /include/mypage }"></div>
+			</div>
+			<div class="c-column-8">
+				<div class="mypage_content">
 
-                    <h5>나의 랭킹</h5>
-                    <div class="mypage_box">
-                        <p>LV.5 랭킹 999위</p>
-                        <p>풀어본문제 : 9999</p>
-                        <p>맞춘문제 : 9999</p>
-                        <p>정답률 : 9999</p>
-                    </div>
+					<h5>나의 랭킹</h5>
+					<div class="mypage_box">
+						<p>레벨 : <b th:text="${member.grade}"></b>  | 랭킹 <b th:text="${userRank + '위'}">999위</b></p>
+						<p>제출 문제 : <b th:text="${member.submitCount}">9999</b></p>
+						<p>맞은 문제 : <b th:text="${member.correctCount}">9999</b></p>
+						<p>정답률 : <b th:text="${#numbers.formatDecimal(member.correctRate,1,1)} + ' ' + '%' ">9999</b></p>
+					</div>
 
-                    <h5>풀어본 문제</h5>
-                    <div class="mypage_box">
-                        <div class="problem-info">
-                            <p class="test-number">999번 문제</p>
-                            <a href=""><p class="test-description">A+B를 구하여 출력하는 코드를 작성하시오</p></a>
-                            <p class="submission-date">제출일 2024-10-25</p>
-                        </div>
-                        <hr class="dashed">
-                        <div class="problem-info">
-                            <p class="test-number">999번 문제</p>
-                            <a href=""><p class="test-description">A+B를 구하여 출력하는 코드를 작성하시오</p></a>
-                            <p class="submission-date">제출일 2024-10-25</p>
-                        </div>
-                    </div>
-                    <button style="width: 100%; border-radius: 0 0 5px 5px;"><i class="xi-plus-min"></i> 문제 더보기</button>
+					<h5>풀어본 문제</h5>
+					<div class="mypage_box">
+						<div class="mytestList">
+							<div th:if="${testCount == 0}">
+								<p>풀어본 문제가 없습니다.<a class="more-link" href="/test/collect">문제 풀러 가기</a></p>
+							</div>
+							<div class="test-info" th:each="test, stat : ${myTest}">
+								<hr th:if="${stat.index > 0}" class="dashed">
+								<p class="test-number" >문제 번호 : <span th:text="${test.tlIdx.idx + '번'}"></span></p>
+								<a th:href="@{'/test/challenge?idx=' + ${test.tlIdx.idx}}"><p class="test-description" th:text="${test.tlIdx.testIdx.title}">A+B를 구하여 출력하는 코드를 작성하시오</p></a>
+								<p class="submission-date">제출일 : <span th:text="${test.regdate}">2024-10-25</span></p>
+								<P class="test-status">결과 : <b th:text="${test.submSts == 'Y' ? '정답' : (test.submSts == 'N' ? '오답' : '결과 미제출')}"></b></P>
+							</div>
+						</div>
+					</div>
+					<button id="moreTestBtn" style="width: 100%; border-radius: 0 0 5px 5px;"><i class="xi-plus-min"></i> 문제 더보기</button>
+					
+					<h5>북마크한 문제</h5>
+					<div class="mypage_box">
+						<div class="mybookmark">
+							<div th:if="${bookmarkCount == 0}">
+								<p>북마크한 문제가 없습니다.<a class="more-link" href="/test/collect">문제 북마크하러 가기</a></p>
+							</div>
+							<div class="bookmark-info" th:each="myBookmark, stat : ${myBookmarks}">
+								<hr th:if="${stat.index > 0}" class="dashed">
+								<p class="test-number" >문제 번호 : <span th:text="${myBookmark.testIdx.idx + '번'}"></span></p>
+								<a th:href="@{'/test/challenge?idx=' + ${myBookmark.testIdx.idx}}"><p class="test-description" th:text="${myBookmark.testIdx.title}">A+B를 구하여 출력하는 코드를 작성하시오</p></a>
+								<p class="submission-date">북마크한 날짜 : <span th:text="${myBookmark.addDate}">2024-10-25</span></p>
+							</div>
+						</div>
+					</div>
+					<button id="moreBookmarkBtn" style="width: 100%; border-radius: 0 0 5px 5px;"><i class="xi-plus-min"></i> 문제 더보기</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- footer -->
+	<div id="footer" th:replace="~{ /include/footer }"></div>
+	<script>
+		let page = 1;
+		let totalPage = parseInt('[[${ totalPage }]]');
+		let totalbookPage = parseInt('[[${ totalbookPage }]]');
+		
+		window.onload = () => {
+			if ('[[ ${ testCount }]]' <= 2) {
+				document.getElementById('moreTestBtn').style.display = 'none';
+			}
+			if ('[[ ${ bookmarkCount }]]' <= 2) {
+				document.getElementById('moreBookmarkBtn').style.display = 'none';
+			}
+		};
+		
+		const loadTest = async () => {
+			let formData = new FormData();
+			formData.append('page', page);
+			formData.append('email', '[[ ${ session.email } ]]');
+			
+			await fetch('/member/mypage/mytest', {
+				method: 'POST',
+				body: formData
+			})
+			.then((response) => response.json())
+			.then((data) => {
+				console.log('Fetched data:', data.content);
+				addTestList(data);
+				
+			})
+			.catch((error) => {
+				console.log('error: ' + error);
+				Swal.fire({
+					icon: 'error',
+					text: '시스템 장애로 인해 문제 가져오기에 실패했습니다.',
+					confirmButtonText: '확인'
+				});
+			})
+		}
+		// 문제 목록 추가 함수
+		const addTestList = (data) => {
+			const jsonInfo = data.content;
+			
+			let testList = document.querySelector('.mytestList');
+			
+			for (const i in jsonInfo) {
+				
+				let elm = document.createElement('div');
+				elm.classList.add('test-info');
+				
+				let result ='';
+				result += '<hr class="dashed">' +
+						  '<p class="test-number">' + '문제 번호 : ' + '<span>' + jsonInfo[i].tlIdx.idx + '번' + '</span>' + '</p>\n' +
+						  '<p class="test-description">' + '<a href="/test/challenge?idx=' + jsonInfo[i].tlIdx.idx + '">\n' + jsonInfo[i].tlIdx.testIdx.title + '</p></a>\n' +
+						  '<p class="submission-date">' + '제출일 : ' + '<span>' + jsonInfo[i].regdate + '</span>' + '</p>\n' +
+						  '<p class="test-status">' + '결과 : ' + '<b>' + (jsonInfo[i].submSts === 'Y' ? '정답' : '오답') + '</b>' + '</p>\n';
+				
+				elm.innerHTML = result;
+				testList.appendChild(elm);
+			}
+		}
+		
+		document.getElementById('moreTestBtn').addEventListener('click', () => {
+			if (page >= totalPage) {
+				return;
+			}
+			page++; 
+			if (page >= totalPage) document.getElementById('moreTestBtn').style.display = 'none';
+			
+			loadTest();
+		})
+		
+		const loadBookmark = async () => {
+			let formData = new FormData();
+			formData.append('page', page);
+			formData.append('email', '[[ ${ session.email } ]]');
+			
+			await fetch('/member/mypage/mytestBookmark', {
+				method: 'POST',
+				body: formData
+			})
+			.then((response) => response.json())
+			.then((data) => {
+				console.log('Fetched data:', data.content);
+				addBookmark(data);
+				
+			})
+			.catch((error) => {
+				console.log('error: ' + error);
+				Swal.fire({
+					icon: 'error',
+					text: '시스템 장애로 인해 문제 가져오기에 실패했습니다.',
+					confirmButtonText: '확인'
+				});
+			})
+		}
+		// 문제 목록 추가 함수
+		const addBookmark = (data) => {
+			const jsonInfo = data.content;
+			
+			let testList = document.querySelector('.mybookmark');
+			
+			for (const i in jsonInfo) {
+				
+				let elm = document.createElement('div');
+				elm.classList.add('bookmark-info');
+				
+				let result ='';
+				result += '<hr class="dashed">' +
+						  '<p class="test-number">' + '문제 번호 : ' + '<span>' + jsonInfo[i].testIdx.idx + '번' + '</span>' + '</p>\n' +
+						  '<p class="test-description">' + '<a href="/test/challenge?idx=' + jsonInfo[i].testIdx.idx + '">\n' + jsonInfo[i].testIdx.title + '</p></a>\n' +
+						  '<p class="submission-date">' + '북마크한 날짜 : ' + '<span>' + jsonInfo[i].addDate + '</span>' + '</p>\n';
 
-                </div>
-            </div>
-
-            <!--             
-            <div class="test-list">
-            <div class="test-card">
-                <div class="problem-info">
-                    <div class="test-number">00번</div>
-                    <div class="test-description">A+B를 구하여 출력하는 코드를 작성하시오 <span class="star-icon">★</span></div>
-                    <div class="submission-date">제출일 2024-10-25</div>
-                </div>
-                <div>
-                    <div class="status wrong">오답</div>
-                    <div class="retry-button">다시 풀어보기</div>
-                </div>
-            </div>
-          
-         </div>
-
-
-         <p style="font-size: 20px; font-weight: bold;"> 북마크한 문제</p>
-         <div class="test-list">
-            
-            <div class="test-card">
-                <div class="problem-info">
-                    <div class="test-number">00번</div>
-                    <div class="test-description">A+B를 구하여 출력하는 코드를 작성하시오 <span class="star-icon">★</span></div>
-                    <div class="submission-date">제출일 2024-10-25</div>
-                </div>
-                <div>
-                    <div class="status wrong">오답</div>
-                    <div class="retry-button">다시 풀어보기</div>
-                </div>
-            </div> 
-    -->
-        </div>
-    </div>
-    <!-- footer -->
-    <div id="footer" th:replace="~{ /include/footer }"></div>
-
+				elm.innerHTML = result;
+				testList.appendChild(elm);
+			}
+		}
+		
+		document.getElementById('moreBookmarkBtn').addEventListener('click', () => {
+			if (page >= totalbookPage) {
+				return;
+			}
+			page++; 
+			if (page >= totalbookPage) document.getElementById('moreBookmarkBtn').style.display = 'none';
+			
+			loadBookmark();
+		})
+	</script>
 </body>
 
 </html>

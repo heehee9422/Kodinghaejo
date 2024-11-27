@@ -1,154 +1,19 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="kr">
+<html lang="kr" xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>게시판</title>
-<!-- Standard css -->
-<link rel="icon" href="/img/logo/favicon.png">
-<link rel="stylesheet" href="/css/style.css">
-<link rel="stylesheet"
-	href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
-<!-- pub-js link -->
-<script src="/js/pub-ui-custom.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>[[ ${ view.title } ]]&nbsp;&#124;&nbsp;코딩해조</title>
+	<!-- Standard css -->
+	<link rel="icon" href="/img/logo/favicon.png">
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet"
+		href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+	<!-- pub-js link -->
+	<script src="/js/pub-ui-custom.js"></script>
+	<!-- common-js link -->
+	<script src="/js/common.js"></script>
 </head>
-<script>
-//게시물 삭제
-async function deactive(questionIdx) {
-	try {
-		const result = await Swal.fire({
-			title: "게시글을 삭제하시겠습니까?",
-			icon: "warning",
-			showCancelButton: true,
-			confirmButtonText: "네, 삭제합니다",
-			cancelButtonText: "취소"
-		});
-
-		if (result.isConfirmed) {
-			const response = await fetch(`/test/questiondeactive?questionIdx=${questionIdx}`, {
-				method: 'GET'
-			});
-
-			if (response.ok) {
-				Swal.fire("게시글이 삭제되었습니다.", "", "success").then(() => {
-					location.href = "/test/questionBoard?testIdx=all";
-				});
-			} else {
-				Swal.fire("게시글 삭제에 실패했습니다.", "", "error");
-			}
-		}
-	} catch (error) {
-		console.error("게시글 비활성화 중 오류 발생:", error);
-		Swal.fire("게시글 비활성화 중 오류가 발생했습니다.", "", "error");
-	}
-}
-
-//답글등록
-const answerWriteForm = async() => {
-		let tqIdx = document.querySelector('#tqIdx');
-		let writer = document.querySelector('#writer');
-		let email = document.querySelector('#email');
-		let isUse = document.querySelector('#isUse');
-		let content = editor.getMarkdown(); // 마크다운 텍스트로 가져오기
-
-		if (content.trim() === '') {
-			Swal.fire({
-				  icon: "warning",
-				  text: "내용을 입력해 주세요.",
-				});
-			return false;[]
-		}
-		
-		let formData = new FormData(document.getElementById('AnswerWriteForm'));
-		formData.append("content", content); 
-			
-		await fetch('/test/answerWrite', {
-			method: 'POST',
-			body: formData
-		})
-		.then((response)=> response.json())
-		.then((data)=> {
-			if(data.message === 'good'){
-				Swal.fire({
-					title: "댓글이 등록되었습니다.",
-					icon: "success",
-					confirmButtonText: "확인"
-				}).then((result) => {
-					if (result.isConfirmed) {
-						location.reload(true);
-					}
-				});
-			}
-		})
-		.catch((error)=> {
-			Swal.fire({
-				  icon: "error",
-				  text: "시스템 장애로 댓글등록에 실패했습니다!",
-				});
-			console.log("error" + error);
-		})
-		
-		
-	}
-
-//답글 비활성화
-async function answerDeactive(answerIdx,tqIdx) {	
-	
-	try {
-		const result = await 
-		Swal.fire({
-			title: "답변을 삭제하시겠습니까?",
-			icon: "warning",
-			showCancelButton: true,
-			confirmButtonText: "네, 삭제합니다",
-			cancelButtonText: "취소"
-		});
-
-		if (result.isConfirmed) {
-			const response = await fetch(`/test/answerDeactive?answerIdx=${answerIdx}&tqIdx=${tqIdx}`, {
-				method: 'GET'
-			});
-
-		if (response.ok) {
-			 Swal.fire("답변이 삭제되었습니다.", "", "success").then(() => {
-					location.reload(true);
-				});
- 	 } else {
-			  Swal.fire("답변 삭제에 실패했습니다.", "", "error");
-			}
-		}
-	 } catch (error) {
-			console.error("답변 비활성화 중 오류 발생:", error);
-			Swal.fire("답변 비활성화 중 오류가 발생했습니다.", "", "error");
-		}
-	}
-
-
-//댓글 수정
-function answerModify(answerIdx) {
-	const contentP = document.getElementById('answer-text-' + answerIdx);
-	const editTextarea = document.getElementById('answer-edit-' + answerIdx);
-	const editButton = document.getElementById('edit-btn-'+ answerIdx);
-	const saveButton = document.getElementById('save-btn-'+ answerIdx);
-
-	// 기존 댓글 내용을 textarea에 복사하고 보여줌
-	editTextarea.value = contentP.innerText;
-	contentP.style.display = 'none';	// 기존 텍스트 숨기기
-	editTextarea.style.display = 'block';	// textarea 표시
-	editButton.style.display = 'none';	// "수정하기" 버튼 숨기기
-	saveButton.style.display = 'inline';	// "저장하기" 버튼 표시
-}
-
-
-
-
-
-</script>
-
-
-
-
 <body>
 	<!-- header 영역 -->
 	<div id="header" th:replace="~{ /include/header }"></div>
@@ -158,46 +23,46 @@ function answerModify(answerIdx) {
 		<div class="content-question-board-view">
 			<div class="content-question-board-view-wrap">
 				<div class="question-head">
-					<a href="#" class="btn_menu" onclick="history.back();">목록가기</a>
-					<h4
-						th:onclick="'window.location.href=\'/test/challenge?test_idx=' + ${testInfo.idx} + '\''">[[${testInfo.idx}]]번
-						Lv[[${testInfo.diff}]] [[${testInfo.title}]] 풀어보기</h4>
+					<a href="/test/questionBoard" class="btn_menu">목록가기</a>
+					<h4 th:onclick="|location.href='/test/challenge?idx=${ view.tlIdx.testIdx.idx }'\" th:text="@{ 'LV. ' + ${ view.tlIdx.testIdx.diff } + ' ' + ${ view.tlIdx.testIdx.title } + ' 풀어보기' }"></h4>
 				</div>
 
 				<div class="profile-title">
-					<img src="/img/test-profile/beoleoji.png" alt="">
+					<img th:if="${ view.email.storedImg == null || view.email.storedImg == '' }" src="/img/test-profile/beoleoji.png" alt="">
+					<img th:if="${ view.email.storedImg != null && view.email.storedImg != '' }" th:src="@{ '/member/img/' + ${ view.email.email } }" alt="">
 					<div class="profile-title-content">
-						<p class="profile-name">[[${questionview.writer}]]</p>
-						<p class="profile-date">[[${questionview.regdate}]]</p>
+						<p class="profile-name" th:text="${ view.writer }"></p>
+						<p class="profile-date" th:text="${ #temporals.format(view.regdate, 'yyyy-MM-dd HH:mm:ss') }"></p>
 					</div>
 				</div>
 				<div class="question-body">
-					<h4 class="title">[[${questionview.title}]]</h4>
-					<p>[[${questionview.content}]]</p>
-					<div class="profile-item">
-						<th:block th:if="${session.email == questionview.email.email}">
-							<a
-								th:href="@{/test/questionModify(questionIdx=${questionview.idx})}">수정하기</a>
-							<a th:href="|javascript:deactive('${questionview.idx}')|">삭제하기</a>
+					<h4 class="title" th:text="${ view.title }"></h4>
+					<div id="content"></div>
+					<div class="profile-item" th:if="${ session.email == view.email.email }">
+						<a th:href="@{/test/m/questionModify(idx=${ view.idx })}">수정하기</a>
+						<a th:href="|javascript:deleteQuestion('${ view.idx }')|">삭제하기</a>
+					</div>
+				</div>
+				<div class="question-reple">
+					<div id="reply-list-q">
+						<!-- 댓글 -->
+						<th:block  th:each="reply : ${ view.reply }">
+						<div th:id="@{ 'reply-' + ${ reply.idx } }" class="reple-itme">
+							<p class="profile-name" th:text="${ reply.writer }"></p>
+							<p class="reple-content" th:id="@{ 'reply-content-' + ${ reply.idx } }" th:idx="${ reply.idx }" th:content="${ reply.content }"></p>
+							<p th:text="${ #temporals.format(reply.regdate, 'yyyy-MM-dd HH:mm:ss') }"></p>
+							<!-- 본인일 경우에 -->
+							<div th:if="${ session.email == reply.email.email }" th:id="@{ 'reply-tab-' + ${ reply.idx } }" class="reple-itme-btn-group">
+								<a th:href="|javascript:replyModify('q', '${ reply.idx }')|">수정</a>
+								<a th:href="|javascript:replyDelete('q', '${ reply.idx }')|">삭제</a>
+							</div>
+						</div>
 						</th:block>
 					</div>
-
-				</div>
-
-				<div class="question-reple">
-					<!-- 댓글 -->
-					<div class="reple-itme">
-						<p class="profile-name">김아무개</p>
-						<p class="reple-content">저도 궁금했던것인데 알면알려줄래요?</p>
-						<!-- 본인일 경우에 -->
-						<div class="reple-itme-btn-group">
-							<a href="#">수정</a> <a href="#">삭제</a>
-						</div>
-					</div>
-					<div class="inp-write">
-						<i class="xi-speech"></i> <input type="text"
-							placeholder="댓글을 작성해 주세요"> <input type="button"
-							value="작성" class="btn_write">
+					<div class="inp-write" th:if="${ session.email != null }">
+						<i class="xi-speech"></i>
+						<input type="text" id="reply-content-q" placeholder="댓글을 작성해주세요.">
+						<input type="button" value="작성" class="btn_write" onclick="replyWrite('q')">
 					</div>
 				</div>
 				<hr class="non-line">
@@ -205,102 +70,744 @@ function answerModify(answerIdx) {
 		</div>
 	</div>
 
-
 	<div class="container pb50"
 		style="background: #F9FAFB; min-height: 300px;">
-		<!-- 답글 내용 -->
+		<!-- 답변 내용 -->
 		<div class="content-question-review">
-			<!-- 답글 -->
+			<!-- 답변 -->
 			<div class="question-box">
-				<h5>문제 답변 [[${answerCount}]]개</h5>
-
-
-
-				<div class="question-list" th:each="answer : ${answerList}"
-					th:if=" ${answer.isUse} == 'Y'">
-					<div class="question-list-title">
-						<div class="profile-title">
-							<img src="/img/test-profile/nonoping.png" alt="">
-							<p class="profile-name" th:text="${answer.writer}"></p>
-							<p class="profile-date" th:text="${answer.regdate}"></p>
-						</div>
-						<!-- 해당 고객일때 -->
-						<th:block th:if="${session.email == answer.email.email}">
-							<div class="user-tab">
-								<a th:href="|javascript:answerModify('${answer.idx}')|"
-									th:id="@{'edit-btn-' + ${answer.idx}}" class="btn_edit"
-									style="display: inline;">수정하기</a> <a
-									th:href="|javascript:answerSave('${answer.idx}')|"
-									th:id="@{'save-btn-' + ${answer.idx}}" class="btn_edit"
-									style="display: none;">저장하기</a> <a
-									th:href="|javascript:answerDeactive('${answer.idx}','${answer.tqIdx.idx}')|"
-									th:id="@{'deactive-btn-' + ${answer.idx}}" class="btn_cancel">
-									삭제하기</a>
+				<h5>문제 답변 <span id="answer-count" th:text="${ #lists.size(view.answer) }"></span></h5>
+				<div id="answer-list">
+					<th:block th:each="answer : ${ view.answer }">
+					<div class="question-list" th:id="@{ 'answer-' + ${ answer.idx } }">
+						<div class="question-list-title">
+							<div class="profile-title">
+								<img th:if="${ answer.email.storedImg == null || answer.email.storedImg == '' }" src="/img/test-profile/nonoping.png" alt="">
+								<img th:if="${ answer.email.storedImg != null && answer.email.storedImg != '' }" th:src="@{ '/member/img/' + ${ answer.email.email } }" alt="">
+								<p class="profile-name" th:text="${ answer.writer }"></p>
+								<p class="profile-date" th:text="${ #temporals.format(answer.regdate, 'yyyy-MM-dd HH:mm:ss') }"></p>
 							</div>
-						</th:block>
+							<!-- 해당 고객일때 -->
+							<div th:if="${ session.email == answer.email.email }" class="user-tab" th:id="@{ 'answer-tab-' + ${ answer.idx } }">
+								<a th:href="|javascript:answerModify('${ answer.idx }')|" class="btn_edit">수정하기</a>
+								<a th:href="|javascript:answerDelete('${ answer.idx }')|" class="btn_cancel">삭제하기</a>
+							</div>
+						</div>
+						<div class="question-list-content">
+							<div class="answer-content" th:id="@{ 'answer-content-' + ${ answer.idx } }" th:idx="${ answer.idx }" th:content="${ answer.content }"></div>
+							<!-- 241126 : 댓글 추가 -->
+							<div class="question-reple">
+								<div th:id="@{ 'reply-list-' + ${ answer.idx } }">
+									<!-- 댓글 -->
+									<div th:each="reply : ${ answer.reply }" th:id="@{ 'reply-' + ${ reply.idx } }" class="reple-itme">
+										<p class="profile-name" th:text="${ reply.writer }"></p>
+										<p class="reple-content" th:id="@{ 'reply-content-' + ${ reply.idx } }" th:idx="${ reply.idx }" th:content="${ reply.content }"></p>
+										<p th:text="${ #temporals.format(reply.regdate, 'yyyy-MM-dd HH:mm:ss') }"></p>
+										<!-- 본인일 경우에 -->
+										<div th:if="${ session.email == reply.email.email }" th:id="@{ 'reply-tab-' + ${ reply.idx } }" class="reple-itme-btn-group">
+											<a th:href="|javascript:replyModify('${ answer.idx }', '${ reply.idx }')|">수정</a>
+											<a th:href="|javascript:replyDelete('${ answer.idx }', '${ reply.idx }')|">삭제</a>
+										</div>
+									</div>
+								</div>
+								<div class="inp-write" th:if="${ session.email != null }">
+									<i class="xi-speech"></i>
+									<input type="text" th:id="@{ 'reply-content-' + ${ answer.idx } }" placeholder="댓글을 작성해주세요.">
+									<input type="button" value="작성" class="btn_write" th:onclick="|replyWrite('${ answer.idx }')|">
+								</div>
+							</div>
+						</div>
 					</div>
-					<div class="question-list-content">
-						<!-- 댓글 내용 -->
-						<p th:id="@{'answer-text-' + ${answer.idx}}"
-							th:text="${answer.content}"></p>
-						<!-- 수정용 textarea (초기에는 숨김) -->
-						<textarea th:id="@{'answer-edit-' + ${answer.idx}}"
-							style="display: none; width: 100%; height: 80px;"></textarea>
-
-
-					</div>
+					</th:block>
 				</div>
 			</div>
 		</div>
 
 	</div>
 
-	<div class="container" style="min-height: 500px;">
-		<!-- 답글 쓰기 내역 -->
-		<th:block th:if="${ session.email != null}">
-
-			<div class="content-question-write mt50">
-				<form class="AnswerWriteForm" id="AnswerWriteForm"
-					name="AnswerWriteForm" method="post">
-					<h5 class="mb20">문제 답변작성</h5>
-					<div id="content" style="width: 100%; height: 500px;"></div>
-					<input type="hidden" id="tqIdx" name="tqIdx"
-						th:value="${questionview.idx}"> <input type="hidden"
-						id="email" name="email" th:value="${session.email}"> <input
-						type="hidden" id="writer" name="writer"
-						th:value="${session.username}"> <input type="hidden"
-						id="isUse" name="isUse" value="Y">
-
-				</form>
-				<button class="view-write-btn mt20" onclick="answerWriteForm()"
-					style="float: right;">답글 등록</button>
-			</div>
-		</th:block>
+	<!-- 답변 쓰기 내역 -->
+	<div class="container" style="min-height: 500px;" th:if="${ session.email != null }">
+		<div class="content-question-write mt50">
+			<h5 class="mb20">문제 답변 작성</h5>
+			<div id="answer-write-area" style="width: 100%; height: 500px;"></div>
+			<button class="view-write-btn mt20" onclick="answerWrite()" style="float: right;">답변 등록</button>
+		</div>
 	</div>
-
+	<div th:if="${ session.email == null}" id="answer-write-area" class="hidden"></div>
 	<!-- footer영역 -->
 	<div id="footer" th:replace="~{ /include/footer }"></div>
+	
 	<!-- toast API -->
-	<!-- 현재 그냥 사용 하시고 나중에 모듈 한꺼번에 묶어 주세요 -->
-	<script
-		src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
-	<link rel="stylesheet"
-		href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
-	<script>
-	const editor = new toastui.Editor({
-	  el: document.querySelector('#content'), // 에디터를 적용할 요소 (컨테이너)
-	  height: '400px',						// 에디터 영역의 높이 값 (OOOpx || auto)
-	  initialEditType: 'markdown',			// 최초로 보여줄 에디터 타입 (markdown || wysiwyg)
-	  placeholder: '내용을 입력해 주세요.',	// 내용의 초기 값으로, 반드시 마크다운 문자열 형태여야 함
-	  initialEditType: 'wysiwyg',			  // 마크다운 프리뷰 스타일 (tab || vertical)
-	  toolbarItems: [
-		['heading', 'bold', 'italic', 'strike'],
-		['hr', 'quote'],
-		['ul', 'ol', 'task'],
-		['table', 'link'],
-		['code', 'codeblock']
-		]
-	});
-  </script>
+	<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+	<link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+
+	<!-- Custom Script -->
+	<script type="text/javascript">
+		//========== 답변 관련 처리 ==========
+		//토스트 UI - 뷰어(질문 내용)
+		const viewer = new toastui.Editor.factory({
+			el: document.querySelector('#content'),
+			viewer: true,
+			initialValue: getEditorContent(`[[ ${ view.content } ]]`)
+		});
+
+		//질문 삭제
+		const deleteQuestion = async (idx) => {
+			await Swal.fire({
+				icon: 'warning',
+				text: '질문을 삭제하시겠습니까?',
+				showCancelButton: true,
+				confirmButtonText: '네, 삭제합니다.',
+				cancelButtonText: '아니오.'
+			})
+			.then((result) => {
+				if (result.isConfirmed) {
+					let formData = new FormData();
+					formData.append('idx', idx);
+					
+					fetch('/board/m/questionDelete', {
+						method: 'POST',
+						body: formData
+					})
+					.then((response) => response.json())
+					.then((data) => {
+						if (data.message == 'good') {
+							Swal.fire({
+								icon: 'success',
+								html: '질문이 삭제되었습니다.<br>목록 페이지로 이동합니다.',
+								confirmButtonText: '확인'
+							})
+							.then((result) => {
+								if (result.isConfirmed)
+									document.location = '/test/questionBoard';
+							});
+						} else {
+							Swal.fire({
+								icon: 'error',
+								text: '시스템 장애로 인해 질문 삭제에 실패했습니다.',
+								confirmButtonText: '확인'
+							});
+						}
+					})
+					.catch((error) => {
+						Swal.fire({
+							icon: 'error',
+							text: '시스템 장애로 인해 질문 삭제에 실패했습니다.',
+							confirmButtonText: '확인'
+						});
+						console.log('error: ' + error);
+					});
+				}
+			});
+		}
+		
+		//========== 답변 관련 처리 ==========
+		//답변 관련 변수들 선언
+		let modifyAnswerIdx = 0; //수정 중인 답변 인덱스
+		let answerEditors = []; //답변 에디터 배열
+		let answerViewerContents = []; //답변 수정 전 내용 배열
+		
+		//답변 내용 세팅
+		const answerSetting = async () => {
+			let answerArr = document.querySelectorAll('.answer-content');
+			for (let i = 0; i < answerArr.length; i++) {
+				const idx = answerArr[i].getAttribute('idx');
+				const content = answerArr[i].getAttribute('content');
+	
+				//토스트 UI - 뷰어(답변 내용)
+				const answerViewer = new toastui.Editor.factory({
+					el: document.querySelector('#answer-content-' + idx),
+					viewer: true,
+					initialValue: getEditorContent(content)
+				});
+				
+				answerViewerContents[idx] = content;
+				
+				answerArr[i].removeAttribute('idx');
+				answerArr[i].removeAttribute('content');
+			}
+		}
+		
+		//토스트 UI - 에디터(답변 작성)
+		const editor = new toastui.Editor({
+			el: document.querySelector('#answer-write-area'),	//에디터를 적용할 요소 (컨테이너)
+			height: '400px',																	//에디터 영역의 높이 값 (OOOpx || auto)
+			initialEditType: 'wysiwyg',												//최초로 보여줄 에디터 타입 (markdown || wysiwyg)
+			placeholder: '내용을 입력해주세요.',							//내용의 초기 값으로, 반드시 마크다운 문자열 형태여야 함
+			previewStyle: 'vertical',													//마크다운 프리뷰 스타일 (tab || vertical)
+			toolbarItems: [
+				//기본 툴바 항목에서 'image' 항목을 제외하고 나열합니다.
+				[ 'heading', 'bold', 'italic', 'strike' ],
+				[ 'hr', 'quote' ],
+				[ 'ul', 'ol', 'task' ],
+				[ 'table', 'link' ],
+				//'image' 항목을 제거했습니다.
+				[ 'code', 'codeblock' ]
+			]
+		});
+		
+		//답변 작성
+		const answerWrite = async () => {
+			let content = editor.getMarkdown(); // 마크다운 텍스트로 가져오기
+
+			if (content.trim() == '') {
+				Swal.fire({
+					icon: 'warning',
+					text: '내용을 입력해주세요.',
+					confirmButtonText: '확인'
+				});
+				return false;
+			}
+			
+			let formData = new FormData();
+			formData.append('tq_idx', parseInt('[[ ${ view.idx } ]]'));
+			formData.append('content', setEditorContent(content));
+				
+			await fetch('/test/m/answerWrite', {
+				method: 'POST',
+				body: formData
+			})
+			.then((response) => response.json())
+			.then((data) => {
+				editor.setMarkdown('');
+				
+				const jsonInfo = data;
+
+				const answerCount = document.querySelector('#answer-count');
+				answerCount.innerText = (parseInt(answerCount.innerText) + 1);
+				
+				const answerList = document.querySelector('#answer-list');
+				let profileImg = (jsonInfo.email.storedImg == null || jsonInfo.email.storedImg == '') ? '/img/test-profile/nonoping.png' : ('/member/img/' + jsonInfo.email.email);
+				
+				//날짜 데이터 변환 시작
+				let now = new Date(jsonInfo.regdate);
+				let year = now.getFullYear(); //연도
+				let month = now.getMonth() + 1; //월. 0~11로 표현
+				let date = now.getDate(); //일 * day: 요일 --> 0 ~ 6: 일 ~ 토
+				let hours = now.getHours();
+				let minutes = now.getMinutes();
+				
+				let mm = (month >= 10) ? month : '0' + month;
+				let dd = (date >= 10) ? date : '0' + date;
+				let hh = (hours >= 10) ? hours : '0' + hours;
+				let mi = (minutes >= 10) ? minutes : '0' + minutes;
+				let regdate = year + '-' + mm + '-' + dd + ' ' + hh + ':' + mi;
+				//날짜 데이터 변환 종료
+				
+				const elm = document.createElement('div');
+				elm.classList.add('question-list');
+				elm.setAttribute('id', 'answer-' + jsonInfo.idx);
+				
+				let result = '';
+				
+				result += '<div class="question-list-title">\n' +
+									'\t<div class="profile-title">\n' +
+									'\t\t<img src="' + profileImg + '" alt="">\n' +
+									'\t\t<p class="profile-name">' + jsonInfo.writer + '</p>\n' +
+									'\t\t<p class="profile-date">' + regdate + '</p>\n' +
+									'\t</div>\n' +
+									'\t<div class="user-tab" id="answer-tab-' + jsonInfo.idx + '">\n' +
+									'\t\t<a href="javascript:answerModify(' + jsonInfo.idx + ')" class="btn_edit">수정하기</a>\n' +
+									'\t\t<a href="javascript:answerDelete(' + jsonInfo.idx + ')" class="btn_cancel">삭제하기</a>\n' +
+									'\t</div>\n' +
+									'</div>\n' +
+									'<div class="question-list-content">\n' +
+									'\t<div class="answer-content" id="answer-content-' + jsonInfo.idx + '"></div>\n' +
+									'\t<div class="question-reple">\n' +
+									'\t\t<div id="reply-list-' + jsonInfo.idx + '"></div>\n';
+				if ('[[ ${ session.email } ]]' != '') {
+					result += '\t\t<div class="inp-write">\n' +
+										'\t\t\t<i class="xi-speech"></i>\n' +
+										'\t\t\t<input type="text" id="reply-content-' + jsonInfo.idx + '" placeholder="댓글을 작성해주세요.">\n' +
+										'\t\t\t<input type="button" value="작성" class="btn_write" onclick="replyWrite(' + jsonInfo.idx + ')">\n' +
+										'\t\t</div>\n';
+				}
+				result += '\t</div>\n' +
+									'</div>';
+									
+				elm.innerHTML = result;
+				answerList.appendChild(elm);
+
+				const answerViewer = new toastui.Editor.factory({
+					el: document.querySelector('#answer-content-' + jsonInfo.idx),
+					viewer: true,
+					initialValue: getEditorContent(jsonInfo.content)
+				});
+				
+				answerViewerContents[jsonInfo.idx] = jsonInfo.content;
+			})
+			.catch((error) => {
+				Swal.fire({
+					icon: 'error',
+					text: '시스템 장애로 답변 등록에 실패했습니다.',
+					confirmButtonText: '확인'
+				});
+				console.log('error: ' + error);
+			})
+		}
+		
+		//답변 수정
+		const answerModify = (idx) => {
+			if (modifyAnswerIdx != 0) {
+				const viewBtns = '<a href="javascript:answerModify(' + modifyAnswerIdx + ')" class="btn_edit">수정하기</a>\n' +
+													'<a href="javascript:answerDelete(' + modifyAnswerIdx + ')" class="btn_cancel">삭제하기</a>';
+				document.querySelector('#answer-tab-' + modifyAnswerIdx).innerHTML = viewBtns;
+				
+				document.querySelector('#answer-content-' + modifyAnswerIdx).removeAttribute('style');
+				const answerViewer = new toastui.Editor.factory({
+					el: document.querySelector('#answer-content-' + modifyAnswerIdx),
+					viewer: true,
+					initialValue: getEditorContent(answerViewerContents[modifyAnswerIdx])
+				});
+			}
+			
+			const modifyBtns = '<a class="btn_delete" id="btn-answer-modify-cancel-' + idx + '">취소하기</a>\n' +
+													'<a class="btn_edit" id="btn-answer-modify-' + idx + '">등록하기</a>';
+			document.querySelector('#answer-tab-' + idx).innerHTML = modifyBtns;
+			
+			document.querySelector('#answer-content-' + idx).removeAttribute('style');
+			const answerEditor = new toastui.Editor({
+				el: document.querySelector('#answer-content-' + idx),
+				initialEditType: 'wysiwyg',
+				initialValue: getEditorContent(answerViewerContents[idx]),
+				placeholder: '내용을 입력해주세요.',
+				previewStyle: 'vertical',
+				toolbarItems: [
+					//기본 툴바 항목에서 'image' 항목을 제외하고 나열합니다.
+					[ 'heading', 'bold', 'italic', 'strike' ],
+					[ 'hr', 'quote' ],
+					[ 'ul', 'ol', 'task' ],
+					[ 'table', 'link' ],
+					//'image' 항목을 제거했습니다.
+					[ 'code', 'codeblock' ]
+				]
+			});
+			
+			answerEditors[idx] = answerEditor;
+			
+			const btnAnswerModify = document.querySelector('#btn-answer-modify-' + idx);
+			const btnAnswerModifyCancel = document.querySelector('#btn-answer-modify-cancel-' + idx);
+			
+			btnAnswerModifyCancel.addEventListener('click', () => {
+				const viewBtns = '<a href="javascript:answerModify(' + modifyAnswerIdx + ')" class="btn_edit">수정하기</a>\n' +
+													'<a href="javascript:answerDelete(' + modifyAnswerIdx + ')" class="btn_cancel">삭제하기</a>';
+				document.querySelector('#answer-tab-' + modifyAnswerIdx).innerHTML = viewBtns;
+				
+				const answerViewer = new toastui.Editor.factory({
+					el: document.querySelector('#answer-content-' + modifyAnswerIdx),
+					viewer: true,
+					initialValue: getEditorContent(answerViewerContents[modifyAnswerIdx])
+				});
+				document.querySelector('#answer-content-' + modifyAnswerIdx).removeAttribute('style');
+				
+				modifyAnswerIdx = 0;
+			});
+			
+			btnAnswerModify.addEventListener('click', async () => {
+				let content = answerEditors[modifyAnswerIdx].getMarkdown();
+				
+				if (content.trim() == '') {
+					Swal.fire({
+						icon: 'warning',
+						text: '내용을 입력해주세요.',
+						confirmButtonText: '확인'
+					});
+					return false;
+				}
+				
+				let formData = new FormData();
+				formData.append('idx', modifyAnswerIdx);
+				formData.append('content', setEditorContent(content));
+				
+				await fetch('/test/m/answerModify', {
+					method: 'POST',
+					body: formData
+				})
+				.then((response) => response.json())
+				.then((data) => {
+					if (data.message == 'good') {
+						const viewBtns = '<a href="javascript:answerModify(' + modifyAnswerIdx + ')" class="btn_edit">수정하기</a>\n' +
+															'<a href="javascript:answerDelete(' + modifyAnswerIdx + ')" class="btn_cancel">삭제하기</a>';
+						document.querySelector('#answer-tab-' + modifyAnswerIdx).innerHTML = viewBtns;
+						
+						const answerViewer = new toastui.Editor.factory({
+							el: document.querySelector('#answer-content-' + modifyAnswerIdx),
+							viewer: true,
+							initialValue: content
+						});
+						document.querySelector('#answer-content-' + modifyAnswerIdx).removeAttribute('style');
+						
+						answerViewerContents[modifyAnswerIdx] = content;
+						
+						modifyAnswerIdx = 0;
+					} else {
+						Swal.fire({
+							icon: 'error',
+							text: '시스템 장애로 인해 답변 수정에 실패했습니다.',
+							confirmButtonText: '확인'
+						});
+						console.log('error: ' + error);
+					}
+				})
+				.catch((error) => {
+					Swal.fire({
+						icon: 'error',
+						text: '시스템 장애로 인해 답변 수정에 실패했습니다.',
+						confirmButtonText: '확인'
+					});
+					console.log('error: ' + error);
+				})
+			});
+			
+			modifyAnswerIdx = idx;
+		}
+		
+		//답변 삭제
+		const answerDelete = async (idx) => {
+			await Swal.fire({
+				icon: 'warning',
+				text: '답변을 삭제하시겠습니까?',
+				showCancelButton: true,
+				confirmButtonText: '네, 삭제합니다.',
+				cancelButtonText: '취소'
+			})
+			.then((result) => {
+				if (result.isConfirmed) {
+					let formData = new FormData();
+					formData.append('idx', idx);
+					
+					fetch('/test/m/answerDelete', {
+						method: 'POST',
+						body: formData
+					})
+					.then((response) => response.json())
+					.then((data) => {
+						if (data.message == 'good') {
+							Swal.fire({
+								icon: 'success',
+								text: '답변이 삭제되었습니다.',
+								confirmButtonText: '확인'
+							});
+
+							const answerList = document.querySelector('#answer-list');
+							const deleteAnswer = document.querySelector('#answer-' + idx);
+							
+							answerList.removeChild(deleteAnswer);
+							
+							const answerCount = document.querySelector('#answer-count');
+							answerCount.innerText = (parseInt(answerCount.innerText) - 1);
+						} else {
+							Swal.fire({
+								icon: 'error',
+								text: '시스템 장애로 인해 답변 삭제에 실패했습니다.',
+								confirmButtonText: '확인'
+							});
+						}
+					})
+					.catch((error) => {
+						Swal.fire({
+							icon: 'error',
+							text: '시스템 장애로 인해 답변 삭제에 실패했습니다.',
+							confirmButtonText: '확인'
+						});
+						console.log('error: ' + error);
+					});
+				}
+			});
+		}
+		
+		//========== 댓글 관련 처리 ==========
+		//댓글 관련 변수들 선언
+		let modifyReplyIdxQ = 0; //수정 중인 질문 댓글의 인덱스
+		let modifyReplyVal = ''; //수정 중인 답변 댓글의 질문 인덱스 (질문 댓글인 경우 'q')
+		let modifyReplyIdxA = 0; //수정 중인 답변 댓글의 인덱스
+		let replyTexts = []; //댓글 입력란 배열
+		let replyContents = []; //댓글 수정 전 내용 배열
+
+		//댓글 내용 세팅
+		const replySetting = async () => {
+			let replyArr = document.querySelectorAll('.reple-content');
+			for (let i = 0; i < replyArr.length; i++) {
+				const idx = replyArr[i].getAttribute('idx');
+				const content = replyArr[i].getAttribute('content');
+	
+				replyArr[i].innerText = getEditorContent(content);
+				
+				replyContents[idx] = content;
+				
+				replyArr[i].removeAttribute('idx');
+				replyArr[i].removeAttribute('content');
+			}
+		}
+		
+		//댓글 작성
+		const replyWrite = async (val) => {
+			//val 기준으로 rePrnt, prntIdx 설정
+			const rePrnt = (val == 'q') ? 'Q' : 'QA';
+			const prntIdx = (val == 'q') ? parseInt('[[ ${ view.idx } ]]') : parseInt(val);
+			
+			let content = document.querySelector('#reply-content-' + val).value;
+
+			if (content.trim() == '') {
+				Swal.fire({
+					icon: 'warning',
+					text: '내용을 입력해주세요.',
+					confirmButtonText: '확인'
+				});
+				return false;
+			}
+
+			let formData = new FormData();
+			formData.append('rePrnt', rePrnt);
+			formData.append('prntIdx', prntIdx);
+			formData.append('email', '[[ ${ session.email } ]]');
+			formData.append('writer', '[[ ${ session.nickname } ]]');
+			formData.append('content', content);
+			
+			await fetch('/test/m/replyWrite', {
+				method: 'POST',
+				body: formData
+			})
+			.then((response) => response.json())
+			.then((data) => {
+				document.querySelector('#reply-content-' + val).value = '';
+				
+				const jsonInfo = data;
+				
+				//날짜 데이터 변환 시작
+				let now = new Date(jsonInfo.regdate);
+				let year = now.getFullYear(); //연도
+				let month = now.getMonth() + 1; //월. 0~11로 표현
+				let date = now.getDate(); //일 * day: 요일 --> 0 ~ 6: 일 ~ 토
+				let hours = now.getHours();
+				let minutes = now.getMinutes();
+				
+				let mm = (month >= 10) ? month : '0' + month;
+				let dd = (date >= 10) ? date : '0' + date;
+				let hh = (hours >= 10) ? hours : '0' + hours;
+				let mi = (minutes >= 10) ? minutes : '0' + minutes;
+				let regdate = year + '-' + mm + '-' + dd + ' ' + hh + ':' + mi;
+				//날짜 데이터 변환 종료
+				
+				const replyList = document.querySelector('#reply-list-' + val);
+				const elm = document.createElement('div');
+				elm.setAttribute('id', 'reply-' + jsonInfo.idx);
+				elm.classList.add('reple-itme');
+				
+				let result = '';
+				
+				result += '<p class="profile-name">' + jsonInfo.writer + '</p>\n' +
+									'<p class="reple-content" id="reply-content-' + jsonInfo.idx + '">' + getEditorContent(jsonInfo.content) + '</p>\n' +
+									'<p>' + regdate + '</p>\n' +
+									'<div id="reply-tab-' + jsonInfo.idx + '" class="reple-itme-btn-group">\n' +
+									'\t<a href="javascript:replyModify(\'' + val +'\', \'' + jsonInfo.idx + '\')">수정</a>\n' +
+									'\t<a href="javascript:replyDelete(\'' + val +'\', \'' + jsonInfo.idx + '\')">삭제</a>\n' +
+									'</div>';
+				
+				elm.innerHTML = result;
+				replyList.appendChild(elm);
+				
+				replyContents[jsonInfo.idx] = jsonInfo.content;
+			})
+			.catch((error) => {
+				Swal.fire({
+					icon: 'error',
+					text: '시스템 장애로 인해 댓글 작성에 실패했습니다.',
+					confirmButtonText: '확인'
+				});
+				console.log('error: ' + error);
+			});
+		}
+		
+		//댓글 수정
+		const replyModify = (val, idx) => {
+			if (modifyReplyIdxQ != 0) {
+				const viewBtns = '<a href="javascript:replyModify(\'q\', \'' + modifyReplyIdxQ + '\')">수정</a>\n' +
+													'<a href="javascript:replyDelete(\'q\', \'' + modifyReplyIdxQ + '\')">삭제</a>';
+				document.querySelector('#reply-tab-' + modifyReplyIdxQ).innerHTML = viewBtns;
+
+				const replyContent = document.createElement('p');
+				replyContent.classList.add('reple-content');
+				replyContent.setAttribute('id', 'reply-content-' + modifyReplyIdxQ);
+				replyContent.innerText = getEditorContent(replyContents[modifyReplyIdxQ]);
+				
+				replyTexts[modifyReplyIdxQ].replaceWith(replyContent);
+				
+				if (val != 'q') modifyReplyIdxQ = 0;
+			}
+			
+			if (modifyReplyIdxA != 0) {
+				const viewBtns = '<a href="javascript:replyModify(\'' + modifyReplyVal + '\', \'' + modifyReplyIdxA + '\')">수정</a>\n' +
+													'<a href="javascript:replyDelete(\'' + modifyReplyVal + '\', \'' + modifyReplyIdxA + '\')">삭제</a>';
+				document.querySelector('#reply-tab-' + modifyReplyIdxA).innerHTML = viewBtns;
+				
+				const replyContent = document.createElement('p');
+				replyContent.classList.add('reple-content');
+				replyContent.setAttribute('id', 'reply-content-' + modifyReplyIdxA);
+				replyContent.innerText = getEditorContent(replyContents[modifyReplyIdxA]);
+				
+				replyTexts[modifyReplyIdxQ].replaceWith(replyContent);
+				
+				if (val == 'q') modifyReplyIdxA = 0;
+			}
+
+			const modifyBtns = '<a href="javascript:void(0)" id="btn-reply-modify-cancel-' + idx + '">취소</a>\n' +
+													'<a href="javascript:void(0)" id="btn-reply-modify-' + idx + '">등록</a>';
+			document.querySelector('#reply-tab-' + idx).innerHTML = modifyBtns;
+			
+			const replyText = document.createElement('input');
+			replyText.setAttribute('type', 'text');
+			replyText.setAttribute('placeholder', '댓글을 작성해주세요.');
+			replyText.value = getEditorContent(replyContents[idx]);
+			
+			document.querySelector('#reply-content-' + idx).replaceWith(replyText);
+			
+			replyTexts[idx] = replyText;
+			
+			const btnReplyModifyCancel = document.querySelector('#btn-reply-modify-cancel-' + idx);
+			const btnReplyModify = document.querySelector('#btn-reply-modify-' + idx);
+			
+			btnReplyModifyCancel.addEventListener('click', () => {
+				if (modifyReplyIdxQ != 0) {
+					const viewBtns = '<a href="javascript:replyModify(\'q\', \'' + modifyReplyIdxQ + '\')">수정</a>\n' +
+														'<a href="javascript:replyDelete(\'q\', \'' + modifyReplyIdxQ + '\')">삭제</a>';
+					document.querySelector('#reply-tab-' + modifyReplyIdxQ).innerHTML = viewBtns;
+
+					const replyContent = document.createElement('p');
+					replyContent.classList.add('reple-content');
+					replyContent.setAttribute('id', 'reply-content-' + modifyReplyIdxQ);
+					replyContent.innerText = getEditorContent(replyContents[modifyReplyIdxQ]);
+					
+					replyTexts[modifyReplyIdxQ].replaceWith(replyContent);
+					
+					modifyReplyIdxQ = 0;
+				}
+				
+				if (modifyReplyIdxA != 0) {
+					const viewBtns = '<a href="javascript:replyModify(\'' + val + '\', \'' + modifyReplyIdxA + '\')">수정</a>\n' +
+														'<a href="javascript:replyDelete(\'' + val + '\', \'' + modifyReplyIdxA + '\')">삭제</a>';
+					document.querySelector('#reply-tab-' + modifyReplyIdxA).innerHTML = viewBtns;
+					
+					const replyContent = document.createElement('p');
+					replyContent.classList.add('reple-content');
+					replyContent.setAttribute('id', 'reply-content-' + modifyReplyIdxA);
+					replyContent.innerText = getEditorContent(replyContents[modifyReplyIdxA]);
+					
+					replyTexts[modifyReplyIdxQ].replaceWith(replyContent);
+					
+					modifyReplyIdxA = 0;
+				}
+			});
+			
+			btnReplyModify.addEventListener('click', async () => {
+				let targetIdx = (modifyReplyVal == 'q') ? modifyReplyIdxQ : modifyReplyIdxA;
+				let content = replyTexts[targetIdx].value;
+				
+				if (content.trim() == '') {
+					Swal.fire({
+						icon: 'warning',
+						text: '내용을 입력해주세요.',
+						confirmButtonText: '확인'
+					});
+					return false;
+				}
+				
+				let formData = new FormData();
+				formData.append('idx', targetIdx);
+				formData.append('content', setEditorContent(content));
+				
+				await fetch('/test/m/replyModify', {
+					method: 'POST',
+					body: formData
+				})
+				.then((response) => response.json())
+				.then((data) => {
+					if (data.message == 'good') {
+						const viewBtns = '<a href="javascript:replyModify(\'' + modifyReplyVal + '\', \'' + targetIdx + '\')">수정</a>\n' +
+															'<a href="javascript:replyDelete(\'' + modifyReplyVal + '\', \'' + targetIdx + '\')">삭제</a>';
+						document.querySelector('#reply-tab-' + targetIdx).innerHTML = viewBtns;
+						
+						const replyContent = document.createElement('p');
+						replyContent.classList.add('reple-content');
+						replyContent.setAttribute('id', 'reply-content-' + targetIdx);
+						replyContent.innerText = content;
+						
+						replyTexts[targetIdx].replaceWith(replyContent);
+						
+						replyContents[targetIdx] = content;
+						
+						if (modifyReplyVal == 'q')
+							modifyReplyIdxQ = 0;
+						else
+							modifyReplyIdxA = 0;
+						
+						modifyReplyVal == '';
+					}
+				})
+			});
+			
+			if (val == 'q')
+				modifyReplyIdxQ = idx;
+			else
+				modifyReplyIdxA = idx;
+			
+			modifyReplyVal = val;
+		}
+		
+		//댓글 삭제
+		const replyDelete = async (val, idx) => {
+			await Swal.fire({
+				icon: 'warning',
+				text: '댓글을 삭제하시겠습니까?',
+				showCancelButton: true,
+				confirmButtonText: '네, 삭제합니다.',
+				cancelButtonText: '취소'
+			})
+			.then((result) => {
+				if (result.isConfirmed) {
+					let formData = new FormData();
+					formData.append('idx', idx);
+					
+					fetch('/test/m/replyDelete', {
+						method: 'POST',
+						body: formData
+					})
+					.then((response) => response.json())
+					.then((data) => {
+						if (data.message == 'good') {
+							Swal.fire({
+								icon: 'success',
+								text: '댓글이 삭제되었습니다.',
+								confirmButtonText: '확인'
+							});
+
+							const replyList = document.querySelector('#reply-list-' + val);
+							const deleteReply = document.querySelector('#reply-' + idx);
+							
+							replyList.removeChild(deleteReply);
+						} else {
+							Swal.fire({
+								icon: 'error',
+								text: '시스템 장애로 인해 댓글 삭제에 실패했습니다.',
+								confirmButtonText: '확인'
+							});
+						}
+					})
+					.catch((error) => {
+						Swal.fire({
+							icon: 'error',
+							text: '시스템 장애로 인해 댓글 삭제에 실패했습니다.',
+							confirmButtonText: '확인'
+						});
+						console.log('error: ' + error);
+					});
+				}
+			});
+		}
+	</script>
 </body>
+<script>
+	answerSetting();
+	replySetting();
+</script>
 </html>

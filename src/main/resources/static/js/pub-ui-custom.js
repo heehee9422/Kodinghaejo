@@ -93,6 +93,7 @@ function listDropdown() {
 }
 
 /* 랭크 /rank : 탭 */
+/*
 function toggleTab() {
 	const btnMenu = document.querySelectorAll('.rank_tab_group li');
 	const menuContent = document.querySelectorAll('.content-rank-main .content-rank-toggle-menu-item')
@@ -115,6 +116,7 @@ function toggleTab() {
 		});
 	}
 }
+*/
 
 /* 채팅 사이드바 /chatView	*/
 function chatViewSideBar() {
