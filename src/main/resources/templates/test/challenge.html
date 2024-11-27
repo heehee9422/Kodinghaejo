@@ -11,8 +11,8 @@
 	href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
 <!-- pub-js link -->
 <script src="/js/pub-ui-custom.js"></script>
-<!-- common-js link -->
-<script src="/js/common.js"></script>
+	<!-- common-js link -->
+	<script src="/js/common.js"></script>
 </head>
 <body>
 	<div id="load" class="delay-filed" style="display: none;">
@@ -180,10 +180,10 @@
 			.then((response) => response.json())
 			.then((data) => {
 				tlIdx = data.idx;
-				editor.setValue(getEditorContent(data.content_src));
-				correctSrc = data.correct_src;
-				runSrc = data.run_src;
-				submSrc = data.subm_src;
+				editor.setValue(data.content_src.replaceAll('\\t', '\t').replaceAll('\\n', '\n'));
+				correctSrc = data.correct_src.replaceAll('\\t', '\t').replaceAll('\\n', '\n');
+				runSrc = data.run_src.replaceAll('\\t', '\t').replaceAll('\\n', '\n');
+				submSrc = data.subm_src.replaceAll('\\t', '\t').replaceAll('\\n', '\n');
 			})
 			.catch((error) => {
 				console.log("error: " + error);
@@ -202,7 +202,7 @@
 				body: new URLSearchParams({
 					'type': type,
 					'tl_idx': tlIdx,
-					'code': setEditorContent(editor.getValue()),
+					'code': editor.getValue(),
 					'correct_src': correctSrc,
 					'run_src': runSrc,
 					'subm_src': submSrc,

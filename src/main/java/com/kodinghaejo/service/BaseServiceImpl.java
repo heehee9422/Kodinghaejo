@@ -89,7 +89,7 @@ public class BaseServiceImpl implements BaseService {
 	//랭킹 리스트
 	public List<MemberDTO> memberRank(String kind) {
 
-		List<MemberEntity> memberEntities = memberRepository.findByIsUse("Y");
+		List<MemberEntity> memberEntities = memberRepository.findAll();
 
 		List<MemberDTO> memberDTOs = new ArrayList<>();
 

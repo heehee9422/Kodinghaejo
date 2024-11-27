@@ -70,14 +70,6 @@ public class BaseController {
 		model.addAttribute("members", members);
 	}
 
-	//가장 많이 풀어본 문제
-	@GetMapping("/popularTest")
-	public String getPopularTest() {
-		Long idx = testService.getMostPopularTest();
-
-		return "redirect:/test/challenge?idx=" + idx;
-	}
-	
 	//등록일 기준 신규 문제
 	@GetMapping("/newTest")
 	public String getNewTest() {

@@ -150,21 +150,7 @@ public class TestController {
 			int passCnt = (int) data.get("passcnt");
 			String submSts = ((passCnt * 5) >= 70) ? "Y" : "N";
 
-			boolean isAdd = service.submitTest(tlIdx, email, submSts, code);
-
-			int diff = service.getTestDiff(tlIdx);
-			
-			long scoreToAdd = switch (diff) {
-				case 0 -> 1L;
-				case 1 -> 4L;
-				case 2 -> 8L;
-				case 3 -> 10L;
-				default -> 0L;
-			};
-			
-			if (isAdd && scoreToAdd > 0 && submSts.equals("Y")) {
-				service.updateMemberScore(email, scoreToAdd);
-			}
+			service.submitTest(tlIdx, email, submSts, code);
 		}
 
 		return result;

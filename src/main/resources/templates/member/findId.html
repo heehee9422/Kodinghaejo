@@ -88,16 +88,10 @@
 			.then((response) => response.json())
 			.then((data) => {
 				if (data.message == 'good') {
-					let emailStr = '';
-					for (const i in data.id) {
-						if (emailStr != '') emailStr += '<br>'
-						emailStr += data.id[i];
-					}
-					
 					Swal.fire({
 						icon: 'success',
 						title: '아이디(이메일) 찾기 결과',
-						html: emailStr,
+						html: data.id,
 						confirmButtonText: '확인'
 					});
 				} else if (data.message == 'ID_NOT_FOUND') {

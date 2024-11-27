@@ -32,11 +32,8 @@ public interface MemberService {
 	//이메일 중복 확인
 	public int checkEmail(String email);
 
-	//회원 기본정보(전체)
+	//회원 기본정보
 	public MemberDTO memberInfo(String email);
-	
-	//회원 기본정보(사용가능 Y만)
-	public MemberDTO memberInfoByIsUse(String email);
 
 	//회원 로그인, 로그아웃, 패스워드변경 일자 등록(Update)
 	public void lastdateUpdate(String email, String status);
@@ -45,7 +42,7 @@ public interface MemberService {
 	public void memberLogRegistry(String email, String status);
 
 	//회원 아이디(이메일) 찾기
-	public List<String> findId(MemberDTO member);
+	public String findId(MemberDTO member);
 
 	//비밀번호 변경일 연기(30일)
 	public void modifyPasswordAfter30(String email);

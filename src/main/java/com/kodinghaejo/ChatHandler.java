@@ -58,9 +58,9 @@ public class ChatHandler extends TextWebSocketHandler {
 		System.out.println(content);
 
 		if (email == null) {
-			chatService.saveLog(chatIdx,content);
+			//chatService.saveLog(chatIdx,content);
 		} else {
-			chatService.saveMessage(chatIdx,email,content);
+			//chatService.saveMessage(chatIdx,email,content);
 		}
 
 		//해당 채팅방에만 메시지 브로드캐스트

@@ -108,7 +108,7 @@ const deleteFreeBoard = (idx) => {
 						<tbody>
 							<tr th:each="board : ${boards}">
 								<td th:text="${board.idx}">1</td>
-								<td><a th:href="@{ '/board/freeboardView?idx=' + ${ board.idx } }" th:text="${board.title}" target="_blank">첫번째 게시글입니다.</a></td>
+								<td th:text="${board.title}">첫번째 게시글입니다.</td>
 								<td th:text="${board.writer}">홍길동</td>
 								<td th:text="${board.regdate}">2024-11-04</td>
 								<td th:text="${board.hitCnt}">4</td>

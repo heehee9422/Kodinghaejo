@@ -63,9 +63,6 @@ public class MemberController {
 		//이메일(아이디) 가입여부 확인
 		if (service.checkEmail(loginData.getEmail()) == 0) //해당 이메일 회원이 존재하지 않음
 			return "{ \"message\": \"ID_NOT_FOUND\" }";
-		
-		if (service.checkEmail(loginData.getEmail()) == -1) //탈퇴 상태의 회원
-			return "{ \"message\": \"DELETE_ACCOUNT_DENY\" }";
 
 		//비밀번호 일치여부 확인
 		if (!pwEncoder.matches(loginData.getPassword(), service.memberInfo(loginData.getEmail()).getPassword())) //비밀번호가 일치하지 않을 경우
@@ -188,21 +185,14 @@ public class MemberController {
 	@ResponseBody
 	@PostMapping("/member/findId")
 	public String postFindId(MemberDTO findData) {
-		List<String> emailList = service.findId(findData);
+		String email = service.findId(findData);
 
-		if (emailList.isEmpty()) {
+		if (email == "") {
 			return "{ \"message\": \"ID_NOT_FOUND\" }";
 		} else {
-			String emailStr = "[ ";
-			for (String email : emailList) {
-				if (!emailStr.equals("[ ")) emailStr += ", ";
-				emailStr += "\"" + email + "\"";
-			}
-			emailStr += " ]";
-			
-			log.info("==================== 아이디(이메일) 찾기 JSON: { \"message\": \"good\", \"id\": {} } ====================",
-					emailStr);
-			return "{ \"message\": \"good\", \"id\": " + emailStr + " }";
+			log.info("==================== 아이디(이메일) 찾기 JSON: { \"message\": \"good\", \"id\": \"{}\" } ====================",
+					email);
+			return "{ \"message\": \"good\", \"id\": \"" + email + "\" }";
 		}
 	}
 
@@ -232,8 +222,6 @@ public class MemberController {
 			service.lastdateUpdate(findData.getEmail(), "password");
 
 			mailService.sendSimpleMailMessage(findData.getEmail(), password);
-			
-			log.info("========== password: {} ==========", password);
 
 			return "{ \"message\": \"good\" }";
 		}

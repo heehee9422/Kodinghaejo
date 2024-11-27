@@ -16,7 +16,7 @@ import com.kodinghaejo.entity.MemberEntity;
 public interface MemberRepository extends JpaRepository<MemberEntity, String> {
 
 	public Optional<MemberEntity> findByEmailAndIsUse(String email, String isUse);
-	public List<MemberEntity> findByUsernameAndTelAndIsUse(String username, String tel, String isUse);
+	public Optional<MemberEntity> findByUsernameAndTelAndIsUse(String username, String tel, String isUse);
 
 	//이메일,닉네임,이름 별 검색
 	Page<MemberEntity> findByEmailContaining(String email, Pageable pageable);
@@ -34,8 +34,5 @@ public interface MemberRepository extends JpaRepository<MemberEntity, String> {
 
 	//sort 기준으로 회원찾기
 	public List<MemberEntity> findAll(Sort sort);
-	
-	//사용여부로 회원찾기
-	public List<MemberEntity> findByIsUse(String isUse);
 
 }

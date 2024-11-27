@@ -93,8 +93,8 @@ const deleteQBoard = (idx) => {
 						<tbody>
 							<tr th:each="question : ${questions}">
 								<td th:text="${question.idx}">1</td>
-								<td th:text="${question.tlIdx.testIdx.idx}">1</td>
-								<td><a th:href="@{ '/test/questionBoardView?idx=' + ${ question.idx } }" th:text="${question.title}" target="_blank">이 문제 버그났어요.</a></td>
+								<td th:text="${question.testIdx.idx}">1</td>
+								<td th:text="${question.title}">이 문제 버그났어요.</td>
 								<td th:text="${question.writer}">한건희</td>
 								<td th:text="${question.regdate}">2024-11-04</td>
 								<td><a th:href="|javascript:deleteQBoard(${question.idx})|" class="btn_delete" >삭제</a></td>

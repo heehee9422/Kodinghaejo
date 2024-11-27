@@ -138,26 +138,25 @@
 			.then((data) => {
 				if (data.message == 'good') {
 					Swal.fire({
-						icon: 'success',
-						text: decodeURIComponent(data.username) + '님, 회원가입을 축하드립니다.',
-						confirmButtonText: '확인'
-					})
-					.then((result) => {
-						if (result.isConfirmed)
-							document.location.href = '/';
-					});
+								icon: 'success',
+								text: decodeURIComponent(data.username) + '님, 회원가입을 축하드립니다.',
+								confirmButtonText: '확인'
+							})
+							.then(() => {
+								document.location.href = '/';
+							});
 				} else if (data.message == 'DELETE_ACCOUNT_DENY') {
 					Swal.fire({
-						icon: 'error',
-						html: '탈퇴한 계정의 이메일은 다시 사용할 수 없습니다.<br>관리자에게 문의해주세요.',
-						confirmButtonText: '확인'
-					});
+								icon: 'error',
+								text: '탈퇴한 계정의 이메일은 다시 사용할 수 없습니다.\n관리자에게 문의해주세요.',
+								confirmButtonText: '확인'
+							});
 				} else {
 					Swal.fire({
-						icon: 'error',
-						text: '시스템 장애로 인해 회원가입에 실패했습니다.',
-						confirmButtonText: '확인'
-					});
+								icon: 'error',
+								text: '시스템 장애로 인해 회원가입에 실패했습니다.',
+								confirmButtonText: '확인'
+							});
 				}
 			});
 		}

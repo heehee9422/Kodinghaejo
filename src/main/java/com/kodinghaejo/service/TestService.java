@@ -29,7 +29,7 @@ public interface TestService {
 	public String testCode(String language, String filePath) throws Exception;
 
 	//코드 제출 처리
-	public boolean submitTest(Long tlIdx, String email, String submSts, String code);
+	public void submitTest(Long tlIdx, String email, String submSts, String code);
 
 	//언어별 문제 인덱스로 가져오기
 	public TestLngEntity loadTestLngByIdx(Long idx) throws Exception;
@@ -66,11 +66,5 @@ public interface TestService {
 	
 	//북마크 상태 확인
 	public String isBookmarked(String email, Long testIdx);
-
-	//문제의 난이도 출력
-	public int getTestDiff(Long tlIdx);
-	
-	//회원의 점수 업데이트
-	public void updateMemberScore(String email, long socreToAdd);
 
 }
