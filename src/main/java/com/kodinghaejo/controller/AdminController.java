@@ -229,9 +229,9 @@ public class AdminController {
 
 			return "/admin/noticeboardModify";
 		} catch (Exception e) {
-			log.error("Error during noticeModify", e);
-			return "{\"message\": \"fail\"}";
-		}
+	        log.error("Error during noticeModify", e);
+	        return "{\"message\": \"fail\"}";
+	    }
 	}
 
 	//공지사항 수정
@@ -260,11 +260,11 @@ public class AdminController {
 	@DeleteMapping("/admin/systemBoardDelete/{idx}")
 	public ResponseEntity<String> getBoardDelete(@PathVariable("idx") Long idx) {
 		try {
-			service.deleteBoard(idx);
-			return ResponseEntity.ok("게시글이 정상적으로 삭제되었습니다.");
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("게시글 삭제에 실패했습니다.");
-		}
+	        service.deleteBoard(idx);
+	        return ResponseEntity.ok("게시글이 정상적으로 삭제되었습니다.");
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("게시글 삭제에 실패했습니다.");
+	    }
 	}
 
 	//자유게시판 관리
@@ -507,6 +507,7 @@ public class AdminController {
 	//회원관리 상세보기
 	@GetMapping("/admin/MemberDetail/{email}")
 	public ResponseEntity<MemberDTO> getMemberDetails(@PathVariable String email) {
+
 		MemberDTO memberDTO = service.getMemberDetailByEmail(email);
 		return ResponseEntity.ok(memberDTO);
 	}
@@ -545,6 +546,7 @@ public class AdminController {
 		model.addAttribute("postNum", postNum);
 		model.addAttribute("totalCount", totalCount);
 		model.addAttribute("banners", banners);
+
 		model.addAttribute("pageList", page.getPageList("/admin/systemBanner", "page", pageNum, postNum, pageListCount, totalCount, ""));
 	}
 
@@ -565,6 +567,7 @@ public class AdminController {
 			//운영체제에 따라 이미지가 저장될 디렉토리 구조 설정 시작
 			String os = System.getProperty("os.name").toLowerCase();
 			String path;
+
 			if (os.contains("win"))
 				path = "c:\\Repository\\banner\\";
 			else
@@ -598,7 +601,6 @@ public class AdminController {
 			e.printStackTrace();
 			response.put("message", "error");
 		}
-
 		return response;
 	}
 

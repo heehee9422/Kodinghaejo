@@ -24,7 +24,7 @@
 			<div class="content-question-board-view-wrap">
 				<div class="question-head">
 					<a href="/test/questionBoard" class="btn_menu">목록가기</a>
-					<h4 th:onclick="|location.href='/test/challenge?idx=${ view.tlIdx.testIdx.idx }'\" th:text="@{ 'LV. ' + ${ view.tlIdx.testIdx.diff } + ' ' + ${ view.tlIdx.testIdx.title } + ' 풀어보기' }"></h4>
+					<h4 th:onclick="@{ 'location.href=\'/test/challenge?idx=' + ${ view.tlIdx.testIdx.idx } + '\'' }" th:text="@{ 'LV. ' + ${ view.tlIdx.testIdx.diff } + ' ' + ${ view.tlIdx.testIdx.title } + ' 풀어보기' }"></h4>
 				</div>
 
 				<div class="profile-title">

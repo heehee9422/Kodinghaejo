@@ -2,6 +2,7 @@ package com.kodinghaejo.entity.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,6 +20,8 @@ public interface TestSubmitRepository extends JpaRepository<TestSubmitEntity, Lo
 	//========== 코딩테스트 문제 리스트 ==========
 	
 	public List<TestSubmitEntity> findByEmailAndSubmSts(MemberEntity email, String submSts);
+
+	public Optional<TestSubmitEntity> findByTlIdxAndEmailAndSubmSts(TestLngEntity tlIdx, MemberEntity email, String submSts);
 	
 	public Long countByTlIdx(TestLngEntity tlIdx);
 	
@@ -61,5 +64,13 @@ public interface TestSubmitRepository extends JpaRepository<TestSubmitEntity, Lo
 					"FROM testSubmit ts " +
 					"WHERE ts.email.email = :email")
 	public Long countByEmail(@Param("email") String email);
+	
+	//문제의 난이도 출력
+	@Query("SELECT t.diff " +
+					"FROM testSubmit ts " +
+					"JOIN ts.tlIdx tl " +
+					"JOIN tl.testIdx t " +
+					"WHERE tl.idx = :tlIdx")
+	public int findDiffByTlIdx(@Param("tlIdx") Long tlIdx);
 
 }

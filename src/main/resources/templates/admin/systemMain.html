@@ -14,144 +14,13 @@
   
   <!-- pub-js link -->
   <script src="/js/pub-ui-custom.js"></script>
-  <style>
-    .container {
-    display: flex;
-    margin: 20px;
-	}
-	
-	.info-chart-container {
-	    display: flex;
-	    flex-direction: column;
-	    flex: 1;
-	    background-color: #f0f0f0;
-	}
-	
-	.info-box-container {
-	    display: flex;
-	    margin-bottom: 20px;
-	}
-	
-	.info-box {
-		width: 300px;
-		height: 100px;
-	    background-color: #f0f0f0;
-	    border: 1px solid #ccc;
-	    border-radius: 5px;
-	    padding: 10px 15px;
-	    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-	    font-size: 14px;
-	    margin-top: 100px;
-	    margin-left: 10px;
-	    margin-right: 28px;
-	}
-	.sub-info-box {
-		display:flex;
-		justify-content: space-between;
-	}
-	
-	.info-box:last-child {
-	    margin-right: 0;
-	}
-	
-	.daily-count {
-		margin: 20px;
-	    font-size: 24px;
-	    font-weight: bold;
-	}
-	
-	.daily-label {
-		width: 100px;
-	    display: block;
-	    font-size: 14px;
-	    color: #555;
-	}
-	.xi-user-plus-o, .xi-log-in, .xi-trophy, .xi-pen {
-		margin-top:15px;
-		color: #f0f0f0;
-		background-color: #e0e0e0;
-		box-sizing: border-box; 
-	    border-radius: 10px; 
-	}
-    .system-menu  {
-	    width: 230px; 
-	    height: 500px;
-	    padding: 20px; 
-	    margin-right: 20px;
-	    border: 3px solid rgb(194, 194, 194); 
-	    box-sizing: border-box; 
-	    border-radius: 10px; 
-    }
-
-    .system-menu ul {
-        list-style-type: none;
-        padding: 0;
-    }
-
-    .system-menu li {
-        position: relative;
-        margin: 10px 0;
-    }
-
-    .system-menu a {
-        text-decoration: none;
-        color: black;
-        padding: 5px 10px;
-        display: block;
-        border-radius: 4px;
-        font-size: 16px;
-    }
-
-    .system-menu a:hover {
-        background-color: #f0f0f0;
-    }
-
-    .sub-menu {
-        display: none;
-        background-color: white;
-        z-index: 10;
-        padding: 0;
-        margin: 0;
-        position: relative;
-    }
-
-    .system-menu li:hover .sub-menu {
-        display: block;
-    }
-
-    .sub-menu li {
-        margin: 5px 0;
-        padding-left: 10px;
-    }
-
-    .sub-menu a {
-        font-size: 14px;
-    }
-    
-    /* TOAST UI Chart CSS */
-    .chart-container {
-	    display: flex;
-	    width: 100%;
-	    gap: 20px;
-	}
-	
-	.pie-chart,
-	.bar-chart {
-	    width: 40%;
-	    height: 400px;
-	    padding: 130px;
-	}
-	canvas {
-    	border-radius: 10px;
-	}
-  </style>
 </head>
 <header>
     <div id="header" th:replace="~{ /include/header }"></div>
 </header>
 <body>
-    <div class="container column mt50">
-        <div class="column-row">
+    <div class="container column" style="background: #E1EDF9;">
+        <div class="column-row" style="padding-top: 50px;">
 			<div class="c-column-2">
 				<div id="system_menu" th:replace="~{ /include/system }"></div> 
 			</div>
@@ -160,7 +29,7 @@
 			        <div class="info-chart-container">
 					    <!-- 상단 박스 추가 -->
 					    <div class="info-box-container">
-					        <div class="info-box" style="margin-left:130px;">
+					        <div class="info-box">
 					        	<div class="sub-info-box">
 					        		<div>
 						        		<span class="daily-count" th:text="${todaySignups}">5</span>
@@ -207,11 +76,13 @@
 					    </div>
 					    <div class="chart-container">
 					        <div class="bar-chart">
-					            <div id="barChart"></div>
+                      <div id="barChart"></div>
 					        </div>
-					        <div class="pie-chart">
+                  <hr class="non-line" style="margin: 15px 0;">
+					        <div class="pie-chart" style="display: inline-block;">
 					            <div id="pieChart"></div>
 					        </div>
+                  <hr class="non-line">
 					    </div>
 					</div>
 				</div>
@@ -234,22 +105,23 @@
 	const categories = Object.keys(parsedData).map(month => `${month}월`);
 	const data = Object.values(parsedData);
 	
-	
-	const barChartData = {
-			categories: categories,
-			series: [
-			  {
-				name: '가입자',
-				data: data
-			  },
-			],
-		};
+  const barChartData = {
+    categories: categories,
+    series: [
+      {
+        name: '신규 회원',
+        data: data
+      },
+    ],
+    
+  };
+    
 	const pieOptions = {
 		chart: {
-			width: 600, height: 300,
+			width: '', height: 400,
 			title: {
-			      text: '문제풀이에 사용된 언어',
-			      align: 'center'
+        text: '문제풀이에 사용된 언어',
+        align: 'center'
 			}
 		},
 		series: {
@@ -262,11 +134,13 @@
 	
 	const barOption = {
 		chart: {
-			width: 700, height: 300,
+			width: '', height: 400,
 			title : {
 				text: '2024년 월별 가입자 수',
 				align: 'center'
-			}
+			},
+      animation: false,
+      
 		},
 		xAxis: {
 		    title: '월',
@@ -275,13 +149,15 @@
 		    }
 		  },
 		  yAxis: {
-		    title: '가입자'
+		    title: '신규 회원',
+        align: 'center'
 		  },
 	};
 	
 	// 원형 차트 생성 및 렌더링
 	const pieChartContainer = document.getElementById('pieChart');
 	const pieChart = new toastui.Chart.pieChart({ el: pieChartContainer, data: pieChartData, options: pieOptions });
+
 	// 막대형 차트 생성 및 렌더링
 	const barChartContainer = document.getElementById('barChart');
 	const barChart = new toastui.Chart.columnChart({ el: barChartContainer, data: barChartData, options: barOption });

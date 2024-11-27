@@ -19,7 +19,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.kodinghaejo.dto.BannerDTO;
 import com.kodinghaejo.dto.BoardDTO;
@@ -52,6 +51,7 @@ import com.kodinghaejo.entity.repository.TestRepository;
 import com.kodinghaejo.entity.repository.TestSubmitRepository;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -222,11 +222,6 @@ public class AdminServiceImpl implements AdminService {
 	@Override
 	public void deleteBoard(Long idx) {
 		BoardEntity boardEntity = boardRepository.findById(idx).get();
-		
-		List<ReplyEntity> replyEntities = replyRepository.findByRePrntAndPrntIdx("FR", idx);
-		for (ReplyEntity replyEntity : replyEntities)
-			replyRepository.delete(replyEntity);
-		
 		boardRepository.delete(boardEntity);
 	}
 
@@ -483,6 +478,7 @@ public class AdminServiceImpl implements AdminService {
 		String ip = getUserIp(request);
 
 		if (!today.equals(LocalDate.now())) {
+
 			userIps.clear();
 			today = LocalDate.now();
 		}
@@ -526,6 +522,7 @@ public class AdminServiceImpl implements AdminService {
 			Integer month = (Integer) result[0];
 			Long count = (Long) result[1];
 			monthlySignups.put(month, count);
+
 		}
 		return monthlySignups;
 	}
@@ -643,9 +640,9 @@ public class AdminServiceImpl implements AdminService {
 	@Override
 	public MemberDTO getMemberDetailByEmail(String email) {
 		MemberEntity memberEntity = memberRepository.findByEmail(email)
-				.orElseThrow(() -> new RuntimeException("회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new RuntimeException("회원이 존재하지 않습니다."));
 
-		return new MemberDTO(memberEntity);
+        return new MemberDTO(memberEntity);
 	}
 
 	//배너 저장
@@ -686,7 +683,7 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	//배너 종료일자에 따른 isUse 업데이트
-	@Scheduled(cron = "0/30 * * * * *") //매일 자정 실행
+	@Scheduled(cron = "0/30 * * * * *")
 	@Override
 	public void updateBannerEndDate() {
 		LocalDateTime now = LocalDateTime.now();
@@ -702,7 +699,6 @@ public class AdminServiceImpl implements AdminService {
 	@Override
 	public void saveBannerModify(BannerDTO bannerDTO) {
 		BannerEntity bannerEntity = bannerRepository.findById(bannerDTO.getIdx()).get();
-
 		bannerEntity.setName(bannerDTO.getName());
 		bannerEntity.setUrl(bannerDTO.getUrl());
 		bannerEntity.setImg(bannerDTO.getImg());
@@ -710,7 +706,6 @@ public class AdminServiceImpl implements AdminService {
 		bannerEntity.setEndDate(bannerDTO.getEnddate());
 		bannerEntity.setRegdate(LocalDateTime.now());
 		bannerEntity.setDesc(bannerDTO.getDescription());
-
 		bannerRepository.save(bannerEntity);
 	}
 
@@ -724,3 +719,4 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 }
+

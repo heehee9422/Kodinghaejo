@@ -247,20 +247,31 @@ public class TestServiceImpl implements TestService {
 
 	//코드 제출 처리
 	@Override
-	public void submitTest(Long tlIdx, String email, String submSts, String code) {
+	public boolean submitTest(Long tlIdx, String email, String submSts, String code) {
 		TestLngEntity testLngEntity = testLngRepository.findById(tlIdx).get();
 		MemberEntity memberEntity = memberRepository.findById(email).get();
+		
+		TestSubmitEntity testSubmitEntity;
+		boolean isAdd = (testSubmitRepository.countByTlIdxAndEmailAndSubmSts(testLngEntity, memberEntity, submSts) == 0);
 
-		TestSubmitEntity testSubmitEntity = TestSubmitEntity
-																					.builder()
-																					.tlIdx(testLngEntity)
-																					.email(memberEntity)
-																					.submSts(submSts)
-																					.content(code)
-																					.regdate(LocalDateTime.now())
-																					.build();
+		if (isAdd) {
+			testSubmitEntity = TestSubmitEntity
+													.builder()
+													.tlIdx(testLngEntity)
+													.email(memberEntity)
+													.submSts(submSts)
+													.content(code)
+													.regdate(LocalDateTime.now())
+													.build();
+		} else {
+			testSubmitEntity = testSubmitRepository.findByTlIdxAndEmailAndSubmSts(testLngEntity, memberEntity, submSts).get();
+			testSubmitEntity.setContent(code);
+			testSubmitEntity.setRegdate(LocalDateTime.now());
+		}
 
 		testSubmitRepository.save(testSubmitEntity);
+		
+		return isAdd;
 	}
 	
 	//언어별 문제 인덱스로 불러오기
@@ -405,6 +416,7 @@ public class TestServiceImpl implements TestService {
 		int count = bookmarkRepository.countByEmailAndTestIdx(email, testIdx);
 		return count > 0 ? "yes" : "no";
 	}
+	
 	//북마크
 	public boolean addBookmark(String email, Long testIdx) {
 		TestBookmarkEntityID id = new TestBookmarkEntityID(email, testIdx);
@@ -426,6 +438,7 @@ public class TestServiceImpl implements TestService {
 		bookmarkRepository.save(bookmark);
 		return true;
 	}
+	
 	//북마크 제거
 	public boolean removeBookemark(String email, Long testIdx) {
 		TestBookmarkEntityID id = new TestBookmarkEntityID(email, testIdx);
@@ -434,6 +447,22 @@ public class TestServiceImpl implements TestService {
 		}
 		bookmarkRepository.deleteById(id);
 		return false;
+	}
+	
+
+	//문제의 난이도 출력
+	public int getTestDiff(Long tlIdx) {
+		return testSubmitRepository.findDiffByTlIdx(tlIdx);
+	}
+	
+	//회원의 점수 업데이트
+	public void updateMemberScore(String email, long scoreToAdd) {
+		MemberEntity memberEntity = memberRepository.findByEmail(email)
+				.orElseThrow(() -> new RuntimeException("email not found"));
+		if (memberEntity != null) {
+			memberEntity.setScore(memberEntity.getScore() + scoreToAdd);
+			memberRepository.save(memberEntity);
+		}
 	}
 	
 }
