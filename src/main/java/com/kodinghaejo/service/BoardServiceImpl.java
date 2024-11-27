@@ -332,7 +332,7 @@ public class BoardServiceImpl implements BoardService {
 	//질문 상세보기
 	@Override
 	public TestQuestionDTO getQuestionInfo(Long idx) {
-		TestQuestionEntity testQuestionEntity = testQuestionRepository.findByIdxAndIsUse(idx, "Y").get();
+		TestQuestionEntity testQuestionEntity = testQuestionRepository.findById(idx).get(); //.findByIdxAndIsUse(idx, "Y").get();
 		
 		TestQuestionDTO testQuestionDTO = new TestQuestionDTO(testQuestionEntity);
 		testQuestionDTO.setReply(replyRepository.findByRePrntAndPrntIdxAndIsUse("Q", testQuestionEntity.getIdx(), "Y"));

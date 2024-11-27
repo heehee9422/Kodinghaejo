@@ -138,6 +138,12 @@ public class MemberServiceImpl implements MemberService {
 	//회원 기본정보
 	@Override
 	public MemberDTO memberInfo(String email) {
+		return memberRepository.findById(email).map((member) -> new MemberDTO(member)).get();
+	}
+
+	//회원 기본정보
+	@Override
+	public MemberDTO memberInfoByIsUse(String email) {
 		return memberRepository.findByEmailAndIsUse(email, "Y").map((member) -> new MemberDTO(member)).get();
 	}
 
@@ -178,11 +184,12 @@ public class MemberServiceImpl implements MemberService {
 
 	//회원 아이디(이메일) 찾기
 	@Override
-	public String findId(MemberDTO member) {
-		return memberRepository
-				.findByUsernameAndTelAndIsUse(member.getUsername(), member.getTel(), "Y")
-				.map((m) -> m.getEmail())
-				.orElse("");
+	public List<String> findId(MemberDTO member) {
+		List<String> emailList = new ArrayList<>();
+		memberRepository.findByUsernameAndTelAndIsUse(member.getUsername(), member.getTel(), "Y")
+										.stream().forEach((m) -> emailList.add(m.getEmail()));
+		
+		return emailList;
 	}
 
 	//비밀번호 변경 알림 연기(30일)
@@ -211,6 +218,8 @@ public class MemberServiceImpl implements MemberService {
 	public void deleteAccount(String email) {
 		//회원정보
 		MemberEntity memberEntity = memberRepository.findById(email).get();
+		memberEntity.setScore(0L);
+		memberEntity.setScoredate(LocalDateTime.now());
 		memberEntity.setIsUse("N");
 		memberRepository.save(memberEntity);
 

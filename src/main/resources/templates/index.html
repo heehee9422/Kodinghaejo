@@ -25,7 +25,6 @@
 				<div class="main-banner-text">
 					<p>코딩테스트</p>
 					<p><strong>KODINGHAEJO</strong> 하나로 해결하세요.</p>
-					<button class="w100" onclick="location.href='/page-test/challenge.html'">어디로 이동</button>
 				</div>
 				<div class="banner-img">
 					<img src="/img/main_banner.PNG" alt="">
@@ -119,12 +118,11 @@
 <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="pongpongs" data-description="Support me on Buy me a coffee!" data-message="저희의 프로젝트를 지속할 수 있도록 연구비를 지원해주세요!" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
 
 <script>
-window.onload = function() {
-	if (getCookie("myCookie") !== null) {
-		document.querySelector('.banner-img').style.display = 'none';
-		document.querySelector('.pop-info').style.display = 'none';
-	} 
-};
-
+	window.onload = function() {
+		if (getCookie("myCookie") !== null) {
+			document.querySelector('.banner-img').style.display = 'none';
+			document.querySelector('.pop-info').style.display = 'none';
+		} 
+	};
 </script>
 </html>

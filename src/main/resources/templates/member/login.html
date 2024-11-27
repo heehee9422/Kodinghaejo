@@ -106,6 +106,15 @@
 									text: '해당 이메일로 가입된 계정이 존재하지 않습니다.'
 								});
 						email.focus();
+						break; 
+						
+					case 'DELETE_ACCOUNT_DENY':
+						Swal.fire({
+							icon: 'error',
+							html: '탈퇴한 계정의 이메일은 다시 사용할 수 없습니다.<br>관리자에게 문의해주세요.',
+							confirmButtonText: '확인'
+						});
+						email.focus();
 						break;
 						
 					case 'PASSWORD_NOT_MATCH':

@@ -7,6 +7,6 @@
 	</div>
 	<div class="footer-sub">
 		<p class="copy">ⓒ 2024 All Rights Reserved. 방구석 지킴이</p>
-		<a href="/admin/systemMain" class="btn_admin_go">관리자 바로가기</a><!-- 임시 코드 입니다-->
+		<a th:if="${ session.lvl == 'LVL-0001' }" href="/admin/systemMain" class="btn_admin_go">관리자 바로가기</a><!-- 임시 코드 입니다-->
 	</div>
 </footer>
