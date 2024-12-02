@@ -122,6 +122,7 @@ public class MemberServiceImpl implements MemberService {
 	public void modifyPassword(MemberDTO member) {
 		MemberEntity memberEntity = memberRepository.findById(member.getEmail()).get();
 		memberEntity.setPassword(member.getPassword());
+		if (!memberEntity.getJoinRoute().equals("email")) member.setJoinRoute("email");
 		memberRepository.save(memberEntity);
 	}
 
@@ -293,6 +294,72 @@ public class MemberServiceImpl implements MemberService {
 
 	}
 
+	//계정 복구(사용여부 N --> Y 변경)
+	@Override
+	public void restoreAccount(String email) {
+		//회원정보
+		MemberEntity memberEntity = memberRepository.findById(email).get();
+		memberEntity.setIsUse("Y");
+		memberRepository.save(memberEntity);
+
+		//게시물
+		List<BoardEntity> boardEntities = boardRepository.findByEmailAndIsUse(memberEntity, "D");
+		for (BoardEntity boardEntity : boardEntities) {
+			boardEntity.setIsUse("Y");
+			boardRepository.save(boardEntity);
+		}
+
+		//게시물 추천/신고
+		List<BoardRecommendEntity> boardRecommendEntities = boardRecommendRepository.findByEmailAndIsUse(memberEntity, "D");
+		for (BoardRecommendEntity boardRecommendEntity : boardRecommendEntities) {
+			boardRecommendEntity.setIsUse("Y");
+			boardRecommendRepository.save(boardRecommendEntity);
+		}
+
+		//업로드한 첨부 파일
+		List<FileEntity> fileEntities = fileRepository.findByEmailAndIsUse(email, "D");
+		for (FileEntity fileEntity : fileEntities) {
+			fileEntity.setIsUse("Y");
+			fileRepository.save(fileEntity);
+		}
+
+		//알림
+		List<NotificationEntity> notificationEntities = notificationRepository.findByEmailAndIsUse(memberEntity, "D");
+		for (NotificationEntity notificationEntity : notificationEntities) {
+			notificationEntity.setIsUse("Y");
+			notificationRepository.save(notificationEntity);
+		}
+
+		//댓글
+		List<ReplyEntity> replyEntities = replyRepository.findByEmailAndIsUse(memberEntity, "D");
+		for (ReplyEntity replyEntity : replyEntities) {
+			replyEntity.setIsUse("Y");
+			replyRepository.save(replyEntity);
+		}
+
+		//문제 북마크(즐겨찾기)
+		List<TestBookmarkEntity> testBookmarkEntities = testBookmarkRepository.findByEmailAndIsUse(memberEntity, "D");
+		for (TestBookmarkEntity testBookmarkEntity : testBookmarkEntities) {
+			testBookmarkEntity.setIsUse("Y");
+			testBookmarkRepository.save(testBookmarkEntity);
+		}
+
+		//문제 질문 답변
+		List<TestQuestionAnswerEntity> testQuestionAnswerEntities = testQuestionAnswerRepository.findByEmailAndIsUse(memberEntity, "D");
+		for (TestQuestionAnswerEntity testQuestionAnswerEntity : testQuestionAnswerEntities) {
+			testQuestionAnswerEntity.setIsUse("Y");
+			testQuestionAnswerRepository.save(testQuestionAnswerEntity);
+		}
+
+		//문제 질문
+		List<TestQuestionEntity> testQuestionEntities = testQuestionRepository.findByEmailAndIsUse(memberEntity, "D");
+		for (TestQuestionEntity testQuestionEntity : testQuestionEntities) {
+			testQuestionEntity.setIsUse("Y");
+			testQuestionRepository.save(testQuestionEntity);
+		}
+
+	}
+
 	//내가 작성한 게시글
 	@Override
 	public Page<BoardDTO> mypageBoardList(String email, int pageNum, int postNum) {
@@ -322,12 +389,12 @@ public class MemberServiceImpl implements MemberService {
 		List<ReplyDTO> replyDTOs = new ArrayList<>();
 
 		for (ReplyEntity replyEntity : replyEntities) {
-			System.out.println("rePrnt: " + replyEntity.getRePrnt() + " / prntIdx: " + replyEntity.getPrntIdx());
 			ReplyDTO reply = new ReplyDTO(replyEntity);
 			String prntTitle = (replyEntity.getRePrnt().equals("QA")) ? testQuestionAnswerRepository.findById(replyEntity.getPrntIdx()).get().getContent() :
 													(replyEntity.getRePrnt().equals("Q")) ? testQuestionRepository.findById(replyEntity.getPrntIdx()).get().getTitle() :
 													(replyEntity.getRePrnt().equals("FR")) ? boardRepository.findById(replyEntity.getPrntIdx()).get().getTitle() : "";
 			reply.setPrntTitle(prntTitle);
+			reply.setAqIdx((replyEntity.getRePrnt().equals("QA")) ? testQuestionAnswerRepository.findById(replyEntity.getPrntIdx()).get().getTqIdx().getIdx() : 0);
 			replyDTOs.add(reply);
 		}
 
@@ -341,9 +408,10 @@ public class MemberServiceImpl implements MemberService {
 		
 		MemberDTO memberDTO = new MemberDTO(memberEntity);
 		
-		Long correctCount = testSubmitRepository.countSubmitByEmail(email);
+//		Long correctCount = testSubmitRepository.countSubmitByEmail(email);
+		Long correctCount = testSubmitRepository.countByEmailAndSubmSts(memberEntity, "Y");
 		memberDTO.setCorrectCount(correctCount != null ? correctCount : 0);
-		Long submitCount = testSubmitRepository.countByEmail(email);
+		Long submitCount = testSubmitRepository.countByEmail(memberEntity);
 		memberDTO.setSubmitCount(submitCount);
 		double correctRate = (submitCount > 0) ? (correctCount * 100.0) / submitCount : 0;
 		memberDTO.setCorrectRate(correctRate);
@@ -408,6 +476,14 @@ public class MemberServiceImpl implements MemberService {
 		int endPoint = (startPoint + pageRequest.getPageSize()) > testBookmarkDTOs.size() ? testBookmarkDTOs.size() : (startPoint + pageRequest.getPageSize());
 		
 		return new PageImpl<>(testBookmarkDTOs.subList(startPoint, endPoint), pageRequest, testBookmarkDTOs.size());
+	}
+
+	//메일 인증 완료처리
+	@Override
+	public void updateEmailAuth(String email) {
+		MemberEntity member = memberRepository.findById(email).get();
+		member.setEmailAuth("Y");
+		memberRepository.save(member);
 	}
 
 }

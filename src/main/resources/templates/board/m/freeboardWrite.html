@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>게시판</title>
+	<title>게시물 작성&nbsp;&#124;&nbsp;코딩해조</title>
 	<!-- Standard css -->
 	<link rel="icon" href="/img/logo/favicon.png">
 	<link rel="stylesheet" href="/css/style.css">
@@ -19,6 +19,24 @@
 <body>
 	<!-- header 영역 -->
 	<div id="header" th:replace="~{ /include/header }"></div>
+	<!-- 이메일 미인증 시 인증 유도 -->
+	<script>
+		if ('[[ ${ session.emailAuth } ]]' != 'Y') {
+			Swal.fire({
+				icon: 'error',
+				html: '이메일 인증이 필요합니다.<br>MyPage로 이동하시겠습니까?',
+				showCancelButton: true,
+				confirmButtonText: '네, 이동합니다.',
+				cancelButtonText: '아니오.'
+			})
+			.then((result) => {
+				if (result.isConfirmed)
+					location.href = '/member/mypage/main';
+				else
+					history.back();
+			});
+		}
+	</script>
 	<div class="container">
 		<div class="main-content">
 			<div class="content-board-notice-write">
@@ -133,8 +151,7 @@
 						confirmButtonText: "확인" //확인 눌러야 로케이션 되는
 					})
 					.then((result) => {
-						if (result.isConfirmed)
-							document.location.href = '/board/freeboardView?idx=' + data.idx;
+						document.location.href = '/board/freeboardView?idx=' + data.idx;
 					})
 				} else {
 					Swal.fire({

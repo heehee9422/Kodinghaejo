@@ -287,7 +287,8 @@ public class BoardController {
 	}
 
 	//답글 비활성화
-	@GetMapping("/test/answerDeactive")
+	@ResponseBody
+	@PostMapping("/test/m/answerDelete")
 	public String answerDeactive(@RequestParam("idx") Long idx) throws Exception {
 		service.answerDelete(idx);
 		return "{ \"message\": \"good\" }";

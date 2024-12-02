@@ -1,167 +1,167 @@
 <!DOCTYPE html>
 <html lang="kr" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>codingHea</title>
-  <!-- Standard css -->
-  <link rel="icon" href="/img/logo/favicon.png">
-  <link rel="stylesheet" href="/css/style.css">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
-  <!-- TOAST UI Chart -->
-  <link rel="stylesheet" href="https://uicdn.toast.com/chart/latest/toastui-chart.min.css">
-  <script src="https://uicdn.toast.com/chart/latest/toastui-chart.min.js"></script>
-  
-  <!-- pub-js link -->
-  <script src="/js/pub-ui-custom.js"></script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>시스템 관리&nbsp;&#124;&nbsp;코딩해조</title>
+	<!-- Standard css -->
+	<link rel="icon" href="/img/logo/favicon.png">
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+	<!-- TOAST UI Chart -->
+	<link rel="stylesheet" href="https://uicdn.toast.com/chart/latest/toastui-chart.min.css">
+	<script src="https://uicdn.toast.com/chart/latest/toastui-chart.min.js"></script>
+	
+	<!-- pub-js link -->
+	<script src="/js/pub-ui-custom.js"></script>
 </head>
 <header>
-    <div id="header" th:replace="~{ /include/header }"></div>
+	<div id="header" th:replace="~{ /include/header }"></div>
 </header>
 <body>
-    <div class="container column" style="background: #E1EDF9;">
-        <div class="column-row" style="padding-top: 50px;">
+	<div class="container column" style="background: #E1EDF9;">
+		<div class="column-row" style="padding-top: 50px;">
 			<div class="c-column-2">
 				<div id="system_menu" th:replace="~{ /include/system }"></div> 
 			</div>
 			<div class="c-column-8">
 				<div class="sys-system_menu">
-			        <div class="info-chart-container">
-					    <!-- 상단 박스 추가 -->
-					    <div class="info-box-container">
-					        <div class="info-box">
-					        	<div class="sub-info-box">
-					        		<div>
-						        		<span class="daily-count" th:text="${todaySignups}">5</span>
-						        		<span class="daily-label">오늘 가입자 수</span>
-						        	</div>
-						        	<div>
-						        		<div class="xi-user-plus-o xi-3x"></div>
-						        	</div>
-					        	</div>
-					        </div>
-					        <div class="info-box">
-					            <div class="sub-info-box">
-					        		<div>
-						        		<span class="daily-count" th:text="${todayVisitorCount}">119</span>
-						        		<span class="daily-label">오늘 방문자 수</span>
-						        	</div>
-						        	<div>
-						        		<div class="xi-log-in xi-3x"></div>
-						        	</div>
-					        	</div>
-					        </div>
-					        <div class="info-box">
-					            <div class="sub-info-box">
-					        		<div>
-						        		<span class="daily-count" th:text="${todayTestCount}">112</span>
-						        		<span class="daily-label">오늘 푼 문제 수</span>
-						        	</div>
-						        	<div>
-						        		<div class="xi-trophy xi-3x"></div>
-						        	</div>
-					        	</div>
-					        </div>
-					        <div class="info-box">
-					            <div class="sub-info-box">
-					        		<div>
-						        		<span class="daily-count" th:text="${todayFreeboardCount}">114</span>
-						        		<span class="daily-label">오늘 게시글 수</span>
-						        	</div>
-						        	<div>
-						        		<div class="xi-pen xi-3x"></div>
-						        	</div>
-					        	</div>
-					        </div>
-					    </div>
-					    <div class="chart-container">
-					        <div class="bar-chart">
-                      <div id="barChart"></div>
-					        </div>
-                  <hr class="non-line" style="margin: 15px 0;">
-					        <div class="pie-chart" style="display: inline-block;">
-					            <div id="pieChart"></div>
-					        </div>
-                  <hr class="non-line">
-					    </div>
+					<div class="info-chart-container">
+						<!-- 상단 박스 추가 -->
+						<div class="info-box-container">
+							<div class="info-box">
+								<div class="sub-info-box">
+									<div>
+										<span class="daily-count" th:text="${todaySignups}">5</span>
+										<span class="daily-label">오늘 가입자 수</span>
+									</div>
+									<div>
+										<div class="xi-user-plus-o xi-3x"></div>
+									</div>
+								</div>
+							</div>
+							<div class="info-box">
+								<div class="sub-info-box">
+									<div>
+										<span class="daily-count" th:text="${todayVisitorCount}">119</span>
+										<span class="daily-label">오늘 방문자 수</span>
+									</div>
+									<div>
+										<div class="xi-log-in xi-3x"></div>
+									</div>
+								</div>
+							</div>
+							<div class="info-box">
+								<div class="sub-info-box">
+									<div>
+										<span class="daily-count" th:text="${todayTestCount}">112</span>
+										<span class="daily-label">오늘 푼 문제 수</span>
+									</div>
+									<div>
+										<div class="xi-trophy xi-3x"></div>
+									</div>
+								</div>
+							</div>
+							<div class="info-box">
+								<div class="sub-info-box">
+									<div>
+										<span class="daily-count" th:text="${todayFreeboardCount}">114</span>
+										<span class="daily-label">오늘 게시글 수</span>
+									</div>
+									<div>
+										<div class="xi-pen xi-3x"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="chart-container">
+							<div class="bar-chart">
+						<div id="barChart"></div>
+							</div>
+					<hr class="non-line" style="margin: 15px 0;">
+							<div class="pie-chart" style="display: inline-block;">
+								<div id="pieChart"></div>
+							</div>
+					<hr class="non-line">
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-    <div id="footer" th:replace="~{ include/footer }"></div>	
-<script th:inline="javascript">
+	<div id="footer" th:replace="~{ include/footer }"></div>
+	<!-- Custom Script -->
+	<script type="text/javascript" th:inline="javascript">
+		const lngCount = /*[[${lngCount}]]*/ '{}';
+		const parsedLngData = JSON.parse(lngCount);
+		
+		const pieChartData = {
+			categories: ['언어'],
+			series: Object.entries(parsedLngData).map(([name, data]) => ({ name, data }))
+		};
 	
-	const lngCount = /*[[${lngCount}]]*/ '{}';
-	const parsedLngData = JSON.parse(lngCount);
-	
-	const pieChartData = {
-		categories: ['언어'],
-		series: Object.entries(parsedLngData).map(([name, data]) => ({ name, data }))
-	};
-
-	const monthlySignups = /*[[${monthlySignupsJson}]]*/ '{}';
-	const parsedData = JSON.parse(monthlySignups);
-	const categories = Object.keys(parsedData).map(month => `${month}월`);
-	const data = Object.values(parsedData);
-	
-  const barChartData = {
-    categories: categories,
-    series: [
-      {
-        name: '신규 회원',
-        data: data
-      },
-    ],
-    
-  };
-    
-	const pieOptions = {
-		chart: {
-			width: '', height: 400,
-			title: {
-        text: '문제풀이에 사용된 언어',
-        align: 'center'
-			}
-		},
-		series: {
-			dataLabels: {
-				visible: true,
-				pieSeriesName: { visible: true },	
-			}
-		}
-	};
-	
-	const barOption = {
-		chart: {
-			width: '', height: 400,
-			title : {
-				text: '2024년 월별 가입자 수',
-				align: 'center'
+		const monthlySignups = /*[[${monthlySignupsJson}]]*/ '{}';
+		const parsedData = JSON.parse(monthlySignups);
+		const categories = Object.keys(parsedData).map(month => `${month}월`);
+		const data = Object.values(parsedData);
+		
+		const barChartData = {
+		categories: categories,
+		series: [
+			{
+			name: '신규 회원',
+			data: data
 			},
-      animation: false,
-      
-		},
-		xAxis: {
-		    title: '월',
-		    label: {
-		      interval: 1 // 레이블 간격 조정
-		    }
-		  },
-		  yAxis: {
-		    title: '신규 회원',
-        align: 'center'
-		  },
-	};
+		],
+		
+		};
+		
+		const pieOptions = {
+			chart: {
+				width: '', height: 400,
+				title: {
+			text: '문제풀이에 사용된 언어',
+			align: 'center'
+				}
+			},
+			series: {
+				dataLabels: {
+					visible: true,
+					pieSeriesName: { visible: true },	
+				}
+			}
+		};
+		
+		const barOption = {
+			chart: {
+				width: '', height: 400,
+				title : {
+					text: '2024년 월별 가입자 수',
+					align: 'center'
+				},
+			animation: false,
+			
+			},
+			xAxis: {
+				title: '월',
+				label: {
+					interval: 1 // 레이블 간격 조정
+				}
+				},
+				yAxis: {
+				title: '신규 회원',
+			align: 'center'
+				},
+		};
+		
+		// 원형 차트 생성 및 렌더링
+		const pieChartContainer = document.getElementById('pieChart');
+		const pieChart = new toastui.Chart.pieChart({ el: pieChartContainer, data: pieChartData, options: pieOptions });
 	
-	// 원형 차트 생성 및 렌더링
-	const pieChartContainer = document.getElementById('pieChart');
-	const pieChart = new toastui.Chart.pieChart({ el: pieChartContainer, data: pieChartData, options: pieOptions });
-
-	// 막대형 차트 생성 및 렌더링
-	const barChartContainer = document.getElementById('barChart');
-	const barChart = new toastui.Chart.columnChart({ el: barChartContainer, data: barChartData, options: barOption });
-</script>	   
+		// 막대형 차트 생성 및 렌더링
+		const barChartContainer = document.getElementById('barChart');
+		const barChart = new toastui.Chart.columnChart({ el: barChartContainer, data: barChartData, options: barOption });
+	</script> 
 </body>
 
 </html>

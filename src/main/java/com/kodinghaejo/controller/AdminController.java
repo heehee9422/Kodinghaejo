@@ -525,7 +525,7 @@ public class AdminController {
 		memberService.modifyPassword(findData);
 		memberService.lastdateUpdate(findData.getEmail(), "password");
 
-		mailService.sendSimpleMailMessage(findData.getEmail(), password);
+		mailService.sendSimpleMailMessage("findPassword", findData.getEmail(), password);
 
 		return "{ \"message\": \"good\" }";
 	}
@@ -569,7 +569,7 @@ public class AdminController {
 			String path;
 
 			if (os.contains("win"))
-				path = "c:\\Repository\\banner\\";
+				path = "Z:\\임시저장소\\프로젝트관리\\1회차\\2조\\Repository\\banner\\";
 			else
 				path = "/home/hee/Repository/banner";
 
@@ -659,7 +659,7 @@ public class AdminController {
 			String os = System.getProperty("os.name").toLowerCase();
 			String path;
 			if (os.contains("win")) {
-				path = "c:\\Repository\\banner\\";
+				path = "Z:\\임시저장소\\프로젝트관리\\1회차\\2조\\Repository\\banner\\";
 			} else {
 				path = "/home/hee/Repository/banner";
 			}

@@ -32,7 +32,7 @@
 								[[ ${ list.title } ]]
 							</h3>
 							<p>
-								<span><b>날짜</b>[[ ${ list.regdate } ]]</span>
+								<span><b>날짜</b>[[ ${ #temporals.format(list.regdate, 'yyyy-MM-dd HH:mm:ss') } ]]</span>
 								<span><b>작성자</b>[[ ${ list.writer } ]]</span>
 							</p>
 						</a>

@@ -33,7 +33,7 @@ public class ChatDTO {
 	private Long imgSize;
 	private LocalDateTime regdate;
 	private String isUse;
-	private Set<WebSocketSession> sessions = new HashSet<>();
+	private final Set<WebSocketSession> sessions = new HashSet<>();
 
 	//Entity --> DTO 이동
 	public ChatDTO(ChatEntity entity) {

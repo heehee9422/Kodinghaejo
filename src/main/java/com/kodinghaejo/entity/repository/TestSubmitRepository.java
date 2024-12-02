@@ -54,23 +54,25 @@ public interface TestSubmitRepository extends JpaRepository<TestSubmitEntity, Lo
 	public Long findMostPopularTlIdx();
 	
 	//이메일별 푼 문제 수(submSts가 'Y')
-	@Query("SELECT COUNT(ts) " +
-					"FROM testSubmit ts " +
-					"WHERE ts.email.email = :email AND ts.submSts = 'Y'")
-	public Long countSubmitByEmail(@Param("email") String email);
+//	@Query("SELECT COUNT(ts) " +
+//					"FROM testSubmit ts " +
+//					"WHERE ts.email.email = :email AND ts.submSts = 'Y'")
+//	public Long countSubmitByEmail(@Param("email") String email);
+	public Long countByEmailAndSubmSts(MemberEntity email, String submSts);
 
 	// 문제 제출 수
-	@Query("SELECT COUNT(ts) " +
-					"FROM testSubmit ts " +
-					"WHERE ts.email.email = :email")
-	public Long countByEmail(@Param("email") String email);
+//	@Query("SELECT COUNT(ts) " +
+//					"FROM testSubmit ts " +
+//					"WHERE ts.email.email = :email")
+//	public Long countByEmail(@Param("email") String email);
+	public Long countByEmail(MemberEntity email);
 	
 	//문제의 난이도 출력
-	@Query("SELECT t.diff " +
-					"FROM testSubmit ts " +
-					"JOIN ts.tlIdx tl " +
-					"JOIN tl.testIdx t " +
-					"WHERE tl.idx = :tlIdx")
-	public int findDiffByTlIdx(@Param("tlIdx") Long tlIdx);
+//	@Query("SELECT t.diff " +
+//					"FROM testSubmit ts " +
+//					"JOIN ts.tlIdx tl " +
+//					"JOIN tl.testIdx t " +
+//					"WHERE tl.idx = :tlIdx")
+//	public int findDiffByTlIdx(@Param("tlIdx") Long tlIdx);
 
 }

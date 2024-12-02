@@ -3,74 +3,16 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>게시판</title>
+	<title>공지사항 수정&nbsp;&#124;&nbsp;코딩해조</title>
 	<!-- Standard css -->
 	<link rel="icon" href="/img/logo/favicon.png">
 	<link rel="stylesheet" href="/css/style.css">
 	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
 	<!-- pub-js link -->
 	<script src="/js/pub-ui-custom.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<!-- common-js link -->
+	<script src="/js/common.js"></script>
 </head>
-<script>
-
-const registerForm = async() => {
-	let title = document.querySelector('#title');
-	let writer = document.querySelector('#writer');
-	let email = document.querySelector('#email');
-	let isUse = document.querySelector('#isUse');
-		
-	let content = editor.getMarkdown();
-	
-	if(title.value === ''){
-			Swal.fire({
-		    	icon:"warning",
-		    	text:"제목을 입력하세요"});
-			title.focus();
-			return false;
-	}
-		
-	if (content.trim() === '') {
-			Swal.fire({
-		    	icon:"warning",
-		   		text:"내용을 입력하세요"});
-			return false;
-	} 
-		
-	let formData = new FormData(document.getElementById('WriteForm'));
-	formData.append("cat", 'CAT-0001');
-	formData.append("content", content);
-		
-	const idx = parseInt('[[ ${board.idx} ]]');
-	formData.append("idx", idx);
- 
-	await fetch('/admin/noticeboardModify', {
-
-		method: 'POST',
-		body: formData
-	}).then((response)=> response.json())
-		.then((data)=> {
-			if(data.message === 'good'){
-				Swal.fire({
-		            title: "공지사항이 수정되었습니다.",
-		            icon: "success",
-		            confirmButtonText: "확인" 
-		        }).then((result) => {
-		            if (result.isConfirmed) {
-		            	document.location.href='/admin/systemNotice';
-		            }
-		        });
-			}
-	}).catch((error)=> {
-		Swal.fire({
-			  icon: "error",
-			  text: "시스템 장애로 게시물 등록이 실패했습니다",
-			});
-		console.log("error" + error);
-	})
-
-}
-</script>
 <body>
 	<!-- header 영역 -->
 <div id="header" th:replace="~{ include/header }"></div>
@@ -108,29 +50,82 @@ const registerForm = async() => {
 	<!-- toast API : 나중에 모듈로 작성해서 만들기-->
 	<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
 	<link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
-	
-	<script th:inline="javascript">
-			const editorContent = /*[[${board.content}]]*/ '';
-	</script> 
-	<script>
+	<!-- Custom Script -->
+	<script type="text/javascript">
+		const editorContent = `[[ ${ board.content } ]]`;
+		
 		const editor = new toastui.Editor({
 			el: document.querySelector('#content'), 
 			height: '400px',
 			initialEditType: 'markdown',
-			initialValue: editorContent,	
-			
-			 toolbarItems: [
-					['heading', 'bold', 'italic', 'strike'],
-					['hr', 'quote'],
-					['ul', 'ol', 'task'],
-					['table', 'link'],
-					['code', 'codeblock']
-			 ]
-	
+			initialValue: getEditorContent(editorContent),
+			toolbarItems: [
+				['heading', 'bold', 'italic', 'strike'],
+				['hr', 'quote'],
+				['ul', 'ol', 'task'],
+				['table', 'link'],
+				['code', 'codeblock']
+			]
 		});
+		
+		const registerForm = async() => {
+			let title = document.querySelector('#title');
+			let writer = document.querySelector('#writer');
+			let email = document.querySelector('#email');
+			let isUse = document.querySelector('#isUse');
+				
+			let content = editor.getMarkdown();
+			
+			if(title.value === ''){
+				Swal.fire({
+					icon:"warning",
+					text:"제목을 입력하세요",
+					confirmButtonText: "확인"
+				});
+				title.focus();
+				return false;
+			}
+				
+			if (content.trim() === '') {
+				Swal.fire({
+					icon:"warning",
+					text:"내용을 입력하세요",
+					confirmButtonText: "확인"
+				});
+				return false;
+			} 
+				
+			let formData = new FormData(document.getElementById('WriteForm'));
+			formData.append("cat", 'CAT-0001');
+			formData.append("content", content);
+				
+			const idx = parseInt('[[ ${board.idx} ]]');
+			formData.append("idx", idx);
+		 
+			await fetch('/admin/noticeboardModify', {
+				method: 'POST',
+				body: formData
+			})
+			.then((response)=> response.json())
+			.then((data)=> {
+				if(data.message === 'good'){
+					Swal.fire({
+						text: "공지사항이 수정되었습니다.",
+						icon: "success",
+						confirmButtonText: "확인" 
+					}).then((result) => {
+						document.location.href='/admin/systemNotice';
+					});
+				}
+			})
+			.catch((error)=> {
+				Swal.fire({
+					icon: "error",
+					text: "시스템 장애로 게시물 등록이 실패했습니다",
+				});
+				console.log("error" + error);
+			})
+		}
 	</script>
-	<style>
-		.toastui-editor-mode-switch { display: none !important; }
-	</style>
 </body>
 </html>

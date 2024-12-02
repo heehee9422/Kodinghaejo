@@ -10,7 +10,7 @@ import lombok.Setter;
 
 @Setter
 public class MemberOAuth2DTO implements OAuth2User {
-	//OAuth2UserDetailsServiceImpl에서 setter로 입력받은 값을 OAuth2User가 읽어옴.
+	//OAuth2UserDetailsServiceImpl에서 setter로 입력받은 값을 OAuth2User가 읽어들임.
 
 	private Map<String, Object> attribute;
 	private Collection<? extends GrantedAuthority> authorities;

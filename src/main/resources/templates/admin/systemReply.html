@@ -3,60 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>회원정보 관리</title>
+<title>댓글 관리&nbsp;&#124;&nbsp;코딩해조</title>
 <link rel="icon" href="/img/logo/favicon.png">
 <link rel="stylesheet" href="/css/style.css">
-<link rel="stylesheet"
-	href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
 <script src="/js/pub-ui-custom.js"></script>
-
-<script>
-const deleteReply = (idx) => {
-    Swal.fire({
-        title: "댓글을 삭제하시겠습니까?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "삭제",
-        cancelButtonText: "취소",
-        reverseButtons: true
-    }).then((result) => {
-        if (result.isConfirmed) {
-            fetch(`/admin/systemReplyDelete/${idx}`, {
-                method: 'DELETE'
-            })
-            .then(response => {
-                console.log("Response status:", response.status);
-                return response.text().then(message => ({ status: response.status, message }));
-            })
-            .then(({ status, message }) => {
-                if (status === 200) {
-                    Swal.fire({
-                        title: message,
-                        icon: "success",
-                        confirmButtonText: "확인" 
-                    }).then((result) => {
-                        if(result.isConfirmed) {
-                            location.reload();
-                        }
-                    });
-                } else {
-                    Swal.fire({
-                        icon: "error",
-                        text: message,
-                    });
-                }
-            })
-            .catch(error => {
-                Swal.fire({
-                    icon: "error",
-                    text: "시스템 장애로 댓글 삭제에 실패했습니다",
-                });
-                console.error('삭제 중 오류 발생:', error);
-            });
-        }
-    });
-};
-</script>
 </head>
 <body>
 <div id="header" th:replace="~{ /include/header }"></div>
@@ -70,9 +21,9 @@ const deleteReply = (idx) => {
 					<h2>댓글 관리</h2>
 					<div class="search-bar mb20">
 						<form method="get" action="/admin/systemReply">
-					        <input type="text" name="searchKeyword" placeholder="검색어 입력" th:value="${searchKeyword}" />
-					        <button type="submit" class="btn_search">검색</button>
-					    </form>
+							<input type="text" name="searchKeyword" placeholder="검색어 입력" th:value="${searchKeyword}" />
+							<button type="submit" class="btn_search">검색</button>
+						</form>
 					</div>
 					<div class="sys-description-box mb20">
 						<h3>댓글 수 : <span th:text="${totalCount}"></span></h3>
@@ -90,14 +41,14 @@ const deleteReply = (idx) => {
 						<thead>
 							<div class="reply-category mb20">
 								<form method="get" action="/admin/systemReply">
-							        <!-- 필터 버튼 -->
-							        <button type="submit" name="filter" value="ALL" 
-							                th:classappend="${filter == 'ALL'} ? 'active' : ''">전체</button>
-							        <button type="submit" name="filter" value="FR" 
-							                th:classappend="${filter == 'FR'} ? 'active' : ''">자유게시판</button>
-							        <button type="submit" name="filter" value="Q" 
-							                th:classappend="${filter == 'Q'} ? 'active' : ''">질문게시판</button>
-							    </form>
+									<!-- 필터 버튼 -->
+									<button type="submit" name="filter" value="ALL" 
+											th:classappend="${filter == 'ALL'} ? 'active' : ''">전체</button>
+									<button type="submit" name="filter" value="FR" 
+											th:classappend="${filter == 'FR'} ? 'active' : ''">자유게시판</button>
+									<button type="submit" name="filter" value="Q" 
+											th:classappend="${filter == 'Q'} ? 'active' : ''">질문게시판</button>
+								</form>
 							</div>
 							<tr>
 								<th>번호</th>
@@ -113,9 +64,9 @@ const deleteReply = (idx) => {
 							<tr th:each="reply : ${replys}">
 								<td th:text="${reply.idx}">1</td>
 								<td th:text="${reply.prntTitle}">이 문제 버그났어요.</td>
-								<td th:text="${reply.content}">저도 똑같아요.</td>
+								<td><a th:href="@{ '/test/questionBoardView?idx=' + ${ reply.prntIdx } }" th:text="${reply.content}" target="_blank">이 문제 버그났어요.</a></td>
 								<td th:text="${reply.writer}">한건희</td>
-								<td th:text="${reply.regdate}">2024-11-04</td>
+								<td th:text="${#temporals.format(reply.regdate, 'yyyy-MM-dd HH:mm:ss')}">2024-11-04</td>
 								<td><a th:href="|javascript:deleteReply(${reply.idx})|" class="btn_delete">삭제</a></td>
 								<td th:text="${reply.isUse}"></td>
 							</tr>
@@ -129,6 +80,54 @@ const deleteReply = (idx) => {
 		</div>
 	</div>
 	<div id="footer" th:replace="~{ /include/footer }"></div>
+	<!-- Custom Script -->
+	<script type="text/javascript">
+		const deleteReply = (idx) => {
+			Swal.fire({
+				text: "댓글을 삭제하시겠습니까?",
+				icon: "warning",
+				showCancelButton: true,
+				confirmButtonText: "삭제",
+				cancelButtonText: "취소",
+				reverseButtons: true
+			}).then((result) => {
+				if (result.isConfirmed) {
+					fetch(`/admin/systemReplyDelete/${idx}`, {
+						method: 'DELETE'
+					})
+					.then(response => {
+						console.log("Response status:", response.status);
+						return response.text().then(message => ({ status: response.status, message }));
+					})
+					.then(({ status, message }) => {
+						if (status === 200) {
+							Swal.fire({
+								text: message,
+								icon: "success",
+								confirmButtonText: "확인" 
+							}).then((result) => {
+								location.reload();
+							});
+						} else {
+							Swal.fire({
+								icon: "error",
+								text: message,
+								confirmButtonText: "확인" 
+							});
+						}
+					})
+					.catch(error => {
+						Swal.fire({
+							icon: "error",
+							text: "시스템 장애로 댓글 삭제에 실패했습니다",
+							confirmButtonText: "확인" 
+						});
+						console.error('삭제 중 오류 발생:', error);
+					});
+				}
+			});
+		};
+	</script>
 </body>
 
 </html>

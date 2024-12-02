@@ -10,38 +10,10 @@
 <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
 <!-- pub-js link -->
 <script src="/js/pub-ui-custom.js"></script>
-<script>
-let currentIndex = 0;
-const itemsPerPage = 10;
-
-function showMoreRank() {
-	const rankList = document.getElementById("rankList");
-	const allItems = rankList.querySelectorAll(".content-rank-item-list");
-
-	for (let i = currentIndex; i < currentIndex + itemsPerPage && i < allItems.length; i++) {
-		allItems[i].classList.remove("hidden");
-	}
-
-	currentIndex += itemsPerPage;
-
-	if (currentIndex >= allItems.length) {
-		document.querySelector(".content-rank-item-pluse-view").style.display = "none";
-	}
-}
-
-window.onload = function () {
-	const rankList = document.getElementById("rankList");
-	const allItems = rankList.querySelectorAll(".content-rank-item-list");
-
-	allItems.forEach(item => item.classList.add("hidden"));
-
-	showMoreRank();
-};
-</script>
 </head>
 <body>
 	<!-- header 영역 -->
-	<div id="header" th:replace="/include/header"></div>
+	<div id="header" th:replace="~{ /include/header }"></div>
 	<div class="banner-zone">
 		<!-- 첫번째 영역 : 나중에 보자-->
 		<div class="banner-content">
@@ -153,5 +125,34 @@ window.onload = function () {
 	</div>
 	<!-- footer영역 -->
 	<div id="footer" th:replace="/include/footer"></div>
+	<!-- Custom Script -->
+	<script type="text/javascript">
+		let currentIndex = 0;
+		const itemsPerPage = 10;
+	
+		function showMoreRank() {
+			const rankList = document.getElementById("rankList");
+			const allItems = rankList.querySelectorAll(".content-rank-item-list");
+	
+			for (let i = currentIndex; i < currentIndex + itemsPerPage && i < allItems.length; i++) {
+				allItems[i].classList.remove("hidden");
+			}
+	
+			currentIndex += itemsPerPage;
+	
+			if (currentIndex >= allItems.length) {
+				document.querySelector(".content-rank-item-pluse-view").style.display = "none";
+			}
+		}
+	
+		window.onload = function () {
+			const rankList = document.getElementById("rankList");
+			const allItems = rankList.querySelectorAll(".content-rank-item-list");
+	
+			allItems.forEach(item => item.classList.add("hidden"));
+	
+			showMoreRank();
+		};
+	</script>
 </body>
 </html>

@@ -39,14 +39,16 @@
 				
 				<div class="info-login">
 					<a href="/member/findId">아이디(이메일) 찾기</a>
+					<span class="divider"></span>
 					<a href="/member/findPassword">비밀번호 찾기</a>
+					<span class="divider"></span>
 					<a href="/member/join">이메일 회원가입</a>
 				</div>
 				
 				<div class="sns-login">
 					<h4>SNS 계정으로 간편하게 로그인</h4>
 					<div class="sns-btn-group">
-						<button class="sns-btn-google" onclick="snsLogin('gogle')"><i class="xi-google-plus"></i></button>
+						<button class="sns-btn-google" onclick="snsLogin('google')"><i class="xi-google"></i></button>
 						<button class="sns-btn-naver" onclick="snsLogin('naver')"><i class="xi-naver"></i></button>
 						<!-- <input type="button" value="카카오" onclick="snsLogin('kakao')"> -->
 					</div>
@@ -71,18 +73,20 @@
 			//유효성 검사
 			if (email.value == '') {
 				Swal.fire({
-							icon: 'warning',
-							text: '이메일을 입력해주세요.'
-						});
+					icon: 'warning',
+					text: '이메일을 입력해주세요.',
+					confirmButtonText: '확인'
+				});
 				email.focus();
 				return false;
 			}
 
 			if (password.value == '') {
 				Swal.fire({
-							icon: 'warning',
-							text: '비밀번호를 입력해주세요.'
-						});
+					icon: 'warning',
+					text: '비밀번호를 입력해주세요.',
+					confirmButtonText: '확인'
+				});
 				password.focus();
 				return false;
 			}
@@ -102,9 +106,10 @@
 						
 					case 'ID_NOT_FOUND':
 						Swal.fire({
-									icon: 'error',
-									text: '해당 이메일로 가입된 계정이 존재하지 않습니다.'
-								});
+							icon: 'error',
+							text: '해당 이메일로 가입된 계정이 존재하지 않습니다.',
+							confirmButtonText: '확인'
+						});
 						email.focus();
 						break; 
 						
@@ -120,7 +125,18 @@
 					case 'PASSWORD_NOT_MATCH':
 						Swal.fire({
 							icon: 'error',
-							text: '비밀번호를 확인해주세요.'
+							text: '비밀번호를 확인해주세요.',
+							confirmButtonText: '확인'
+						});
+						password.value = '';
+						password.focus();
+						break;
+						
+					case 'SOCIAL_MEMBER_DENY':
+						Swal.fire({
+							icon: 'error',
+							text: 'SNS 계정으로 접속해주세요.',
+							confirmButtonText: '확인'
 						});
 						password.value = '';
 						password.focus();
@@ -129,7 +145,8 @@
 					default:
 						Swal.fire({
 							icon: 'error',
-							text: '시스템 장애로 인해 로그인에 실패했습니다.'
+							text: '시스템 장애로 인해 로그인에 실패했습니다.',
+							confirmButtonText: '확인'
 						});
 						break;
 				}
@@ -140,8 +157,10 @@
 		
 		//입력란에서 엔터 키를 누르면 로그인 실행
 		const pressEnter = () => {
-			if (event.keyCode == 13)
-				checkLogin();
+			if (event.keyCode == 13) {
+				if (Swal.isVisible()) Swal.close();
+				else checkLogin();
+			}
 		}
 		
 		//SNS 로그인

@@ -39,7 +39,7 @@ public class MemberEntity {
 	@Column(name = "password", length = 100, nullable = false)
 	private String password;
 
-	@Column(name = "tel", length = 20, nullable = false)
+	@Column(name = "tel", length = 20, nullable = true)
 	private String tel;
 
 	@Column(name = "website", length = 100, nullable = true)
