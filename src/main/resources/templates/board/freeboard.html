@@ -182,6 +182,36 @@
 				loadBoard();
 			}
 		})
+	
+		async function toggleLike(postIdx, action) {
+			try {
+				const response = await fetch('/board/m/toggleLike', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({ postIdx, action })
+				});
+				const data = await response.json();
+
+				document.getElementById(`like-count-${postIdx}`).innerText = data.likeCount;
+				
+				const likeUpBtn = document.getElementById(`like-up-${postIdx}`);
+				const likeDownBtn = document.getElementById(`like-down-${postIdx}`);
+
+				if (data.isLiked) {
+					likeUpBtn.style.display = 'none';
+					likeDownBtn.style.display = 'inline';
+				} else {
+					likeUpBtn.style.display = 'inline';
+					likeDownBtn.style.display = 'none';
+				}
+			} catch (error) {
+				console.error("좋아요 상태를 변경할 수 없습니다:", error);
+			} finally{
+				location.reload(true);
+			}
+		}
 	</script>
 </body>
 </html>

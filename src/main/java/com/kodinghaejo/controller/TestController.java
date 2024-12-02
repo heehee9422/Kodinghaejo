@@ -74,7 +74,11 @@ public class TestController {
 	@GetMapping("/test/challenge")
 	public void getChallenge(Model model, @RequestParam("idx") Long idx,
 			@SessionAttribute(name = "email", required = false) String email) throws Exception {
-		model.addAttribute("test", service.loadTest(idx));
+		TestDTO test = service.loadTest(idx);
+		String descHtml = service.convertCode(test.getDescr());
+		model.addAttribute("descHtml", descHtml);
+		
+		model.addAttribute("test", test);
 		model.addAttribute("java", service.lngAvlChk(idx, "LNG-0001"));
 		model.addAttribute("js", service.lngAvlChk(idx, "LNG-0002"));
 		model.addAttribute("oracle", service.lngAvlChk(idx, "LNG-0003"));

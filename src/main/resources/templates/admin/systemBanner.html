@@ -3,197 +3,197 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>배너 관리&nbsp;&#124;&nbsp;코딩해조</title>
+<title>광고 배너 관리</title>
 <link rel="icon" href="/img/logo/favicon.png" />
 <link rel="stylesheet" href="/css/style.css" />
-<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css" />
+<link rel="stylesheet"
+	href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css" />
 <script src="/js/pub-ui-custom.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+	  const buttons = document.querySelectorAll('.btn_isUse');
+
+	  buttons.forEach((button) => {
+	    button.addEventListener('click', function () {
+	      const bannerIdx = this.getAttribute('data-id');
+	      const Status = this.getAttribute('data-isuse');
+	      const newStatus = Status === 'Y' ? 'N' : 'Y'; 
+
+	      const confirmMessage =
+	        newStatus === 'N' ? '해당 배너를 숨기겠습니까?' : '해당 배너를 재활성화 하겠습니까?';
+
+	      Swal.fire({
+	        title: '확인',
+	        text: confirmMessage,
+	        icon: 'warning',
+	        showCancelButton: true,
+	        confirmButtonColor: '#3085d6',
+	        cancelButtonColor: '#d33',
+	        confirmButtonText: '확인',
+	        cancelButtonText: '취소',
+	      }).then((result) => {
+	        if (result.isConfirmed) {
+	          fetch(`/admin/updateBannerIsUse/${bannerIdx}`, {
+	            method: 'PUT',
+	            headers: {
+	              'Content-Type': 'application/json',
+	            },
+	            body: JSON.stringify({ isUse: newStatus }),
+	          })
+	            .then((response) => {
+	              if (response.ok) {
+	                this.setAttribute('data-isuse', newStatus);
+	                this.textContent = newStatus === 'N' ? '재활성' : '숨기기';
+
+	                Swal.fire({
+	                  title: '성공',
+	                  text:
+	                    newStatus === 'N'
+	                      ? '배너가 숨김 처리되었습니다.'
+	                      : '배너가 재활성화되었습니다.',
+	                  icon: 'success',
+	                  confirmButtonText: '확인',
+	                });
+	              } else {
+	                Swal.fire({
+	                  title: '실패',
+	                  text: '상태 변경에 실패했습니다.',
+	                  icon: 'error',
+	                  confirmButtonText: '확인',
+	                });
+	              }
+	            })
+	            .catch((error) => {
+	              console.error('Error:', error);
+	              Swal.fire({
+	                title: '서버 오류',
+	                text: '서버 오류가 발생했습니다.',
+	                icon: 'error',
+	                confirmButtonText: '확인',
+	              });
+	            });
+	        }
+	      });
+	    });
+	  });
+	});
+
+const DeleteBanner = (idx) => {
+    Swal.fire({
+        title: '정말 삭제하시겠습니까?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: '삭제',
+        cancelButtonText: '취소',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const formData = new FormData();
+            formData.append("idx", idx);
+
+            fetch('/admin/systemBannerDelete', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({ 'idx': idx })
+            })
+            .then(response => {
+                if (response.ok) {
+                    Swal.fire({
+                        title: '삭제가 완료되었습니다.',
+                        icon: 'success',
+                        confirmButtonText: '확인'
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        text: '삭제에 실패했습니다.'
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('오류 발생:', error);
+                Swal.fire({
+                    icon: 'error',
+                    text: '삭제 중 오류가 발생했습니다.'
+                });
+            });
+        }
+    });
+};
+</script>
 </head>
+
 <body>
 <div id="header" th:replace="~{ /include/header }"></div>
-<div class="container column mt50">
-	<div class="column-row">
-	<!-- 메뉴 컬럼 -->
-	<div class="c-column-2">
-		<div id="system_menu" th:replace="~{ /include/system }"></div>
-	</div>
-	<!-- content -->
-	<div class="c-column-8">
-		<div class="sys-system_menu">
-		<h2>배너 관리</h2>
-		<div class="sys-desc-guide">
-			배너 규격 사이즈는 <b>가로 200px</b> , <b>세로 600px</b> 입니다 <br>
-			사이즈 규격을 준수해 주세요
-		</div>
-		<div class="sys-description-box mb20">
-			<h3 class="mt20">배너 등록 수 : <span th:text="${totalCount}"></span></h3>
-			<button class="bannerWrite-button"><a href="/admin/systemBannerWrite">배너 등록</a></button>
-		</div>
-		<table>
-			<caption style="display: none;">배너 게시판 입니다</caption>
-			<colgroup>
-			<col width="">
-			<col width="30%">
-			<col width="">
-			<col width="">
-			<col width="">
-			<!-- 참고하세요 -->
-			<!-- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/colgroup -->
-			</colgroup>
-			<thead>
-			<tr>
-				<th>번호</th>
-				<th>배너명</th>
-				<th>등록일</th>
-				<th>배너 상태</th>
-				<th>배너 삭제</th>
-			</tr>
-			</thead>
-			<tbody>
-			<tr th:each="banner : ${banners}">
-				<td th:text="${banner.idx}">1</td>
-				<td> <a th:href="@{/admin/systemBannerModify?idx={idx}(idx=${banner.idx})}" th:text="${banner.name}">이벤트 메인 배너</a></td>
-				<td th:text="${#temporals.format(banner.regdate, 'yyyy-MM-dd HH:mm:ss')}">{data}</td>
-				<td style="text-align: center;">
-					<button class="btn_isUse" 
-					th:attr="data-id=${banner.idx}, data-isuse=${banner.isUse}" 
-					th:text="${banner.isUse == 'Y' ? '숨기기' : '활성'}">
-					숨김 처리
-					</button>
-				</td>
-				<td style="text-align: center;"><a class="btn_delete" th:onclick="|DeleteBanner(${banner.idx})|">삭제</a></td>
-			</tr>
-			</tbody>
-		</table>
-		<div class="pagination">
+  <div class="container column mt50">
+    <div class="column-row">
+      <!-- 메뉴 컬럼 -->
+      <div class="c-column-2">
+        <div id="system_menu" th:replace="~{ /include/system }"></div>
+      </div>
+      <!-- content -->
+      <div class="c-column-8">
+        <div class="sys-system_menu">
+          <h2>배너 관리</h2>
+          <div class="sys-desc-guide">
+            배너 규격 사이즈는 <b>가로 200px</b> , <b>세로 600px</b> 입니다 <br>
+            사이즈 규격을 준수해 주세요
+          </div>
+          <div class="sys-description-box mb20">
+            <h3 class="mt20">배너 등록 수 : <span th:text="${totalCount}"></span></h3>
+            <button class="bannerWrite-button"><a href="/admin/systemBannerWrite">배너 등록</a></button>
+          </div>
+          <table>
+            <caption style="display: none;">배너 게시판 입니다</caption>
+            <colgroup>
+              <col width="">
+              <col width="30%">
+              <col width="">
+              <col width="">
+              <col width="">
+              <!-- 참고하세요 -->
+              <!-- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/colgroup -->
+            </colgroup>
+            <thead>
+              <tr>
+                <th>번호</th>
+                <th>배너명</th>
+                <th>등록일</th>
+                <th>배너 상태</th>
+                <th>배너 삭제</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="banner : ${banners}">
+                <td th:text="${banner.idx}">1</td>
+                <td> <a th:href="@{/admin/systemBannerModify?idx={idx}(idx=${banner.idx})}" th:text="${banner.name}">이벤트 메인 배너</a></td>
+                <td th:text="${banner.regdate}">{data}</td>
+                <td style="text-align: center;">
+                	<button class="btn_isUse" 
+				      th:attr="data-id=${banner.idx}, data-isuse=${banner.isUse}" 
+				      th:text="${banner.isUse == 'Y' ? '숨기기' : '활성'}">
+				      숨김 처리
+				    </button>
+                </td>
+                <td style="text-align: center;"><a class="btn_delete" th:onclick="|DeleteBanner(${banner.idx})|">삭제</a></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="pagination">
 			[(${pageList})]
-		</div>
-		</div>
-	</div>
-	</div>
-</div>
+		  </div>
+        </div>
+      </div>
+    </div>
+  </div>
 	<div id="footer" th:replace="~{ /include/footer }"></div>
-	<!-- Custom Script -->
-	<script type="text/javascript">
-		document.addEventListener('DOMContentLoaded', function () {
-			const buttons = document.querySelectorAll('.btn_isUse');
-		
-			buttons.forEach((button) => {
-				button.addEventListener('click', function () {
-					const bannerIdx = this.getAttribute('data-id');
-					const Status = this.getAttribute('data-isuse');
-					const newStatus = Status === 'Y' ? 'N' : 'Y'; 
-			
-					const confirmMessage =
-						newStatus === 'N' ? '해당 배너를 숨기겠습니까?' : '해당 배너를 재활성화 하겠습니까?';
-			
-					Swal.fire({
-						title: '확인',
-						text: confirmMessage,
-						icon: 'warning',
-						showCancelButton: true,
-						confirmButtonColor: '#3085d6',
-						cancelButtonColor: '#d33',
-						confirmButtonText: '확인',
-						cancelButtonText: '취소',
-					})
-					.then((result) => {
-						if (result.isConfirmed) {
-							fetch(`/admin/updateBannerIsUse/${bannerIdx}`, {
-								method: 'PUT',
-								headers: {
-									'Content-Type': 'application/json',
-								},
-								body: JSON.stringify({ isUse: newStatus }),
-							})
-							.then((response) => {
-								if (response.ok) {
-									this.setAttribute('data-isuse', newStatus);
-									this.textContent = newStatus === 'N' ? '재활성' : '숨기기';
-				
-									Swal.fire({
-									title: '성공',
-									text:
-										newStatus === 'N'
-										? '배너가 숨김 처리되었습니다.'
-										: '배너가 재활성화되었습니다.',
-									icon: 'success',
-									confirmButtonText: '확인',
-									});
-								} else {
-									Swal.fire({
-									title: '실패',
-									text: '상태 변경에 실패했습니다.',
-									icon: 'error',
-									confirmButtonText: '확인',
-									});
-								}
-							})
-							.catch((error) => {
-								console.error('Error:', error);
-								Swal.fire({
-									title: '서버 오류',
-									text: '서버 오류가 발생했습니다.',
-									icon: 'error',
-									confirmButtonText: '확인',
-								});
-							});
-						}
-					});
-				});
-			});
-		});
-		
-		const DeleteBanner = (idx) => {
-			Swal.fire({
-				title: '정말 삭제하시겠습니까?',
-				icon: 'warning',
-				showCancelButton: true,
-				confirmButtonText: '삭제',
-				cancelButtonText: '취소',
-				reverseButtons: true
-			})
-			.then((result) => {
-				if (result.isConfirmed) {
-					const formData = new FormData();
-					formData.append("idx", idx);
-		
-					fetch('/admin/systemBannerDelete', {
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/x-www-form-urlencoded',
-						},
-						body: new URLSearchParams({ 'idx': idx })
-					})
-					.then(response => {
-						if (response.ok) {
-							Swal.fire({
-								title: '삭제가 완료되었습니다.',
-								icon: 'success',
-								confirmButtonText: '확인'
-							}).then(() => {
-								location.reload();
-							});
-						} else {
-							Swal.fire({
-								icon: 'error',
-								text: '삭제에 실패했습니다.'
-							});
-						}
-					})
-					.catch(error => {
-						console.error('오류 발생:', error);
-						Swal.fire({
-							icon: 'error',
-							text: '삭제 중 오류가 발생했습니다.'
-						});
-					});
-				}
-			});
-		};
-	</script>
 </body>
 <script>
-	pagenation();
+  pagenation();
 </script>
 </html>

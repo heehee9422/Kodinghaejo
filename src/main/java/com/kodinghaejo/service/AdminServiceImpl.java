@@ -465,7 +465,7 @@ public class AdminServiceImpl implements AdminService {
 		LocalDateTime startOfDay = LocalDateTime.now().with(LocalTime.MIN);
 		LocalDateTime endOfDay = LocalDateTime.now().with(LocalTime.MAX);
 
-		return boardRepository.countByCatNotAndRegdateBetween("CAT-0001", startOfDay, endOfDay);
+		return boardRepository.countByCatAndRegdateBetween("자유게시판", startOfDay, endOfDay);
 	}
 
 	private Set<String> userIps = new HashSet<>();

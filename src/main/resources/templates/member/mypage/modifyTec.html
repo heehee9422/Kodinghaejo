@@ -128,22 +128,14 @@
 			for (let i = 0; i < hiddens.length; i++) {
 				//선택한 기술이 이미 포함되어 있을 경우
 				if (hiddens[i].value == code) {
-					Swal.fire({
-						icon: 'warning',
-						text: '이미 포함된 기술입니다.',
-						confirmButtonText: '확인'
-					});
+					alert('이미 포함된 기술입니다.');
 					return false;
 				}
 			}
 
 			//이미 기술 3개가 선택되어 있을 경우
 			if (selectCnt == 3) {
-				Swal.fire({
-					icon: 'warning',
-					text: '기술은 최대 3개까지 선택 가능합니다.',
-					confirmButtonText: '확인'
-				});
+				alert('기술은 최대 3개까지 선택 가능합니다.');
 				return false;
 			}
 			
@@ -204,29 +196,15 @@
 			.then((response) => response.json())
 			.then((data) => {
 				if (data.message == 'good') {
-					Swal.fire({
-						icon: 'success',
-						text: '변경사항이 저장되었습니다.',
-						confirmButtonText: '확인'
-					})
-					.then((result) => {
-						document.location = '/member/mypage/main';
-					})
+					alert("변경사항이 저장되었습니다.");
+					document.location = '/member/mypage/main';
 				} else {
-					Swal.fire({
-						icon: 'error',
-						text: '시스템 장애로 인해 변경사항 저장에 실패했습니다.',
-						confirmButtonText: '확인'
-					})
+					alert('시스템 장애로 인해 변경사항 저장에 실패했습니다.');
 				}
 			})
 			.catch((error) => {
 				console.log('error: ' + error);
-				Swal.fire({
-					icon: 'error',
-					text: '시스템 장애로 인해 변경사항 저장에 실패했습니다.',
-					confirmButtonText: '확인'
-				})
+				alert('시스템 장애로 인해 변경사항 저장에 실패했습니다.');
 			});
 		}
 	</script>

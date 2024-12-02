@@ -1,14 +1,20 @@
 <div class="pop-banner" id="pop_banner">
 	<div class="pop-info">
-
 		<span class="dontShow" onclick="dontShowAgain()">하루만 안보기</span>
 		<span class="xi-close" onclick="popCloseEvent()"></span>
 	</div>
-	<div class="sub-banner-img" th:each="banner : ${banners}">
-	<!-- 1번 배너 -->
-		<a th:href="@{${banner.url}}">
-			<img th:src="@{'/banner/img/' + ${banner.img}}" th:alt="${banner.name}">
+	<div class="banner-img">
+		<!-- 1번 배너 
+		-->
+		<a href="https://www.kccistc.net/education/professionalSkillEduDetail.do?rootMenuId=3917&menuId=3922&gaebalwon_cd=09000&gwajeong_no=M2024008" target="_blank">
+			<img src="/img/banner/pop-banner01.png" alt="취업과정">
 		</a>
+		<!-- 2번 배너
+		<a href="https://www.kccistc.net/employment/recruitList.do?rootMenuId=3953&menuId=3956" target="_blank">
+			<img src="img/banner/pop-banner02.png" alt="채용정보">
+		</a>
+		 -->
+		 
 	</div>
 	<div class="top-overview" onclick="scrollToTop()">위로 가기</div>
 </div>

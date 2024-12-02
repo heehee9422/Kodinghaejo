@@ -119,7 +119,7 @@
 	document.querySelector('#btn_sendMessage').addEventListener('click',send);
 	//종료	
 	
-	const websocket = new WebSocket(`ws://www.kodinghaejo.com:8081/ws/chat?chatIdx=${chatIdx}`);
+	const websocket = new WebSocket(`ws://127.0.0.1:8081/ws/chat?chatIdx=${chatIdx}`);
 	
 	
 	websocket.onopen = async () => {

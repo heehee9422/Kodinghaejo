@@ -81,7 +81,7 @@ public class BaseServiceImpl implements BaseService {
 	public List<BoardEntity> getNewNotice(int count) {
 		Pageable pageable = PageRequest.of(0, count);
 			
-		List<BoardEntity> newNotice = boardRepository.findByCatOrderByRegdateDesc("CAT-0001", pageable);
+		List<BoardEntity> newNotice = boardRepository.findByCatAndRegdate(pageable);
 		
 		return newNotice;
 	}
@@ -96,12 +96,10 @@ public class BaseServiceImpl implements BaseService {
 		for (MemberEntity member : memberEntities) {
 			MemberDTO memberDTO = new MemberDTO(member);
 
-//			Long correctCount = submitRepository.countSubmitByEmail(member.getEmail());
-			Long correctCount = submitRepository.countByEmailAndSubmSts(member, "Y");
+			Long correctCount = submitRepository.countSubmitByEmail(member.getEmail());
 			memberDTO.setCorrectCount(correctCount != null ? correctCount : 0);
 
-//			Long submitCount = submitRepository.countByEmail(member.getEmail());
-			Long submitCount = submitRepository.countByEmail(member);
+			Long submitCount = submitRepository.countByEmail(member.getEmail());
 			memberDTO.setSubmitCount(submitCount);
 
 			double correctRate = (submitCount > 0) ? (correctCount * 100.0) / submitCount : 0;

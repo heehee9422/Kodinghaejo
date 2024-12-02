@@ -47,7 +47,6 @@ public class AuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 		session.setAttribute("lvl", service.memberInfo(member.getEmail()).getLvl());
 		session.setAttribute("joinRoute", service.memberInfo(member.getEmail()).getJoinRoute());
 		session.setAttribute("storedImg", member.getStoredImg());
-		session.setAttribute("emailAuth", member.getEmailAuth());
 
 		String url = "/";
 

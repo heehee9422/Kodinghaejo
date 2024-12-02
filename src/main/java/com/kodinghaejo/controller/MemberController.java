@@ -71,11 +71,6 @@ public class MemberController {
 		if (!pwEncoder.matches(loginData.getPassword(), service.memberInfo(loginData.getEmail()).getPassword())) //비밀번호가 일치하지 않을 경우
 			return "{ \"message\": \"PASSWORD_NOT_MATCH\" }";
 
-		//SNS 회원이 일반 로그인 시도할 경우
-		if (!service.memberInfoByIsUse(loginData.getEmail()).getJoinRoute().equals("email")) {
-			return "{ \"message\": \"SOCIAL_MEMBER_DENY\" }";
-		}
-
 		return "{ \"message\": \"good\" }";
 	}
 
@@ -213,7 +208,8 @@ public class MemberController {
 
 	//비밀번호 찾기 화면
 	@GetMapping("/member/findPassword")
-	public void getFindPassword() { }
+	public void getFindPassword() {
+	}
 
 	//임시 비밀번호 발급받기
 	@ResponseBody
@@ -225,10 +221,6 @@ public class MemberController {
 
 		//아이디가 존재하면 해당 email로 회원정보 가져오기
 		MemberDTO member = service.memberInfo(findData.getEmail());
-		
-		//SNS 계정 회원일 경우 거부
-		if (!member.getJoinRoute().equals("email"))
-			return "{ \"message\": \"SOCIAL_MEMBER_DENY\" }";
 
 		//전화번호 확인
 		if (!findData.getTel().equals(member.getTel())) {
@@ -239,7 +231,7 @@ public class MemberController {
 			service.modifyPassword(findData);
 			service.lastdateUpdate(findData.getEmail(), "password");
 
-			mailService.sendSimpleMailMessage("findPassword", findData.getEmail(), password);
+			mailService.sendSimpleMailMessage(findData.getEmail(), password);
 			
 			log.info("========== password: {} ==========", password);
 
@@ -532,32 +524,6 @@ public class MemberController {
 		String email = (String) session.getAttribute("email");
 		
 		return service.myBookmark(page, postNum, email);
-	}
-	
-	//이메일 인증
-	@ResponseBody
-	@PostMapping("/member/mypage/emailAuth")
-	public String emailAuth(@RequestParam("kind") String kind, @RequestParam(name = "auth_code", defaultValue = "") String authCode, HttpSession session) {
-		String email = (String) session.getAttribute("email");
-		
-		switch (kind) {
-			case "R": //인증 요청
-				if (authCode.equals(""))
-					return "{ \"message\": \"BAD_REQUEST\" }";
-				
-				mailService.sendSimpleMailMessage("emailAuth", email, authCode);
-				break;
-				
-			case "S": //인증완료 처리
-				service.updateEmailAuth(email);
-				session.setAttribute("emailAuth", "Y");
-				break;
-				
-			default:
-				return "{ \"message\": \"BAD_REQUEST\" }";
-		}
-		
-		return "{ \"message\": \"good\" }";
 	}
 
 }

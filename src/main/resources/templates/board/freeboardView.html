@@ -46,8 +46,8 @@
 						</li>
 						<li><i class="xi-cut" th:onclick="|reportBoard('${ view.Idx }')|"><span>신고하기</span></i></li>
 						<th:block th:if="${ session.email == view.email.email }">
-						<li><i class="xi-pen" th:onclick="|location.href='/board/m/freeboardModify?idx=${ view.idx }'|"><span>수정하기</span></i></li>
-						<li><i class="xi-trash" th:onclick="|deleteBoard('${ view.idx }')|"><span>삭제하기</span></i></li>
+						<li><a th:href="@{ /board/m/freeboardModify(idx=${ view.idx }) }">수정하기</a></li>
+						<li><a th:href="|javascript:deleteBoard('${ view.idx }')|"> 삭제하기</a></li>
 						</th:block>
 					</ol>
 				</div>
@@ -172,7 +172,8 @@
 								confirmButtonText: '확인'
 							})
 							.then((result) => {
-								document.location = '/board/freeboard';
+								if (result.isConfirmed)
+									document.location = '/board/freeboard';
 							});
 							
 						} else if (data.message == 'ALREADY_REPORTED') {
@@ -182,7 +183,8 @@
 								confirmButtonText: '확인'
 							})
 							.then((result) => {
-								document.location = '/board/freeboard';
+								if (result.isConfirmed)
+									document.location = '/board/freeboard';
 							});
 						} else {
 							Swal.fire({
@@ -206,23 +208,6 @@
 		
 		//게시물 삭제
 		const deleteBoard = async (idx) => {
-			//이메일 미인증 시 인증 유도
-			if ('[[ ${ session.emailAuth } ]]' != 'Y') {
-				await Swal.fire({
-					icon: 'error',
-					html: '이메일 인증이 필요합니다.<br>MyPage로 이동하시겠습니까?',
-					showCancelButton: true,
-					confirmButtonText: '네, 이동합니다.',
-					cancelButtonText: '아니오.'
-				})
-				.then((result) => {
-					if (result.isConfirmed)
-						location.href = '/member/mypage/main';
-				});
-				
-				return false;
-			}
-			
 			await Swal.fire({
 				icon: 'warning',
 				text: '게시물을 삭제하시겠습니까?',
@@ -248,7 +233,8 @@
 								confirmButtonText: '확인'
 							})
 							.then((result) => {
-								document.location = '/board/freeboard';
+								if (result.isConfirmed)
+									document.location = '/board/freeboard';
 							});
 						} else {
 							Swal.fire({
@@ -340,14 +326,12 @@
 				let date = now.getDate(); //일 * day: 요일 --> 0 ~ 6: 일 ~ 토
 				let hours = now.getHours();
 				let minutes = now.getMinutes();
-				let seconds = now.getSeconds();
 				
 				let mm = (month >= 10) ? month : '0' + month;
 				let dd = (date >= 10) ? date : '0' + date;
 				let hh = (hours >= 10) ? hours : '0' + hours;
 				let mi = (minutes >= 10) ? minutes : '0' + minutes;
-				let ss = (seconds >= 10) ? seconds : '0' + seconds;
-				let regdate = year + '-' + mm + '-' + dd + ' ' + hh + ':' + mi + ':' + ss;
+				let regdate = year + '-' + mm + '-' + dd + ' ' + hh + ':' + mi;
 				//날짜 데이터 변환 종료
 				
 				const elm = document.createElement('div');
@@ -404,22 +388,6 @@
 		
 		//댓글 작성
 		const replyWrite = async () => {
-			//이메일 미인증 시 인증 유도
-			if ('[[ ${ session.emailAuth } ]]' != 'Y') {
-				await Swal.fire({
-					icon: 'error',
-					html: '이메일 인증이 필요합니다.<br>MyPage로 이동하시겠습니까?',
-					showCancelButton: true,
-					confirmButtonText: '네, 이동합니다.',
-					cancelButtonText: '아니오.'
-				})
-				.then((result) => {
-					location.href = '/member/mypage/main';
-				});
-				
-				return false;
-			}
-			
 			let content = editor.getMarkdown();
 			
 			if (content.trim() == '') {
@@ -440,8 +408,6 @@
 			})
 			.then((response) => response.json())
 			.then((data) => {
-				editor.setMarkdown('');
-				
 				const jsonInfo = data;
 
 				const replyCnt = document.querySelector('#replyCnt');
@@ -457,14 +423,12 @@
 				let date = now.getDate(); //일 * day: 요일 --> 0 ~ 6: 일 ~ 토
 				let hours = now.getHours();
 				let minutes = now.getMinutes();
-				let seconds = now.getSeconds();
 				
 				let mm = (month >= 10) ? month : '0' + month;
 				let dd = (date >= 10) ? date : '0' + date;
 				let hh = (hours >= 10) ? hours : '0' + hours;
 				let mi = (minutes >= 10) ? minutes : '0' + minutes;
-				let ss = (seconds >= 10) ? seconds : '0' + seconds;
-				let regdate = year + '-' + mm + '-' + dd + ' ' + hh + ':' + mi + ':' + ss;
+				let regdate = year + '-' + mm + '-' + dd + ' ' + hh + ':' + mi;
 				//날짜 데이터 변환 종료
 					
 				const elm = document.createElement('div');
@@ -513,22 +477,6 @@
 		
 		//댓글 수정
 		const replyModify = (idx) => {
-			//이메일 미인증 시 인증 유도
-			if ('[[ ${ session.emailAuth } ]]' != 'Y') {
-				Swal.fire({
-					icon: 'error',
-					html: '이메일 인증이 필요합니다.<br>MyPage로 이동하시겠습니까?',
-					showCancelButton: true,
-					confirmButtonText: '네, 이동합니다.',
-					cancelButtonText: '아니오.'
-				})
-				.then((result) => {
-					location.href = '/member/mypage/main';
-				});
-				
-				return false;
-			}
-			
 			if (modifyReplyIdx != 0) {
 				const viewBtns = '<a class="btn_edit" href="javascript:replyModify(' + modifyReplyIdx + ')">수정하기</a>\n' +
 													'<a class="btn_delete" href="javascript:replyDelete(' + modifyReplyIdx + ')">삭제하기</a>';
@@ -646,22 +594,6 @@
 
 		//댓글 삭제
 		const replyDelete = async (idx) => {
-			//이메일 미인증 시 인증 유도
-			if ('[[ ${ session.emailAuth } ]]' != 'Y') {
-				await Swal.fire({
-					icon: 'error',
-					html: '이메일 인증이 필요합니다.<br>MyPage로 이동하시겠습니까?',
-					showCancelButton: true,
-					confirmButtonText: '네, 이동합니다.',
-					cancelButtonText: '아니오.'
-				})
-				.then((result) => {
-					location.href = '/member/mypage/main';
-				});
-				
-				return false;
-			}
-			
 			await Swal.fire({
 				icon: 'warning',
 				text: '댓글을 삭제하시겠습니까?',
@@ -723,7 +655,8 @@
 			confirmButtonText: '확인'
 		})
 		.then((result) => {
-			document.location = '/board/freeboard';
+			if (result.isConfirmed)
+				document.location = '/board/freeboard';
 		});
 	}
 

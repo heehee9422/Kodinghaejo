@@ -29,13 +29,12 @@
 							<table>
 								<caption style="display: none;">mypage테이블 입니다</caption>
 								<colgroup>
-									<col width="7%">
-									<col width="13%">
 									<col width="">
-									<col width="20%">
-									<col width="10%">
-									<col width="10%">
-									<col width="10%">
+									<col width="">
+									<col width="">
+									<col width="">
+									<col width="">
+									<col width="">
 								</colgroup>
 								<thead>
 									<tr>
@@ -77,18 +76,16 @@
 								<table>
 									<caption style="display: none;">mypage테이블 입니다</caption>
 									<colgroup>
-										<col width="7%">
-										<col width="13%">
-										<col width="20%">
 										<col width="">
-										<col width="20%">
-										<col width="10%">
+										<col width="">
+										<col width="">
+										<col width="">
+										<col width="">
 									</colgroup>
 									<thead>
 										<tr>
 											<th>순번</th>
-											<th>원글종류</th>
-											<th>원글제목</th>
+											<th>원글</th>
 											<th>댓글내용</th>
 											<th>작성일</th>
 											<th>삭제</th>
@@ -98,12 +95,7 @@
 										<th:block th:if="${ replyTotalElement > 0 }">
 										<tr th:each="reply, index : ${ replyList }">
 											<td th:text="${ replyTotalElement - (replyPage - 1) * postNum - index.count + 1 }"></td>
-											<td th:text="${ reply.rePrnt == 'FR'  ? '자유게시판' :  reply.rePrnt == 'Q' ? '질문' : reply.rePrnt == 'QA' ? '답변' : '' }"></td>
-											<td>
-												<a th:if="${ reply.rePrnt == 'FR' }" th:href="@{ '/board/freeboardView?idx=' + ${ reply.prntIdx } }">[[ ${ reply.prntTitle } ]]</a>
-												<a th:if="${ reply.rePrnt == 'Q' }" th:href="@{ '/test/questionBoardView?idx=' + ${ reply.prntIdx } }">[[ ${ reply.prntTitle } ]]</a>
-												<a th:if="${ reply.rePrnt == 'QA' }" th:href="@{ '/test/questionBoardView?idx=' + ${ reply.aqIdx } }">[[ ${ reply.prntTitle } ]]</a>
-											</td>
+											<td><a href="#">[[ ${ reply.prntTitle } ]]</a></td>
 											<td th:text="${ reply.content }"></td>
 											<td th:text="${ #temporals.format(reply.regdate, 'yyyy-MM-dd HH:mm:ss') }"></td>
 											<td><button class="btn_delete" th:onclick="|deleteReply(${ reply.idx })|">삭제</button></td>
@@ -135,19 +127,15 @@
 		const deleteBoard = async (idx) => {
 			await Swal.fire({
 				icon: 'warning',
-				text: '게시물을 삭제하시겠습니까?',
+				text: '게시글을 삭제하시겠습니까?',
 				showCancelButton: true,
-				confirmButtonText: '네, 삭제합니다.',
-				cancelButtonText: '아니오.'
+				confirmButtonText: '네, 삭제합니다',
+				cancelButtonText: '취소'
 			})
 			.then((result) => {
 				if (result.isConfirmed) {
-					let formData = new FormData();
-					formData.append('idx', idx);
-					
-					fetch('/board/m/delete', {
-						method: 'POST',
-						body: formData
+					fetch('/board/m/deleteBoard?idx=' + idx, {
+						method: 'GET'
 					})
 					.then((response) => response.json())
 					.then((data) => {
@@ -178,7 +166,7 @@
 				icon: 'warning',
 				text: '댓글을 삭제하시겠습니까?',
 				showCancelButton: true,
-				confirmButtonText: '네, 삭제합니다.',
+				confirmButtonText: '네, 삭제합니다',
 				cancelButtonText: '취소'
 			})
 			.then((result) => {
@@ -186,28 +174,20 @@
 					let formData = new FormData();
 					formData.append("idx", idx);
 					
-					fetch('/board/m/replyDelete', {
+					fetch('/board/m/reply?kind=D', {
 						method: 'POST',
 						body: formData
 					})
 					.then((response) => response.json())
 					.then((data) => {
-						if (data.message == 'good') {
-							Swal.fire({
-								icon: 'success',
-								text: '댓글이 삭제되었습니다.',
-								confirmButtonText: '확인'
-							})
-							.then(() => {
-								location.href = '/member/mypage/myboard?boardPage=[[ ${ boardPage } ]]&replyPage=[[ ${ replyPage } ]]';
-							});
-						} else {
-							Swal.fire({
-								icon: 'error',
-								text: '시스템 장애로 인해 댓글 삭제에 실패했습니다.',
-								confirmButtonText: '확인'
-							});
-						}
+						Swal.fire({
+							icon: 'success',
+							text: '댓글이 삭제되었습니다.',
+							confirmButtonText: '확인'
+						})
+						.then(() => {
+							location.href = '/member/mypage/myboard?boardPage=[[ ${ boardPage } ]]&replyPage=[[ ${ replyPage } ]]';
+						});
 					})
 				}
 			});

@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -21,8 +22,6 @@ public class WebSecurityConfig {
 	private final AuthSuccessHandler authSuccessHandler;
 	private final AuthFailureHandler authFailureHandler;
 	private final UserDetailsServiceImpl userDetailsService;
-	private final OAuth2SuccessHandler oAuth2SuccessHandler;
-	private final OAuth2FailureHandler oAuth2FailureHandler;
 
 	//스프링 시큐리티에서 암호화 관련 객체를 가져와 스프링빈으로 등록
 	@Bean
@@ -31,12 +30,10 @@ public class WebSecurityConfig {
 	}
 
 	//스프링 시큐리티 적용 제외 대상 설정 --> 스프링빈을 등록
-	/*
 	@Bean
 	WebSecurityCustomizer webSecurityCustoimzer() {
 		return (web) -> web.ignoring().requestMatchers("/img/**", "/css/**", "/js/**");
 	}
-	*/
 	
 	//스프링 시큐리티 로그인 화면 사용 비활성화, CSRF/CORS 공격 방어용 보안 설정 비활성화
 	@Bean
@@ -59,22 +56,12 @@ public class WebSecurityConfig {
 				.userDetailsService(userDetailsService) //스프링 시큐리티에서 로그인을 처리하는 프로그램
 				.authenticationSuccessHandler(authSuccessHandler)); //자동 로그인이 성공했을 때 처리할 명령문이 있는 Handler
 
-		//OAuth2 설정
-		http
-			.oauth2Login((login) -> login
-				.loginPage("/member/login")
-				.successHandler(oAuth2SuccessHandler)
-				.failureHandler(oAuth2FailureHandler));
-		
 		//스프링 시큐리티의 접근권한 설정(Access Control)
 		http
 			.authorizeHttpRequests((authz) -> authz
-				.requestMatchers("/", "/index").permitAll()
-				.requestMatchers("/img/**", "/css/**", "/js/**").permitAll()
-				.requestMatchers("/oauth2/**", "/login/**").permitAll()
-				.requestMatchers("/member/**", "/test/**", "/rank/**", "/board/**", "/chat/**", "/banner/img/**").permitAll()
+				.requestMatchers("/", "/index", "/member/**", "/test/**", "/rank/**", "/board/**", "/chat/**").permitAll()
 				.requestMatchers("/member/mypage/**", "/board/m/**").hasAnyAuthority("LVL-0001", "LVL-0002")
-				.requestMatchers("/admin/**").hasAuthority("LVL-0001")
+				.requestMatchers("/admin/**").hasAnyAuthority("LVL-0001")
 				.anyRequest().authenticated());
 
 		//세션 설정

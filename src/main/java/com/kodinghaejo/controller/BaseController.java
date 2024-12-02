@@ -1,16 +1,11 @@
 package com.kodinghaejo.controller;
 
-import java.io.File;
-import java.net.URLEncoder;
-import java.nio.file.Files;
 import java.util.List;
 import java.util.Random;
 
-import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -23,11 +18,12 @@ import com.kodinghaejo.service.BaseService;
 import com.kodinghaejo.service.TestService;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 @Controller
 @AllArgsConstructor
+@Log4j2
 public class BaseController {
 
 	private final AdminService adminservice;
@@ -41,13 +37,10 @@ public class BaseController {
 		List<BannerEntity> banners;
 		banners = adminservice.getBanner();
 
-		if (banners != null && !banners.isEmpty()) {
-			Random random = new Random();
-			BannerEntity randomBanner = banners.get(random.nextInt(banners.size()));
-			model.addAttribute("banners", randomBanner);
-		} else {
-			model.addAttribute("banners", null);
-		}
+		Random random = new Random();
+		BannerEntity randomBanner = banners.get(random.nextInt(banners.size()));
+
+		model.addAttribute("banners", randomBanner);
 
 		//난이도별 문제
 		List<TestDTO> diffProblem = testService.getDiffTest();
@@ -110,43 +103,6 @@ public class BaseController {
 		model.addAttribute("notice", boardEntities);
 
 		return boardEntities;
-	}
-	
-	//배너 이미지 보기
-	@GetMapping("/banner/img/{fileName}")
-	public void downloadBannerImage(@PathVariable("fileName") String fileName, HttpServletResponse rs) throws Exception {
-		String os = System.getProperty("os.name").toLowerCase();
-		String path;
-		if (os.contains("win")) {
-			path = "Z:\\임시저장소\\프로젝트관리\\1회차\\2조\\Repository\\banner\\";
-		} else {
-			path = "/home/mklee/Repository/Kodinghaejo/banner/";
-		}
-
-		File directory = new File(path);
-		if (!directory.exists()) {
-			directory.mkdirs();
-		}
-
-		File file = new File(path + fileName);
-		if (!file.exists() || !file.isFile()) {
-			rs.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return;
-		}
-
-		byte[] fileBytes = FileUtils.readFileToByteArray(file);
-
-		String contentType = Files.probeContentType(file.toPath());
-		if (contentType == null) {
-			contentType = "application/octet-stream";
-		}
-		rs.setContentType(contentType);
-		rs.setHeader("Content-Disposition", "inline; filename=\"" + URLEncoder.encode(fileName, "UTF-8") + "\"");
-		rs.setContentLength(fileBytes.length);
-
-		rs.getOutputStream().write(fileBytes);
-		rs.getOutputStream().flush();
-		rs.getOutputStream().close();
 	}
 
 }

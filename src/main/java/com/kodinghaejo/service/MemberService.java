@@ -59,9 +59,6 @@ public interface MemberService {
 	//계정 삭제
 	public void deleteAccount(String email);
 
-	//계정 복구
-	public void restoreAccount(String email);
-
 	//내가 작성한 게시글
 	public Page<BoardDTO> mypageBoardList(String email, int pageNum, int postNum);
 
@@ -79,8 +76,5 @@ public interface MemberService {
 	
 	//회원의 북마크 문제
 	public Page<TestBookmarkDTO> myBookmark(int pageNum, int postNum, String email);
-	
-	//메일 인증 완료처리
-	public void updateEmailAuth(String email);
 
 }

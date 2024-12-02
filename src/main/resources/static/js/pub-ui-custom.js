@@ -7,12 +7,12 @@ function scrollToTop() {
 
 /* popbanner-close : pop-info x 버튼 이벤트 */
 function popCloseEvent() {
-	document.querySelector('.sub-banner-img').style.display = 'none';
+	document.querySelector('.banner-img').style.display = 'none';
 	document.querySelector('.xi-close').parentElement.style.display = 'none';
 }
 
 // 쿠키를 설정 함수 : setcookie_expires("쿠키명", "쿠키 값", 날짜일 수);
-function setCookieExpires(name, value, expiredays) {
+function setcookie_expires(name, value, expiredays) {
 	let todayDate = new Date();
 	todayDate.setDate(todayDate.getDate() + expiredays); 
 	document.cookie = name + '=' + encodeURIComponent(value) + '; path=/; expires=' + todayDate.toUTCString() + ';';
@@ -32,20 +32,10 @@ function getCookie(name) {
 
 // popbanner-close : pop-info 하루만 안보기
 function dontShowAgain() {
-	Swal.fire({
-		icon: 'info',
-		text: '광고를 하루 동안 보지 않습니다.',
-		showCancelButton: true,
-		confirmButtonText: '확인',
-		cancelButtonText: '취소'
-	})
-	.then((result) => {
-		if (result.isConfirmed) {
-			setCookieExpires("hideBanner", "true", 1); 
-			document.querySelector('.sub-banner-img').style.display = 'none';
-			document.querySelector('.pop-info').style.display = 'none';
-		}
-	});
+	setcookie_expires("myCookie", "true", 1); 
+	alert("광고를 하루 동안 보지 않습니다.");
+	document.querySelector('.banner-img').style.display = 'none';
+	document.querySelector('.pop-info').style.display = 'none';
 }
 
 // 로그인 쪽 모달 -- 나중 처리 

@@ -40,7 +40,7 @@ public interface BoardRepository extends JpaRepository<BoardEntity, Long> {
 	Page<BoardEntity> findByTitleContainingAndCatNot(String searchKeyword, String category, Pageable pageable);
 	
 	//카테고리별 일별 게시글 수
-	public long countByCatNotAndRegdateBetween(String cat, LocalDateTime start, LocalDateTime end);
+	public long countByCatAndRegdateBetween(String cat, LocalDateTime start, LocalDateTime end);
 
 	//본인이 작성한 게시글 확인
 	//마이페이지(페이징)
@@ -49,7 +49,7 @@ public interface BoardRepository extends JpaRepository<BoardEntity, Long> {
 	public List<BoardEntity> findByEmailAndIsUse(MemberEntity email, String isUse);
 	
 	//등록일 기준으로 공지사항 출력
-	//@Query("SELECT b FROM board b WHERE b.cat = 'CAT-0001' ORDER BY b.regdate DESC")
-	public List<BoardEntity> findByCatOrderByRegdateDesc(String cat, Pageable pageable);
+	@Query("SELECT b FROM board b WHERE b.cat = 'CAT-0001' ORDER BY b.regdate DESC")
+	public List<BoardEntity> findByCatAndRegdate(Pageable pageable);
 
 }
