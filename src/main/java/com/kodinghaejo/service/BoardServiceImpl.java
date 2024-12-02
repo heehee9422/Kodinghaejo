@@ -1,7 +1,6 @@
 package com.kodinghaejo.service;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -39,11 +38,9 @@ import com.kodinghaejo.entity.repository.TestRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 
 @Service
 @AllArgsConstructor
-@Log4j2
 public class BoardServiceImpl implements BoardService {
 
 	private final BoardRepository boardRepository;
@@ -261,7 +258,7 @@ public class BoardServiceImpl implements BoardService {
 		List<BoardDTO> boardDTOs = new ArrayList<>();
 		for (BoardEntity boardEntity : boardEntities) {
 			BoardDTO boardDTO = new BoardDTO(boardEntity);
-			boardDTO.setIsNew((LocalDateTime.now().truncatedTo(ChronoUnit.DAYS).compareTo(boardEntity.getRegdate().truncatedTo(ChronoUnit.DAYS)) <= 2) ? "Y" : "N");
+			boardDTO.setIsNew(LocalDateTime.now().isBefore(boardEntity.getRegdate().plusDays(2)) ? "Y" : "N");
 			boardDTOs.add(boardDTO);
 		}
 		return new PageImpl<>(boardDTOs, pageRequest, boardEntities.getTotalElements());
@@ -319,7 +316,7 @@ public class BoardServiceImpl implements BoardService {
 			TestQuestionDTO testQuestionDTO = new TestQuestionDTO(testQuestionEntity);
 			testQuestionDTO.setAnswerCount(testQuestionAnswerRepository.countByTqIdxAndIsUse(testQuestionEntity, "Y"));
 			testQuestionDTO.setLngName(commonCodeRepository.findById(testQuestionEntity.getTlIdx().getLng()).get().getVal());
-			testQuestionDTO.setIsNew((LocalDateTime.now().truncatedTo(ChronoUnit.DAYS).compareTo(testQuestionEntity.getRegdate().truncatedTo(ChronoUnit.DAYS)) <= 2) ? "Y" : "N");
+			testQuestionDTO.setIsNew(LocalDateTime.now().isBefore(testQuestionEntity.getRegdate().plusDays(2)) ? "Y" : "N");
 			testQuestionDTOs.add(testQuestionDTO);
 		}
 

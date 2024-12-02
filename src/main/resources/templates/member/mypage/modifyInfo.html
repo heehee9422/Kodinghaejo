@@ -65,7 +65,7 @@
 									<p id="websiteMsg" class="bad"></p>
 								</div>
 								<div class="join-descr-form">
-									<label for="descr">자기소개</label>
+									<label for="descr" style="display: block; text-align: left; margin-bottom: 10px;">자기소개</label>
 									<textarea id="descr" name="descr" cols="50" rows="5" placeholder="간단한 자기소개글을 입력해주세요">[[ ${ member.descr } ]]</textarea>
 								</div>
 							</div>
@@ -118,7 +118,11 @@
 			const imgFile = e.target.files[0];
 			
 			if (imgFile.type.indexOf('image') == -1) {
-				alert('이미지 파일만 업로드 해주세요.');
+				Swal.fire({
+					icon: 'warning',
+					text: '이미지 파일만 업로드 해주세요.',
+					confirmButtonText: '확인'
+				});
 				return false;
 			}
 			
@@ -158,10 +162,20 @@
 			.then((response) => response.json())
 			.then((data) => {
 				if (data.message == 'good') {
-					alert(decodeURIComponent(data.username) + '님의 정보가 수정되었습니다.');
-					document.location.href = '/member/mypage/main';
+					Swal.fire({
+						icon: 'success',
+						text: decodeURIComponent(data.username) + '님의 정보가 수정되었습니다.',
+						confirmButtonText: '확인'
+					})
+					.then((result) => {
+						document.location.href = '/member/mypage/main';
+					});
 				} else {
-					alert('시스템 장애로 인해 정보 수정에 실패했습니다.')
+					Swal.fire({
+						icon: 'error',
+						text: '시스템 장애로 인해 정보 수정에 실패했습니다.',
+						confirmButtonText: '확인'
+					});
 				}
 			});
 		}
@@ -189,7 +203,7 @@
 		//웹사이트 유효성 검증
 		const checkWebsite = () => {
 			//정규식으로 웹사이트 유효성 검증
-			const websiteRegex = /^https?\:\/\/[\w\-\.]+[a-z]$/;
+			const websiteRegex = /^https?\:\/\/[\w\-\.]+[a-z]$\/;
 
 			if (website.value == '' || websiteRegex.test(website.value)) {
 				websiteOk = 'Y';

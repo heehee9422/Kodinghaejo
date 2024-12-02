@@ -3,86 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>회원정보 관리</title>
+<title>채팅방 관리&nbsp;&#124;&nbsp;코딩해조</title>
 <link rel="icon" href="/img/logo/favicon.png">
 <link rel="stylesheet" href="/css/style.css">
-<link rel="stylesheet"
-	href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
 <script src="/js/pub-ui-custom.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<script>
-
-const deleteEmptyChats = () => {
-    Swal.fire({
-        title: "채팅방을 정리하시겠습니까?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "네, 정리합니다",
-        cancelButtonText: "취소"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            fetch(`/admin/systemChatDelete`, {
-                method: 'DELETE'
-            })
-            .then(response => {
-                if (response.ok) {
-                    Swal.fire({
-                        title: "성공",
-                        text: "채팅방이 정리되었습니다.",
-                        icon: "success",
-                        confirmButtonText: "확인"
-                    }).then(() => {
-                        location.reload(); // 성공 시 페이지 새로고침
-                    });
-                } else {
-                    console.log('Error Status:', response.status);
-                    Swal.fire({
-                        title: "오류",
-                        text: "채팅방 정리에 실패했습니다.",
-                        icon: "error",
-                        confirmButtonText: "확인"
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('삭제 중 오류 발생:', error);
-                Swal.fire({
-                    title: "오류",
-                    text: "삭제 요청 중 오류가 발생했습니다.",
-                    icon: "error",
-                    confirmButtonText: "확인"
-                });
-            });
-        }
-    });
-};
-
-/*
-const deleteEmptyChats = () => {
-	
-    if (confirm("채팅방을 정리하시겠습니까?")) {
-        fetch(`/admin/systemChatDelete`, {
-            method: 'DELETE'
-        })
-        .then(response => {
-            if (response.ok) {
-                alert("채팅방이 정리되었습니다.");
-                location.reload();
-            } else {
-                // 상태 코드 출력 (디버깅 용도)
-                console.log('Error Status:', response.status);
-                alert("채팅방 정리에 실패했습니다.");
-            }
-        })
-        .catch(error => {
-            console.error('삭제 중 오류 발생:', error);
-            alert("삭제 요청 중 오류가 발생했습니다.");
-        });
-    }
-}
-*/
-</script>
 </head>
 <body>
 	<div id="header" th:replace="~{ /include/header }"></div>
@@ -96,9 +22,9 @@ const deleteEmptyChats = () => {
 					<h2>채팅방 관리</h2>
 					<div class="search-bar mb20">
 						<form method="get" action="/admin/systemChat">
-					        <input type="text" name="searchKeyword" placeholder="검색어 입력" th:value="${searchKeyword}" />
-					        <button type="submit" class="btn_search">검색</button>
-					    </form>
+							<input type="text" name="searchKeyword" placeholder="검색어 입력" th:value="${searchKeyword}" />
+							<button type="submit" class="btn_search">검색</button>
+						</form>
 					</div>
 					<div class="sys-description-box mb20">
 						<div class="box-itme">
@@ -139,7 +65,7 @@ const deleteEmptyChats = () => {
 								<td th:text="${chat.idx}">1</td>
 								<td th:text="${chat.title}">같이 코딩공부하실분</td>
 								<td>홍길동</td>
-								<td th:text="${chat.regdate}">2024-11-04</td>
+								<td th:text="${#temporals.format(chat.regdate, 'yyyy-MM-dd HH:mm:ss')}">2024-11-04</td>
 								<td th:text="${chat.limit}">4</td>
 								<td>11</td>
 								<td>0</td>
@@ -155,6 +81,79 @@ const deleteEmptyChats = () => {
 		</div>
 	</div>
 	<div id="footer" th:replace="~{ /include/footer }"></div>
+	<!-- Custom Script -->
+	<script type="text/javascript">
+		const deleteEmptyChats = () => {
+			Swal.fire({
+				title: "채팅방을 정리하시겠습니까?",
+				icon: "warning",
+				showCancelButton: true,
+				confirmButtonText: "네, 정리합니다",
+				cancelButtonText: "취소"
+			}).then((result) => {
+				if (result.isConfirmed) {
+					fetch(`/admin/systemChatDelete`, {
+						method: 'DELETE'
+					})
+					.then(response => {
+						if (response.ok) {
+							Swal.fire({
+								title: "성공",
+								text: "채팅방이 정리되었습니다.",
+								icon: "success",
+								confirmButtonText: "확인"
+							})
+							.then(() => {
+								location.reload(); // 성공 시 페이지 새로고침
+							});
+						} else {
+							console.log('Error Status:', response.status);
+							Swal.fire({
+								title: "오류",
+								text: "채팅방 정리에 실패했습니다.",
+								icon: "error",
+								confirmButtonText: "확인"
+							});
+						}
+					})
+					.catch(error => {
+						console.error('삭제 중 오류 발생:', error);
+						Swal.fire({
+							title: "오류",
+							text: "삭제 요청 중 오류가 발생했습니다.",
+							icon: "error",
+							confirmButtonText: "확인"
+						});
+					});
+				}
+			});
+		};
+		
+		/*
+		const deleteEmptyChats = () => {
+			
+			if (confirm("채팅방을 정리하시겠습니까?")) {
+				fetch(`/admin/systemChatDelete`, {
+					method: 'DELETE'
+				})
+				.then(response => {
+					if (response.ok) {
+						alert("채팅방이 정리되었습니다.");
+						location.reload();
+					} else {
+						// 상태 코드 출력 (디버깅 용도)
+						console.log('Error Status:', response.status);
+						alert("채팅방 정리에 실패했습니다.");
+					}
+				})
+				.catch(error => {
+					console.error('삭제 중 오류 발생:', error);
+					alert("삭제 요청 중 오류가 발생했습니다.");
+				});
+			}
+		}
+		*/
+	</script>
 </body>
 
 </html>

@@ -28,6 +28,7 @@ public class ReplyDTO {
 	private String isUse;
 
 	private String prntTitle; //원글 제목
+	private Long aqIdx; //답변 댓글일 경우, 질문 인덱스
 
 	//Entity --> DTO 이동
 	public ReplyDTO(ReplyEntity entity) {

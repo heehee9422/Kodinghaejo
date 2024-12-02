@@ -143,8 +143,7 @@
 						confirmButtonText: '확인'
 					})
 					.then((result) => {
-						if (result.isConfirmed)
-							document.location.href = '/';
+						document.location.href = '/';
 					});
 				} else if (data.message == 'DELETE_ACCOUNT_DENY') {
 					Swal.fire({

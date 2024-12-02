@@ -3,11 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>문제 리스트 관리</title>
+<title>문제 관리&nbsp;&#124;&nbsp;코딩해조</title>
 <link rel="icon" href="/img/logo/favicon.png">
 <link rel="stylesheet" href="/css/style.css">
-<link rel="stylesheet"
-	href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
 <script src="/js/pub-ui-custom.js"></script>
 </head>
 <body>
@@ -22,9 +21,9 @@
 					<h2>문제 목록</h2>
 					<div class="search-bar mb20">
 						<form method="get" action="/admin/systemTest">
-					        <input type="text" name="searchKeyword" placeholder="검색어 입력" th:value="${searchKeyword}" />
-					        <button type="submit" class="btn_search">검색</button>
-					    </form>
+							<input type="text" name="searchKeyword" placeholder="검색어 입력" th:value="${searchKeyword}" />
+							<button type="submit" class="btn_search">검색</button>
+						</form>
 					</div>
 					<div class="sys-description-box mb20">
 						<div class="box-itme">
@@ -63,14 +62,14 @@
 								</td>
 								<td th:text="${test.diff}">1레벨</td>
 								<td>
-						            <ul>
-						                <!-- testLngList를 순회하며 언어 코드 출력 -->
-						                <li th:each="lang : ${test.testLngList}" 
-										    th:text="${lang.lng == 'LNG-0001' ? 'JAVA' : (lang.lng == 'LNG-0002' ? 'javascript' : 'Unknown')}">
+									<ul>
+										<!-- testLngList를 순회하며 언어 코드 출력 -->
+										<li th:each="lang : ${test.testLngList}" 
+											th:text="${lang.lng == 'LNG-0001' ? 'JAVA' : (lang.lng == 'LNG-0002' ? 'javascript' : 'Unknown')}">
 										</li>
-						            </ul>
-						        </td>
-								<td th:text="${test.regdate}">2024-11-04</td>
+									</ul>
+								</td>
+								<td th:text="${#temporals.format(test.regdate, 'yyyy-MM-dd HH:mm:ss')}">2024-11-04</td>
 								<td th:text="${test.submitCount}">999명</td>
 								<td th:text="${#numbers.formatDecimal(test.correctRate,1,1)} + ' ' + '%' ">50%</td>
 							</tr>

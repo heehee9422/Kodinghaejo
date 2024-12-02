@@ -3,59 +3,12 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>회원정보 관리</title>
+<title>자유게시판 관리&nbsp;&#124;&nbsp;코딩해조</title>
 <link rel="icon" href="/img/logo/favicon.png" />
 <link rel="stylesheet" href="/css/style.css" />
 <link rel="stylesheet"
 	href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css" />
 <script src="/js/pub-ui-custom.js"></script>
-<script>
-const deleteFreeBoard = (idx) => {
-	Swal.fire({
-        title: "게시글을 삭제하시겠습니까?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "삭제",
-        cancelButtonText: "취소",
-        reverseButtons: true
-    }).then((result) => {
-        if (result.isConfirmed) {
-            fetch(`/admin/systemBoardDelete/${idx}`, {
-                method: 'DELETE'
-            })
-            .then(response => {
-                console.log("Response status:", response.status);
-                return response.text().then(message => ({ status: response.status, message }));
-            })
-            .then(({ status, message }) => {
-                if (status === 200) {
-                    Swal.fire({
-                        title: message,
-                        icon: "success",
-                        confirmButtonText: "확인" 
-                    }).then((result) => {
-                        if(result.isConfirmed) {
-                            location.reload();
-                        }
-                    });
-                } else {
-                    Swal.fire({
-                        icon: "error",
-                        text: message,
-                    });
-                }
-            })
-            .catch(error => {
-                Swal.fire({
-                    icon: "error",
-                    text: "시스템 장애로 게시물 등록이 실패했습니다",
-                });
-                console.error('삭제 중 오류 발생:', error);
-            });
-        }
-    });
-};
-</script>
 </head>
 <body>
 	<div id="header" th:replace="~{ /include/header }"></div>
@@ -71,9 +24,9 @@ const deleteFreeBoard = (idx) => {
 					<h2>자유게시판 관리</h2>
 					<div class="search-bar mb20">
 						<form method="get" action="/admin/systemFreeBoard">
-					        <input type="text" name="searchKeyword" placeholder="검색어 입력" th:value="${searchKeyword}" />
-					        <button type="submit" class="btn_search">검색</button>
-					    </form>
+							<input type="text" name="searchKeyword" placeholder="검색어 입력" th:value="${searchKeyword}" />
+							<button type="submit" class="btn_search">검색</button>
+						</form>
 					</div>
 					<div class="sys-description-box mb20">
 						<h3 class="mt20">게시글 수 : <span th:text="${totalCount}"></span></h3>
@@ -110,7 +63,7 @@ const deleteFreeBoard = (idx) => {
 								<td th:text="${board.idx}">1</td>
 								<td><a th:href="@{ '/board/freeboardView?idx=' + ${ board.idx } }" th:text="${board.title}" target="_blank">첫번째 게시글입니다.</a></td>
 								<td th:text="${board.writer}">홍길동</td>
-								<td th:text="${board.regdate}">2024-11-04</td>
+								<td th:text="${#temporals.format(board.regdate, 'yyyy-MM-dd HH:mm:ss')}">2024-11-04</td>
 								<td th:text="${board.hitCnt}">4</td>
 								<td th:text="${board.goodCnt}">3</td>
 								<td th:text="${board.badCnt}">0</td>
@@ -128,6 +81,53 @@ const deleteFreeBoard = (idx) => {
 		</div>
 	</div>
 	<div id="footer" th:replace="~{ /include/footer }"></div>
+	<!-- Custom Script -->
+	<script type="text/javascript">
+		const deleteFreeBoard = (idx) => {
+			Swal.fire({
+				text: "게시글을 삭제하시겠습니까?",
+				icon: "warning",
+				showCancelButton: true,
+				confirmButtonText: "삭제",
+				cancelButtonText: "취소",
+				reverseButtons: true
+			}).then((result) => {
+				if (result.isConfirmed) {
+					fetch(`/admin/systemBoardDelete/${idx}`, {
+						method: 'DELETE'
+					})
+					.then(response => {
+						console.log("Response status:", response.status);
+						return response.text().then(message => ({ status: response.status, message }));
+					})
+					.then(({ status, message }) => {
+						if (status === 200) {
+							Swal.fire({
+								text: message,
+								icon: "success",
+								confirmButtonText: "확인" 
+							}).then((result) => {
+								location.reload();
+							});
+						} else {
+							Swal.fire({
+								icon: "error",
+								text: message,
+								confirmButtonText: "확인" 
+							});
+						}
+					})
+					.catch(error => {
+						Swal.fire({
+							icon: "error",
+							text: "시스템 장애로 게시물 등록이 실패했습니다",
+						});
+						console.error('삭제 중 오류 발생:', error);
+					});
+				}
+			});
+		};
+	</script>
 </body>
 
 </html>

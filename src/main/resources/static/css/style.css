@@ -293,17 +293,18 @@ details summary::marker{font-size:0;}
 	top: 70px;
 	z-index: 1;
 }
-.pop-banner .banner-img {
+.pop-banner .sub-banner-img {
+	display: none;
 	width: 200px;
 	height: 600px;
 }
-.pop-banner .banner-img img {
+.pop-banner .sub-banner-img img {
 	width: inherit;
 	height: 100%;
 	object-fit: cover;
 }
 .pop-banner .pop-info {
-	display: flex;
+	display: none;
 	justify-content: space-between;
 	align-items: center;
 	background: #000;
@@ -390,11 +391,12 @@ details summary::marker{font-size:0;}
 .content-login .info-login a:hover {
 	text-decoration: underline;
 }
-.content-login .info-login a::after {
-	content: ' | ';
-}
-.content-login .info-login a:last-child::after {
-	content: none;
+.content-login .info-login span.divider {
+	width: 1px;
+	margin: 0 8px 0 5px;
+	padding-left: 1px;
+	background: #999;
+	font-size: 12px;
 }
 .content-login .sns-login h4 {
 	border-top: 1px dashed #AAC5F9;
@@ -838,44 +840,45 @@ details summary::marker{font-size:0;}
 .content-question-board-view .content-question-board-view-wrap .question-body p {
 	line-height: 1.8em;
 }
-.content-question-board-view .content-question-board-view-wrap .question-reple .reple-itme {
+.question-reple .reple-itme {
 	display: flex;
 	gap: 20px;
+	background: #fff;
 	margin-bottom: 20px;
 	border: 1px solid #ced4da;
 	border-radius: 5px;
 	padding: 15px;
 }
-.content-question-board-view .content-question-board-view-wrap .question-reple .reple-itme > p {
+.question-reple .reple-itme > p {
 	margin: 0;
 	padding: 0;
 }
-.content-question-board-view .content-question-board-view-wrap .question-reple .reple-itme .profile-name
-, .content-question-board-view .content-question-board-view-wrap .question-reple .reple-itme .reple-itme-btn-group {
+.question-reple .reple-itme .profile-name
+, .question-reple .reple-itme .reple-itme-btn-group {
 	flex-shrink: 0;
 }
-.content-question-board-view .content-question-board-view-wrap .btn_write {
+.question-reple .btn_write {
 	padding: 11px 12px;
 }
-.content-question-board-view .content-question-board-view-wrap .btn_write:hover {
+.question-reple .btn_write:hover {
 	background: #f8f8f8;
 	transition: .5s;
 }
-.content-question-board-view .content-question-board-view-wrap .inp-write {
+.question-reple .inp-write {
 	width: 100%;
 	display: flex;
 	gap: 10px;
 	justify-content: center;
 	align-items: center;
 }
-.content-question-board-view .content-question-board-view-wrap .inp-write i {
+.question-reple .inp-write i {
 	font-size: 20px;
 	color: #345263;
 }
-.content-question-board-view .content-question-board-view-wrap .inp-write input[type="text"]{
+.question-reple .inp-write input[type="text"]{
 	width: 90%;
 }
-.content-question-board-view .content-question-board-view-wrap .inp-write .btn_write {
+.question-reple .inp-write .btn_write {
 	width: calc(100% - 90%);
 }
 .content-question-review .question-box {
@@ -1061,7 +1064,8 @@ details summary::marker{font-size:0;}
 	border-radius: 5px;
 	cursor: pointer;
 }
-.challenge-nav .nav-item .dropdown-language .dropdown-menu .dropdown-item:hover {
+.challenge-nav .nav-item .dropdown-language .dropdown-menu .dropdown-item:hover
+, .challenge-nav .nav-item .dropdown-language .dropdown-menu .dropdown-item.active {
 	background: #d0e1ff;
 	color: #44576c;
 	transition: .4s all;
@@ -1078,6 +1082,7 @@ details summary::marker{font-size:0;}
 	max-width: 40%;
 	border-right: 1px dashed #fff;
 	padding-right: 20px;
+	overflow-y: auto;
 }
 .wrap .challenge-content .challenge-content-list .challenge-content-run {
 	min-width: 60%;
@@ -1137,7 +1142,7 @@ details summary::marker{font-size:0;}
 	display: flex;
 	justify-content: space-between;
 }
-.wrap .challenge-content .bottom-list .testcase-button
+.wrap .challenge-content .bottom-list .testcase-button > a
 , .wrap .challenge-content .bottom-list .func-buttons .btn_check 
 , .wrap .challenge-content .bottom-list .func-buttons .btn_forward 
 , .wrap .challenge-content .bottom-list .func-buttons .btn_login 
@@ -1148,7 +1153,7 @@ details summary::marker{font-size:0;}
 	border-radius: 5px;
 	cursor: pointer;
 }
-.wrap .challenge-content .bottom-list .testcase-button:hover
+.wrap .challenge-content .bottom-list .testcase-button > a:hover
 , .wrap .challenge-content .bottom-list .func-buttons .btn_check:hover 
 , .wrap .challenge-content .bottom-list .func-buttons .btn_forward:hover 
 , .wrap .challenge-content .bottom-list .func-buttons .btn_login:hover 
@@ -1157,6 +1162,9 @@ details summary::marker{font-size:0;}
 	background-color: #37485D;
 	color: white;
 	transition: .4s all;
+}
+.wrap .challenge-content .bottom-list .testcase-button > a {
+	display: inline-block;
 }
 /************************ header *************************/
 header {
@@ -1544,7 +1552,7 @@ div[class*="-form"] {
 	height: 135px;
 	display: flex;
 	align-items: center;
-	cursor: pointer;
+	/* cursor: pointer; */
 }
 .main-content .content-box .box-item .item-middle-card .item-middle-ui-card-box .card-middle-ui-list img {
 	border-radius: 50%;
@@ -1579,15 +1587,13 @@ div[class*="-form"] {
 .rank-gold {
 	background-image: url('/img/rank-badge/Badge-Frame-4.png');
 }
-/*
-.main-content .content-box .box-item .item-middle-card .item-middle-ui-card-box .card-middle-ui-list:hover {
+/* .main-content .content-box .box-item .item-middle-card .item-middle-ui-card-box .card-middle-ui-list:hover {
 	background: #f2faff;
-}
-.main-content .content-box .box-item .item-middle-card .item-middle-ui-card-box .card-middle-ui-list img:hover {
+} */
+/* .main-content .content-box .box-item .item-middle-card .item-middle-ui-card-box .card-middle-ui-list img:hover {
 	-webkit-animation: rotate-vert-center 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955) both;
 	animation: rotate-vert-center 0.5s cubic-bezier(0.455, 0.030, 0.515, 0.955) both;
-}
-*/
+} */
 .main-content .content-box .box-item .item-middle-card .item-middle-ui-card-box .card-middle-ui-list .card-item {
 	display: flex;
 	flex-direction: column;
@@ -1701,6 +1707,9 @@ div[class*="-form"] {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+}
+.board-notice-view .notice-view-title .notice-view-title-list .like {
+	cursor: pointer;
 }
 /* ********* free-board ********* */
 .content-board-free .content-board-free-content {
@@ -2490,11 +2499,6 @@ a.btn_delete:hover {
 	-webkit-transform: rotateY(360deg);
 			transform: rotateY(360deg);
 	}
-}
-button.active {
-	background-color: #007bff;
-	color: #fff;
-	font-weight: bold;
 }
 .more-link {
 	font-size: 14px;

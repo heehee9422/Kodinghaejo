@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>게시판</title>
+	<title>배너 등록&nbsp;&#124;&nbsp;코딩해조</title>
 	<!-- Standard css -->
 	<link rel="icon" href="/img/logo/favicon.png">
 	<link rel="stylesheet" href="/css/style.css">
@@ -11,92 +11,6 @@
 	<!-- pub-js link -->
 	<script src="/js/pub-ui-custom.js"></script>
 </head>
-<script>
-const registerForm = async () => {
-    let name = document.querySelector('#name');
-    let url = document.querySelector('#url');
-    let img = document.querySelector('#img');
-    
-    if (name.value === '') {
-        Swal.fire({
-            icon: 'warning',
-            title: '배너명을 입력하세요!!!',
-            confirmButtonText: '확인'
-        });
-        name.focus();
-        return false;
-    }
-    if (url.value === '') {
-        Swal.fire({
-            icon: 'warning',
-            title: '이동 경로를 입력하세요!!!',
-            confirmButtonText: '확인'
-        });
-        url.focus();
-        return false;
-    }
-    if (img.files.length === 0) {
-        Swal.fire({
-            icon: 'warning',
-            title: '이미지를 첨부하세요!!!',
-            confirmButtonText: '확인'
-        });
-        return false;
-    }
-
-    const file = img.files[0];
-    const reader = new FileReader();
-
-    reader.onload = (e) => {
-        const imgElement = new Image();
-        imgElement.src = e.target.result;
-
-        imgElement.onload = () => {
-            const width = imgElement.width;
-            const height = imgElement.height;
-
-            if (width !== 200 || height !== 600) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: '이미지 크기는 200px X 600px이어야 합니다!!!',
-                    confirmButtonText: '확인'
-                });
-                img.value = '';
-                return false;
-            } else {
-                let formData = new FormData(document.getElementById('WriteForm'));
-
-                let desc = editor.getMarkdown();
-                formData.append("desc", desc);
-
-                fetch('/admin/systemBannerWrite', {
-                    method: 'POST',
-                    body: formData
-                }).then((response) => response.json())
-                .then((data) => {
-                    if (data.message === 'good') {
-                        Swal.fire({
-                            icon: 'success',
-                            title: '배너가 등록되었습니다.',
-                            confirmButtonText: '확인'
-                        }).then(() => {
-                            document.location.href = '/admin/systemBanner';
-                        });
-                    }
-                }).catch((error) => {
-                    Swal.fire({
-                        icon: 'error',
-                        title: '시스템 장애로 배너 등록에 실패했습니다.',
-                        confirmButtonText: '확인'
-                    });
-                    console.log("error", error);
-                });
-            }
-        };
-    };
-    reader.readAsDataURL(file);
-};
-</script>
 <body>
 	<!-- header 영역 -->
 	<div id="header" th:replace="include/header"></div>
@@ -125,11 +39,11 @@ const registerForm = async () => {
 						<input type="hidden" id="isUse" name="isUse" value="Y">
 					</div>
 					<div class="category-dates mb20">
-				        <label for="startDate">시작 날짜</label>
-				        <input type="datetime-local" id="startDate" name="startDate">
-				        <label for="endDate">종료 날짜</label>
-				        <input type="datetime-local" id="endDate" name="endDate">
-				    </div>
+						<label for="startDate">시작 날짜</label>
+						<input type="datetime-local" id="startDate" name="startDate">
+						<label for="endDate">종료 날짜</label>
+						<input type="datetime-local" id="endDate" name="endDate">
+					</div>
 					<div class="category-desc">
 						<label for="desc">배너 설명</label>
 						<div id="content"></div>
@@ -148,7 +62,8 @@ const registerForm = async () => {
 	<!-- toast API : 나중에 모듈로 작성해서 만들기-->
 	<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
 	<link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
-	<script>
+	<!-- Custom Script -->
+	<script type="text/javascript">
 		const editor = new toastui.Editor({
 			el: document.querySelector('#content'),
 			height: '400px',
@@ -156,20 +71,99 @@ const registerForm = async () => {
 			initialValue: '',
 			initialEditType: 'wysiwyg',
 			placeholder: '간단한 배너 설명을 작성해주세요.',
-			
-			 toolbarItems: [
-					['heading', 'bold', 'italic', 'strike'],
-					['hr', 'quote'],
-					['ul', 'ol', 'task'],
-					['table', 'link'],
-					['code', 'codeblock']
-			 ]
-	
+			toolbarItems: [
+				['heading', 'bold', 'italic', 'strike'],
+				['hr', 'quote'],
+				['ul', 'ol', 'task'],
+				['table', 'link'],
+				['code', 'codeblock']
+			]
 		});
-	</script>
-	<style>
-		.toastui-editor-mode-switch { display: none !important; }
-	</style>
 
+		const registerForm = async () => {
+			let name = document.querySelector('#name');
+			let url = document.querySelector('#url');
+			let img = document.querySelector('#img');
+			
+			if (name.value === '') {
+				Swal.fire({
+					icon: 'warning',
+					text: '배너명을 입력하세요!!!',
+					confirmButtonText: '확인'
+				});
+				name.focus();
+				return false;
+			}
+			if (url.value === '') {
+				Swal.fire({
+					icon: 'warning',
+					text: '이동 경로를 입력하세요!!!',
+					confirmButtonText: '확인'
+				});
+				url.focus();
+				return false;
+			}
+			if (img.files.length === 0) {
+				Swal.fire({
+					icon: 'warning',
+					text: '이미지를 첨부하세요!!!',
+					confirmButtonText: '확인'
+				});
+				return false;
+			}
+
+			const file = img.files[0];
+			const reader = new FileReader();
+
+			reader.onload = (e) => {
+				const imgElement = new Image();
+				imgElement.src = e.target.result;
+
+				imgElement.onload = () => {
+					const width = imgElement.width;
+					const height = imgElement.height;
+
+					if (width !== 200 || height !== 600) {
+						Swal.fire({
+							icon: 'warning',
+							text: '이미지 크기는 200px X 600px이어야 합니다!!!',
+							confirmButtonText: '확인'
+						});
+						img.value = '';
+						return false;
+					} else {
+						let formData = new FormData(document.getElementById('WriteForm'));
+
+						let desc = editor.getMarkdown();
+						formData.append("desc", desc);
+
+						fetch('/admin/systemBannerWrite', {
+							method: 'POST',
+							body: formData
+						}).then((response) => response.json())
+						.then((data) => {
+							if (data.message === 'good') {
+								Swal.fire({
+									icon: 'success',
+									text: '배너가 등록되었습니다.',
+									confirmButtonText: '확인'
+								}).then(() => {
+									document.location.href = '/admin/systemBanner';
+								});
+							}
+						}).catch((error) => {
+							Swal.fire({
+								icon: 'error',
+								text: '시스템 장애로 배너 등록에 실패했습니다.',
+								confirmButtonText: '확인'
+							});
+							console.log("error", error);
+						});
+					}
+				}
+			}
+			reader.readAsDataURL(file);
+		}
+	</script>
 </body>
 </html>

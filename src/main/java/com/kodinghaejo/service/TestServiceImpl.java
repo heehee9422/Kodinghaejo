@@ -10,13 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import org.commonmark.node.Node;
-import org.commonmark.parser.Parser;
-import org.commonmark.renderer.html.HtmlRenderer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
@@ -290,9 +286,10 @@ public class TestServiceImpl implements TestService {
 
 	//등록일 기준 신규 문제 idx값 가져오기
 	public Long getNewTest(int count) {
-		Pageable pageable = PageRequest.of(0, count);
-
-		List<TestEntity> newProblem = testRepository.findNewTest(pageable);
+//		Pageable pageable = PageRequest.of(0, count);
+//
+//		List<TestEntity> newProblem = testRepository.findNewTest(pageable);
+		List<TestEntity> newProblem = testRepository.findByIsUseOrderByRegdateDesc("Y");
 
 		Random random = new Random();
 		int randomIdx = random.nextInt(newProblem.size());
@@ -401,19 +398,14 @@ public class TestServiceImpl implements TestService {
 
 		return testDTOs;
 	}
-
-	//마크다운 -> html 변환
-	public String convertCode(String markdown) {
-		Parser parser = Parser.builder().build();
-		Node document = parser.parse(markdown);
-		HtmlRenderer renderer = HtmlRenderer.builder().build();
-		return renderer.render(document);
-	}
 	
 	//좋아요 상태 확인
 	@Override
 	public String isBookmarked(String email, Long testIdx) {
-		int count = bookmarkRepository.countByEmailAndTestIdx(email, testIdx);
+		MemberEntity memberEntity = memberRepository.findById(email).get();
+		TestEntity testEntity = testRepository.findById(testIdx).get();
+		
+		Long count = bookmarkRepository.countByEmailAndTestIdxAndIsUse(memberEntity, testEntity, "Y");
 		return count > 0 ? "yes" : "no";
 	}
 	
@@ -452,7 +444,8 @@ public class TestServiceImpl implements TestService {
 
 	//문제의 난이도 출력
 	public int getTestDiff(Long tlIdx) {
-		return testSubmitRepository.findDiffByTlIdx(tlIdx);
+//		return testSubmitRepository.findDiffByTlIdx(tlIdx);
+		return testLngRepository.findById(tlIdx).get().getTestIdx().getDiff();
 	}
 	
 	//회원의 점수 업데이트
