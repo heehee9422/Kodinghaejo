@@ -20,12 +20,12 @@ public interface ChatService {
 
 	//대화방 아이디로 특정 대화방 정보 가져 오기
 	public ChatDTO findRoomById(String idx);
-	
+
 	public int countMembers(Long chatIdx);
-	
+
 	//대화방 새로 생성
 	public Long createRoom(ChatDTO chatdto);
-	
+
 	public Long userinfo(ChatDTO chatdto);
 
 //	 public ChatEntity createMemberList(ChatMemberDTO chatmemberdto, ChatEntity chatIdx);
@@ -38,7 +38,7 @@ public interface ChatService {
 
 	//모든 회원 정보 가져오기
 	public List<MemberDTO> getAllUsers();
-	
+
 	//특정 회원 정보 가져오기
 	public MemberDTO getUserByEmail(String email);
 

@@ -31,13 +31,10 @@
 							<input type="hidden" name="storedImg" th:value="${ member.storedImg }">
 							<input type="hidden" name="imgSize" th:value="${ member.imgSize }">
 							<div class="mypage_profile">
-								<div class="profile_img" id="profileImg">
-									<th:block th:if="${ member.imgSize != null && member.imgSize > 0 }">
-									<img th:src="@{ '/member/img/' + ${ member.email } }">
-									</th:block>
-									<th:block th:if="${ member.imgSize == null || member.imgSize == 0 }">
-									<img src="/img/test-profile/coolping.png">
-									</th:block>
+								<div class="profile_img" id="profileImg" style="position: relative; cursor: pointer;">
+									<img th:if="${ member.imgSize != null && member.imgSize > 0 }" id="pImg" th:src="@{ '/member/img/' + ${ member.email } }">
+									<img th:if="${ member.imgSize == null || member.imgSize == 0 }" id="pImg" src="/img/test-profile/coolping.png">
+									<div style="width:50px; height: 50px; background: #000; position: absolute; top: 103px; left: 105px; border-radius: 50%"><i class="xi-camera" style="color: #e9e9e9; font-size: 25px; line-height: 2em;"></i></div>
 								</div>
 								<div class="join-email-form">
 									<label for="email">이메일<span class="asterisk"></span></label>
@@ -107,6 +104,7 @@
 		var websiteOk = 'Y'; //웹사이트 확인 검증여부
 		var profileImg = document.querySelector('#profileImg');
 		var fileEvent = document.querySelector('#imageFile');
+		var pImg = document.querySelector('#pImg');
 		
 		//profileImg 영역 클릭 시 파일이벤트 처리
 		profileImg.addEventListener('click', (e) => {
@@ -114,7 +112,6 @@
 		});
 		
 		fileEvent.addEventListener('change', (e) => {
-			profileImg.innerHTML = '';
 			const imgFile = e.target.files[0];
 			
 			if (imgFile.type.indexOf('image') == -1) {
@@ -128,7 +125,7 @@
 			
 			const reader = new FileReader();
 			reader.onload = (event) => {
-				profileImg.innerHTML = '<img src="' + event.target.result + '">';
+				pImg.setAttribute('src', event.target.result);
 				console.log(event.target.result);
 			}
 			
@@ -203,7 +200,7 @@
 		//웹사이트 유효성 검증
 		const checkWebsite = () => {
 			//정규식으로 웹사이트 유효성 검증
-			const websiteRegex = /^https?\:\/\/[\w\-\.]+[a-z]$\/;
+			const websiteRegex = /^(http|https):\/\/[\w\-]+(\.[\w\-]+)+[/#?]?.*$/;
 
 			if (website.value == '' || websiteRegex.test(website.value)) {
 				websiteOk = 'Y';

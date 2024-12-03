@@ -29,11 +29,11 @@ public class TestQuestionDTO {
 	private String content;
 	private LocalDateTime regdate;
 	private String isUse;
-	
+
 	private Long answerCount;
 	private String lngName;
 	private String isNew;
-	
+
 	private List<ReplyEntity> reply;
 	private List<TestQuestionAnswerDTO> answer;
 

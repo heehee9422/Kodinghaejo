@@ -18,7 +18,7 @@ public interface ReplyRepository extends JpaRepository<ReplyEntity, Long> {
 	public List<ReplyEntity> findByRePrntAndPrntIdx(String rePrnt, Long prntIdx);
 
 	public List<ReplyEntity> findByPrntIdx(Long prntIdx);
-	
+
 	public Long countByRePrntAndPrntIdxAndIsUse(String rePrnt, Long prntIdx, String isUse);
 
 	public Page<ReplyEntity> findByContentContaining(String searchKeyword, Pageable pageable);

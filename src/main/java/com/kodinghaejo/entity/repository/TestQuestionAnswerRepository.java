@@ -11,10 +11,10 @@ import com.kodinghaejo.entity.TestQuestionAnswerEntity;
 import com.kodinghaejo.entity.TestQuestionEntity;
 
 public interface TestQuestionAnswerRepository extends JpaRepository<TestQuestionAnswerEntity, Long> {
-	
+
 	//질문에 대한 답변 갯수
 	public Long countByTqIdxAndIsUse(TestQuestionEntity tqIdx, String isUse);
-	
+
 	//질문 인덱스와 사용여부로 답변 가져오기
 	public List<TestQuestionAnswerEntity> findByTqIdxAndIsUse(TestQuestionEntity tqIdx, String isUse);
 

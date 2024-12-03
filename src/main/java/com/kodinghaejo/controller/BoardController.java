@@ -67,7 +67,7 @@ public class BoardController {
 			@RequestParam("content") String content, HttpSession session) throws Exception {
 		String email = (String) session.getAttribute("email");
 		String writer = (String) session.getAttribute("nickname");
-		
+
 		Long idx = service.write(cat, email, writer, title, content);
 		return "{ \"message\": \"good\", \"idx\": \"" + idx + "\" }";
 	}
@@ -77,7 +77,7 @@ public class BoardController {
 	public void getModify(Model model, @RequestParam("idx") Long idx, HttpSession session) throws Exception {
 		String email = (String) session.getAttribute("email");
 		Map<String, Object> commonCode = baseService.loadUsedCommonCode();
-		
+
 		model.addAttribute("view", service.view(idx, email));
 		model.addAttribute("commonCode", commonCode);
 	}
@@ -150,9 +150,9 @@ public class BoardController {
 	//게시물 추천/취소
 	@ResponseBody
 	@PostMapping("/board/m/recommend")
-	public String postRecommend(@RequestParam("board_idx") Long boardIdx, @RequestParam("email") String email,
-			@RequestParam("kind") String kind) {
-		service.recommend(boardIdx, email, kind);
+	public String recommend(@RequestParam("idx") Long idx, @RequestParam("kind") String kind, HttpSession session) {
+		String email = (String) session.getAttribute("email");
+		service.recommend(idx, email, kind);
 
 		return "{ \"message\": \"good\" }";
 	}
@@ -160,10 +160,10 @@ public class BoardController {
 	//게시물 신고
 	@ResponseBody
 	@PostMapping("/board/m/report")
-	public String reportPost(@RequestParam("board_idx") Long boardIdx, HttpSession session) {
+	public String reportPost(@RequestParam("idx") Long idx, HttpSession session) {
 		String email = (String) session.getAttribute("email");
-		log.info("===== boardIdx: {} / email: {} =====", boardIdx, email);
-		return service.reportPost(email, boardIdx);
+		log.info("===== idx: {} / email: {} =====", idx, email);
+		return service.reportPost(email, idx);
 	}
 
 	//공지사항 리스트
@@ -193,9 +193,9 @@ public class BoardController {
 		model.addAttribute("view", view);
 		model.addAttribute("page", page);
 	}
-	
+
 //=============== 질문보드 ==================
-	
+
 	//질문 쓰기화면 보기
 	@GetMapping("/test/m/questionWrite")
 	public void getQuestionWrite(Model model, @RequestParam("tl_idx") Long tlIdx) throws Exception {
@@ -223,20 +223,20 @@ public class BoardController {
 			@SessionAttribute(name = "email", required = false) String email) throws Exception {
 		int postNum = 10;
 		int pageListCount = 5;
-		
+
 		Page<TestQuestionDTO> list = service.getQuestionList(pageNum, postNum, kind, keyword, email);
 		int totalCount = (int) list.getTotalElements();
 		PageUtil page = new PageUtil();
-		
+
 		String params = "";
 		params += (kind.equals("")) ? "" : "&kind=" + kind;
 		params += (keyword.equals("")) ? "" : "&keyword=" + keyword;
-		
+
 		model.addAttribute("list", list);
 		model.addAttribute("page", pageNum);
 		model.addAttribute("totalElements", totalCount);
 		model.addAttribute("kind", kind);
-		model.addAttribute("keyword", keyword);		
+		model.addAttribute("keyword", keyword);
 		model.addAttribute("pageList", page.getPageList("/test/questionBoard", "page", pageNum, postNum, pageListCount, totalCount, params));
 	}
 
@@ -274,7 +274,7 @@ public class BoardController {
 			@RequestParam("content") String content, HttpSession session) throws Exception {
 		String email = (String) session.getAttribute("email");
 		String writer = (String) session.getAttribute("nickname");
-		
+
 		return service.answerWrite(tqIdx, email, writer, content);
 	}
 

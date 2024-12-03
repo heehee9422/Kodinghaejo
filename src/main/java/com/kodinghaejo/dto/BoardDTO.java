@@ -34,7 +34,7 @@ public class BoardDTO {
 	private Long badCnt; //해당 게시물의 신고 수
 	private String goodChk; //해당 게시물의 추천여부
 	private String badChk; //해당 게시물의 신고여부
-	
+
 	private String isNew; //날짜 비교해서 N표시 여부
 
 	//Entity --> DTO 이동

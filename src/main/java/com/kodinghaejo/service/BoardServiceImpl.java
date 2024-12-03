@@ -57,7 +57,7 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	public Long write(String cat, String email, String writer, String title, String content) throws Exception {
 		MemberEntity memberEntity = memberRepository.findById(email).get();
-		
+
 		BoardEntity boardEntity = BoardEntity
 																.builder()
 																.cat(cat)
@@ -70,7 +70,7 @@ public class BoardServiceImpl implements BoardService {
 																.isUse("Y")
 																.build();
 		boardRepository.save(boardEntity);
-		
+
 		return boardEntity.getIdx();
 	}
 
@@ -197,20 +197,20 @@ public class BoardServiceImpl implements BoardService {
 
 	//게시물 추천 처리
 	@Override
-	public void recommend(Long boardIdx, String email, String kind) {
+	public void recommend(Long idx, String email, String kind) {
 		BoardRecommendEntity boardRecommendEntity;
 
-		if (boardRecommendRepository.findById(new BoardRecommendEntityID(email, boardIdx)).isEmpty()) {
+		if (boardRecommendRepository.findById(new BoardRecommendEntityID(email, idx)).isEmpty()) {
 			boardRecommendEntity = BoardRecommendEntity
 															.builder()
 															.email(memberRepository.findById(email).get())
-															.boardIdx(boardRepository.findById(boardIdx).get())
+															.boardIdx(boardRepository.findById(idx).get())
 															.goodChk(kind)
 															.goodDate(LocalDateTime.now())
 															.isUse("Y")
 															.build();
 		} else {
-			boardRecommendEntity = boardRecommendRepository.findById(new BoardRecommendEntityID(email, boardIdx)).get();
+			boardRecommendEntity = boardRecommendRepository.findById(new BoardRecommendEntityID(email, idx)).get();
 			boardRecommendEntity.setGoodChk(kind);
 			boardRecommendEntity.setGoodDate(LocalDateTime.now());
 		}
@@ -270,7 +270,7 @@ public class BoardServiceImpl implements BoardService {
 	public Long questionWrite(Long tlIdx, String email, String writer, String title, String content) throws Exception {
 		TestLngEntity testLngEntity = testLngRepository.findById(tlIdx).get();
 		MemberEntity memberEntity = memberRepository.findById(email).get();
-		
+
 		TestQuestionEntity testQuestionEntity = TestQuestionEntity
 																							.builder()
 																							.tlIdx(testLngEntity)
@@ -282,18 +282,18 @@ public class BoardServiceImpl implements BoardService {
 																							.isUse("Y")
 																							.build();
 		testQuestionRepository.save(testQuestionEntity);
-		
+
 		return testQuestionEntity.getIdx();
 	}
-	
+
 	//질문 가져오기(NEW)
 	@Override
 	public Page<TestQuestionDTO> getQuestionList(int pageNum, int postNum, String kind, String keyword, String email) {
 		MemberEntity memberEntity = (email == null || email.equals("")) ? null : memberRepository.findById(email).get();
-		
+
 		PageRequest pageRequest = PageRequest.of(pageNum - 1, postNum, Sort.by(Direction.DESC, "idx"));
 		List<TestQuestionEntity> testQuestionEntities;
-		
+
 		if (kind.equals("A")) { //모든 질문
 			testQuestionEntities = testQuestionRepository.findByIsUseOrderByIdxDesc("Y")
 																										.stream().filter((e) -> (e.getTlIdx().getTestIdx().getTitle().contains(keyword) || e.getTitle().contains(keyword) || e.getContent().contains(keyword))).toList();
@@ -309,9 +309,9 @@ public class BoardServiceImpl implements BoardService {
 		} else {
 			return null;
 		}
-		
+
 		List<TestQuestionDTO> testQuestionDTOs = new ArrayList<>();
-		
+
 		for (TestQuestionEntity testQuestionEntity : testQuestionEntities) {
 			TestQuestionDTO testQuestionDTO = new TestQuestionDTO(testQuestionEntity);
 			testQuestionDTO.setAnswerCount(testQuestionAnswerRepository.countByTqIdxAndIsUse(testQuestionEntity, "Y"));
@@ -325,28 +325,28 @@ public class BoardServiceImpl implements BoardService {
 
 		return new PageImpl<>(testQuestionDTOs.subList(startPoint, endPoint), pageRequest, testQuestionDTOs.size());
 	}
-	
+
 	//질문 상세보기
 	@Override
 	public TestQuestionDTO getQuestionInfo(Long idx) {
 		TestQuestionEntity testQuestionEntity = testQuestionRepository.findById(idx).get(); //.findByIdxAndIsUse(idx, "Y").get();
-		
+
 		TestQuestionDTO testQuestionDTO = new TestQuestionDTO(testQuestionEntity);
 		testQuestionDTO.setReply(replyRepository.findByRePrntAndPrntIdxAndIsUse("Q", testQuestionEntity.getIdx(), "Y"));
-		
+
 		List<TestQuestionAnswerEntity> testQuestionAnswerEntities = testQuestionAnswerRepository.findByTqIdxAndIsUse(testQuestionEntity, "Y");
 		List<TestQuestionAnswerDTO> testQuestionAnswerDTOs = new ArrayList<>();
 		for (TestQuestionAnswerEntity testQuestionAnswerEntity : testQuestionAnswerEntities) {
 			TestQuestionAnswerDTO testQuestionAnswerDTO = new TestQuestionAnswerDTO(testQuestionAnswerEntity);
 			testQuestionAnswerDTO.setReply(replyRepository.findByRePrntAndPrntIdxAndIsUse("QA", testQuestionAnswerEntity.getIdx(), "Y"));
-			
+
 			testQuestionAnswerDTOs.add(testQuestionAnswerDTO);
 		}
 		testQuestionDTO.setAnswer(testQuestionAnswerDTOs);
-		
+
 		return testQuestionDTO;
 	}
-	
+
 	//모든 질문 가져오기
 	@Override
 	public List<TestQuestionEntity> getAllQuestionWithTestInfo() {
@@ -354,11 +354,13 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	//특정문제 정보 가져오기
+	@Override
 	public TestEntity getTestByIdx(Long testIdx) {
 		return testRepository.findById(testIdx).orElseThrow(() -> new RuntimeException("해당 문제를 찾을 수 없습니다."));
 	}
 
 	//특정문제의 질문 가져오기
+	@Override
 	public List<TestQuestionEntity> getQuestionsByTestIdx(Long testIdx) {
 		return testQuestionRepository.findQuestionsByTestIdx(testIdx);
 	}
@@ -428,7 +430,7 @@ public class BoardServiceImpl implements BoardService {
 	public TestQuestionAnswerEntity answerWrite(Long tqIdx, String email, String writer, String content) throws Exception {
 		TestQuestionEntity testQuestionEntity = testQuestionRepository.findById(tqIdx).get();
 		MemberEntity memberEntity = memberRepository.findById(email).get();
-		
+
 		TestQuestionAnswerEntity testQuestionAnswerEntity = TestQuestionAnswerEntity
 																													.builder()
 																													.tqIdx(testQuestionEntity)
@@ -439,17 +441,19 @@ public class BoardServiceImpl implements BoardService {
 																													.isUse("Y")
 																													.build();
 		testQuestionAnswerRepository.save(testQuestionAnswerEntity);
-		
+
 		return testQuestionAnswerEntity;
 	}
 
 	//답변목록보기
+	@Override
 	public List<TestQuestionAnswerDTO> answerlist(Long questionIdx) {
 		return testQuestionAnswerRepository.findByTqIdx(questionIdx).stream().map(TestQuestionAnswerDTO::new)
 				.collect(Collectors.toList());
 	}
 
 	//답변 개수보기
+	@Override
 	public int getAnswerCountByQuestionId(Long questionIdx) {
 		return testQuestionAnswerRepository.countAnswerByTqIdx(questionIdx);
 	}
@@ -463,6 +467,7 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	//답변 삭제(isUse를 "N"으로 설정)
+	@Override
 	public void answerDelete(Long idx) {
 		TestQuestionAnswerEntity answerEntity = testQuestionAnswerRepository.findById(idx).get();
 		answerEntity.setIsUse("N");

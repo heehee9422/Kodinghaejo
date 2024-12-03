@@ -3,29 +3,29 @@
 //==================== 에디터 값 처리 ====================
 
 //탭 및 줄바꿈 처리 (에디터 -> DB 저장 시)
-const setEditorContent = (content) => {
-	const replaceContent = content.replaceAll('\t', '\\t')
-																.replaceAll('\n', '\\n')
-																.replaceAll('&', '&amp;')
-																//.replaceAll(' ', '&nbsp;')
-																.replaceAll('<', '&lt;')
-																.replaceAll('>', '&gt;')
-																.replaceAll('"', '&quot;')
-																.replaceAll("'", '&apos;');
-	return replaceContent;
+const escapeHtml = (str) => {
+	if (str == null) return '';
+	
+	return str.replace(/&/g, '&amp;')
+						.replace(/</g, '&lt;')
+						.replace(/>/g, '&gt;')
+						.replace(/"/g, '&quot;')
+						.replace(/'/g, "&apos;")
+						.replace(/\t/g, '\\t')
+						.replace(/\n/g, '\\n');
 }
 
 //탭 및 줄바꿈 처리 (DB -> 에디터 및 뷰어 호출 시)
-const getEditorContent = (content) => {
-	const replaceContent = content.replaceAll('\\t', '\t')
-																.replaceAll('\\n', '\n')
-																//.replaceAll('&nbsp;', ' ')
-																.replaceAll('&lt;', '<')
-																.replaceAll('&gt;', '>')
-																.replaceAll('&quot;', '"')
-																.replaceAll('&apos;', "'")
-																.replaceAll('&amp;', '&');
-	return replaceContent;
+const unescapeHtml = (str) => {
+	if (str == null) return '';
+	
+	return str.replace(/&amp;/g, '&')
+						.replace(/&lt;/g, '<')
+						.replace(/&gt;/g, '>')
+						.replace(/&quot;/g, '"')
+						.replace(/&apos;/g, "'")
+						.replace(/\\t/g, '\t')
+						.replace(/\\n/g, '\n');
 }
 
 //==================== 공통코드 관련 ====================

@@ -22,11 +22,11 @@ public class MailServiceImpl implements MailService {
 	@Override
 	public void sendSimpleMailMessage(String type, String email, String value) {
 		SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-		
+
 		String title; //메일 제목
 		String content; //메일 내용
 		String username = memberRepository.findById(email).orElse(null).getUsername(); //사용자 이름
-		
+
 		switch (type) {
 			case "findPassword":
 				title = "[코딩해조] 임시 비밀번호 발급 안내";
@@ -35,7 +35,7 @@ public class MailServiceImpl implements MailService {
 									"회원님의 임시 비밀번호는 [" + value + "]입니다.\n" +
 									"로그인 후에 비밀번호를 변경해주세요.";
 				break;
-				
+
 			case "emailAuth":
 				title = "[코딩해조] 이메일 인증 안내";
 				content = "안녕하세요. " + username + "님.\n" +
@@ -43,7 +43,7 @@ public class MailServiceImpl implements MailService {
 									"인증번호 [" + value + "]\n\n" +
 									"해당 번호를 인증화면에 입력해주세요.";
 				break;
-				
+
 			default:
 				return;
 		}

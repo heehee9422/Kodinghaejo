@@ -28,7 +28,7 @@ public class TestQuestionAnswerDTO {
 	private String content;
 	private LocalDateTime regdate;
 	private String isUse;
-	
+
 	private List<ReplyEntity> reply;
 
 	//Entity --> DTO 이동

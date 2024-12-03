@@ -189,7 +189,7 @@ public class MemberServiceImpl implements MemberService {
 		List<String> emailList = new ArrayList<>();
 		memberRepository.findByUsernameAndTelAndIsUse(member.getUsername(), member.getTel(), "Y")
 										.stream().forEach((m) -> emailList.add(m.getEmail()));
-		
+
 		return emailList;
 	}
 
@@ -400,14 +400,15 @@ public class MemberServiceImpl implements MemberService {
 
 		return new PageImpl<>(replyDTOs, pageRequest, replyEntities.getTotalElements());
 	}
-	
+
 	//마이페이지 나의 랭킹
+	@Override
 	public MemberDTO memberTest(String email) {
 		MemberEntity memberEntity = memberRepository.findByEmail(email)
 				.orElseThrow(() -> new RuntimeException("email not found"));
-		
+
 		MemberDTO memberDTO = new MemberDTO(memberEntity);
-		
+
 //		Long correctCount = testSubmitRepository.countSubmitByEmail(email);
 		Long correctCount = testSubmitRepository.countByEmailAndSubmSts(memberEntity, "Y");
 		memberDTO.setCorrectCount(correctCount != null ? correctCount : 0);
@@ -415,66 +416,69 @@ public class MemberServiceImpl implements MemberService {
 		memberDTO.setSubmitCount(submitCount);
 		double correctRate = (submitCount > 0) ? (correctCount * 100.0) / submitCount : 0;
 		memberDTO.setCorrectRate(correctRate);
-		
+
 		return memberDTO;
-		
+
 	}
-	
+
 	//모든회원
+	@Override
 	public List<MemberDTO> getAllMember() {
 		List<MemberEntity> memberEntities = memberRepository.findAll();
-		
+
 		List<MemberDTO> memberDTOs = new ArrayList<>();
-		
+
 		for (MemberEntity member : memberEntities) {
 			MemberDTO memberDTO = memberTest(member.getEmail());
 			memberDTOs.add(memberDTO);
 		}
-		
+
 		return memberDTOs;
 	}
-	
+
 //회원의 풀어본 문제
+	@Override
 	public Page<TestSubmitDTO> myTest(int pageNum, int postNum, String email) {
 		MemberEntity memberEntity = memberRepository.findByEmail(email)
 				.orElseThrow(() -> new RuntimeException("email not found"));
-		
+
 		PageRequest pageRequest = PageRequest.of(pageNum - 1, postNum, Sort.by(Direction.DESC, "idx"));
-		
+
 		List<TestSubmitEntity> submitEntities = testSubmitRepository.findByEmail(memberEntity);
-		 
+
 		List<TestSubmitDTO> testSubmitDTOs = new ArrayList<>();
-		
+
 		for (TestSubmitEntity submit : submitEntities) {
 			TestSubmitDTO testSubmitDTO = new TestSubmitDTO(submit);
 			testSubmitDTOs.add(testSubmitDTO);
 		}
-		
+
 		int startPoint = (int) pageRequest.getOffset();
 		int endPoint = (startPoint + pageRequest.getPageSize()) > testSubmitDTOs.size() ? testSubmitDTOs.size() : (startPoint + pageRequest.getPageSize());
-		
+
 		return new PageImpl<>(testSubmitDTOs.subList(startPoint, endPoint), pageRequest, testSubmitDTOs.size());
 	}
-	
+
 	//회원의 북마크 문제
+	@Override
 	public Page<TestBookmarkDTO> myBookmark(int pageNum, int postNum, String email) {
 		MemberEntity memberEntity = memberRepository.findByEmail(email)
 				.orElseThrow(() -> new RuntimeException("email not found"));
-		
+
 		PageRequest pageRequest = PageRequest.of(pageNum - 1, postNum, Sort.by(Direction.DESC, "idx"));
-		
+
 		List<TestBookmarkEntity> bookmarkEntities = testBookmarkRepository.findByEmailAndIsUse(memberEntity, "Y");
-		
+
 		List<TestBookmarkDTO> testBookmarkDTOs = new ArrayList<>();
-		
+
 		for (TestBookmarkEntity bookmarkEntity : bookmarkEntities) {
 			TestBookmarkDTO testBookmarkDTO = new TestBookmarkDTO(bookmarkEntity);
 			testBookmarkDTOs.add(testBookmarkDTO);
 		}
-		
+
 		int startPoint = (int) pageRequest.getOffset();
 		int endPoint = (startPoint + pageRequest.getPageSize()) > testBookmarkDTOs.size() ? testBookmarkDTOs.size() : (startPoint + pageRequest.getPageSize());
-		
+
 		return new PageImpl<>(testBookmarkDTOs.subList(startPoint, endPoint), pageRequest, testBookmarkDTOs.size());
 	}
 

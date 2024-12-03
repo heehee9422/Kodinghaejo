@@ -53,7 +53,7 @@ public class MemberEntity {
 
 	@Column(name = "score", nullable = true)
 	private Long score;
-	
+
 	@Column(name = "tec_1", length = 20, nullable = true)
 	private String tec1;
 
@@ -95,7 +95,7 @@ public class MemberEntity {
 
 	@Column(name = "notifdate", nullable = true)
 	private LocalDateTime notifdate;
-	
+
 	@Column(name = "scoredate", nullable = true)
 	private LocalDateTime scoredate;
 

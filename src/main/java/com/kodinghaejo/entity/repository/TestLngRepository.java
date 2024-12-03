@@ -20,14 +20,14 @@ public interface TestLngRepository extends JpaRepository<TestLngEntity, Long> {
 
 	//testIdx와 lng로 testLngEntity 찾는 쿼리 메서드
 	Optional<TestLngEntity> findByTestIdxAndLng(TestEntity testEntity, String lng);
-	
+
 	//문제 목록에서 언어 필터 적용
 	public List<TestLngEntity> findByLng(String lng);
 
 	//가장 많이 풀어본 test_idx값 출력
 	@Query(value = "SELECT ts.test_idx " +
 									"FROM jpa_test_lng ts " +
-									"WHERE ts.idx = :tlIdx", 
+									"WHERE ts.idx = :tlIdx",
 			nativeQuery = true)
 	public Long findTestIdxByTlIdx(@Param("tlIdx") Long tlIdx);
 

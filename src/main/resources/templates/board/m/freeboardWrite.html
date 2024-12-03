@@ -136,7 +136,7 @@
 			let formData = new FormData();
 			formData.append('cat', cat.value); // 선택된 카테고리 값을 FormData에 추가
 			formData.append('title', title.value);
-			formData.append('content', setEditorContent(content)); // Toast UI Editor의 내용을 FormData에 추가
+			formData.append('content', escapeHtml(content)); // Toast UI Editor의 내용을 FormData에 추가
 				
 			await fetch('/board/m/write', {
 				method: 'POST',

@@ -29,12 +29,11 @@
 							<img src="/img/test-profile/nonoping.png" alt="">
 							<div class="profile-title-content">
 								<p class="profile-name" th:text="${ view.writer }"></p>
-								<p class="profile-date" th:text="${ view.regdate }"></p>
+								<p class="profile-date" th:text="${ #temporals.format(view.regdate, 'yyyy-MM-dd HH:mm:ss') }"></p>
 							</div>
 						</div>
 						<div class="like">
-							<i th:if="${ view.goodChk == 'Y' }" th:onclick="|recommend('${ view.idx }')|" th:id="@{ 'good-' + ${ view.idx } }" th:kind="${ view.goodChk }" class="xi-heart"><span th:id="@{ 'good-count-' + ${ view.idx } }" th:text="${ view.goodCnt }">{0}</span></i>
-							<i th:if="${ view.goodChk == 'N' }" th:onclick="|recommend('${ view.idx }')|" th:id="@{ 'good-' + ${ view.idx } }" th:kind="${ view.goodChk }" class="xi-heart-o"><span th:id="@{ 'good-count-' + ${ view.idx } }" th:text="${ view.goodCnt }">{0}</span></i>
+							<i onclick="recommend()" id="good-btn" th:kind="${ view.goodChk }" th:class="${ view.goodChk == 'Y' ? 'xi-heart' : 'xi-heart-o' }"><span th:id="@{ 'good-count' }" th:text="${ view.goodCnt }">{0}</span></i>
 							<!-- like 시 클릭 될 클래스 명<span><i class="xi-heart"></i>{0}</span> -->
 						</div>
 					</div>
@@ -63,15 +62,15 @@
 		const viewer = new toastui.Editor.factory({
 			el: document.querySelector('#content'),
 			viewer: true,
-			initialValue: getEditorContent(`[[ ${ view.content } ]]`)
+			initialValue: unescapeHtml(`[[ ${ view.content } ]]`)
 		});
 
 		//게시물 추천
 		const recommend = async () => {
 			if ('[[ ${ session.email } ]]' == '') return false;
 			
-			const goodBtn = document.querySelector('#good-[[ ${ view.idx } ]]');
-			const goodCnt = document.querySelector('#good-count-[[ ${ view.idx } ]]');
+			const goodBtn = document.querySelector('#good-btn');
+			const goodCnt = document.querySelector('#good-count');
 			let goodCntNum = parseInt(goodCnt.innerText);
 			let kind = (goodBtn.getAttribute("kind") == 'Y') ? 'N' : 
 									(goodBtn.getAttribute("kind") == 'N') ? 'Y' : '';
@@ -82,7 +81,7 @@
 				method: 'POST',
 				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 				body: new URLSearchParams({
-					'board_idx': '[[ ${ view.idx } ]]',
+					'idx': '[[ ${ view.idx } ]]',
 					'email': '[[ ${ session.email } ]]',
 					'kind': kind
 				})

@@ -43,8 +43,7 @@
 									<li><i class="xi-comment-o"></i><span th:text="${ list.replyCnt }">{0}</span></li>
 								</ol>
 								<div class="like">
-									<a th:if="${ list.goodChk == 'Y' }" th:href="|javascript:recommend('${ list.idx }')|" th:id="@{ 'good-' + ${ list.idx } }" th:kind="${ list.goodChk }" class="xi-heart"></a>
-									<a th:if="${ list.goodChk == 'N' }" th:href="|javascript:recommend('${ list.idx }')|" th:id="@{ 'good-' + ${ list.idx } }" th:kind="${ list.goodChk }" class="xi-heart-o"></a>
+									<a th:href="|javascript:recommend('${ list.idx }')|" th:id="@{ 'good-' + ${ list.idx } }" th:kind="${ list.goodChk }" th:class="${ list.goodChk == 'Y' ? 'xi-heart' : 'xi-heart-o' }"></a>
 									<span th:id="@{ 'good-count-' + ${ list.idx } }" th:text="${ list.goodCnt }">0</span>
 									<!-- like 시 클릭 될 클래스 명<span><i class="xi-heart"></i>{0}</span> -->
 								</div>
@@ -141,8 +140,7 @@
 				method: 'POST',
 				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 				body: new URLSearchParams({
-					'board_idx': idx,
-					'email': '[[ ${ session.email } ]]',
+					'idx': idx,
 					'kind': kind
 				})
 			})

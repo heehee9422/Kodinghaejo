@@ -75,13 +75,13 @@
 	<link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
 
 	<!-- Custom Script -->
-	<script type="text/javascript">
+	<script type="text/javascript" th:inline="javascript">
 		//카테고리 셀렉트박스 옵션추가
 		const cat = document.querySelector('#cat');
 		setSelectOption(commonCode, cat, 'cat', '[[ ${ view.cat } ]]');
 		
 		//게시물 내용
-		const contentValue = `[[${ view.content }]]`;
+		const contentValue = /*[[${ view.content }]]*/'게시물 내용';
 
 		//Toast UI 에디터
 		const editor = new toastui.Editor({
@@ -89,7 +89,7 @@
 			height: '400px',												//에디터 영역의 높이 값 (OOOpx || auto)
 			initialEditType: 'markdown',						//마크다운 프리뷰 스타일 (tab || vertical)
 			placeholder: '내용을 입력해주세요.',		// 플레이스홀더
-			initialValue: getEditorContent(contentValue),
+			initialValue: unescapeHtml(contentValue),
 			previewStyle: 'vertical',								//마크다운 프리뷰 스타일 (tab || vertical)
 			toolbarItems: [
 				//기본 툴바 항목에서 'image' 항목을 제외하고 나열합니다.
@@ -144,7 +144,7 @@
 			formData.append("idx", parseInt('[[ ${ view.idx } ]]'));
 			formData.append("cat", cat.value);
 			formData.append('title', title.value);
-			formData.append("content", setEditorContent(content)); // Editor 내용 추가
+			formData.append("content", escapeHtml(content)); // Editor 내용 추가
 			
 			//서버에 수정 요청
 			await fetch('/board/m/modify', {

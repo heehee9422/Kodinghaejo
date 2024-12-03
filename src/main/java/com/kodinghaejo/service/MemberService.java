@@ -34,7 +34,7 @@ public interface MemberService {
 
 	//회원 기본정보(전체)
 	public MemberDTO memberInfo(String email);
-	
+
 	//회원 기본정보(사용가능 Y만)
 	public MemberDTO memberInfoByIsUse(String email);
 
@@ -70,16 +70,16 @@ public interface MemberService {
 
 	//마이페이지 나의 랭킹
 	public MemberDTO memberTest(String email);
-	
+
 	//모든회원
 	public List<MemberDTO> getAllMember();
 
 	//회원의 풀어본 문제
 	public Page<TestSubmitDTO> myTest(int pageNum, int postNum, String email);
-	
+
 	//회원의 북마크 문제
 	public Page<TestBookmarkDTO> myBookmark(int pageNum, int postNum, String email);
-	
+
 	//메일 인증 완료처리
 	public void updateEmailAuth(String email);
 

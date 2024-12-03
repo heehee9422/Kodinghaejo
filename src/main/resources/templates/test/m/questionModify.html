@@ -76,7 +76,7 @@
 			el: document.querySelector('#content'), // 에디터를 적용할 요소 (컨테이너)
 			height: '400px',												// 에디터 영역의 높이 값 (OOOpx || auto)
 			initialEditType: 'markdown',						// 최초로 보여줄 에디터 타입 (markdown || wysiwyg)
-			initialValue: getEditorContent(contentValue),
+			initialValue: unescapeHtml(contentValue),
 			placeholder: '내용을 입력해주세요.',		// 플레이스홀더
 			previewStyle: 'vertical',								//마크다운 프리뷰 스타일 (tab || vertical)
 			toolbarItems: [
@@ -120,7 +120,7 @@
 			let formData = new FormData();
 			formData.append('idx', parseInt('[[ ${ view.idx } ]]'));
 			formData.append('title', title.value);
-			formData.append('content', setEditorContent(content));
+			formData.append('content', escapeHtml(content));
 			
 			//서버에 수정 요청
 			await fetch('/test/m/questionModify', {

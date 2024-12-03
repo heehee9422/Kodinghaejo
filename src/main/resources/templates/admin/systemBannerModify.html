@@ -10,6 +10,8 @@
 	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
 	<!-- pub-js link -->
 	<script src="/js/pub-ui-custom.js"></script>
+	<!-- common-js link -->
+	<script src="/js/common.js"></script>
 </head>
 <body>
 	<!-- header 영역 -->
@@ -70,14 +72,15 @@
 	<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
 	<link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
 	<!-- Custom Script -->
-	<script type="text/javascript">
-		const editorContent = `[[ ${ banner.desc } ]]`;
+	<script type="text/javascript" th:inline="javascript">
+		const editorContent = /*[[ ${ banner.desc } ]]*/'배너 내용';
 		
 		const editor = new toastui.Editor({
 			el: document.querySelector('#content'),
 			height: '400px',
 			initialEditType: 'markdown',
-			initialValue: editorContent,
+			initialValue: unescapeHtml(editorContent),
+			placeholder: '간단한 배너 설명을 작성해주세요.',
 			toolbarItems: [
 				['heading', 'bold', 'italic', 'strike'],
 				['hr', 'quote'],
@@ -115,7 +118,7 @@
 			let formData = new FormData(document.getElementById('WriteForm'));
 
 			let desc = editor.getMarkdown();
-			formData.append("desc", desc);
+			formData.append("desc", escapeHtml(desc));
 			
 			if (img.files.length === 0) {
 				// 새 파일이 없을 경우 기존 이미지를 사용

@@ -63,7 +63,7 @@ public class MemberController {
 		//이메일(아이디) 가입여부 확인
 		if (service.checkEmail(loginData.getEmail()) == 0) //해당 이메일 회원이 존재하지 않음
 			return "{ \"message\": \"ID_NOT_FOUND\" }";
-		
+
 		if (service.checkEmail(loginData.getEmail()) == -1) //탈퇴 상태의 회원
 			return "{ \"message\": \"DELETE_ACCOUNT_DENY\" }";
 
@@ -204,7 +204,7 @@ public class MemberController {
 				emailStr += "\"" + email + "\"";
 			}
 			emailStr += " ]";
-			
+
 			log.info("==================== 아이디(이메일) 찾기 JSON: { \"message\": \"good\", \"id\": {} } ====================",
 					emailStr);
 			return "{ \"message\": \"good\", \"id\": " + emailStr + " }";
@@ -225,7 +225,7 @@ public class MemberController {
 
 		//아이디가 존재하면 해당 email로 회원정보 가져오기
 		MemberDTO member = service.memberInfo(findData.getEmail());
-		
+
 		//SNS 계정 회원일 경우 거부
 		if (!member.getJoinRoute().equals("email"))
 			return "{ \"message\": \"SOCIAL_MEMBER_DENY\" }";
@@ -240,7 +240,7 @@ public class MemberController {
 			service.lastdateUpdate(findData.getEmail(), "password");
 
 			mailService.sendSimpleMailMessage("findPassword", findData.getEmail(), password);
-			
+
 			log.info("========== password: {} ==========", password);
 
 			return "{ \"message\": \"good\" }";
@@ -405,9 +405,9 @@ public class MemberController {
 	@GetMapping("/member/mypage/mytest")
 	public void getMypageMytest(Model model, HttpSession session) {
 		int postNum = 2;
-		
+
 		String email = (String) session.getAttribute("email");
-		
+
 		MemberDTO member = service.memberTest(email);
 
 		String grade = baseService.calGrade(member.getScore());
@@ -422,28 +422,28 @@ public class MemberController {
 		}
 		// 현재 사용자의 rank 찾기
 		int userRank = 0;
-		for (int i = 0; i < allMembers.size(); i++) {
-			if (allMembers.get(i).getEmail().equals(member.getEmail())) {
-				userRank = allMembers.get(i).getRank();
+		for (MemberDTO member2 : allMembers) {
+			if (member2.getEmail().equals(member.getEmail())) {
+				userRank = member2.getRank();
 				break;
 			}
 		}
-		
+
 		//풀어본 문제
 		Page<TestSubmitDTO> myTest = service.myTest(1, postNum, email);
-		
+
 		long testCount = (myTest != null) ? myTest.getTotalElements() : 0;
-		
-		
+
+
 		//북마크
 		Page<TestBookmarkDTO> myBookmarks = service.myBookmark(1, postNum, email);
-	
+
 		long bookmarkCount = (myBookmarks != null) ? myBookmarks.getTotalElements() : 0;
-		
+
 		model.addAttribute("bookmarkCount", bookmarkCount);
 		model.addAttribute("myBookmarks",myBookmarks);
 		model.addAttribute("totalbookPage", myBookmarks.getTotalPages());
-		
+
 		model.addAttribute("testCount", testCount);
 		model.addAttribute("myTest", myTest);
 		model.addAttribute("userRank", userRank);
@@ -456,7 +456,7 @@ public class MemberController {
 	public Page<TestSubmitDTO> postmytest(@RequestParam("page") int page, HttpSession session) {
 		int postNum = 2;
 		String email = (String) session.getAttribute("email");
-		
+
 		return service.myTest(page, postNum, email);
 	}
 
@@ -483,80 +483,80 @@ public class MemberController {
 		model.addAttribute("boardPageList", page.getPageList("/member/mypage/myboard", "boardPage", boardPageNum, postNum, pageListCount, boardTotalCount, ("&replyPage=" + replyPageNum)));
 		model.addAttribute("replyPageList", page.getPageList("/member/mypage/myboard", "replyPage", replyPageNum, postNum, pageListCount, replyTotalCount, ("&boardPage=" + boardPageNum)));
 	}
-	
+
 //마이페이지 풀어본 문제 화면
 	@GetMapping("/member/mypage/mytestlist")
 	public void getMypageMytestList(Model model, HttpSession session) {
 		int postNum = 2;
-		
+
 		String email = (String) session.getAttribute("email");
-		
+
 		Page<TestSubmitDTO> myTest = service.myTest(1, postNum, email);
-		
+
 		long testCount = (myTest != null) ? myTest.getTotalElements() : 0;
-		
+
 		model.addAttribute("testCount", testCount);
 		model.addAttribute("myTest", myTest);
 		model.addAttribute("totalPage", myTest.getTotalPages());
 	}
-	
+
 	@ResponseBody
 	@PostMapping("/member/mypage/mytestlist")
 	public Page<TestSubmitDTO> postmytestList(@RequestParam("page") int page, HttpSession session) {
 		int postNum = 2;
 		String email = (String) session.getAttribute("email");
-		
+
 		return service.myTest(page, postNum, email);
 	}
-	
+
 	//마이페이지 문제 북마크 페이지
 	@GetMapping("/member/mypage/mytestBookmark")
 	public void getMypageMytestBookmark(Model model, HttpSession session) {
 		int postNum = 2;
-		
+
 		String email = (String) session.getAttribute("email");
-		
+
 		Page<TestBookmarkDTO> myBookmarks = service.myBookmark(1, postNum, email);
-		
+
 		long bookmarkCount = (myBookmarks != null) ? myBookmarks.getTotalElements() : 0;
-		
+
 		model.addAttribute("bookmarkCount", bookmarkCount);
 		model.addAttribute("myBookmarks",myBookmarks);
 		model.addAttribute("totalbookPage", myBookmarks.getTotalPages());
 	}
-	
+
 	@ResponseBody
 	@PostMapping("/member/mypage/mytestBookmark")
 	public Page<TestBookmarkDTO> postmytestBookmark(@RequestParam("page") int page, HttpSession session) {
 		int postNum = 2;
 		String email = (String) session.getAttribute("email");
-		
+
 		return service.myBookmark(page, postNum, email);
 	}
-	
+
 	//이메일 인증
 	@ResponseBody
 	@PostMapping("/member/mypage/emailAuth")
 	public String emailAuth(@RequestParam("kind") String kind, @RequestParam(name = "auth_code", defaultValue = "") String authCode, HttpSession session) {
 		String email = (String) session.getAttribute("email");
-		
+
 		switch (kind) {
 			case "R": //인증 요청
 				if (authCode.equals(""))
 					return "{ \"message\": \"BAD_REQUEST\" }";
-				
+
 				mailService.sendSimpleMailMessage("emailAuth", email, authCode);
 				break;
-				
+
 			case "S": //인증완료 처리
 				service.updateEmailAuth(email);
 				session.setAttribute("emailAuth", "Y");
 				break;
-				
+
 			default:
 				return "{ \"message\": \"BAD_REQUEST\" }";
 		}
-		
+
 		return "{ \"message\": \"good\" }";
 	}
 

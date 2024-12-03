@@ -19,7 +19,7 @@ public class OAuth2FailureHandler extends SimpleUrlAuthenticationFailureHandler 
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
 			AuthenticationException exception) throws IOException, ServletException {
 		log.debug("========== OAuth2 로그인 실패 ==========");
-		
+
 		setDefaultFailureUrl("/member/login");
 		super.onAuthenticationFailure(request, response, exception);
 	}

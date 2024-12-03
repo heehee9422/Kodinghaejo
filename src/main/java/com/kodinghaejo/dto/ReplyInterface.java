@@ -3,7 +3,7 @@ package com.kodinghaejo.dto;
 import java.time.LocalDateTime;
 
 public interface ReplyInterface {
-	
+
 	Long getIdx();
 	String getRePrnt();
 	Long getPrntIdx();
@@ -12,5 +12,5 @@ public interface ReplyInterface {
 	String getContent();
 	LocalDateTime getRegdate();
 	String getIsUse();
-	
+
 }

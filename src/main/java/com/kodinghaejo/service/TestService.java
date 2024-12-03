@@ -23,7 +23,7 @@ public interface TestService {
 	public TestLngEntity loadTestLng(Long testIdx, String language) throws Exception;
 
 	//코드 실행 및 제출 시 파일 생성
-	public void createVerifyFiles(String mainSrc, String correctSrc) throws Exception;
+	public void createVerifyFiles(String mainSrc, String correctSrc, String language) throws Exception;
 
 	//코드 실행 및 제출 시 검증 처리
 	public String testCode(String language, String filePath) throws Exception;
@@ -54,19 +54,16 @@ public interface TestService {
 
 	//문제 검색
 	public List<TestDTO> searchtestListByTitle(String searchKeyword);
-	
-	//북마크 추가
-	public boolean addBookmark(String email, Long testIdx);
-	
-	//북마크 제거
-	public boolean removeBookemark(String email, Long testIdx);
-	
+
+	//북마크 추가 및 제거
+	public void bookmark(String email, Long idx, String kind);
+
 	//북마크 상태 확인
 	public String isBookmarked(String email, Long testIdx);
 
 	//문제의 난이도 출력
 	public int getTestDiff(Long tlIdx);
-	
+
 	//회원의 점수 업데이트
 	public void updateMemberScore(String email, long socreToAdd);
 

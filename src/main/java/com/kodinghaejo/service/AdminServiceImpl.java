@@ -141,6 +141,8 @@ public class AdminServiceImpl implements AdminService {
 				testLngEntity.setCorrect(langDTO.getCorrect());
 				testLngEntity.setRunSrc(langDTO.getRunSrc());
 				testLngEntity.setSubmSrc(langDTO.getSubmSrc());
+				testLngEntity.setRunSrc2(langDTO.getRunSrc2());
+				testLngEntity.setSubmSrc2(langDTO.getSubmSrc2());
 			}
 			//수정된 엔티티 저장
 			testLngRepository.save(testLngEntity);
@@ -505,6 +507,7 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	//일별 푼 문제 수
+	@Override
 	public long getTodayTestCount() {
 		LocalDateTime startOfday = LocalDateTime.now().with(LocalTime.MIN);
 		LocalDateTime endOfday = LocalDateTime.now().with(LocalTime.MAX);
@@ -528,6 +531,7 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	//문제풀이에 사용된 언어
+	@Override
 	public Map<String, Integer> getLngSubmitCount() {
 		List<Object[]> results = submitRepository.countSubmitByLng();
 		Map<String, Integer> lngCount = new HashMap<>();
@@ -567,6 +571,7 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	//타입에 따른 공통코드 조회
+	@Override
 	public Page<CommonCodeEntity> getCodeListByType(int pageNum, int postNum, String type) {
 		PageRequest pageRequest = PageRequest.of(pageNum - 1, postNum, Sort.by(Direction.DESC, "code"));
 

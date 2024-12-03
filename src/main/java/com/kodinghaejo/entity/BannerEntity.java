@@ -41,10 +41,10 @@ public class BannerEntity {
 
 	@Column(name = "description", length = 1000, nullable = true)
 	private String desc;
-	
+
 	@Column(name = "start_date", nullable = false)
 	private LocalDateTime startDate;
-	
+
 	@Column(name = "end_date", nullable = false)
 	private LocalDateTime endDate;
 
@@ -53,5 +53,5 @@ public class BannerEntity {
 
 	@Column(name = "is_use", length = 2, nullable = false)
 	private String isUse;
-	
+
 }

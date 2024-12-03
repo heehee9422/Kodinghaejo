@@ -66,27 +66,27 @@ public class BaseController {
 
 	//랭킹
 	@GetMapping("/rank/rank")
-	public void getRank(Model model, @RequestParam(name = "kind", defaultValue = "") String kind) { 
+	public void getRank(Model model, @RequestParam(name = "kind", defaultValue = "") String kind) {
 		List<MemberDTO> members = baseService.memberRank(kind);
-		
+
 		for (MemberDTO member : members) {
 			String grade = baseService.calGrade(member.getScore());
 			member.setGrade(grade);
 		}
-		
+
 		model.addAttribute("members", members);
 	}
 
 	//가장 많이 풀어본 문제
-	@GetMapping("/popularTest")
+	@GetMapping("/test/popularTest")
 	public String getPopularTest() {
 		Long idx = testService.getMostPopularTest();
 
 		return "redirect:/test/challenge?idx=" + idx;
 	}
-	
+
 	//등록일 기준 신규 문제
-	@GetMapping("/newTest")
+	@GetMapping("/test/newTest")
 	public String getNewTest() {
 		Long randomIdx = testService.getNewTest(5);
 
@@ -94,7 +94,7 @@ public class BaseController {
 	}
 
 	//난이도 0 기준 랜덤 문제
-	@GetMapping("/randomTest")
+	@GetMapping("/test/randomTest")
 	public String getRandomTest() {
 		Long randomIdx = testService.getRandomTest();
 
@@ -111,7 +111,7 @@ public class BaseController {
 
 		return boardEntities;
 	}
-	
+
 	//배너 이미지 보기
 	@GetMapping("/banner/img/{fileName}")
 	public void downloadBannerImage(@PathVariable("fileName") String fileName, HttpServletResponse rs) throws Exception {

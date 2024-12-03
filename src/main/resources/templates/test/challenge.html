@@ -32,8 +32,7 @@
 			<!-- 제목 & 북마커 -->
 			<div class="challenge-nav">
 				<div class="nav-item">
-					<i th:if="${isbookmarked == 'no'}" th:onclick="|bookmark('${test.idx}', 'add')|" th:id="@{'bookmark-add-' + ${test.idx}}" class="xi-bookmark-o"></i>
-					<i th:if="${isbookmarked == 'yes'}" th:onclick="|bookmark('${test.idx}', 'remove')|" th:id="@{'bookmark-remove-' + ${test.idx}}" class="xi-bookmark"></i>
+					<i th:onclick="bookmark()" id="bookmark-btn" th:kind="${ isBookmarked }" th:class="${ isBookmarked == 'Y' ? 'xi-bookmark' : 'xi-bookmark-o' }"></i>
 					<span class="challenge-title">[[ ${ test.title } ]]</span>
 				</div>
 				<div class="nav-item">
@@ -105,7 +104,7 @@
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	
 	<!-- Custom Script -->
-	<script type="text/javascript">
+	<script type="text/javascript" th:inline="javascript">
 		//로딩 대기화면
 		const loading_page = document.getElementById("load");
 	
@@ -114,22 +113,24 @@
 		
 		let selectedLanguage; //초기 언어
 		let lngMode; //에디터 모드
-		if ('[[ ${ java } ]]' === 'Y') {
+		if ('Y' === /*[[ ${ java } ]]*/'java') {
 			selectedLanguage = 'java';
 			lngMode = 'text/x-java';
-		} else if ('[[ ${ js } ]]' === 'Y') {
+		} else if ('Y' === /*[[ ${ js } ]]*/'js') {
 			selectedLanguage = 'js';
 			lngMode = 'text/javascript';
-		} else if ('[[ ${ oracle } ]]' === 'Y') {
+		} else if ('Y' === /*[[ ${ oracle } ]]*/'oracle') {
 			selectedLanguage = 'oracle';
 			lngMode = 'text/x-sql';
 		}
 
 		//토스트 UI - 뷰어
+		const testDescr = /*[[ ${ test.descr } ]]*/'문제설명'
+		
 		const viewer = new toastui.Editor.factory({
 			el: document.querySelector('.challenge-content-question'),
 			viewer: true,
-			initialValue: getEditorContent(`[[ ${ test.descr } ]]`),
+			initialValue: unescapeHtml(testDescr),
 			theme: 'dark'
 		});
 		
@@ -184,17 +185,17 @@
 				method: 'POST',
 				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 				body: new URLSearchParams({
-					'test_idx': parseInt('[[ ${ test.idx } ]]'),
+					'test_idx': /*[[ ${ test.idx } ]]*/'test_idx',
 					'language': lngCode
 				})
 			})
 			.then((response) => response.json())
 			.then((data) => {
 				tlIdx = data.idx;
-				editor.setValue(getEditorContent(data.content_src));
+				editor.setValue(unescapeHtml(data.content_src));
 				correctSrc = data.correct_src;
-				runSrc = data.run_src;
-				submSrc = data.subm_src;
+				runSrc = (data.run_src + data.run_src_2);
+				submSrc = (data.subm_src + data.subm_src_2);
 			})
 			.catch((error) => {
 				console.log("error: " + error);
@@ -209,7 +210,7 @@
 		//코드 실행 및 제출 시 처리
 		const challenge = async (type) => {
 			//이메일 미인증 시 인증 유도
-			if ('[[ ${ session.emailAuth } ]]' != 'Y') {
+			if ('Y' != /*[[ ${ session.emailAuth } ]]*/'emailAuth') {
 				Swal.fire({
 					icon: 'error',
 					html: '이메일 인증이 필요합니다.<br>MyPage로 이동하시겠습니까?',
@@ -234,7 +235,7 @@
 				body: new URLSearchParams({
 					'type': type,
 					'tl_idx': tlIdx,
-					'code': setEditorContent(editor.getValue()),
+					'code': escapeHtml(editor.getValue()),
 					'correct_src': correctSrc,
 					'run_src': runSrc,
 					'subm_src': submSrc,
@@ -371,30 +372,44 @@
 			}
 		}
 		
-		async function bookmark(testIdx, action) {
-			try {
-				const response = await fetch('/test/bookmark', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({ testIdx, action })
-				});
-				const data = await response.json();
-				const bookmarkaddBtn = document.getElementById(`bookmark-add-${testIdx}`);
-				const bookremoveBtn = document.getElementById(`bookmark-remove-${testtIdx}`);
-				if (data.isbookmarked) {
-					bookmarkaddBtn.style.display = 'none';
-					bookremoveBtn.style.display = 'inline';
+		//문제 북마크 추가 및 제거
+		const bookmark = async () => {
+			if ('' == /*[[ ${ session.email } ]]*/'email') return false;
+			
+			const bookmarkBtn = document.querySelector('#bookmark-btn');
+			let kind = (bookmarkBtn.getAttribute('kind') == 'Y') ? 'N' :
+									(bookmarkBtn.getAttribute('kind') == 'N') ? 'Y' : '';
+			
+			if (kind == '') return false;
+			
+			await fetch('/test/m/bookmark', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+				body: new URLSearchParams({
+					'idx': /*[[ ${ test.idx } ]]*/'idx',
+					'kind': kind
+				})
+			})
+			.then((response) => response.json())
+			.then((data) => {
+				if (data.message == 'good') {
+					if (kind == 'Y') {
+						bookmarkBtn.classList.remove('xi-bookmark-o');
+						bookmarkBtn.classList.add('xi-bookmark');
+					} else if (kind == 'N') {
+						bookmarkBtn.classList.remove('xi-bookmark');
+						bookmarkBtn.classList.add('xi-bookmark-o');
+					}
+					
+					bookmarkBtn.setAttribute('kind', kind);
 				} else {
-					bookmarkaddBtn.style.display = 'inline';
-					bookremoveBtn.style.display = 'none';
+					Swal.fire({
+						icon: 'error',
+						text: '시스템 장애로 인해 문제 북마크 ' + ((kind == 'Y') ? '추가' : (kind == 'N') ? '제거' : '처리') + '에 실패했습니다.',
+						confirmButtonText: '확인'
+					});
 				}
-			} catch (error) {
-				console.error("좋아요 상태를 변경할 수 없습니다:", error);
-			} finally {
-				location.reload(true);
-			}
+			});
 		}
 	</script>
 </body>

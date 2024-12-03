@@ -55,6 +55,12 @@ public class TestLngEntity {
 
 	@Column(name = "subm_src", length = 2000, nullable = false)
 	private String submSrc;
+	
+	@Column(name = "run_src_2", length = 2000, nullable = true)
+	private String runSrc2;
+	
+	@Column(name = "subm_src_2", length = 2000, nullable = true)
+	private String submSrc2;
 
 	@Column(name = "regdate", nullable = false)
 	private LocalDateTime regdate;

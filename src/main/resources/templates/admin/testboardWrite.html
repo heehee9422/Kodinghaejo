@@ -10,6 +10,8 @@
 <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
 <!-- pub-js link -->
 <script src="/js/pub-ui-custom.js"></script>
+<!-- common-js link -->
+<script src="/js/common.js"></script>
 </head>
 <body>
 	<!-- header 영역 -->
@@ -73,36 +75,24 @@
 			previewStyle: 'vertical',
 			height: '400px',
 			initialEditType: 'markdown',
-			initialValue: `### 문제 설명
-ex)정수 num1과 num2가 주어질 때, num1에서 num2를 뺀 값을 return하도록 solution 함수를 완성해주세요.
-
- --- 
-
-	 ### 제한사항
-
-	- 첫번째 제한사항을 작성하세요.
-	- 두번째 제한사항을 작성하세요.
-	- 세번째 제한사항을 작성하세요.
-	- 네번째 제한사항을 작성하세요.
-
-	 ### 입출력 예
-
-	 | num1 | num2 | result |
-	 |------|------|--------|
-	 |	 |	 |		|
-	 |	 |	 |		|
-
- --- 
-
-	 ### 입출력 예 설명
-
-	 ##### 입출력 예 #1
-
-	 - ex)num1이 2이고 num2가 3이므로 2 - 3 = -1을 return합니다.
-
-	 ##### 입출력 예 #2
-
-	 - ex)num1이 100이고 num2가 2이므로 100 - 2 = 98을 return합니다.`
+			initialValue: '#### 문제 설명\n\n' +
+										'ex)정수 `num1`과 `num2`가 주어질 때, `num1`에서 `num2`를 뺀 값을 return하도록 solution 함수를 완성해주세요.\n' +
+										'***\n\n' +
+										'#### 제한사항\n\n' +
+										'* ex)-50000 ≤ `num1` ≤ 50000\n' +
+										'* ex)-50000 ≤ `num2` ≤ 50000\n' +
+										'***\n' +
+										'#### 입출력 예\n\n' +
+										'| num1 | num2 | result |\n' +
+										'|------|------|--------|\n' +
+										'| ex)2 | ex)3 | ex)-1 |\n' +
+										'| ex)100 | ex)2 | ex)98 |\n\n' +
+										'***\n\n' +
+										'#### 입출력 예 설명\n' +
+										'###### 입출력 예 #1\n\n' +
+										'* ex)`num1`이 2이고 `num2`가 3이므로 2 - 3 = -1을 return합니다.\n\n' +
+										'###### 입출력 예 #2\n\n' +
+										'* ex)`num1`이 100이고 `num2`가 2이므로 100 - 2 = 98을 return합니다.'
 		});
 
 		let languageIndex = 0;
@@ -234,7 +224,7 @@ ex)정수 num1과 num2가 주어질 때, num1에서 num2를 뺀 값을 return하
 			}
 			const data = {
 				title: title.value,
-				descr: content,
+				descr: escapeHtml(content),
 				diff: document.querySelector("select[name='category-level']").value,
 				regdate: new Date().toISOString(),
 				isUse: "Y",
@@ -244,12 +234,18 @@ ex)정수 num1과 num2가 주어질 때, num1에서 num2를 뺀 값을 return하
 			editors.forEach((editor, index) => {
 				console.log('index: ' + index);
 				const languageCode = document.querySelector(`select[name='testLngList[${index}].language']`).value;
+				
+				const submSrc = escapeHtml(editor.submSrcEditor.getValue());
+				const runSrc = escapeHtml(editor.runSrcEditor.getValue());
+				
 				data.testLngList.push({
 					lng: languageCode === 'java' ? 'LNG-0001' : 'LNG-0002',
-					content: editor.contentEditor.getValue().replaceAll('\n', '\\n').replaceAll('\t', '\\t'),
-					correct: editor.correctEditor.getValue().replaceAll('\n', '\\n').replaceAll('\t', '\\t'),
-					submSrc: editor.submSrcEditor.getValue().replaceAll('\n', '\\n').replaceAll('\t', '\\t'),
-					runSrc: editor.runSrcEditor.getValue().replaceAll('\n', '\\n').replaceAll('\t', '\\t'),
+					content: escapeHtml(editor.contentEditor.getValue()),
+					correct: escapeHtml(editor.correctEditor.getValue()),
+					submSrc: (submSrc.length > 2000) ? submSrc.substring(0, 2000) : submSrc,
+					runSrc: (runSrc.length > 2000) ? runSrc.substring(0, 2000) : runSrc,
+					submSrc2: (submSrc.length > 2000) ? submSrc.substring(2000) : ' ',
+					runSrc2: (runSrc.length > 2000) ? runSrc.substring(2000) : ' ',
 					regdate: data.regdate,
 					isUse: data.isUse
 				});

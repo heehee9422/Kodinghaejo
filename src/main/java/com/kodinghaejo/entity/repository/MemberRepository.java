@@ -25,16 +25,17 @@ public interface MemberRepository extends JpaRepository<MemberEntity, String> {
 
 	//일별 가입자 수
 	public long countByRegdateBetween(LocalDateTime startOfDay, LocalDateTime endOfDay);
-	
+
 	//월별 가입자 수(매년)
 	@Query("SELECT MONTH(m.regdate) AS month, COUNT(m) AS count FROM member m WHERE YEAR(m.regdate) = :currentYear GROUP BY MONTH(m.regdate)")
 	List<Object[]> findMonthlySignups(@Param("currentYear") int currentYear);
-	
+
 	public Optional<MemberEntity> findByEmail(String email);
 
 	//sort 기준으로 회원찾기
+	@Override
 	public List<MemberEntity> findAll(Sort sort);
-	
+
 	//사용여부로 회원찾기
 	public List<MemberEntity> findByIsUse(String isUse);
 

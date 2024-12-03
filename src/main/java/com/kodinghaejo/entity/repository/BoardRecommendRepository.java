@@ -21,7 +21,7 @@ public interface BoardRecommendRepository extends JpaRepository<BoardRecommendEn
 
 	//좋아요 상태 확인
 	public Long countByEmailAndBoardIdxAndGoodChkAndIsUse(MemberEntity email, BoardEntity boardIdx, String goodChk, String isUse);
-	
+
 	//신고 여부 확인
 	public Long countByEmailAndBoardIdxAndBadChkAndIsUse(MemberEntity email, BoardEntity boardIdx, String badChk, String isUse);
 

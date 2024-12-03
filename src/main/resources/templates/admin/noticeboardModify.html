@@ -51,14 +51,14 @@
 	<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
 	<link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
 	<!-- Custom Script -->
-	<script type="text/javascript">
-		const editorContent = `[[ ${ board.content } ]]`;
+	<script type="text/javascript" th:inline="javascript">
+		const editorContent = /*[[ ${ board.content } ]]*/'공지 내용';
 		
 		const editor = new toastui.Editor({
 			el: document.querySelector('#content'), 
 			height: '400px',
 			initialEditType: 'markdown',
-			initialValue: getEditorContent(editorContent),
+			initialValue: unescapeHtml(editorContent),
 			toolbarItems: [
 				['heading', 'bold', 'italic', 'strike'],
 				['hr', 'quote'],

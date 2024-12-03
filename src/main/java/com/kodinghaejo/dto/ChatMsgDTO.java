@@ -28,7 +28,7 @@ public class ChatMsgDTO {
 	private String content;
 	private LocalDateTime regdate;
 	private String isUse;
-	
+
 	private MessageType type; //메시지 타입
 
 	//Entity --> DTO 이동

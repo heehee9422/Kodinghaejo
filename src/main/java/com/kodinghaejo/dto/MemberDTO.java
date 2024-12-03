@@ -45,7 +45,7 @@ public class MemberDTO {
 	private String joinRoute;
 	private String accToken;
 	private String isUse;
-	
+
 	private Long correctCount;
 	private Long submitCount;
 	private double correctRate;

@@ -11,7 +11,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
@@ -22,6 +21,7 @@ import com.kodinghaejo.entity.TestLngEntity;
 import com.kodinghaejo.service.BaseService;
 import com.kodinghaejo.service.TestService;
 import com.kodinghaejo.util.PageUtil;
+import com.kodinghaejo.util.ReplaceUtil;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
@@ -78,7 +78,7 @@ public class TestController {
 		model.addAttribute("java", service.lngAvlChk(idx, "LNG-0001"));
 		model.addAttribute("js", service.lngAvlChk(idx, "LNG-0002"));
 		model.addAttribute("oracle", service.lngAvlChk(idx, "LNG-0003"));
-		model.addAttribute("isbookmarked", service.isBookmarked(email, idx));
+		model.addAttribute("isBookmarked", (email == null) ? "N" : service.isBookmarked(email, idx));
 	}
 
 	//코딩테스트 언어별 문제 가져오기
@@ -86,19 +86,8 @@ public class TestController {
 	@PostMapping("/test/language")
 	public Map<String, Object> postLanguage(@RequestParam("test_idx") Long testIdx,
 			@RequestParam("language") String language) throws Exception {
-		log.info("==================== test_idx: {} ====================", testIdx);
-		log.info("==================== language: {} ====================", language);
 
 		TestLngEntity result = service.loadTestLng(testIdx, language);
-		log.info("==================== result.getIdx(): {} ====================", result.getIdx());
-		log.info("==================== result.getTestIdx(): {} ====================", result.getTestIdx().getIdx());
-		log.info("==================== result.getLng(): {} ====================", result.getLng());
-		log.info("==================== result.getContent(): {} ====================", result.getContent());
-		log.info("==================== result.getCorrect(): {} ====================", result.getCorrect());
-		log.info("==================== result.getRunSrc(): {} ====================", result.getRunSrc());
-		log.info("==================== result.getSubmSrc(): {} ====================", result.getSubmSrc());
-		log.info("==================== result.getRegdate(): {} ====================", result.getRegdate());
-		log.info("==================== result.getIsUse(): {} ====================", result.getIsUse());
 
 		Map<String, Object> data = new HashMap<>();
 		data.put("idx", result.getIdx());
@@ -106,6 +95,8 @@ public class TestController {
 		data.put("correct_src", result.getCorrect());
 		data.put("run_src", result.getRunSrc());
 		data.put("subm_src", result.getSubmSrc());
+		data.put("run_src_2", result.getRunSrc2());
+		data.put("subm_src_2", result.getSubmSrc2());
 
 		return data;
 	}
@@ -131,8 +122,9 @@ public class TestController {
 		Path path = Paths.get("submissions/" + filename);
 		Files.createDirectories(path.getParent()); //경로가 없으면 생성
 
-		Files.write(path, code.getBytes()); //코드 파일로 저장
-		service.createVerifyFiles((type.equals("run") ? runSrc : type.equals("submit") ? submSrc : ""), correctSrc);
+		Files.write(path, new ReplaceUtil().unescapeHtml(code).getBytes()); //코드 파일로 저장
+		
+		service.createVerifyFiles((type.equals("run") ? runSrc : type.equals("submit") ? submSrc : ""), correctSrc, language);
 
 		//코드 실행 로직 호출
 		String result = service.testCode(language, path.toString()); //실행 결과 반환
@@ -149,7 +141,7 @@ public class TestController {
 			boolean isAdd = service.submitTest(tlIdx, email, submSts, code);
 
 			int diff = service.getTestDiff(tlIdx);
-			
+
 			long scoreToAdd = switch (diff) {
 				case 0 -> 1L;
 				case 1 -> 4L;
@@ -157,7 +149,7 @@ public class TestController {
 				case 3 -> 10L;
 				default -> 0L;
 			};
-			
+
 			if (isAdd && scoreToAdd > 0 && submSts.equals("Y")) {
 				service.updateMemberScore(email, scoreToAdd);
 			}
@@ -165,19 +157,15 @@ public class TestController {
 
 		return result;
 	}
-	
-	//북마크 
+
+	//북마크
 	@ResponseBody
-	@PostMapping("/test/bookmark")
-	public Map<String, Object> toggleLike(@RequestBody Map<String, Object> requestData, HttpSession session) {
+	@PostMapping("/test/m/bookmark")
+	public String bookmark(@RequestParam("idx") Long idx, @RequestParam("kind") String kind, HttpSession session) {
 		String email = (String) session.getAttribute("email");
-		Long testIdx = Long.valueOf(requestData.get("testIdx").toString());
-		String action = (String) requestData.get("action");
-		boolean isbookmarked = "add".equals(action) ? service.addBookmark(email, testIdx) : service.removeBookemark(email, testIdx);
-		System.out.println(isbookmarked);
-		Map<String, Object> response = new HashMap<>();
-		response.put("isbookmarked", isbookmarked);
-		return response;
-	}	
+		service.bookmark(email, idx, kind);
+		
+		return "{ \"message\": \"good\" }";
+	}
 
 }

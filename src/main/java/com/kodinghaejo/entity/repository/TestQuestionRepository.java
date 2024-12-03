@@ -19,23 +19,23 @@ public interface TestQuestionRepository extends JpaRepository<TestQuestionEntity
 	//========== 질문 게시판 목록 ==========
 	//모든 질문
 	public List<TestQuestionEntity> findByIsUseOrderByIdxDesc(String isUse);
-	
+
 	//내 질문
 	public List<TestQuestionEntity> findByEmailAndTitleContainingAndIsUseOrderByIdxDesc(MemberEntity email, String title, String isUse);
-	
+
 	//해당 문제의 질문
 	public List<TestQuestionEntity> findByTlIdxAndTitleContainingAndIsUseOrderByIdxDesc(TestLngEntity tlIdx, String title, String isUse);
-	
+
 	//========== 질문 게시판 상세 ==========
 	//질문 상세보기
 	public Optional<TestQuestionEntity> findByIdxAndIsUse(Long idx, String isUse);
-	
+
 	//========== 이전 ==========
-	
+
 	Page<TestQuestionEntity> findByTitleContaining(String searchKeyword, Pageable pageable);
 
 	public List<TestQuestionEntity> findByEmailAndIsUse(MemberEntity email, String isUse);
-	
+
 	//모든 문제 문제정보랑 같이 가져오기 (isUse 가
 //	@Query("SELECT q FROM testQuestion q JOIN FETCH q.tlIdx.testIdx t WHERE q.isUse = 'Y' ORDER BY q.idx DESC")
 //	List<TestQuestionEntity> findAllWithTestInfo();
@@ -45,6 +45,7 @@ public interface TestQuestionRepository extends JpaRepository<TestQuestionEntity
 	List<TestQuestionEntity> findQuestionsByTestIdx(@Param("testIdx") Long testIdx);
 
 	//모든 질문 개수
+	@Override
 	@Query("SELECT COUNT(q) FROM testQuestion q WHERE q.isUse = 'Y'")
 	long count();
 
@@ -79,11 +80,11 @@ public interface TestQuestionRepository extends JpaRepository<TestQuestionEntity
 	long countQuestionsWithNoAnswers();
 
 	//문제 제목 또는 질문 제목으로 검색
-	@Query("SELECT q FROM testQuestion q " + 
-					"JOIN q.tlIdx.testIdx t " + 
+	@Query("SELECT q FROM testQuestion q " +
+					"JOIN q.tlIdx.testIdx t " +
 					"WHERE q.isUse = 'Y' AND t.isUse = 'Y' AND " +
 					"(q.title LIKE %:keyword% OR t.title LIKE %:keyword%) " +
 					"ORDER BY q.idx DESC")
 	List<TestQuestionEntity> searchQuestionsByKeyword(@Param("keyword") String keyword);
-	
+
 }

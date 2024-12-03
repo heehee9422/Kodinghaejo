@@ -26,63 +26,63 @@ import lombok.extern.log4j.Log4j2;
 @AllArgsConstructor
 @Log4j2
 public class OAuth2UserDetailsServiceImpl extends DefaultOAuth2UserService {
-	
+
 	private final PasswordEncoder pwEncoder;
 	private final MemberService service;
 	private final MemberRepository memberRepository;
 	private final HttpSession session;
-	
+
 	@Override
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 		OAuth2User oAuth2User = super.loadUser(userRequest);
-		
+
 		String provider = userRequest.getClientRegistration().getRegistrationId();
 		String providerId = oAuth2User.getAttribute("sub");
 		String email = null;
 		String username = null;
-		
+
 		switch (provider) {
 			case "google":
 				email = oAuth2User.getAttribute("email");
 				username = oAuth2User.getAttribute("name");
 				break;
-				
+
 			case "naver":
 				Map<String, Object> response = oAuth2User.getAttribute("response");
 				email = (String) response.get("email");
 				username = (String) response.get("name");
 				break;
 		}
-		
+
 		log.info("========== OAuth2 로그인 단계: Provider 정보({}) ==========", provider);
 		log.info("========== OAuth2 로그인 단계: Provider ID 정보({}) ==========", providerId);
 		log.info("========== OAuth2 로그인 단계: email 정보({}) ==========", email);
 		log.info("========== OAuth2 로그인 단계: username 정보({}) ==========", username);
-		
+
 		oAuth2User.getAttributes().forEach((k, v) -> {
 			log.info(k + ": " + v);
 		});
-		
+
 		MemberEntity member = saveSocialMember(email, provider, username);
 
 		List<SimpleGrantedAuthority> grantedAuthorities = new ArrayList<>();
 		SimpleGrantedAuthority grantedAuthority = new SimpleGrantedAuthority(member.getLvl());
 		grantedAuthorities.add(grantedAuthority);
-		
+
 		log.info("========== OAuth2 로그인 단계: role 설정({}) ==========", grantedAuthority.toString());
-		
+
 		MemberOAuth2DTO memberOAuth2DTO = new MemberOAuth2DTO();
 		memberOAuth2DTO.setAttribute(oAuth2User.getAttributes());
 		memberOAuth2DTO.setAuthorities(grantedAuthorities);
 		memberOAuth2DTO.setName(member.getUsername());
-		
+
 		service.lastdateUpdate(email, "login");
 		service.memberLogRegistry(email, "login");
-		
+
 		//닉네임 값이 없을 경우 이름으로 대체
 		String nickname = (member.getNickname() != null && !member.getNickname().equals("")) ?
 												member.getNickname() : member.getUsername();
-		
+
 		session.setAttribute("email", email);
 		session.setAttribute("username", member.getUsername());
 		session.setAttribute("nickname", nickname);
@@ -98,17 +98,17 @@ public class OAuth2UserDetailsServiceImpl extends DefaultOAuth2UserService {
 		log.info("========== 세션 lvl: {} ==========", member.getLvl());
 		log.info("========== 세션 joinRoute: {} ==========", provider);
 		log.info("========== 세션 storedImg: {} ==========", member.getStoredImg());
-		
+
 		return memberOAuth2DTO;
 	}
-	
+
 	private MemberEntity saveSocialMember(String email, String provider, String username) {
 		Optional<MemberEntity> result = memberRepository.findById(email);
 		MemberEntity member;
-		
+
 		if (result.isPresent()) {
 			member = result.get();
-			
+
 			if (member.getIsUse().equals("N"))
 				service.restoreAccount(email);
 		} else {
@@ -132,7 +132,7 @@ public class OAuth2UserDetailsServiceImpl extends DefaultOAuth2UserService {
 															.build();
 			memberRepository.save(member);
 		}
-		
+
 		return member;
 	}
 

@@ -48,7 +48,7 @@ public interface BoardService {
 	public void hitno(Long idx) throws Exception;
 
 	//게시물 추천 처리
-	public void recommend(Long boardIdx, String email, String kind);
+	public void recommend(Long idx, String email, String kind);
 
 	//신고하기
 	public String reportPost(String email, Long boardIdx);
@@ -59,10 +59,10 @@ public interface BoardService {
 	//=========질문게시판==========
 	//질문 등록
 	public Long questionWrite(Long tlIdx, String email, String writer, String title, String content) throws Exception;
-	
+
 	//질문 가져오기(NEW)
 	public Page<TestQuestionDTO> getQuestionList(int pageNum, int postNum, String kind, String keyword, String email);
-	
+
 	//질문 상세보기
 	public TestQuestionDTO getQuestionInfo(Long idx);
 
@@ -119,10 +119,10 @@ public interface BoardService {
 
 	//답변없는 질문 가져오기
 	public List<TestQuestionEntity> getQuestionsWithNoAnswers();
-	
+
 	//답변없는 질문 갯수 가져오기
 	public long getQuestionWithNoAnswersCount();
-	
+
 	// 문제 제목 또는 질문 제목으로 검색
 	public List<TestQuestionEntity> searchQuestions(String keyword);
 

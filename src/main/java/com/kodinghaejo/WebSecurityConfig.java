@@ -37,7 +37,7 @@ public class WebSecurityConfig {
 		return (web) -> web.ignoring().requestMatchers("/img/**", "/css/**", "/js/**");
 	}
 	*/
-	
+
 	//스프링 시큐리티 로그인 화면 사용 비활성화, CSRF/CORS 공격 방어용 보안 설정 비활성화
 	@Bean
 	SecurityFilterChain filter(HttpSecurity http) throws Exception {
@@ -65,7 +65,7 @@ public class WebSecurityConfig {
 				.loginPage("/member/login")
 				.successHandler(oAuth2SuccessHandler)
 				.failureHandler(oAuth2FailureHandler));
-		
+
 		//스프링 시큐리티의 접근권한 설정(Access Control)
 		http
 			.authorizeHttpRequests((authz) -> authz

@@ -41,13 +41,12 @@
 					</ol>
 					<ol>
 						<li>
-							<i th:if="${ view.goodChk == 'Y' }" th:onclick="|recommend('${ view.idx }')|" th:id="@{ 'good-' + ${ view.idx } }" th:kind="${ view.goodChk }" class="xi-heart"><span th:id="@{ 'good-count-' + ${ view.idx } }" th:text="${ view.goodCnt }">{0}</span></i>
-							<i th:if="${ view.goodChk == 'N' }" th:onclick="|recommend('${ view.idx }')|" th:id="@{ 'good-' + ${ view.idx } }" th:kind="${ view.goodChk }" class="xi-heart-o"><span th:id="@{ 'good-count-' + ${ view.idx } }" th:text="${ view.goodCnt }">{0}</span></i>
+							<i onclick="recommend()" id="good-btn" th:kind="${ view.goodChk }" th:class="${ view.goodChk == 'Y' ? 'xi-heart' : 'xi-heart-o' }"><span th:id="@{ 'good-count' }" th:text="${ view.goodCnt }">{0}</span></i>
 						</li>
-						<li><i class="xi-cut" th:onclick="|reportBoard('${ view.Idx }')|"><span>신고하기</span></i></li>
+						<li><i class="xi-cut" th:onclick="|reportBoard()|"><span>신고하기</span></i></li>
 						<th:block th:if="${ session.email == view.email.email }">
 						<li><i class="xi-pen" th:onclick="|location.href='/board/m/freeboardModify?idx=${ view.idx }'|"><span>수정하기</span></i></li>
-						<li><i class="xi-trash" th:onclick="|deleteBoard('${ view.idx }')|"><span>삭제하기</span></i></li>
+						<li><i class="xi-trash" onclick="deleteBoard()"><span>삭제하기</span></i></li>
 						</th:block>
 					</ol>
 				</div>
@@ -93,15 +92,15 @@
 		const viewer = new toastui.Editor.factory({
 			el: document.querySelector('#content'),
 			viewer: true,
-			initialValue: getEditorContent(`[[ ${ view.content } ]]`)
+			initialValue: unescapeHtml(`[[ ${ view.content } ]]`)
 		});
 
 		//게시물 추천
 		const recommend = async () => {
 			if ('[[ ${ session.email } ]]' == '') return false;
 			
-			const goodBtn = document.querySelector('#good-[[ ${ view.idx } ]]');
-			const goodCnt = document.querySelector('#good-count-[[ ${ view.idx } ]]');
+			const goodBtn = document.querySelector('#good-btn');
+			const goodCnt = document.querySelector('#good-count');
 			let goodCntNum = parseInt(goodCnt.innerText);
 			let kind = (goodBtn.getAttribute("kind") == 'Y') ? 'N' : 
 									(goodBtn.getAttribute("kind") == 'N') ? 'Y' : '';
@@ -112,8 +111,7 @@
 				method: 'POST',
 				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 				body: new URLSearchParams({
-					'board_idx': '[[ ${ view.idx } ]]',
-					'email': '[[ ${ session.email } ]]',
+					'idx': '[[ ${ view.idx } ]]',
 					'kind': kind
 				})
 			})
@@ -139,7 +137,7 @@
 						confirmButtonText: '확인'
 					});
 				}
-			})
+			});
 		}
 		
 		//게시물 신고
@@ -156,7 +154,7 @@
 			.then((result) => {
 				if (result.isConfirmed) {
 					let formData = new FormData();
-					formData.append('board_idx', parseInt('[[ ${ view.idx } ]]'));
+					formData.append('idx', parseInt('[[ ${ view.idx } ]]'));
 					
 					fetch('/board/m/report', {
 						method: 'POST',
@@ -205,7 +203,7 @@
 		}
 		
 		//게시물 삭제
-		const deleteBoard = async (idx) => {
+		const deleteBoard = async () => {
 			//이메일 미인증 시 인증 유도
 			if ('[[ ${ session.emailAuth } ]]' != 'Y') {
 				await Swal.fire({
@@ -233,7 +231,7 @@
 			.then((result) => {
 				if (result.isConfirmed) {
 					let formData = new FormData();
-					formData.append('idx', idx);
+					formData.append('idx', parseInt('[[ ${ view.idx } ]]'));
 					
 					fetch('/board/m/delete', {
 						method: 'POST',
@@ -383,7 +381,7 @@
 				const replyViewer = new toastui.Editor.factory({
 					el: document.querySelector('#reply-content-' + jsonInfo[i].idx),
 					viewer: true,
-					initialValue: getEditorContent(jsonInfo[i].content)
+					initialValue: unescapeHtml(jsonInfo[i].content)
 				});
 				
 				replyViewerContents[jsonInfo[i].idx] = jsonInfo[i].content;
@@ -432,7 +430,7 @@
 			}
 				
 			let formData = new FormData(replyForm);
-			formData.append('content', setEditorContent(content)); //Toast UI Editor의 내용을 FormData에 추가
+			formData.append('content', escapeHtml(content)); //Toast UI Editor의 내용을 FormData에 추가
 				
 			await fetch('/board/m/replyWrite', {
 				method: 'POST',
@@ -496,7 +494,7 @@
 				const replyViewer = new toastui.Editor.factory({
 					el: document.querySelector('#reply-content-' + jsonInfo.idx),
 					viewer: true,
-					initialValue: getEditorContent(jsonInfo.content)
+					initialValue: unescapeHtml(jsonInfo.content)
 				});
 				
 				replyViewerContents[jsonInfo.idx] = jsonInfo.content;
@@ -538,7 +536,7 @@
 				const replyViewer = new toastui.Editor.factory({
 					el: document.querySelector('#reply-content-' + modifyReplyIdx),
 					viewer: true,
-					initialValue: getEditorContent(replyViewerContents[modifyReplyIdx])
+					initialValue: unescapeHtml(replyViewerContents[modifyReplyIdx])
 				});
 			}
 			
@@ -550,7 +548,7 @@
 			const replyEditor = new toastui.Editor({
 				el: document.querySelector('#reply-content-' + idx),
 				initialEditType: 'wysiwyg',
-				initialValue: getEditorContent(replyViewerContents[idx]),
+				initialValue: unescapeHtml(replyViewerContents[idx]),
 				placeholder: '내용을 입력해주세요.',
 				previewStyle: 'vertical',
 				toolbarItems: [
@@ -578,7 +576,7 @@
 				const replyViewer = new toastui.Editor.factory({
 					el: document.querySelector('#reply-content-' + modifyReplyIdx),
 					viewer: true,
-					initialValue: getEditorContent(replyViewerContents[modifyReplyIdx])
+					initialValue: unescapeHtml(replyViewerContents[modifyReplyIdx])
 				});
 				document.querySelector('#reply-content-' + modifyReplyIdx).removeAttribute('style');
 				
@@ -599,7 +597,7 @@
 				
 				let formData = new FormData();
 				formData.append('idx', modifyReplyIdx);
-				formData.append('content', setEditorContent(content));
+				formData.append('content', escapeHtml(content));
 				
 				await fetch('/board/m/replyModify', {
 					method: 'POST',

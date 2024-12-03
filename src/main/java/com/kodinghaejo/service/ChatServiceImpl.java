@@ -64,7 +64,7 @@ public class ChatServiceImpl implements ChatService {
 	public ChatDTO findRoomById(String idx) {
 		return chatRooms.get(idx);
 	}
-	
+
 	// 채팅방 인원수 가져오기
 	@Override
 	public int countMembers(Long chatIdx) {
@@ -87,7 +87,7 @@ public class ChatServiceImpl implements ChatService {
 
 		return entity.getIdx();
 	}
-	
+
 	// 유저목록에서 유저를 선택하고 1:1대화방 생성
 	//대화방 새로 생성
 	@Override
@@ -103,7 +103,7 @@ public class ChatServiceImpl implements ChatService {
 													.descr(chatdto.getDescr())
 													.build();
 		chatRepository.save(entity);
-	
+
 		return entity.getIdx();
 	}
 
@@ -166,6 +166,7 @@ public class ChatServiceImpl implements ChatService {
 	}
 
 	//채팅방에 접속을 하면 채팅멤버 테이블에 채팅멤버가 등록
+	@Override
 	public void addUserToRoom(Long chatidx, String email, String username, String manager) {
 		ChatEntity chatRoom = findRoomById(chatidx);
 		MemberEntity chatEmail = memberRepository.findById(email).get();
@@ -174,17 +175,17 @@ public class ChatServiceImpl implements ChatService {
 			return;// 채팅멤버가 이미 있으면 그냥종료
 		} else if (manager != "Y") {
 			manager = "N";} //createRoom()으로 방을 만들며 입장했으면 관리자로
-		
+
 			ChatMemberEntity chatmember = ChatMemberEntity
 																			.builder()
 																			.chatIdx(chatRoom)
-																			.email(chatEmail) 
+																			.email(chatEmail)
 																			.nickname(username)
 																			.manager(manager)
 																			.regdate(LocalDateTime.now())
 																			.build();
 			chatMemberRepository.save(chatmember);
-		
+
 	}
 
 	//메세지를 테이블에 저장하는 서비스

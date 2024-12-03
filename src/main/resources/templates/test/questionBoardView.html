@@ -148,7 +148,7 @@
 		const viewer = new toastui.Editor.factory({
 			el: document.querySelector('#content'),
 			viewer: true,
-			initialValue: getEditorContent(`[[ ${ view.content } ]]`)
+			initialValue: unescapeHtml(`[[ ${ view.content } ]]`)
 		});
 
 		//질문 삭제
@@ -234,7 +234,7 @@
 				const answerViewer = new toastui.Editor.factory({
 					el: document.querySelector('#answer-content-' + idx),
 					viewer: true,
-					initialValue: getEditorContent(content)
+					initialValue: unescapeHtml(content)
 				});
 				
 				answerViewerContents[idx] = content;
@@ -294,7 +294,7 @@
 			
 			let formData = new FormData();
 			formData.append('tq_idx', parseInt('[[ ${ view.idx } ]]'));
-			formData.append('content', setEditorContent(content));
+			formData.append('content', escapeHtml(content));
 				
 			await fetch('/test/m/answerWrite', {
 				method: 'POST',
@@ -366,7 +366,7 @@
 				const answerViewer = new toastui.Editor.factory({
 					el: document.querySelector('#answer-content-' + jsonInfo.idx),
 					viewer: true,
-					initialValue: getEditorContent(jsonInfo.content)
+					initialValue: unescapeHtml(jsonInfo.content)
 				});
 				
 				answerViewerContents[jsonInfo.idx] = jsonInfo.content;
@@ -409,7 +409,7 @@
 				const answerViewer = new toastui.Editor.factory({
 					el: document.querySelector('#answer-content-' + modifyAnswerIdx),
 					viewer: true,
-					initialValue: getEditorContent(answerViewerContents[modifyAnswerIdx])
+					initialValue: unescapeHtml(answerViewerContents[modifyAnswerIdx])
 				});
 			}
 			
@@ -421,7 +421,7 @@
 			const answerEditor = new toastui.Editor({
 				el: document.querySelector('#answer-content-' + idx),
 				initialEditType: 'wysiwyg',
-				initialValue: getEditorContent(answerViewerContents[idx]),
+				initialValue: unescapeHtml(answerViewerContents[idx]),
 				placeholder: '내용을 입력해주세요.',
 				previewStyle: 'vertical',
 				toolbarItems: [
@@ -448,7 +448,7 @@
 				const answerViewer = new toastui.Editor.factory({
 					el: document.querySelector('#answer-content-' + modifyAnswerIdx),
 					viewer: true,
-					initialValue: getEditorContent(answerViewerContents[modifyAnswerIdx])
+					initialValue: unescapeHtml(answerViewerContents[modifyAnswerIdx])
 				});
 				document.querySelector('#answer-content-' + modifyAnswerIdx).removeAttribute('style');
 				
@@ -469,7 +469,7 @@
 				
 				let formData = new FormData();
 				formData.append('idx', modifyAnswerIdx);
-				formData.append('content', setEditorContent(content));
+				formData.append('content', escapeHtml(content));
 				
 				await fetch('/test/m/answerModify', {
 					method: 'POST',
@@ -600,7 +600,7 @@
 				const idx = replyArr[i].getAttribute('idx');
 				const content = replyArr[i].getAttribute('content');
 	
-				replyArr[i].innerText = getEditorContent(content);
+				replyArr[i].innerText = unescapeHtml(content);
 				
 				replyContents[idx] = content;
 				
@@ -685,7 +685,7 @@
 				let result = '';
 				
 				result += '<p class="profile-name">' + jsonInfo.writer + '</p>\n' +
-									'<p class="reple-content" id="reply-content-' + jsonInfo.idx + '">' + getEditorContent(jsonInfo.content) + '</p>\n' +
+									'<p class="reple-content" id="reply-content-' + jsonInfo.idx + '">' + unescapeHtml(jsonInfo.content) + '</p>\n' +
 									'<p>' + regdate + '</p>\n' +
 									'<div id="reply-tab-' + jsonInfo.idx + '" class="reple-itme-btn-group">\n' +
 									'\t<a href="javascript:replyModify(\'' + val +'\', \'' + jsonInfo.idx + '\')">수정</a>\n' +
@@ -734,7 +734,7 @@
 				const replyContent = document.createElement('p');
 				replyContent.classList.add('reple-content');
 				replyContent.setAttribute('id', 'reply-content-' + modifyReplyIdxQ);
-				replyContent.innerText = getEditorContent(replyContents[modifyReplyIdxQ]);
+				replyContent.innerText = unescapeHtml(replyContents[modifyReplyIdxQ]);
 				
 				replyTexts[modifyReplyIdxQ].replaceWith(replyContent);
 				
@@ -749,7 +749,7 @@
 				const replyContent = document.createElement('p');
 				replyContent.classList.add('reple-content');
 				replyContent.setAttribute('id', 'reply-content-' + modifyReplyIdxA);
-				replyContent.innerText = getEditorContent(replyContents[modifyReplyIdxA]);
+				replyContent.innerText = unescapeHtml(replyContents[modifyReplyIdxA]);
 				
 				replyTexts[modifyReplyIdxQ].replaceWith(replyContent);
 				
@@ -763,7 +763,7 @@
 			const replyText = document.createElement('input');
 			replyText.setAttribute('type', 'text');
 			replyText.setAttribute('placeholder', '댓글을 작성해주세요.');
-			replyText.value = getEditorContent(replyContents[idx]);
+			replyText.value = unescapeHtml(replyContents[idx]);
 			
 			document.querySelector('#reply-content-' + idx).replaceWith(replyText);
 			
@@ -781,7 +781,7 @@
 					const replyContent = document.createElement('p');
 					replyContent.classList.add('reple-content');
 					replyContent.setAttribute('id', 'reply-content-' + modifyReplyIdxQ);
-					replyContent.innerText = getEditorContent(replyContents[modifyReplyIdxQ]);
+					replyContent.innerText = unescapeHtml(replyContents[modifyReplyIdxQ]);
 					
 					replyTexts[modifyReplyIdxQ].replaceWith(replyContent);
 					
@@ -796,7 +796,7 @@
 					const replyContent = document.createElement('p');
 					replyContent.classList.add('reple-content');
 					replyContent.setAttribute('id', 'reply-content-' + modifyReplyIdxA);
-					replyContent.innerText = getEditorContent(replyContents[modifyReplyIdxA]);
+					replyContent.innerText = unescapeHtml(replyContents[modifyReplyIdxA]);
 					
 					replyTexts[modifyReplyIdxQ].replaceWith(replyContent);
 					
@@ -819,7 +819,7 @@
 				
 				let formData = new FormData();
 				formData.append('idx', targetIdx);
-				formData.append('content', setEditorContent(content));
+				formData.append('content', escapeHtml(content));
 				
 				await fetch('/test/m/replyModify', {
 					method: 'POST',

@@ -152,21 +152,21 @@ public class ChatController {
 
 	/*
 	//이부분 수정중 <
-	
+
 	@ResponseBody
-	
+
 	@PostMapping("/chat/chatview") public String postChat(ChatMsgDTO chatmsg) {
 	Long chatIdx = chatService.postMessage(chatmsg, chatIdx); //채팅내역 로그
 	log.info("--------------------- 작성된 채팅 idx : {} ---------------------"
 	,chatMsgIdx); return "{\"message\":\"good\",\"idx\":\"\"" + chatMsgIdx +
 	"\"}"; }
-	
+
 	@GetMapping("/chat/chat") public void chat0(Model model) { //채팅 시작 로그
 	log.info("--------------------- 채팅 시작 ---------------------");
 	model.addAttribute("list", chatService.findAllRooms()); }
-	
+
 	@ResponseBody
-	
+
 	@PostMapping("/chat/chat") public String chat1(@RequestParam("title") String
 	title) { ChatDTO chatDTO = chatService.createRoom(title);
 	log.info("--------------------- 새로 생성된 idx : {} ---------------------"

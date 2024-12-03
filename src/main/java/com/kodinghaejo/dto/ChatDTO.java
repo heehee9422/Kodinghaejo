@@ -69,7 +69,7 @@ public class ChatDTO {
 
 		return entity;
 	}
-	
+
 	public void handleActions(WebSocketSession session, ChatMsgDTO chatMessage, ChatService chatService) {
 		if (chatMessage.getType().equals(ChatMsgDTO.MessageType.ENTER)) {
 			sessions.add(session);

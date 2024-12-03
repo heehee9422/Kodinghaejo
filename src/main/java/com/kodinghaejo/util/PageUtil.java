@@ -10,7 +10,7 @@ public class PageUtil {
 		//pageListCount : 하단 페이지리스트에 보여질 페이지 갯수
 		//totalCount : 전체 행 갯수
 		//params : 페이지를 제외한 나머지 파라미터값
-		
+
 		//totalPage : 전체 페이지 갯수
 		//section : 한 개의 페이지 목록 예) 1 2 3 4 5 --> section 1, 6 7 8 9 10 --> section 2
 		//totalSection : 전체 section 갯수
@@ -89,5 +89,5 @@ public class PageUtil {
 
 		return pageList;
 	}
-	
+
 }

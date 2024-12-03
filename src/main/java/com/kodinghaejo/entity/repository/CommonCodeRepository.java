@@ -16,11 +16,11 @@ import jakarta.transaction.Transactional;
 public interface CommonCodeRepository extends JpaRepository<CommonCodeEntity, String> {
 
 	public List<CommonCodeEntity> findByIsUseOrderByCodeAsc(String isUse);
-	
+
 	public Page<CommonCodeEntity> findByCodeContaining(String SearchKeyword, Pageable pageable);
-	
+
 	public Page<CommonCodeEntity> findByType(String type, Pageable pageable);
-	
+
 	@Modifying
 	@Transactional
 	@Query("DELETE FROM commonCode c WHERE c.code = :code")

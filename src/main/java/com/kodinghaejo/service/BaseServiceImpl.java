@@ -23,7 +23,7 @@ import lombok.AllArgsConstructor;
 @Service
 @AllArgsConstructor
 public class BaseServiceImpl implements BaseService {
-	
+
 	private final CommonCodeRepository commonCodeRepository;
 	private final BoardRepository boardRepository;
 	private final MemberRepository memberRepository;
@@ -76,17 +76,19 @@ public class BaseServiceImpl implements BaseService {
 
 		return data;
 	}
-	
+
 	//등록일 기준 신규 공지
+	@Override
 	public List<BoardEntity> getNewNotice(int count) {
 		Pageable pageable = PageRequest.of(0, count);
-			
+
 		List<BoardEntity> newNotice = boardRepository.findByCatOrderByRegdateDesc("CAT-0001", pageable);
-		
+
 		return newNotice;
 	}
 
 	//랭킹 리스트
+	@Override
 	public List<MemberDTO> memberRank(String kind) {
 
 		List<MemberEntity> memberEntities = memberRepository.findByIsUse("Y");
@@ -126,7 +128,7 @@ public class BaseServiceImpl implements BaseService {
 						return b.getScoredate().compareTo(a.getScoredate()); //내림차순으로 비교
 					}
 				}
-				
+
 				return scoreComparison;
 			});
 		}
@@ -134,6 +136,7 @@ public class BaseServiceImpl implements BaseService {
 	}
 
 	// 점수 등급
+	@Override
 	public String calGrade(Long score) {
 		if (score < 400) {
 			return "아이언 1";

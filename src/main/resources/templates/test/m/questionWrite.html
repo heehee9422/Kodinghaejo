@@ -116,7 +116,7 @@
 			let formData = new FormData();
 			formData.append('tl_idx', parseInt('[[ ${ lng.idx } ]]'));
 			formData.append('title', title.value);
-			formData.append('content', setEditorContent(content));
+			formData.append('content', escapeHtml(content));
 			
 			await fetch('/test/m/questionWrite', {
 				method: 'POST',
