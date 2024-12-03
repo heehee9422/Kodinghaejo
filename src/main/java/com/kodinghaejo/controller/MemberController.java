@@ -250,34 +250,40 @@ public class MemberController {
 	//회원 프로필 이미지 보기
 	@GetMapping("/member/img/{email}")
 	public void filedownload(@PathVariable("email") String email, HttpServletResponse rs) throws Exception {
-		//운영체제에 따라 이미지가 저장될 디렉토리 구조 설정 시작
-		String os = System.getProperty("os.name").toLowerCase();
-		String path;
-		if (os.contains("win"))
-			path = "Z:\\임시저장소\\프로젝트관리\\1회차\\2조\\Repository\\profile\\";//"C:\\Repository\\Kodinghaejo\\profile\\";
-		else
-			path = "/home/mklee/Repository/Kodinghaejo/profile/";
+	//운영체제에 따라 이미지가 저장될 디렉토리 구조 설정 시작
+			String os = System.getProperty("os.name").toLowerCase();
+			String path;
+			if (os.contains("win"))
+				path = "Z:\\임시저장소\\프로젝트관리\\1회차\\2조\\Repository\\profile\\";//"C:\\Repository\\Kodinghaejo\\profile\\";
+			else
+				path = "/home/mklee/Repository/Kodinghaejo/profile/";
+			
+			String defaultImg = "nonoping.png";
+			
+			//디렉토리가 존재하는지 체크해서 없다면 생성
+			File p = new File(path);
+			if (!p.exists())
+				p.mkdirs();
+			//운영체제에 따라 이미지가 저장될 디렉토리 구조 설정 종료
 
-		//디렉토리가 존재하는지 체크해서 없다면 생성
-		File p = new File(path);
-		if (!p.exists())
-			p.mkdirs();
-		//운영체제에 따라 이미지가 저장될 디렉토리 구조 설정 종료
+			MemberDTO member = service.memberInfo(email);
+			
+			String storedImg = (member.getStoredImg() != null && !member.getStoredImg().isEmpty()) 
+					? member.getStoredImg() 
+					: defaultImg;
+			
+			//다운로드할 파일의 경로와 파일명을 매개변수로 입력받아 byte 데이터타입의 1차원 배열로 저장
+			byte[] fileByte = FileUtils.readFileToByteArray(new File(path + storedImg));
 
-		MemberDTO member = service.memberInfo(email);
-
-		//다운로드할 파일의 경로와 파일명을 매개변수로 입력받아 byte 데이터타입의 1차원 배열로 저장
-		byte[] fileByte = FileUtils.readFileToByteArray(new File(path + member.getStoredImg()));
-
-		//예) HTTP Response Header는 Content-Disposition: attachment;
-		//filename="hello.jpg";
-		//HTTP Response Body에는 1차원 바이트 타입으로 변환된 배열
-		rs.setContentType("application/octet-stream");
-		rs.setContentLength(fileByte.length);
-		rs.setHeader("Content-Disposition", "attachment; filename=\"" + URLEncoder.encode(member.getOrgImg(), "UTF-8") + "\";");
-		rs.getOutputStream().write(fileByte); //stream을 통해 1차원 byte 타입 배열로 변환된 데이터(추후 파일로 변환)를 버퍼에 씀
-		rs.getOutputStream().flush(); //버퍼에 있는 내용을 write
-		rs.getOutputStream().close(); //스트림 닫기
+			//예) HTTP Response Header는 Content-Disposition: attachment;
+			//filename="hello.jpg";
+			//HTTP Response Body에는 1차원 바이트 타입으로 변환된 배열
+			rs.setContentType("application/octet-stream");
+			rs.setContentLength(fileByte.length);
+			rs.setHeader("Content-Disposition", "attachment; filename=\"" + URLEncoder.encode(storedImg, "UTF-8") + "\";");
+			rs.getOutputStream().write(fileByte); //stream을 통해 1차원 byte 타입 배열로 변환된 데이터(추후 파일로 변환)를 버퍼에 씀
+			rs.getOutputStream().flush(); //버퍼에 있는 내용을 write
+			rs.getOutputStream().close(); //스트림 닫기
 	}
 
 	//==================== 마이 페이지 ====================

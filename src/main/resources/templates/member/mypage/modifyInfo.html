@@ -100,7 +100,7 @@
 	
 	<!-- Custom Script -->
 	<script type="text/javascript">
-		var telOk = 'Y'; //전화번호 확인 검증여부
+		var telOk = ('[[ ${ member.tel } ]]' == '') ? 'N' : 'Y'; //전화번호 확인 검증여부
 		var websiteOk = 'Y'; //웹사이트 확인 검증여부
 		var profileImg = document.querySelector('#profileImg');
 		var fileEvent = document.querySelector('#imageFile');

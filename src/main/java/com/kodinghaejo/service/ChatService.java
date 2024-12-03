@@ -10,6 +10,7 @@ import com.kodinghaejo.dto.ChatLogDTO;
 import com.kodinghaejo.dto.ChatMsgDTO;
 import com.kodinghaejo.dto.MemberDTO;
 import com.kodinghaejo.entity.ChatEntity;
+import com.kodinghaejo.entity.ChatMemberEntity;
 
 import jakarta.transaction.Transactional;
 
@@ -25,8 +26,6 @@ public interface ChatService {
 
 	//대화방 새로 생성
 	public Long createRoom(ChatDTO chatdto);
-
-	public Long userinfo(ChatDTO chatdto);
 
 //	 public ChatEntity createMemberList(ChatMemberDTO chatmemberdto, ChatEntity chatIdx);
 
@@ -46,7 +45,7 @@ public interface ChatService {
 	public ChatEntity findRoomById(Long idx);
 
 	//채팅방에 접속을 하면 채팅멤버 테이블에 채팅멤버가 등록
-	public void addUserToRoom(Long chatidx, String email, String username, String manager);
+	public boolean addUserToRoom(Long chatidx, String email, String username, String manager);
 
 	//메세지를 테이블에 저장하는 서비스
 	public void saveMessage(Long chatIdx, String email, String content);
@@ -62,5 +61,15 @@ public interface ChatService {
 	public List<String> getChatMembers(Long chatIdx);
 
 	public List<Map<String, Object>> getChatMessagesWithUsername(Long chatIdx);
+//채팅방 멤버에 포함되어있는지 체크
+	public boolean isUserInRoom(Long chatIdx, String email);
+	
+	// 1:1 채팅방
+	public boolean isPrivateChatRoomExists(String userEmail, String memberEmail);
+	public Long getPrivateChatRoomIdx(String userEmail, String memberEmail);
+	
+	public ChatMemberEntity getmanager(Long chatIdx);
+	
+	public List<ChatDTO> findManagers();
 
 }

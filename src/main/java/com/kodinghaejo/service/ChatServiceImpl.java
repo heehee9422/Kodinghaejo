@@ -16,6 +16,7 @@ import org.springframework.web.socket.WebSocketSession;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kodinghaejo.dto.ChatDTO;
 import com.kodinghaejo.dto.ChatLogDTO;
+import com.kodinghaejo.dto.ChatMemberDTO;
 import com.kodinghaejo.dto.ChatMsgDTO;
 import com.kodinghaejo.dto.MemberDTO;
 import com.kodinghaejo.entity.ChatEntity;
@@ -79,28 +80,11 @@ public class ChatServiceImpl implements ChatService {
 													.builder()
 													.type(chatdto.getType())
 													.title(chatdto.getTitle())
-													.regdate(LocalDateTime.now())
-													.isUse("Y")
-													.password(chatdto.getPassword())
-													.build();
-		chatRepository.save(entity);
-
-		return entity.getIdx();
-	}
-
-	// 유저목록에서 유저를 선택하고 1:1대화방 생성
-	//대화방 새로 생성
-	@Override
-	public Long userinfo(ChatDTO chatdto) {
-		ChatEntity entity = ChatEntity
-													.builder()
-													.type(chatdto.getType())
-													.title(chatdto.getTitle())
+													.descr(chatdto.getDescr())
 													.limit(chatdto.getLimit())
 													.regdate(LocalDateTime.now())
 													.isUse("Y")
 													.password(chatdto.getPassword())
-													.descr(chatdto.getDescr())
 													.build();
 		chatRepository.save(entity);
 
@@ -155,37 +139,41 @@ public class ChatServiceImpl implements ChatService {
 	// 특정 회원 정보 가져오기
 	@Override
 	public MemberDTO getUserByEmail(String email) {
-		MemberEntity memberEntity = memberRepository.findById(email).get();
+		MemberEntity memberEntity = memberRepository.findById(email)
+				.orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
 		return new MemberDTO(memberEntity);
 	}
 
 	//채팅방 찾는
 	@Override
 	public ChatEntity findRoomById(Long idx) {
-		return chatRepository.findById(idx).orElseThrow(() -> new IllegalArgumentException("해당 채팅방이 존재하지 않습니다."));
+		return chatRepository.findById(idx)
+				.orElseThrow(() -> new IllegalArgumentException("해당 채팅방이 존재하지 않습니다."));
 	}
 
 	//채팅방에 접속을 하면 채팅멤버 테이블에 채팅멤버가 등록
 	@Override
-	public void addUserToRoom(Long chatidx, String email, String username, String manager) {
+	public boolean addUserToRoom(Long chatidx, String email, String username, String manager) {
 		ChatEntity chatRoom = findRoomById(chatidx);
-		MemberEntity chatEmail = memberRepository.findById(email).get();
-
+		MemberEntity chatEmail = memberRepository.findById(email)
+				.orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
+		
 		if (chatMemberRepository.existsByChatIdxAndEmail(chatRoom, chatEmail)) {
-			return;// 채팅멤버가 이미 있으면 그냥종료
-		} else if (manager != "Y") {
-			manager = "N";} //createRoom()으로 방을 만들며 입장했으면 관리자로
-
-			ChatMemberEntity chatmember = ChatMemberEntity
-																			.builder()
-																			.chatIdx(chatRoom)
-																			.email(chatEmail)
-																			.nickname(username)
-																			.manager(manager)
-																			.regdate(LocalDateTime.now())
-																			.build();
-			chatMemberRepository.save(chatmember);
-
+			return false; // 채팅멤버가 이미 있으면 그냥종료
+		} else if (!"Y".equals(manager)) {
+			manager = "N"; // createRoom()으로 방을 만들며 입장했으면 관리자로
+		}
+		
+		ChatMemberEntity chatmember = ChatMemberEntity.builder()
+				.chatIdx(chatRoom)
+				.email(chatEmail)
+				.nickname(username)
+				.manager(manager)
+				.regdate(LocalDateTime.now())
+				.build();
+		chatMemberRepository.save(chatmember);
+		
+		return true;
 	}
 
 	//메세지를 테이블에 저장하는 서비스
@@ -256,6 +244,68 @@ public class ChatServiceImpl implements ChatService {
 			messageData.put("regdate", msg.getRegdate());
 			return messageData;
 		}).collect(Collectors.toList());
+	}
+	
+//채팅방 멤버에 포함되어있는지 체크
+	@Override
+	public boolean isUserInRoom(Long chatIdx, String email) {
+		ChatEntity chatRoom = findRoomById(chatIdx);
+		MemberEntity member = memberRepository.findById(email)
+				.orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
+		return chatMemberRepository.existsByChatIdxAndEmail(chatRoom, member);
+	}
+	
+	// 1:1 채팅
+	public boolean isPrivateChatRoomExists(String userEmail, String memberEmail) {
+		List<ChatMemberEntity> userChatRooms = chatMemberRepository.findByEmail(memberRepository.findByEmail(userEmail).orElse(null));
+		List<ChatMemberEntity> memberChatRooms = chatMemberRepository.findByEmail(memberRepository.findByEmail(memberEmail).orElse(null));
+	
+		for (ChatMemberEntity userChatRoom : userChatRooms) {
+			for (ChatMemberEntity memberChatRoom : memberChatRooms) {
+				if (userChatRoom.getChatIdx().equals(memberChatRoom.getChatIdx()) && "OWN".equals(userChatRoom.getChatIdx().getType())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	public Long getPrivateChatRoomIdx(String userEmail, String memberEmail) {
+		List<ChatMemberEntity> userChatRooms = chatMemberRepository.findByEmail(memberRepository.findByEmail(userEmail).orElse(null));
+		List<ChatMemberEntity> memberChatRooms = chatMemberRepository.findByEmail(memberRepository.findByEmail(memberEmail).orElse(null));
+		
+		for (ChatMemberEntity userChatRoom : userChatRooms) {
+			for (ChatMemberEntity memberChatRoom : memberChatRooms) {
+				if (userChatRoom.getChatIdx().equals(memberChatRoom.getChatIdx()) && "OWN".equals(userChatRoom.getChatIdx().getType())) {
+					return userChatRoom.getChatIdx().getIdx();
+				}
+			}
+		}
+		return null;
+	}
+	
+	public ChatMemberEntity getmanager(Long chatIdx) {
+		return chatMemberRepository.findByChatIdxAndManager(chatIdx);
+	}
+	
+	public List<ChatDTO> findManagers() {
+		List<ChatEntity> chatEntities = chatRepository.findAll();
+		List<ChatDTO> chatDTOs = new ArrayList<>();
+		
+		for (ChatEntity chat : chatEntities) {
+			ChatDTO chatDTO = new ChatDTO(chat);
+		
+			List<ChatMemberDTO> memberDTOs = chatMemberRepository.findByChatIdx(chat)
+					.stream()
+					.filter(chatMember -> "Y".equals(chatMember.getManager()))
+					.map(ChatMemberDTO::new)
+					.toList();
+			
+			chatDTO.setManagerEmail(memberDTOs);
+			chatDTOs.add(chatDTO);
+		}
+		
+		return chatDTOs;
 	}
 
 }
