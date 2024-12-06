@@ -13,7 +13,7 @@
 </head>
 <body>
 	<!-- header 영역 -->
-	<div id="header" th:replace="~{ /include/header }"></div>
+	<div id="header" th:replace="~{ include/header }"></div>
 	<div class="banner-zone">
 		<!-- 첫번째 영역 : 나중에 보자-->
 		<div class="banner-content">
@@ -48,7 +48,9 @@
 					<div class="content-rank-toggle-menu-item" id="tabMenu01" style="display: block;">
 						<div class="content-rank-box">
 							<div class="content-rank-box-list" th:each="member, stat : ${members}" th:if="${stat.index < 3}">
-								<img th:src="${#strings.isEmpty(member.orgImg) ? '/img/test-profile/coolping.png' : '/member/img/' + member.email}" alt="" style="width: 40%;">
+								<div class="image-box">
+									<img th:src="${'/member/img/' + member.email}" alt="">
+								</div>
 								<p>닉네임<b th:text="${member.nickname != null ? member.nickname : 'unknown'}">수리핑</b></p>
 								<p>레벨<b th:text="${member.grade}">LV999</b></p>
 								<p>맞은 문제<b th:text="${member.correctCount}">5개</b> | 정답률 <b th:text="${#numbers.formatDecimal(member.correctRate,1,1)} + ' ' + '%' ">99%</b></p>
@@ -86,7 +88,9 @@
 					<div class="content-rank-toggle-menu-item" id="tabMenu02">
 						<div class="content-rank-box">
 							<div class="content-rank-box-list" th:each="member, stat : ${members}" th:if="${stat.index < 3}">
-								<img th:src="${#strings.isEmpty(member.orgImg) ? '/img/test-profile/coolping.png' : '/member/img/' + member.email}" alt="" style="width: 40%;">
+								<div class="image-box">
+									<img th:src="${'/member/img/' + member.email}" alt="">
+								</div>
 								<p>닉네임<b th:text="${member.nickname != null ? member.nickname : 'unknown'}">수리핑</b></p>
 								<p>레벨<b th:text="${member.grade}">LV999</b></p>
 								<p>맞은 문제<b th:text="${member.correctCount}">5개</b> | 정답률 <b th:text="${#numbers.formatDecimal(member.correctRate,1,1)} + ' ' + '%' ">99%</b></p>
@@ -124,7 +128,29 @@
 		</div>
 	</div>
 	<!-- footer영역 -->
-	<div id="footer" th:replace="/include/footer"></div>
+	<div id="footer" th:replace="~{ include/footer }"></div>
+	<!-- Custom CSS -->
+	<style type="text/css">
+		.image-box {
+			position: relative;
+			width: 40%;
+			margin: 0 auto;
+		}
+		.image-box::after {
+			display:block;
+			content: "";
+			padding-bottom: 100%;
+		}
+		.image-box > img {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			border-radius: 50%;
+		}
+	</style>
 	<!-- Custom Script -->
 	<script type="text/javascript">
 		let currentIndex = 0;

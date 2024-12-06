@@ -22,8 +22,7 @@
 				<th:block th:if="${ session.email != null }">
 				<li>
 					<span class="login_profile">
-						<img th:if="${ session.storedImg != null }" th:src="@{ '/member/img/' + ${ session.email } }" alt="" style="width: 30px; height: 30px; border-radius: 50%;">
-						<img th:if="${ session.storedImg == null }" src="/img/test-profile/coolping.png" alt="" style="width: 30px; height: 30px; border-radius: 50%;">
+						<img th:src="@{ '/member/img/' + ${ session.email } }" alt="" style="width: 30px; height: 30px; border-radius: 50%;">
 						<b>[[ ${ session.nickname } ]]</b>님이 로그인 하셨습니다
 						<li><a href="javascript:noticeBell();" class="notice-pop on" id="noticeBellLink"><i class="xi-bell-o"></i></a></li>
 					</span>

@@ -15,7 +15,7 @@
 
 <body>
 	<!-- header 영역 -->
-	<div id="header" th:replace="~{ /include/header }"></div>
+	<div id="header" th:replace="~{ include/header }"></div>
 	<div class="banner-zone">
 	<!-- 첫번째 영역 : 나중에 보자-->
 	<div class="banner-content">
@@ -82,9 +82,9 @@
 				</p>
 				<ol>
 					<li class="room">
-				 			<b><a href=javascript:void(0);>[[${chatRoom.title}]]</a></b>
+				 			<b><a href=javascript:void(0);><i th:class="${ chatRoom.type == 'PUB' ? 'xi-speech' : chatRoom.type == 'PVT' ? 'xi-lock' : '' }" style="margin-right: 5px;"></i>[[${chatRoom.title}]]</a></b>
 						<p>참여자 수</p>
-						<p id="entry" th:if="${chatRoom.limit == 0}">[[${memberCounts[chatRoom.idx]}]]</p>
+						<p id="entry" th:if="${chatRoom.limit == 0}">[[${memberCounts[chatRoom.idx]}]] / ∞</p>
 						<p id="entry" th:unless="${chatRoom.limit == 0}">[[${memberCounts[chatRoom.idx]}]] / [[${chatRoom.limit}]]</p>
 					</li>
 				</ol>
@@ -101,7 +101,7 @@
 	<!-- https://apost.dev/1026/ -->
 	<!-- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/details -->
 	<!-- footer영역 -->
-	<div id="footer" th:replace="~{ /include/footer }"></div>
+	<div id="footer" th:replace="~{ include/footer }"></div>
 	<!-- Custom Script -->
 	<script type="text/javascript">
 		//채팅방 개설 팝업창
@@ -270,7 +270,7 @@
 							// 비밀번호 입력을 받는 SweetAlert로 변경
 							Swal.fire({
 								title: '비밀번호를 입력하세요:',
-								input: 'text',
+								input: 'password',
 								inputAttributes: {
 									autocapitalize: 'off'
 								},

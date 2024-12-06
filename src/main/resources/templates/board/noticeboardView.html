@@ -15,7 +15,7 @@
 </head>
 <body>
 	<!-- header 영역 -->
-	<div id="header" th:replace="~{ /include/header }"></div>
+	<div id="header" th:replace="~{ include/header }"></div>
 	<div class="container">
 		<div class="main-content">
 			<div class="content-board-notice">
@@ -26,7 +26,7 @@
 					<p class="notice-view-title-head" th:text="${ view.title }"></p>
 					<div class="notice-view-title-list">
 						<div class="profile-title">
-							<img src="/img/test-profile/nonoping.png" alt="">
+							<img th:src="@{ '/member/img/' + ${ view.email.email } }" alt="">
 							<div class="profile-title-content">
 								<p class="profile-name" th:text="${ view.writer }"></p>
 								<p class="profile-date" th:text="${ #temporals.format(view.regdate, 'yyyy-MM-dd HH:mm:ss') }"></p>
@@ -50,7 +50,7 @@
 		</div>
 	</div>
 	<!-- footer영역 -->
-	<div id="footer" th:replace="~{ /include/footer }"></div>
+	<div id="footer" th:replace="~{ include/footer }"></div>
 	
 	<!-- toast API -->
 	<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>

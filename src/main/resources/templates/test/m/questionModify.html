@@ -15,7 +15,7 @@
 </head>
 <body>
 	<!-- header 영역 -->
-	<div id="header" th:replace="~{ /include/header} "></div>
+	<div id="header" th:replace="~{ include/header} "></div>
 	<!-- 이메일 미인증 시 인증 유도 -->
 	<script>
 		if ('[[ ${ session.emailAuth } ]]' != 'Y') {
@@ -60,7 +60,7 @@
 		</div>
 	</div>
 	<!-- footer영역 -->
-	<div id="footer" th:replace="~{ /include/footer }"></div>
+	<div id="footer" th:replace="~{ include/footer }"></div>
 
 	<!-- toast API : 나중에 모듈로 작성해서 만들기-->
 	<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>

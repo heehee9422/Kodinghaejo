@@ -61,7 +61,7 @@ public class AdminController {
 
 	//시스템 관리 메인화면
 	@GetMapping("/admin/systemMain")
-	public String getSystemMain(Model model, HttpServletRequest request) {
+	public void getSystemMain(Model model, HttpServletRequest request) {
 		long todaySignups = service.getTodaySignups();
 		model.addAttribute("todaySignups", todaySignups);
 
@@ -85,8 +85,6 @@ public class AdminController {
 			e.printStackTrace();
 			model.addAttribute("lngCount", "{}");
 		}
-
-		return "/admin/systemMain";
 	}
 
 	//회원정보 관리
@@ -222,16 +220,14 @@ public class AdminController {
 
 	//공지사항 수정화면
 	@GetMapping("/admin/noticeboardModify")
-	public String noticeModify(@RequestParam("id") Long id, Model model) {
+	public void noticeModify(@RequestParam("id") Long id, Model model) {
 		try {
 			BoardDTO boardDTO = service.getNoticeById(id);
 			model.addAttribute("board", boardDTO);
 
-			return "/admin/noticeboardModify";
 		} catch (Exception e) {
-	        log.error("Error during noticeModify", e);
-	        return "{\"message\": \"fail\"}";
-	    }
+			log.error("Error during noticeModify", e);
+		}
 	}
 
 	//공지사항 수정
@@ -408,18 +404,15 @@ public class AdminController {
 
 	//문제 수정화면
 	@GetMapping("/admin/testboardModify")
-	public String modifyTest(@RequestParam("id") Long id, Model model) {
+	public void modifyTest(@RequestParam("id") Long id, Model model) {
 		try {
 			TestDTO testDTO = service.getTestById(id); //서비스에서 데이터 조회
 			model.addAttribute("test", testDTO);
 
 			List<String> diffList = List.of("0", "1", "2");
 			model.addAttribute("diffList", diffList);
-
-			return "/admin/testboardModify";
 		} catch (Exception e) {
 			log.error("Error during modifyTest", e);
-			return "{\"message\": \"fail\"}";
 		}
 	}
 
@@ -569,7 +562,7 @@ public class AdminController {
 			String path;
 
 			if (os.contains("win"))
-				path = "Z:\\임시저장소\\프로젝트관리\\1회차\\2조\\Repository\\banner\\";
+				path = "D:\\공유폴더\\임시저장소\\프로젝트관리\\1회차\\2조\\Repository\\banner\\";
 			else
 				path = "/home/hee/Repository/banner";
 
@@ -624,7 +617,7 @@ public class AdminController {
 
 	//배너 수정화면
 	@GetMapping("/admin/systemBannerModify")
-	public String getBannerModify(@RequestParam("idx") Long idx, Model model) {
+	public void getBannerModify(@RequestParam("idx") Long idx, Model model) {
 		try {
 			BannerEntity bannerEntity = service.getBannerById(idx);
 
@@ -636,10 +629,8 @@ public class AdminController {
 			model.addAttribute("startDate", startDate);
 			model.addAttribute("endDate", endDate);
 
-			return "/admin/systemBannerModify";
 		} catch (Exception e) {
 			log.error("Error during BannerModify", e);
-			return "{\"message\": \"fail\"}";
 		}
 	}
 
@@ -659,7 +650,7 @@ public class AdminController {
 			String os = System.getProperty("os.name").toLowerCase();
 			String path;
 			if (os.contains("win")) {
-				path = "Z:\\임시저장소\\프로젝트관리\\1회차\\2조\\Repository\\banner\\";
+				path = "D:\\공유폴더\\임시저장소\\프로젝트관리\\1회차\\2조\\Repository\\banner\\";
 			} else {
 				path = "/home/hee/Repository/banner";
 			}

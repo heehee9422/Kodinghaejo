@@ -16,5 +16,7 @@ public interface ChatRepository extends JpaRepository<ChatEntity, Long> {
 
 	@Override
 	void deleteById(Long idx);
+	
+	public List<ChatEntity> findByIsUseOrderByRegdateDesc(String isUse);
 
 }

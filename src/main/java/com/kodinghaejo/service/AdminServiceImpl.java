@@ -224,6 +224,11 @@ public class AdminServiceImpl implements AdminService {
 	@Override
 	public void deleteBoard(Long idx) {
 		BoardEntity boardEntity = boardRepository.findById(idx).get();
+		
+		List<ReplyEntity> replyEntities = replyRepository.findByRePrntAndPrntIdx("FR", idx);
+		for (ReplyEntity replyEntity : replyEntities)
+			replyRepository.delete(replyEntity);
+		
 		boardRepository.delete(boardEntity);
 	}
 

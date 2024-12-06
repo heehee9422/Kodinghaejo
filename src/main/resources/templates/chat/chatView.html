@@ -21,9 +21,9 @@
 				<div class="chat-view-nav">
 					<div class="chat-view-nav-title">
 						<ul>
-							<li><a href="#" onclick="history.back();" role="button"><i class="xi-angle-left"></i><span class="hidden">뒤로가기</span></a></li>
+							<li><a href="javascript:window.close();" role="button"><i class="xi-close"></i><span class="hidden">뒤로가기</span></a></li>
 							<li class="profile">
-								<img th:src="${managerEmail != null ? '/member/img/' + managerEmail : '/img/test-profile/nonoping.png'}" alt="이미지" style="width: 50px;">
+								<img th:src="${'/member/img/' + managerEmail}" alt="이미지" style="width: 50px; height: 50px; border-radius: 50%; margin: 0 20px; background: #f8f8f8; object-fit: cover;">
 								<p><b th:text="${chatRoom.title}"></b></p>
 							</li>
 							<li class="chat-nav-side-btn"><a href="#" onclick=""><i class="xi-hamburger-back" role="button"></i><span class="hidden">사이드 바</span></a></li>
@@ -33,7 +33,7 @@
 
 				<div class="chat-nav-side slide-left">
 					<div class="chat-nav-side-item">
-						<b>대화상대</b>
+						<b>참여자</b>
 						<div class="user-box" id="userBox"></div>
 					</div>
 					<!-- 
@@ -50,9 +50,9 @@
 						<b>첨부파일</b>
 						<div class="attach-file-box">
 
-							<p><a href="#">D:\kodinghaejo_pub\img\aset03.png</a></p>
-							<p><a href="#">D:\kodinghaejo_pub\img\aset03.png</a></p>
-							<p><a href="#">D:\kodinghaejo_pub\img\aset03.png</a></p>
+							<p><a href="#">D:\공유폴더\kodinghaejo_pub\img\aset03.png</a></p>
+							<p><a href="#">D:\공유폴더\kodinghaejo_pub\img\aset03.png</a></p>
+							<p><a href="#">D:\공유폴더\kodinghaejo_pub\img\aset03.png</a></p>
 						</div>
 					</div>
 					<div class="chat-nav-side-item">
@@ -162,7 +162,7 @@
 							str = "<div class='chat-me fadeInDown'>"
 								+"<p class='date'>" + formatDate(new Date()) + "</p>"
 									+ "<ul class='chat-message-user'>"
-									+ "<li>" + data.user + "</li>"
+									+ "<li><b>" + data.user + "</b></li>"
 									+ "<li>" + data.message + "</li>"
 									+ "</ul>"
 									+ "<img src=/member/img/" + data.email + ">" 
@@ -172,7 +172,7 @@
 							str = "<div class='chat-your fadeInDown'>"
 									+ "<img src=/member/img/" + data.email + ">" 
 									+ "<ul class='chat-message'>"
-									+ "<li>" + data.user + "</li>"
+									+ "<li><b>" + data.user + "</b></li>"
 									+ "<li>" + data.message + "</li>"
 									+ "</ul>"
 									+"<p class='date'>" + formatDate(new Date()) + "</p>"
@@ -194,6 +194,59 @@
 		document.querySelector('#btn_exitChat').addEventListener('click', async () => {
 			const chatIdx = urlParams.get('idx');
 			const email = document.querySelector('#email').value; // 사용자 이메일
+			
+			if ('[[ ${ managerEmail } ]]' == email) {
+				Swal.fire({
+					icon: 'warning',
+					html: '회원님은 현재 이 채팅방의 방장입니다.<br>채팅방에서 나가려면 폐쇄해야 합니다.<br>이 채팅방을 폐쇄하시겠습니까?',
+					showCancelButton: true,
+					confirmButtonText: '네, 폐쇄합니다.',
+					cancelButtonText: '아니오.'
+				})
+				.then((result) => {
+					if (result.isConfirmed) {
+						fetch('/chat/chatClose', {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/x-www-form-urlencoded',
+							},
+							body: new URLSearchParams({
+								'idx': chatIdx
+							})
+						})
+						.then((response) => response.json())
+						.then((data) => {
+							if (data.message == 'good') {
+								Swal.fire({
+									icon: 'success',
+									text: '채팅방이 폐쇄되었습니다.',
+									confirmButtonText: '확인'
+								})
+								.then(() => {
+									websocket.close();
+									opener.location.reload();
+									window.close();
+								});
+							} else {
+								Swal.fire({
+									icon: 'error',
+									text: '시스템 장애로 인해 채팅방 폐쇄에 실패했습니다.',
+									confirmButtonText: '확인'
+								});
+							}
+						})
+						.catch((error) => {
+							Swal.fire({
+								icon: 'error',
+								text: '시스템 장애로 인해 채팅방 폐쇄에 실패했습니다.',
+								confirmButtonText: '확인'
+							});
+						})
+					}
+				});
+				
+				return false;
+			}
 	
 			try {
 				// 1. 서버로 나가기 요청 전송 (채팅 멤버 삭제)
@@ -228,6 +281,7 @@
 
 				// 4. 페이지 이동
 				//window.location.href = "/chat/chatmain";
+				opener.location.reload();
 				window.close();
 			} catch (error) {
 				console.error("채팅방 종료 중 오류 발생:", error);
@@ -349,6 +403,8 @@
 		};
 	
 		chatBody.scrollTop = chatBody.scrollHeight;
+
+		opener.location.reload();
 	</script>
 </body>
 

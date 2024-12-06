@@ -14,13 +14,13 @@
 
 <body>
 <!-- header 영역 -->
-<div id="header" th:replace="~{ /include/header }"></div>
+<div id="header" th:replace="~{ include/header }"></div>
 	<div class="container">
 		<div class="main-content">
 			<div class="content-board-free">
 				<div class="content-board-free-title">
 					<h3>자유롭게 이야기를 나누어 보세요</h3>
-					<button th:if="${ session.email != null }" class="board-free-btn" onclick="location.href='/board/m/freeboardWrite'" >작성하기</button>
+					<button th:if="${ session.email != null }" class="board-free-btn" onclick="writeBoard()">작성하기</button>
 				</div>
 				<div class="content-board-free-content">
 					<div class="free-content-box">
@@ -57,7 +57,7 @@
 		</div>
 	</div>
 	<!-- footer영역 -->
-	<div id="footer" th:replace="~{ /include/footer }"></div>
+	<div id="footer" th:replace="~{ include/footer }"></div>
 	
 	<!-- Custom Script -->
 	<script type="text/javascript">
@@ -97,6 +97,23 @@
 			for (const i in jsonInfo) {
 				let elm = document.createElement('div');
 				elm.classList.add('content-box-item');
+
+				//날짜 데이터 변환 시작
+				let now = new Date(jsonInfo[i].regdate);
+				let year = now.getFullYear(); //연도
+				let month = now.getMonth() + 1; //월. 0~11로 표현
+				let date = now.getDate(); //일 * day: 요일 --> 0 ~ 6: 일 ~ 토
+				let hours = now.getHours();
+				let minutes = now.getMinutes();
+				let seconds = now.getSeconds();
+				
+				let mm = (month >= 10) ? month : '0' + month;
+				let dd = (date >= 10) ? date : '0' + date;
+				let hh = (hours >= 10) ? hours : '0' + hours;
+				let mi = (minutes >= 10) ? minutes : '0' + minutes;
+				let ss = (seconds >= 10) ? seconds : '0' + seconds;
+				let regdate = year + '-' + mm + '-' + dd + ' ' + hh + ':' + mi + ':' + ss;
+				//날짜 데이터 변환 종료
 				
 				let result = '';
 				result += '<h4>' + jsonInfo[i].catName + '</h4>\n' +
@@ -106,7 +123,7 @@
 									'</a>\n' +
 									'<div class="profile-title">\n' +
 									'\t<p class="profile-name">' + jsonInfo[i].writer + '</p>\n' +
-									'\t<p class="profile-date">' + jsonInfo[i].regdate + '</p>\n' +
+									'\t<p class="profile-date">' + regdate + '</p>\n' +
 									'</div>\n' +
 									'<div class="profile-item">\n' +
 									'\t<ol>\n' +
@@ -122,6 +139,27 @@
 				elm.innerHTML = result;
 				boardList.appendChild(elm);
 			}
+		}
+		
+		//게시물 작성 화면으로
+		const writeBoard = () => {
+			if ('[[ ${ session.emailAuth } ]]' != 'Y') {
+				Swal.fire({
+					icon: 'error',
+					html: '이메일 인증이 필요합니다.<br>MyPage로 이동하시겠습니까?',
+					showCancelButton: true,
+					confirmButtonText: '네, 이동합니다.',
+					cancelButtonText: '아니오.'
+				})
+				.then((result) => {
+					if (result.isConfirmed)
+						location.href = '/member/mypage/main';
+					else
+						history.back();
+				});
+			}
+			
+			location.href = '/board/m/freeboardWrite';
 		}
 		
 		//게시물 추천

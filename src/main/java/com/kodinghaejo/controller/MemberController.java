@@ -112,7 +112,7 @@ public class MemberController {
 		String os = System.getProperty("os.name").toLowerCase();
 		String path;
 		if (os.contains("win"))
-			path = "Z:\\임시저장소\\프로젝트관리\\1회차\\2조\\Repository\\profile\\";//"C:\\Repository\\Kodinghaejo\\profile\\";
+			path = "D:\\공유폴더\\임시저장소\\프로젝트관리\\1회차\\2조\\Repository\\profile\\";//"C:\\Repository\\Kodinghaejo\\profile\\";
 		else
 			path = "/home/user/Repository/profile/";
 
@@ -254,11 +254,11 @@ public class MemberController {
 			String os = System.getProperty("os.name").toLowerCase();
 			String path;
 			if (os.contains("win"))
-				path = "Z:\\임시저장소\\프로젝트관리\\1회차\\2조\\Repository\\profile\\";//"C:\\Repository\\Kodinghaejo\\profile\\";
+				path = "D:\\공유폴더\\임시저장소\\프로젝트관리\\1회차\\2조\\Repository\\profile\\";//"C:\\Repository\\Kodinghaejo\\profile\\";
 			else
 				path = "/home/mklee/Repository/Kodinghaejo/profile/";
 			
-			String defaultImg = "nonoping.png";
+			String defaultImg = "default-profile.png";
 			
 			//디렉토리가 존재하는지 체크해서 없다면 생성
 			File p = new File(path);

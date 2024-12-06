@@ -14,9 +14,9 @@
 <body>
 	<!-- header 영역 -->
 	
-	<div id="header" th:replace="~{ /include/header }"></div>
+	<div id="header" th:replace="~{ include/header }"></div>
 	<!-- pop-banner-zone영역 : 헤더 밑에 붙여 주세요-->
-	<div class="pop-banner" id="pop_banner" th:replace="~{ /include/popBanner }"></div>
+	<div class="pop-banner" id="pop_banner" th:replace="~{ include/popBanner }"></div>
 
 	<div class="container">
 		<!-- main-banner -->
@@ -87,7 +87,7 @@
 								<!-- 241126-프로필 이미지 프레임 추가 : .rank-silver, .rank-gold, .rank-bronse -->
 								<div th:class="${ (stat.index == 0) ? 'rank-gold' : (stat.index == 1) ? 'rank-silver' : 'rank-bronze' }">
 									<div class="profile-img">
-										<img th:src="${#strings.isEmpty(member.orgImg) ? '/img/test-profile/nonoping.png' : '/member/img/' + member.email}" alt="profile" style="position: relative; left: 25px; top: 24px; z-index: -1;">
+										<img th:src="@{ '/member/img/' + ${ member.email } }" alt="profile" style="position: relative; left: 25px; top: 24px; z-index: -1;">
 									</div>
 								</div>
 								<div class="card-item">
@@ -112,7 +112,7 @@
 	
 	</div>
 	<!-- footer영역 -->
-	<div id="footer" th:replace="~{ /include/footer }"></div>
+	<div id="footer" th:replace="~{ include/footer }"></div>
 </body>
 <!-- 커피챗 한잔해 : 메인에 만 -->
 <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="pongpongs" data-description="Support me on Buy me a coffee!" data-message="저희의 프로젝트를 지속할 수 있도록 연구비를 지원해주세요!" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>

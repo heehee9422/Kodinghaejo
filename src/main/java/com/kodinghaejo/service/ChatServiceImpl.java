@@ -289,7 +289,7 @@ public class ChatServiceImpl implements ChatService {
 	}
 	
 	public List<ChatDTO> findManagers() {
-		List<ChatEntity> chatEntities = chatRepository.findAll();
+		List<ChatEntity> chatEntities = chatRepository.findByIsUseOrderByRegdateDesc("Y");
 		List<ChatDTO> chatDTOs = new ArrayList<>();
 		
 		for (ChatEntity chat : chatEntities) {
@@ -307,5 +307,12 @@ public class ChatServiceImpl implements ChatService {
 		
 		return chatDTOs;
 	}
-
+	
+	//채팅방 폐쇄
+	@Override
+	public void closeChatroom(Long idx) {
+		ChatEntity chatEntity = chatRepository.findById(idx).get();
+		chatEntity.setIsUse("N");
+		chatRepository.save(chatEntity);
+	}
 }

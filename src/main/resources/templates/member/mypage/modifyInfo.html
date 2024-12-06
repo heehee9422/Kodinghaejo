@@ -14,11 +14,11 @@
 <!-- 게시판 복사용 게시판 -->
 <body>
 	<!-- header 영역 -->
-	<div id="header" th:replace="~{ /include/header }"></div>
+	<div id="header" th:replace="~{ include/header }"></div>
 	<div class="container column bgcontain-mypage">
 		<div class="column-row myPage">
 			<div class="c-column-2">
-				<div id="mypage_manu" th:replace="~{ /include/mypage }"></div>
+				<div id="mypage_manu" th:replace="~{ include/mypage }"></div>
 			</div>
 			<div class="c-column-8">
 				<div class="mypage_content">
@@ -32,8 +32,7 @@
 							<input type="hidden" name="imgSize" th:value="${ member.imgSize }">
 							<div class="mypage_profile">
 								<div class="profile_img" id="profileImg" style="position: relative; cursor: pointer;">
-									<img th:if="${ member.imgSize != null && member.imgSize > 0 }" id="pImg" th:src="@{ '/member/img/' + ${ member.email } }">
-									<img th:if="${ member.imgSize == null || member.imgSize == 0 }" id="pImg" src="/img/test-profile/coolping.png">
+									<img id="pImg" th:src="@{ '/member/img/' + ${ member.email } }">
 									<div style="width:50px; height: 50px; background: #000; position: absolute; top: 103px; left: 105px; border-radius: 50%"><i class="xi-camera" style="color: #e9e9e9; font-size: 25px; line-height: 2em;"></i></div>
 								</div>
 								<div class="join-email-form">
@@ -80,7 +79,7 @@
 	</div>
 
 	<!-- footer영역 -->
-	<div id="footer" th:replace="~{ /include/footer }"></div>
+	<div id="footer" th:replace="~{ include/footer }"></div>
 	
 	<!-- Custom CSS -->
 	<style type="text/css">

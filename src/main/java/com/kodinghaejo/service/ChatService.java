@@ -71,5 +71,8 @@ public interface ChatService {
 	public ChatMemberEntity getmanager(Long chatIdx);
 	
 	public List<ChatDTO> findManagers();
+	
+	//채팅방 폐쇄
+	public void closeChatroom(Long idx);
 
 }

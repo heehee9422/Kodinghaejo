@@ -118,7 +118,7 @@ public class BaseController {
 		String os = System.getProperty("os.name").toLowerCase();
 		String path;
 		if (os.contains("win")) {
-			path = "Z:\\임시저장소\\프로젝트관리\\1회차\\2조\\Repository\\banner\\";
+			path = "D:\\공유폴더\\임시저장소\\프로젝트관리\\1회차\\2조\\Repository\\banner\\";
 		} else {
 			path = "/home/mklee/Repository/Kodinghaejo/banner/";
 		}

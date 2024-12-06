@@ -2048,10 +2048,12 @@ div[class*="-form"] {
 	background: #fbfbff;
 }
 .content-chat-wrap .chat-list .chat-list-item img {
-	width: 150px;
-	border-radius: 999px;
+	width: 100px;
+	height: 100px;
+	border-radius: 50%;
 	background: #f8f8f8;
 	margin: 0 20px;
+	object-fit: cover;
 }
 .content-chat-wrap .chat-list .chat-list-item ol {
 	list-style: none;

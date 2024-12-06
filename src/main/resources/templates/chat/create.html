@@ -20,13 +20,14 @@
 			<input type="radio" name="type" value="PUB" id="PUB" onclick="togglePassword(false)"><label for="PUB">공개</label>
 			<input type="radio" name="type" value="PVT" id="PVT" onclick="togglePassword(true)"><label for="PVT">비공개</label>
 			<span class="mt20" style="display: block;">채팅방 비밀번호</span>
-			<input type="text" name="password" id="password" placeholder="비밀번호" disabled>
+			<input type="password" name="password" id="password" placeholder="비밀번호" disabled>
+			<input type="password" name="passwordCheck" id="passwordCheck" placeholder="비밀번호 확인" disabled>
 			<span>채팅방 제목</span>
-			<input type="text" name="title" placeholder="채팅방 제목">
+			<input type="text" name="title" id="title" placeholder="채팅방 제목">
 			<span>채팅방 소개</span>
-			<input type="text" name="descr" placeholder="채팅방 소개">
+			<input type="text" name="descr" id="descr" placeholder="채팅방 소개">
 			<span>채팅방 정원</span>
-			<input type="text" name="limit" placeholder="0 입력시 인원수 제한이 사라집니다.">
+			<input type="text" name="limit" id="limit" placeholder="0 입력시 인원수 제한이 사라집니다.">
 		</form>
 		<input type="button" id="btn_room" class="btn_home" value="대화방 만들기" style="width:140px;" onclick="createRoom()"><br>
 	</div>
@@ -37,16 +38,18 @@
 	<script type="text/javascript">
 		// raido 버튼 공개를 누르면 비밀번호칸 비활성화 비공개로 누르면 비밀번호칸 활성화
 		function togglePassword(enable) {
-			document.getElementById('password').disabled = !enable;
-			//radio 버튼을 비공개 공개로 바꿀시 비밀번호 칸 초기화
-			var passwordField = document.getElementById('password')
+			const passwordField = document.getElementById('password');
+			const passwordCheckField = document.getElementById('passwordCheck');
+			
 			passwordField.disabled = !enable;
+			passwordCheckField.disabled = !enable;
+			//radio 버튼을 비공개 공개로 바꿀시 비밀번호 칸 초기화
 			if (!enable) {
 				passwordField.value = '';
 			}
 		}
 	
-		var websocket = new WebSocket('ws://www.kodinghaejo.com:8081/ws/chat')
+		//var websocket = new WebSocket('ws://www.kodinghaejo.com:8081/ws/chat')
 		var roomId = '';
 		
 		/*
@@ -56,40 +59,76 @@
 			3. 대화방 종료
 		*/
 		var roomStatus = '0';
+		
+		document.querySelector('#limit').addEventListener('input', (event) => {
+			const changeVal = event.target.value.replace(/[^0-9]/g, ""); //숫자 제외한 문자 제거
+			
+			event.target.value = changeVal;
+		});
 	
 		//대화방 만들기
 		const createRoom = async () => {		
-			let title = document.querySelector('input[name="title"]');
-			let password = document.querySelector('input[name="password"]');
-			let type = document.querySelector('input[name="type"]:checked');
-			let descr = document.querySelector('input[name="descr"]');
-			let limit = document.querySelector('input[name="limit"]');
+			const title = document.querySelector('#title');
+			const password = document.querySelector('#password');
+			const passwordCheck = document.querySelector('#passwordCheck');
+			const type = document.querySelector('input[name="type"]:checked');
+			const descr = document.querySelector('#descr');
+			const limit = document.querySelector('#limit');
 		
 			if (title.value == '') {
 				Swal.fire({
 					icon: 'warning',
-					title: '입력 필요',
-					text: '만들 대화방 이름을 입력하세요.',
+					text: '생성할 채팅방 이름을 입력하세요.',
 					confirmButtonText: '확인'
+				})
+				.then(() => {
+					title.focus();
 				});
 				return;
 			}
 			
-			if (type.value == 'PVT' && password.value == '') {
-				Swal.fire({
-					icon: 'warning',
-					title: '입력 필요',
-					text: '비밀번호를 입력 해 주세요.',
-					confirmButtonText: '확인'
-				});
-				return;
+			if (type.value == 'PVT') {
+				if (password.value == '') {
+					Swal.fire({
+						icon: 'warning',
+						text: '비밀번호를 입력해주세요.',
+						confirmButtonText: '확인'
+					})
+					.then(() => {
+						password.focus();
+					});
+					return;
+				} 
+				
+				if (passwordCheck.value == '') {
+					Swal.fire({
+						icon: 'warning',
+						text: '비밀번호를 확인해주세요.',
+						confirmButtonText: '확인'
+					})
+					.then(() => {
+						passwordCheck.focus();
+					});
+					return;
+				}
+				
+				if (password.value != passwordCheck.value) {
+					Swal.fire({
+						icon: 'warning',
+						text: '비밀번호가 일치하지 않습니다.',
+						confirmButtonText: '확인'
+					})
+					.then(() => {
+						passwordCheck.focus();
+					});
+					return;
+				}
 			}
 			
 			if (limit.value == '') {
 				Swal.fire({
 					icon: 'warning',
-					title: '입력 필요',
-					text: '인원수를 입력하세요.',
+					text: '인원 수를 입력하세요.',
 					confirmButtonText: '확인'
 				});
 				return;
@@ -122,11 +161,13 @@
 						confirmButtonText: '확인',
 						timer: 2000,
 						timerProgressBar: true
-					}).then(() => {
+					})
+					.then(() => {
 						if (window.opener && !window.opener.closed) {
 							window.opener.location.reload();
 						}
 						window.close();
+						window.open('/chat/chatview?idx=' + data.chatidx);
 					});
 				} else {
 					Swal.fire({

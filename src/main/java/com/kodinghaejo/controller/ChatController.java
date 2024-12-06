@@ -125,7 +125,8 @@ public class ChatController {
 			if (!userAdd) {
 				// 채팅방이 꽉 찼을 경우
 				model.addAttribute("error", "채팅방이 꽉 찼습니다.");
-				return "redirect:/chat/chatmain";
+//				return "redirect:/chat/chatmain";
+				return "window.close()";
 			}
 		}
 
@@ -248,5 +249,14 @@ public class ChatController {
 	,chatDTO.getIdx()); return "{\"message\":\"good\",\"idx\":\"" +
 	chatDTO.getIdx() + "\"}"; }
 	 */
+	
+	//채팅방 폐쇄
+	@ResponseBody
+	@PostMapping("/chat/chatClose")
+	public String chatClose(@RequestParam("idx") Long idx, HttpSession session) {
+		chatService.closeChatroom(idx);
+		
+		return "{ \"message\": \"good\" }";
+	}
 
 }

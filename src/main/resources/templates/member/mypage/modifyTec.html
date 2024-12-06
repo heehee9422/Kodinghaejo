@@ -19,11 +19,11 @@
 <!-- 게시판 복사용 게시판 -->
 <body>
 	<!-- header 영역 -->
-	<div id="header" th:replace="~{ /include/header }"></div>
+	<div id="header" th:replace="~{ include/header }"></div>
 	<div class="container column bgcontain-mypage">
 		<div class="column-row myPage">
 			<div class="c-column-2">
-				<div id="mypage_manu" th:replace="~{ /include/mypage }"></div>
+				<div id="mypage_manu" th:replace="~{ include/mypage }"></div>
 			</div>
 			<div class="c-column-8">
 				<div class="mypage_content">
@@ -60,7 +60,7 @@
 	</div>
 
 	<!-- footer영역 -->
-	<div id="footer" th:replace="~{ /include/footer }"></div>
+	<div id="footer" th:replace="~{ include/footer }"></div>
 
 	<!-- Custom Script -->
 	<script type="text/javascript">

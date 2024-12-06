@@ -22,11 +22,11 @@
 		<div class="delay-icon"><i class="xi-spinner-5"></i></div>
 	</div>
 	<!-- header-->
-	<div id="header" th:replace="~{ /include/header }"></div>
+	<div id="header" th:replace="~{ include/header }"></div>
 	<div class="container column bgcontain-mypage">
 		<div class="column-row myPage">
 			<div class="c-column-2">
-				<div id="mypage_manu" th:replace="~{ /include/mypage }"></div>
+				<div id="mypage_manu" th:replace="~{ include/mypage }"></div>
 			</div>
 			<div class="c-column-8">
 				<div class="mypage_content">
@@ -35,12 +35,7 @@
 					<div class="mypage_box">
 						<div class="mypage_profile">
 							<div class="profile_img">
-								<th:block th:if="${ member.imgSize != null && member.imgSize > 0 }">
 								<img th:src="@{ '/member/img/' + ${ member.email } }">
-								</th:block>
-								<th:block th:if="${ member.imgSize == null || member.imgSize == 0 }">
-								<img src="/img/test-profile/coolping.png">
-								</th:block>
 							</div>
 							<div class="profile_name">
 								<p class="profile_email">[[ ${ member.nickname } ]]&nbsp;&#40;[[ ${ member.username } ]]&#41;</p>
@@ -100,7 +95,7 @@
 	</div>
 
 	<!-- footer -->
-	<div id="footer" th:replace="~{ /include/footer }"></div>
+	<div id="footer" th:replace="~{ include/footer }"></div>
 	
 	<!-- Custom Script -->
 	<script type="text/javascript">

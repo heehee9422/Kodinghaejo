@@ -16,7 +16,7 @@
 </head>
 <body>
 	<!-- header 영역 -->
-	<div id="header" th:replace="~{ /include/header }"></div>
+	<div id="header" th:replace="~{ include/header }"></div>
 
 	<!-- 글 내용 -->
 	<div class="container" style="min-height: auto;">
@@ -28,8 +28,7 @@
 				</div>
 
 				<div class="profile-title">
-					<img th:if="${ view.email.storedImg == null || view.email.storedImg == '' }" src="/img/test-profile/beoleoji.png" alt="">
-					<img th:if="${ view.email.storedImg != null && view.email.storedImg != '' }" th:src="@{ '/member/img/' + ${ view.email.email } }" alt="">
+					<img th:src="@{ '/member/img/' + ${ view.email.email } }" alt="">
 					<div class="profile-title-content">
 						<p class="profile-name" th:text="${ view.writer }"></p>
 						<p class="profile-date" th:text="${ #temporals.format(view.regdate, 'yyyy-MM-dd HH:mm:ss') }"></p>
@@ -82,8 +81,7 @@
 					<div class="question-list" th:id="@{ 'answer-' + ${ answer.idx } }">
 						<div class="question-list-title">
 							<div class="profile-title">
-								<img th:if="${ answer.email.storedImg == null || answer.email.storedImg == '' }" src="/img/test-profile/nonoping.png" alt="">
-								<img th:if="${ answer.email.storedImg != null && answer.email.storedImg != '' }" th:src="@{ '/member/img/' + ${ answer.email.email } }" alt="">
+								<img th:src="@{ '/member/img/' + ${ answer.email.email } }" alt="">
 								<p class="profile-name" th:text="${ answer.writer }"></p>
 								<p class="profile-date" th:text="${ #temporals.format(answer.regdate, 'yyyy-MM-dd HH:mm:ss') }"></p>
 							</div>
@@ -135,7 +133,7 @@
 	</div>
 	<div th:if="${ session.email == null}" id="answer-write-area" class="hidden"></div>
 	<!-- footer영역 -->
-	<div id="footer" th:replace="~{ /include/footer }"></div>
+	<div id="footer" th:replace="~{ include/footer }"></div>
 	
 	<!-- toast API -->
 	<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
@@ -310,7 +308,6 @@
 				answerCount.innerText = (parseInt(answerCount.innerText) + 1);
 				
 				const answerList = document.querySelector('#answer-list');
-				let profileImg = (jsonInfo.email.storedImg == null || jsonInfo.email.storedImg == '') ? '/img/test-profile/nonoping.png' : ('/member/img/' + jsonInfo.email.email);
 				
 				//날짜 데이터 변환 시작
 				let now = new Date(jsonInfo.regdate);
@@ -337,7 +334,7 @@
 				
 				result += '<div class="question-list-title">\n' +
 									'\t<div class="profile-title">\n' +
-									'\t\t<img src="' + profileImg + '" alt="">\n' +
+									'\t\t<img src="/member/img/' + jsonInfo.email.email + '" alt="">\n' +
 									'\t\t<p class="profile-name">' + jsonInfo.writer + '</p>\n' +
 									'\t\t<p class="profile-date">' + regdate + '</p>\n' +
 									'\t</div>\n' +
