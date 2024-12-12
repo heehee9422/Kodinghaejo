@@ -35,3 +35,7 @@ out/
 
 ### VS Code ###
 .vscode/
+
+
+### properties ###
+/Kodinghaejo/src/main/resources/application.properties
